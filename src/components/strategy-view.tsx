@@ -64,7 +64,12 @@ export function StrategyView({
   };
 
   return (
-    <Card className={cn(!isFocused && "opacity-60 hover:opacity-100 transition-opacity")}>
+    <Card className={cn(
+        "transition-opacity",
+        !isFocused && "opacity-60 hover:opacity-100",
+        strategy.state === 'Draft' && 'border-blue-500/50',
+        strategy.state === 'Open' && 'border-green-500/50'
+    )}>
       <CardHeader className="flex flex-row items-start justify-between">
         <div className="flex-1">
           <CardTitle className="font-headline text-xl">{strategy.description}</CardTitle>
