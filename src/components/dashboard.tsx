@@ -5,7 +5,7 @@ import { useState, useMemo, useCallback } from "react";
 import { Plus, Workflow } from "lucide-react";
 
 import type { Stream, Strategy, Initiative, StrategyState, InitiativeStepKey, InitiativeItem } from "@/lib/types";
-import { initialStreams, newInitiativeTemplate } from "@/lib/data";
+import { initialStreams, newInitiativeTemplate, strategyStates } from "@/lib/data";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 
@@ -27,14 +27,35 @@ import { CreateStreamDialog } from "@/components/create-stream-dialog";
 import { CreateStrategyDialog } from "@/components/create-strategy-dialog";
 import { StrategyView } from "@/components/strategy-view";
 
+const strategyOrder: Record<StrategyState, number> = {
+  Draft: 1,
+  Open: 2,
+  Closed: 3,
+  Obsolete: 4,
+  Deleted: 5,
+};
+
 export function Dashboard() {
   const { toast } = useToast();
   const [streams, setStreams] = useState<Stream[]>(initialStreams);
   const [activeStreamId, setActiveStreamId] = useState<string | null>(initialStreams[0]?.id || null);
   const [isCreateStreamOpen, setCreateStreamOpen] = useState(false);
   const [isCreateStrategyOpen, setCreateStrategyOpen] = useState(false);
+  
+  const [focusedStrategyId, setFocusedStrategyId] = useState<string | null>(null);
 
   const activeStream = useMemo(() => streams.find((s) => s.id === activeStreamId), [streams, activeStreamId]);
+
+  const sortedStrategies = useMemo(() => {
+    if (!activeStream?.strategies) return [];
+    
+    const draftStrategy = activeStream.strategies.find(s => s.state === 'Draft');
+    const openStrategy = activeStream.strategies.find(s => s.state === 'Open');
+
+    return [...activeStream.strategies].sort((a, b) => {
+        return strategyOrder[a.state] - strategyOrder[b.state];
+    });
+  }, [activeStream]);
 
   const handleCreateStream = useCallback((name: string) => {
     const id = name.toLowerCase().replace(/\s+/g, "-");
@@ -163,6 +184,9 @@ export function Dashboard() {
     toast({ title: "Item Removed", variant: "destructive" });
   }, [activeStreamId, toast]);
 
+  const hasDraftOrOpenStrategy = useMemo(() => {
+    return sortedStrategies.some(s => s.state === 'Draft' || s.state === 'Open');
+  }, [sortedStrategies]);
 
   return (
     <SidebarProvider>
@@ -214,19 +238,23 @@ export function Dashboard() {
           </div>
 
           <div className="space-y-6">
-            {activeStream?.strategies && activeStream.strategies.length > 0 ? (
-                activeStream.strategies.map(strategy => (
-                    <StrategyView 
-                        key={strategy.id} 
-                        strategy={strategy} 
-                        onCreateInitiative={(initiativeName) => handleCreateInitiative(strategy.id, initiativeName)}
-                        onUpdateStrategy={(updatedValues) => handleUpdateStrategy(strategy.id, updatedValues)}
-                        onUpdateInitiative={(initiativeId, updatedValues) => handleUpdateInitiative(strategy.id, initiativeId, updatedValues)}
-                        onUpdateInitiativeItem={(...args) => handleUpdateInitiativeItem(strategy.id, ...args)}
-                        onAddInitiativeItem={(...args) => handleAddInitiativeItem(strategy.id, ...args)}
-                        onDeleteInitiativeItem={(...args) => handleDeleteInitiativeItem(strategy.id, ...args)}
-                    />
-                ))
+            {sortedStrategies && sortedStrategies.length > 0 ? (
+                sortedStrategies.map(strategy => {
+                    const isFocused = strategy.state === 'Draft' || strategy.state === 'Open';
+                    return (
+                        <StrategyView 
+                            key={strategy.id} 
+                            strategy={strategy} 
+                            isFocused={isFocused}
+                            onCreateInitiative={(initiativeName) => handleCreateInitiative(strategy.id, initiativeName)}
+                            onUpdateStrategy={(updatedValues) => handleUpdateStrategy(strategy.id, updatedValues)}
+                            onUpdateInitiative={(initiativeId, updatedValues) => handleUpdateInitiative(strategy.id, initiativeId, updatedValues)}
+                            onUpdateInitiativeItem={(...args) => handleUpdateInitiativeItem(strategy.id, ...args)}
+                            onAddInitiativeItem={(...args) => handleAddInitiativeItem(strategy.id, ...args)}
+                            onDeleteInitiativeItem={(...args) => handleDeleteInitiativeItem(strategy.id, ...args)}
+                        />
+                    )
+                })
             ) : (
                 <div className="text-center py-20 border-2 border-dashed rounded-lg">
                     <h3 className="text-xl font-medium text-muted-foreground">No strategies yet.</h3>

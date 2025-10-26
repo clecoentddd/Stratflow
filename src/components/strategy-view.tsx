@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useMemo } from "react";
@@ -22,9 +23,11 @@ import { Input } from "@/components/ui/input";
 
 import type { Strategy, Initiative, StrategyState, InitiativeStepKey, InitiativeItem } from "@/lib/types";
 import { InitiativeView } from "./initiative-view";
+import { cn } from "@/lib/utils";
 
 interface StrategyViewProps {
   strategy: Strategy;
+  isFocused: boolean;
   onCreateInitiative: (initiativeName: string) => void;
   onUpdateStrategy: (updatedValues: Partial<Strategy>) => void;
   onUpdateInitiative: (initiativeId: string, updatedValues: Partial<Initiative>) => void;
@@ -35,6 +38,7 @@ interface StrategyViewProps {
 
 export function StrategyView({ 
     strategy, 
+    isFocused,
     onCreateInitiative, 
     onUpdateStrategy, 
     ...initiativeHandlers 
@@ -60,7 +64,7 @@ export function StrategyView({
   };
 
   return (
-    <Card>
+    <Card className={cn(!isFocused && "opacity-60 hover:opacity-100 transition-opacity")}>
       <CardHeader className="flex flex-row items-start justify-between">
         <div className="flex-1">
           <CardTitle className="font-headline text-xl">{strategy.description}</CardTitle>
