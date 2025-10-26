@@ -16,10 +16,22 @@ export default function Home() {
   const [isCreateOrgOpen, setCreateOrgOpen] = useState(false);
 
   useEffect(() => {
-    // This would be where you fetch data from a backend.
-    // For now, we load it into state.
-    setOrganizations(defaultOrgs);
+    // In a real app, you might fetch this from localStorage or a backend
+    const storedOrgs = localStorage.getItem("organizations");
+    if (storedOrgs) {
+      setOrganizations(JSON.parse(storedOrgs));
+    } else {
+      setOrganizations(defaultOrgs);
+    }
   }, []);
+
+  useEffect(() => {
+    // Persist to localStorage whenever organizations change
+    if (organizations.length > 0) {
+      localStorage.setItem("organizations", JSON.stringify(organizations));
+    }
+  }, [organizations]);
+
 
   const handleCreateOrganization = (name: string) => {
     const newOrg: Organization = {
@@ -28,7 +40,6 @@ export default function Home() {
       structure: [], // Start with an empty structure
     };
     setOrganizations(prev => [...prev, newOrg]);
-    setCreateOrgOpen(false);
   };
 
   return (

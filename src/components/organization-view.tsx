@@ -101,30 +101,29 @@ export function OrganizationView({ organization, onUpdateOrganization }: Organiz
       return node;
     });
   };
-
-  const findNodeLevel = (nodes: OrgNode[], nodeId: string): number | null => {
-    for (const node of nodes) {
-      if (node.id === nodeId) {
-        return node.level;
+  
+  const findNodeLevel = (nodes: OrgNode[], nodeId: string, currentLevel: number): number => {
+      for (const node of nodes) {
+          if (node.id === nodeId) {
+              return node.level;
+          }
+          if (node.children) {
+              const foundLevel = findNodeLevel(node.children, nodeId, currentLevel + 1);
+              if (foundLevel !== -1) {
+                  return foundLevel;
+              }
+          }
       }
-      if (node.children) {
-        const foundLevel = findNodeLevel(node.children, nodeId);
-        if (foundLevel !== null) {
-          return foundLevel;
-        }
-      }
-    }
-    return null;
+      return -1;
   };
 
   const handleAddNode = (parentId: string, title: string, description: string) => {
-    let parentLevel = -1;
+    // Deep clone the organization to ensure we don't mutate state directly
+    const newOrg = JSON.parse(JSON.stringify(organization));
 
-    if (parentId !== organization.id) {
-        const foundLevel = findNodeLevel(organization.structure, parentId);
-        if (foundLevel !== null) {
-            parentLevel = foundLevel;
-        }
+    let parentLevel = -1;
+    if (parentId !== newOrg.id) {
+        parentLevel = findNodeLevel(newOrg.structure, parentId, 0);
     }
    
     const newNode: OrgNode = {
@@ -140,14 +139,13 @@ export function OrganizationView({ organization, onUpdateOrganization }: Organiz
       },
     };
 
-    let updatedStructure;
-    if (parentId === organization.id) {
-        updatedStructure = [...organization.structure, newNode];
+    if (parentId === newOrg.id) {
+        newOrg.structure.push(newNode);
     } else {
-        updatedStructure = findNodeAndAddChild(organization.structure, parentId, newNode);
+        newOrg.structure = findNodeAndAddChild(newOrg.structure, parentId, newNode);
     }
 
-    onUpdateOrganization({ ...organization, structure: updatedStructure });
+    onUpdateOrganization(newOrg);
   };
   
   const handleAddRootNode = (title: string, description: string) => {

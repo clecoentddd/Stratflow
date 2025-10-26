@@ -1,3 +1,4 @@
+
 "use client";
 
 import { initialOrganizations } from '@/lib/data';
@@ -10,36 +11,49 @@ import type { Organization } from '@/lib/types';
 
 export default function OrganizationPage({ params }: { params: { orgId: string } }) {
   const [organization, setOrganization] = useState<Organization | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const org = initialOrganizations.find(o => o.id === params.orgId);
-    if(org) {
-      // Deep copy to prevent mutation issues
+    const storedOrgsString = localStorage.getItem("organizations");
+    const allOrgs: Organization[] = storedOrgsString ? JSON.parse(storedOrgsString) : initialOrganizations;
+    
+    let org = allOrgs.find(o => o.id === params.orgId);
+
+    if (org) {
       setOrganization(JSON.parse(JSON.stringify(org)));
     } else {
-        const newOrg: Organization = { id: params.orgId, name: "New Organization", structure: [] };
-        // In a real app, you might want to persist this new org, 
-        // but for now, we just set it in state.
-        // We add it to the initialOrganizations array for demonstration if you navigate away and back,
-        // but this is temporary and will be lost on a full page reload.
-        initialOrganizations.push(newOrg);
-        setOrganization(newOrg);
+        // If not found in localStorage, check initial data as a fallback
+        org = initialOrganizations.find(o => o.id === params.orgId);
+        if (org) {
+            setOrganization(JSON.parse(JSON.stringify(org)));
+        }
     }
+    setIsLoading(false);
   }, [params.orgId]);
+
+  useEffect(() => {
+    if (organization) {
+      const storedOrgsString = localStorage.getItem("organizations");
+      const allOrgs: Organization[] = storedOrgsString ? JSON.parse(storedOrgsString) : initialOrganizations;
+      const orgIndex = allOrgs.findIndex(o => o.id === organization.id);
+      
+      let updatedOrgs;
+      if (orgIndex !== -1) {
+          updatedOrgs = [...allOrgs];
+          updatedOrgs[orgIndex] = organization;
+      } else {
+          updatedOrgs = [...allOrgs, organization];
+      }
+      localStorage.setItem("organizations", JSON.stringify(updatedOrgs));
+    }
+  }, [organization]);
 
 
   const handleUpdateOrganization = (updatedOrg: Organization) => {
-    // Deep copy the updated organization to ensure React re-renders
-    setOrganization(JSON.parse(JSON.stringify(updatedOrg)));
-
-    // Also update the in-memory array
-    const orgIndex = initialOrganizations.findIndex(o => o.id === updatedOrg.id);
-    if (orgIndex !== -1) {
-        initialOrganizations[orgIndex] = updatedOrg;
-    }
+    setOrganization(updatedOrg);
   };
   
-  if (!organization) {
+  if (isLoading) {
     return (
         <div className="flex flex-col min-h-screen">
             <AppHeader />
@@ -48,6 +62,10 @@ export default function OrganizationPage({ params }: { params: { orgId: string }
             </main>
         </div>
     );
+  }
+
+  if (!organization) {
+      notFound();
   }
 
   return (
