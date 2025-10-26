@@ -20,6 +20,7 @@ import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import type { Initiative, InitiativeStepKey, InitiativeItem } from "@/lib/types";
+import { cn } from "@/lib/utils";
 
 interface InitiativeItemViewProps {
   item: InitiativeItem;
@@ -54,30 +55,31 @@ function InitiativeItemView({ item, stepKey, initiativeId, onUpdateInitiativeIte
 
   if (isEditing) {
     return (
-      <div className="space-y-2">
+      <div className="space-y-2 p-2 border rounded-md">
         <Textarea
           value={editText}
           onChange={(e) => setEditText(e.target.value)}
           placeholder="Describe an item..."
           autoFocus
           rows={3}
+          className="text-sm"
         />
         <div className="flex justify-end gap-2">
           <Button size="sm" variant="outline" onClick={handleCancel}>
-            <XCircle className="mr-2" />
             Cancel
           </Button>
           <Button size="sm" onClick={handleSave} disabled={!editText.trim()}>
-            <Save className="mr-2" />
             Save
           </Button>
-          {item.text && (
-             <Button size="sm" variant="destructive" onClick={handleDelete}>
-                <Trash2 className="mr-2" />
+        </div>
+        {item.text && (
+            <div className="pt-2 border-t">
+             <Button size="sm" variant="destructive-outline" onClick={handleDelete}>
+                <Trash2 className="mr-2 h-4 w-4" />
                 Delete
              </Button>
-          )}
-        </div>
+            </div>
+        )}
       </div>
     );
   }
@@ -85,7 +87,7 @@ function InitiativeItemView({ item, stepKey, initiativeId, onUpdateInitiativeIte
   return (
     <div 
         onClick={() => setIsEditing(true)} 
-        className="block p-2 rounded-md hover:bg-accent/50 cursor-pointer min-h-[5rem]"
+        className="block p-2 border rounded-md hover:bg-accent/50 cursor-pointer min-h-[5.5rem]"
     >
       <p className="text-sm line-clamp-3 whitespace-pre-wrap">{item.text}</p>
     </div>
@@ -132,7 +134,7 @@ export function InitiativeView({
         <div className="grid grid-cols-1 md:grid-cols-4 items-start gap-4">
           {initiative.steps.map((step) => (
             <Card key={step.key} className="bg-background h-full">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardHeader className="flex flex-row items-center justify-between p-4 pb-2">
                 <CardTitle className="text-base font-medium flex items-center gap-2">
                 <step.icon className="h-4 w-4 text-muted-foreground" />
                 {step.title}
@@ -141,7 +143,7 @@ export function InitiativeView({
                 <Plus className="h-4 w-4" />
                 </Button>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-4 pt-2">
                 <div className="space-y-2">
                 {step.items.length > 0 ? step.items.map((item) => (
                     <InitiativeItemView 
