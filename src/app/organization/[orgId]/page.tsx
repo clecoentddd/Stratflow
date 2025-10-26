@@ -10,6 +10,7 @@ import type { Organization } from '@/lib/types';
 
 
 export default function OrganizationPage({ params }: { params: { orgId: string } }) {
+  const { orgId } = params;
   const [organization, setOrganization] = useState<Organization | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -27,20 +28,20 @@ export default function OrganizationPage({ params }: { params: { orgId: string }
       allOrgs = initialOrganizations;
     }
     
-    let org = allOrgs.find(o => o.id === params.orgId);
+    let org = allOrgs.find(o => o.id === orgId);
 
     if (org) {
       // Use a deep copy to avoid direct state mutation issues
       setOrganization(JSON.parse(JSON.stringify(org)));
     } else {
       // Fallback for safety, though should not be hit if navigation is correct
-      org = initialOrganizations.find(o => o.id === params.orgId);
+      org = initialOrganizations.find(o => o.id === orgId);
       if (org) {
           setOrganization(JSON.parse(JSON.stringify(org)));
       }
     }
     setIsLoading(false);
-  }, [params.orgId]);
+  }, [orgId]);
 
   useEffect(() => {
     // This effect persists the updated organization back to localStorage
