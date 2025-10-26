@@ -36,3 +36,18 @@ export type Stream = {
   name: string;
   strategies: Strategy[];
 };
+
+export type OrgNode = {
+  id: string;
+  title: string;
+  description: string;
+  level: number;
+  children: OrgNode[];
+};
+
+export type Organization = {
+  id: string;
+  name: string;
+  stream: Stream;
+  structure: OrgNode[];
+};

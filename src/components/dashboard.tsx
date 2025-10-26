@@ -4,12 +4,11 @@
 import { useState, useMemo, useCallback } from "react";
 import { Plus } from "lucide-react";
 
-import type { Stream, Strategy, Initiative, StrategyState, InitiativeStepKey, InitiativeItem } from "@/lib/types";
-import { initialStreams, newInitiativeTemplate } from "@/lib/data";
+import type { Stream, Strategy, StrategyState, InitiativeStepKey, InitiativeItem } from "@/lib/types";
+import { newInitiativeTemplate } from "@/lib/data";
 import { useToast } from "@/hooks/use-toast";
 
 import { Button } from "@/components/ui/button";
-import { AppHeader } from "@/components/header";
 import { CreateStrategyDialog } from "@/components/create-strategy-dialog";
 import { StrategyView } from "@/components/strategy-view";
 
@@ -21,9 +20,13 @@ const strategyOrder: Record<StrategyState, number> = {
   Deleted: 5,
 };
 
-export function Dashboard() {
+interface DashboardProps {
+    stream: Stream;
+}
+
+export function Dashboard({ stream: initialStream }: DashboardProps) {
   const { toast } = useToast();
-  const [stream, setStream] = useState<Stream>(initialStreams[0]);
+  const [stream, setStream] = useState<Stream>(initialStream);
   const [isCreateStrategyOpen, setCreateStrategyOpen] = useState(false);
 
   const sortedStrategies = useMemo(() => {
@@ -134,13 +137,11 @@ export function Dashboard() {
   }, [toast]);
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <AppHeader />
-      <main className="p-4 md:p-6 flex-1">
+    <div>
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-3xl font-bold font-headline">
+          <h2 className="text-2xl font-bold font-headline">
             {stream?.name || "Strategy Board"}
-          </h1>
+          </h2>
           <Button onClick={() => setCreateStrategyOpen(true)}>
             <Plus className="mr-2 h-4 w-4" />
             New Strategy
@@ -172,8 +173,6 @@ export function Dashboard() {
               </div>
           )}
         </div>
-      </main>
-
       <CreateStrategyDialog
         isOpen={isCreateStrategyOpen}
         onOpenChange={setCreateStrategyOpen}
