@@ -39,8 +39,7 @@ export function Dashboard({ stream, streamName, onUpdateStream }: DashboardProps
   }, [stream]);
   
   const updateStream = (updater: (currentStream: Stream) => Stream) => {
-    const updatedStream = updater(stream);
-    onUpdateStream(updatedStream);
+    onUpdateStream(updater(stream));
   };
 
   const handleCreateStrategy = useCallback((description: string, timeframe: string) => {
@@ -56,7 +55,7 @@ export function Dashboard({ stream, streamName, onUpdateStream }: DashboardProps
         title: "Strategy Created",
         description: `A new strategy has been added.`,
     });
-  }, [toast, stream]);
+  }, [toast, updateStream]);
 
   const handleCreateInitiative = useCallback((strategyId: string, initiativeName: string) => {
     const newInitiative = newInitiativeTemplate(`init-${Date.now()}`, initiativeName);
@@ -72,14 +71,14 @@ export function Dashboard({ stream, streamName, onUpdateStream }: DashboardProps
       })
     }));
     toast({ title: "Initiative Added", description: `"${initiativeName}" has been added.` });
-  }, [toast, stream]);
+  }, [toast, updateStream]);
 
   const handleUpdateStrategy = useCallback((strategyId: string, updatedValues: Partial<Strategy>) => {
     updateStream(prev => ({
       ...prev,
       strategies: prev.strategies.map(s => s.id === strategyId ? { ...s, ...updatedValues } : s)
     }));
-  }, [stream]);
+  }, [updateStream]);
   
   const handleUpdateInitiative = useCallback((strategyId: string, initiativeId: string, updatedValues: Partial<Initiative>) => {
     updateStream(prev => ({
@@ -89,7 +88,7 @@ export function Dashboard({ stream, streamName, onUpdateStream }: DashboardProps
         initiatives: s.initiatives.map(i => i.id === initiativeId ? { ...i, ...updatedValues } : i)
       } : s)
     }));
-  }, [stream]);
+  }, [updateStream]);
 
   const handleUpdateInitiativeItem = useCallback((strategyId: string, initiativeId: string, stepKey: InitiativeStepKey, itemId: string, newText: string) => {
     updateStream(prev => ({
@@ -105,7 +104,7 @@ export function Dashboard({ stream, streamName, onUpdateStream }: DashboardProps
             } : i)
         } : s)
     }));
-  }, [stream]);
+  }, [updateStream]);
 
   const handleAddInitiativeItem = useCallback((strategyId: string, initiativeId: string, stepKey: InitiativeStepKey) => {
     const newItem: InitiativeItem = { id: `item-${Date.now()}`, text: "" };
@@ -123,7 +122,7 @@ export function Dashboard({ stream, streamName, onUpdateStream }: DashboardProps
         } : s)
     }));
     toast({ title: "Item Added", description: `A new item has been added to the initiative.` });
-  }, [toast, stream]);
+  }, [toast, updateStream]);
 
   const handleDeleteInitiativeItem = useCallback((strategyId: string, initiativeId: string, stepKey: InitiativeStepKey, itemId: string) => {
     updateStream(prev => ({
@@ -140,7 +139,7 @@ export function Dashboard({ stream, streamName, onUpdateStream }: DashboardProps
         } : s)
     }));
     toast({ title: "Item Removed", variant: "destructive" });
-  }, [toast, stream]);
+  }, [toast, updateStream]);
 
   return (
     <div>
