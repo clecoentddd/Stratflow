@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Plus } from "lucide-react";
 import { initialOrganizations as defaultOrgs } from "@/lib/data";
-import type { Organization } from "@/lib/types";
+import type { Organization, OrgNode } from "@/lib/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AppHeader } from "@/components/header";
 import { Button } from "@/components/ui/button";
@@ -33,11 +33,25 @@ export default function Home() {
   }, [organizations]);
 
 
-  const handleCreateOrganization = (name: string) => {
+  const handleCreateOrganization = (name: string, title: string, description: string, level: number) => {
+    const orgId = `org-${Date.now()}`;
+    const newNode: OrgNode = {
+      id: `node-${Date.now()}`,
+      title,
+      description,
+      level,
+      children: [],
+      stream: {
+        id: `stream-${Date.now()}`,
+        name: `${title} Strategy Stream`,
+        strategies: [],
+      },
+    };
+    
     const newOrg: Organization = {
-      id: `org-${Date.now()}`,
+      id: orgId,
       name,
-      structure: [], // Start with an empty structure
+      structure: [newNode],
     };
     setOrganizations(prev => [...prev, newOrg]);
   };
