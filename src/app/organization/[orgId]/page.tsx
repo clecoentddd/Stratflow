@@ -1,3 +1,7 @@
+
+"use client";
+
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ChevronLeft } from "lucide-react";
@@ -5,20 +9,63 @@ import { initialOrganizations } from "@/lib/data";
 import type { Organization } from "@/lib/types";
 import { AppHeader } from "@/components/header";
 import { Button } from "@/components/ui/button";
-import { OrganizationClientPage } from "./client-page";
+import { Dashboard } from "@/components/dashboard";
 
-// This is now a Server Component
 export default function OrganizationStrategyPage({ params }: { params: { orgId: string } }) {
   const { orgId } = params;
+  const [organization, setOrganization] = useState<Organization | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // In a real app, you would fetch this data from a database on the server.
-  // For this example, we'll simulate it by accessing our initial data.
-  // Note: We can't use localStorage on the server. This page will now
-  // only work with the initial default data. A proper database is needed for persistence.
-  const organization = initialOrganizations.find(o => o.id === orgId);
+  useEffect(() => {
+    const storedOrgsString = localStorage.getItem("organizations");
+    let allOrgs: Organization[] = storedOrgsString
+      ? JSON.parse(storedOrgsString)
+      : initialOrganizations;
+    
+    let org = allOrgs.find(o => o.id === orgId);
+
+    if (org) {
+      setOrganization(org);
+    }
+    setIsLoading(false);
+  }, [orgId]);
+  
+  useEffect(() => {
+    if (organization) {
+      const storedOrgsString = localStorage.getItem("organizations");
+      const allOrgs: Organization[] = storedOrgsString ? JSON.parse(storedOrgsString) : initialOrganizations;
+      
+      const orgIndex = allOrgs.findIndex(o => o.id === organization.id);
+      
+      let updatedOrgs;
+      if (orgIndex !== -1) {
+          updatedOrgs = [...allOrgs];
+          updatedOrgs[orgIndex] = organization;
+      } else {
+          updatedOrgs = [...allOrgs, organization];
+      }
+      localStorage.setItem("organizations", JSON.stringify(updatedOrgs));
+    }
+  }, [organization]);
+  
+  const handleUpdateStream = (updatedStream: Organization['stream']) => {
+    if (organization) {
+      setOrganization(prev => prev ? ({...prev, stream: updatedStream }) : null);
+    }
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col min-h-screen">
+        <AppHeader />
+        <main className="p-4 md:p-6 flex-1 flex items-center justify-center">
+            <p>Loading...</p>
+        </main>
+      </div>
+    );
+  }
 
   if (!organization) {
-    // If the org isn't in our "database", show a 404.
     notFound();
   }
   
@@ -34,9 +81,13 @@ export default function OrganizationStrategyPage({ params }: { params: { orgId: 
             </Button>
           </Link>
         </div>
-        {/* We pass the server-fetched data to the Client Component */}
-        <OrganizationClientPage initialOrganization={organization} />
+        <Dashboard 
+            stream={organization.stream} 
+            streamName={`${organization.name} - Strategy Stream`}
+            onUpdateStream={handleUpdateStream}
+        />
       </main>
     </div>
   );
 }
+
