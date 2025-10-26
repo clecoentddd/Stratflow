@@ -54,7 +54,8 @@ export function StrategyView({
     return Math.round(total / strategy.initiatives.length);
   }, [strategy.initiatives]);
 
-  const CurrentStateIcon = strategyStates.find(s => s.value === strategy.state)?.icon || strategyStates[0].icon;
+  const currentStateInfo = strategyStates.find(s => s.value === strategy.state) || strategyStates[0];
+  const CurrentStateIcon = currentStateInfo.icon;
 
   const handleAddInitiative = () => {
     if (newInitiativeName.trim()) {
@@ -66,9 +67,9 @@ export function StrategyView({
   return (
     <Card className={cn(
         "transition-opacity",
-        !isFocused && "opacity-60 hover:opacity-100",
-        strategy.state === 'Draft' && 'border-blue-500/50',
-        strategy.state === 'Open' && 'border-green-500/50'
+        !isFocused && "opacity-50 hover:opacity-100",
+        strategy.state === 'Draft' && 'border-blue-500/80 border-2',
+        strategy.state === 'Open' && 'border-green-500/80 border-2'
     )}>
       <CardHeader className="flex flex-row items-start justify-between">
         <div className="flex-1">
@@ -78,7 +79,11 @@ export function StrategyView({
         <div className="flex items-center gap-2">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm">
+                <Button variant="ghost" size="sm" className={cn(
+                    "font-semibold",
+                    strategy.state === 'Draft' && 'text-blue-600',
+                    strategy.state === 'Open' && 'text-green-600',
+                )}>
                   <CurrentStateIcon className="mr-2 h-4 w-4" />
                   {strategy.state}
                 </Button>
@@ -86,13 +91,13 @@ export function StrategyView({
               <DropdownMenuContent align="end">
                 {strategyStates.map(state => (
                   <DropdownMenuItem key={state.value} onClick={() => onUpdateStrategy({ state: state.value })}>
-                    <state.icon className="mr-2 h-4 w-4" />
+                    <state.icon className={cn("mr-2 h-4 w-4", state.colorClass)} />
                     <span>{state.label}</span>
                   </DropdownMenuItem>
                 ))}
               </DropdownMenuContent>
             </DropdownMenu>
-            <Button variant="ghost" size="icon" className="h-8 w-8">
+            <Button variant="ghost" size="icon" className="h-8 w-8 cursor-grab active:cursor-grabbing">
                 <GripVertical className="h-4 w-4" />
             </Button>
         </div>
@@ -103,7 +108,11 @@ export function StrategyView({
             <span className="text-sm font-medium text-muted-foreground">Overall Progress</span>
             <span className="text-sm font-semibold">{overallProgression}%</span>
           </div>
-          <Progress value={overallProgression} className="h-2" />
+          <Progress value={overallProgression} className={cn(
+            'h-2',
+            strategy.state === 'Open' && '[&>div]:bg-green-500',
+            strategy.state === 'Draft' && '[&>div]:bg-blue-500'
+          )} />
         </div>
         
         <div className="mt-6">

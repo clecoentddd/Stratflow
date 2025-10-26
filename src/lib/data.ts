@@ -1,10 +1,10 @@
 import {
   Archive,
   CheckCircle2,
-  CircleDotDashed,
   FilePenLine,
   ListChecks,
   Milestone,
+  Rocket,
   Search,
   Target,
 } from "lucide-react";
@@ -115,11 +115,12 @@ export const strategyStates: {
   value: StrategyState;
   label: string;
   icon: React.ComponentType<{ className?: string }>;
+  colorClass: string;
 }[] = [
-  { value: "Draft", label: "Draft", icon: FilePenLine },
-  { value: "Open", label: "Open", icon: CircleDotDashed },
-  { value: "Closed", label: "Closed", icon: CheckCircle2 },
-  { value: "Obsolete", label: "Obsolete", icon: Archive },
+  { value: "Draft", label: "Draft", icon: FilePenLine, colorClass: "text-blue-600" },
+  { value: "Open", label: "Open", icon: Rocket, colorClass: "text-green-600" },
+  { value: "Closed", label: "Closed", icon: CheckCircle2, colorClass: "text-gray-500" },
+  { value: "Obsolete", label: "Obsolete", icon: Archive, colorClass: "text-gray-500" },
 ];
 
 export const newInitiativeTemplate = (id: string, name: string) => ({
