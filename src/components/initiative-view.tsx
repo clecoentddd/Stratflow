@@ -1,7 +1,7 @@
 
 "use client";
 
-import { Plus, Trash2, ArrowRight } from "lucide-react";
+import { Plus, Trash2 } from "lucide-react";
 import {
   AccordionContent,
   AccordionItem,
@@ -19,7 +19,6 @@ import { Progress } from "@/components/ui/progress";
 import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
 import type { Initiative, InitiativeStepKey } from "@/lib/types";
-import { cn } from "@/lib/utils";
 
 interface InitiativeViewProps {
   initiative: Initiative;
@@ -57,44 +56,37 @@ export function InitiativeView({
             step={1}
           />
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr_auto_1fr_auto_1fr] items-start gap-4">
-          {initiative.steps.map((step, index) => (
-            <>
-                <Card key={step.key} className="bg-background h-full">
-                <CardHeader className="flex flex-row items-center justify-between pb-2">
-                    <CardTitle className="text-base font-medium flex items-center gap-2">
-                    <step.icon className="h-4 w-4 text-muted-foreground" />
-                    {step.title}
-                    </CardTitle>
-                    <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => onAddInitiativeItem(initiative.id, step.key)}>
-                    <Plus className="h-4 w-4" />
+        <div className="grid grid-cols-1 md:grid-cols-4 items-start gap-4">
+          {initiative.steps.map((step) => (
+            <Card key={step.key} className="bg-background h-full">
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+                <CardTitle className="text-base font-medium flex items-center gap-2">
+                <step.icon className="h-4 w-4 text-muted-foreground" />
+                {step.title}
+                </CardTitle>
+                <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => onAddInitiativeItem(initiative.id, step.key)}>
+                <Plus className="h-4 w-4" />
+                </Button>
+            </CardHeader>
+            <CardContent>
+                <div className="space-y-2">
+                {step.items.length > 0 ? step.items.map((item) => (
+                    <div key={item.id} className="flex items-center gap-2">
+                    <Input
+                        value={item.text}
+                        onChange={(e) => onUpdateInitiativeItem(initiative.id, step.key, item.id, e.target.value)}
+                        placeholder="Describe an item..."
+                    />
+                    <Button size="icon" variant="ghost" className="h-9 w-9 shrink-0" onClick={() => onDeleteInitiativeItem(initiative.id, step.key, item.id)}>
+                        <Trash2 className="h-4 w-4 text-destructive/80" />
                     </Button>
-                </CardHeader>
-                <CardContent>
-                    <div className="space-y-2">
-                    {step.items.length > 0 ? step.items.map((item) => (
-                        <div key={item.id} className="flex items-center gap-2">
-                        <Input
-                            value={item.text}
-                            onChange={(e) => onUpdateInitiativeItem(initiative.id, step.key, item.id, e.target.value)}
-                            placeholder="Describe an item..."
-                        />
-                        <Button size="icon" variant="ghost" className="h-9 w-9 shrink-0" onClick={() => onDeleteInitiativeItem(initiative.id, step.key, item.id)}>
-                            <Trash2 className="h-4 w-4 text-destructive/80" />
-                        </Button>
-                        </div>
-                    )) : (
-                        <p className="text-sm text-muted-foreground text-center py-2">No items yet.</p>
-                    )}
                     </div>
-                </CardContent>
-                </Card>
-                {index < initiative.steps.length - 1 && (
-                    <div className="hidden md:flex items-center h-full">
-                        <ArrowRight className="h-6 w-6 text-muted-foreground/50 self-center" />
-                    </div>
+                )) : (
+                    <p className="text-sm text-muted-foreground text-center py-2">No items yet.</p>
                 )}
-            </>
+                </div>
+            </CardContent>
+            </Card>
           ))}
         </div>
       </AccordionContent>

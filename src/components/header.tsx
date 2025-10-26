@@ -1,3 +1,4 @@
+
 "use client";
 
 import { User, LogOut, Settings } from "lucide-react";
@@ -11,14 +12,15 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
+import { StratFlowLogo } from "./icons";
 
 export function AppHeader() {
   return (
     <header className="sticky top-0 z-10 flex h-16 items-center justify-between border-b bg-background/80 px-4 backdrop-blur-sm sm:px-6">
       <div className="flex items-center gap-2">
-        <SidebarTrigger className="md:hidden" />
+        <StratFlowLogo className="w-8 h-8 text-primary" />
+        <h1 className="text-2xl font-headline font-semibold hidden sm:block">StratFlow</h1>
       </div>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
