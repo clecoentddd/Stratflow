@@ -12,7 +12,8 @@ import { Button } from "@/components/ui/button";
 import { Dashboard } from "@/components/dashboard";
 
 export default function OrganizationStrategyPage({ params }: { params: { orgId: string } }) {
-  const { orgId } = use(params);
+  const resolvedParams = use(params);
+  const orgId = resolvedParams.orgId;
   const [organization, setOrganization] = useState<Organization | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -72,7 +73,7 @@ export default function OrganizationStrategyPage({ params }: { params: { orgId: 
       <AppHeader />
       <main className="p-4 md:p-6 flex-1">
         <div className="mb-6">
-          <Link href="/organizations" legacyBehavior>
+          <Link href="/organizations">
             <Button variant="outline">
               <ChevronLeft className="mr-2 h-4 w-4" />
               Back to Organizations
