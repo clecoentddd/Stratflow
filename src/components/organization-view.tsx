@@ -42,7 +42,7 @@ function OrgNodeView({ node, orgId, isLast, onAddNode }: OrgNodeViewProps) {
                   <Plus className="mr-2 h-4 w-4" /> Add Sub-level
                 </Button>
                 <Link href={`/organization/${orgId}/${node.id}`}>
-                    <Button variant="outline">View Strategy Stream</Button>
+                    <Button>View Strategy Stream</Button>
                 </Link>
               </div>
           </div>
@@ -53,7 +53,7 @@ function OrgNodeView({ node, orgId, isLast, onAddNode }: OrgNodeViewProps) {
       </Card>
       
       {node.children && node.children.length > 0 && (
-        <div className="mt-4 space-y-4">
+        <div className="mt-4">
           {node.children.map((child, index) => (
             <OrgNodeView 
               key={child.id} 
@@ -102,38 +102,29 @@ export function OrganizationView({ organization, onUpdateOrganization }: Organiz
     });
   };
 
-  const findNodeLevel = (nodes: OrgNode[], nodeId: string, currentLevel: number): number => {
+  const findNodeLevel = (nodes: OrgNode[], nodeId: string): number | null => {
     for (const node of nodes) {
       if (node.id === nodeId) {
         return node.level;
       }
-      const foundLevel = findNodeLevel(node.children, nodeId, currentLevel + 1);
-      if (foundLevel !== -1) {
-        return foundLevel;
+      if (node.children) {
+        const foundLevel = findNodeLevel(node.children, nodeId);
+        if (foundLevel !== null) {
+          return foundLevel;
+        }
       }
     }
-    return -1;
+    return null;
   };
 
   const handleAddNode = (parentId: string, title: string, description: string) => {
     let parentLevel = -1;
 
-    const findLevel = (nodes: OrgNode[], id: string): number | null => {
-      for(const node of nodes) {
-        if (node.id === id) return node.level;
-        if(node.children) {
-            const level = findLevel(node.children, id);
-            if(level !== null) return level;
+    if (parentId !== organization.id) {
+        const foundLevel = findNodeLevel(organization.structure, parentId);
+        if (foundLevel !== null) {
+            parentLevel = foundLevel;
         }
-      }
-      return null;
-    }
-
-    if (parentId === organization.id) { // Adding to root
-        parentLevel = -1;
-    } else {
-        const foundLevel = findLevel(organization.structure, parentId);
-        if(foundLevel !== null) parentLevel = foundLevel;
     }
    
     const newNode: OrgNode = {
@@ -157,7 +148,6 @@ export function OrganizationView({ organization, onUpdateOrganization }: Organiz
     }
 
     onUpdateOrganization({ ...organization, structure: updatedStructure });
-    setAddNodeOpen(false);
   };
   
   const handleAddRootNode = (title: string, description: string) => {
@@ -179,63 +169,13 @@ export function OrganizationView({ organization, onUpdateOrganization }: Organiz
       
       <div className="space-y-4">
         {organization.structure.map((node, index) => (
-          <div key={node.id} className="relative">
-             <Card className="mb-4">
-              <CardHeader>
-                <div className="flex justify-between items-start">
-                    <div>
-                        <CardTitle>{node.title}</CardTitle>
-                        <CardDescription>Level {node.level}</CardDescription>
-                    </div>
-                     <div className="flex items-center gap-2">
-                        <Button variant="outline" size="sm" onClick={() => {
-                            // This seems complex to implement here. Let's see if we can simplify.
-                            // For now, we find the node and trigger a local state change.
-                            const tempFunc = () => {
-                                const el = document.querySelector(`[data-node-id="${node.id}"]`);
-                                // This is a placeholder for a better implementation.
-                            };
-                            
-                            // A better approach would be to pass a specific handler
-                             const foundNode = organization.structure.find(n => n.id === node.id);
-                             // To keep it simple, we'll re-use the AddNodeDialog by passing a handler
-                        }}>
-                        </Button>
-                        <Link href={`/organization/${organization.id}/${node.id}`}>
-                            <Button variant="outline">View Strategy Stream</Button>
-                        </Link>
-                    </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                 <div className="flex justify-between items-center">
-                    <p className="text-sm">{node.description}</p>
-                    <Button variant="outline" size="sm" onClick={() => {
-                         const nodeElement = document.getElementById(`add-node-dialog-trigger-${node.id}`);
-                         if (nodeElement) {
-                             // This is not a good way to do this.
-                         }
-                    }}>
-                        {/* We need a better way to open the dialog for this specific node */}
-                    </Button>
-                 </div>
-              </CardContent>
-            </Card>
-
-            {node.children && node.children.length > 0 && (
-              <div className="pl-8 mt-4">
-                {node.children.map((child, childIndex) => (
-                  <OrgNodeView 
-                    key={child.id} 
-                    node={child} 
-                    orgId={organization.id}
-                    isLast={childIndex === node.children.length - 1}
-                    onAddNode={handleAddNode}
-                  />
-                ))}
-              </div>
-            )}
-          </div>
+          <OrgNodeView 
+            key={node.id} 
+            node={node} 
+            orgId={organization.id}
+            isLast={index === organization.structure.length - 1}
+            onAddNode={handleAddNode}
+          />
         ))}
         {organization.structure.length === 0 && (
              <div className="text-center py-20 border-2 border-dashed rounded-lg">
@@ -253,4 +193,3 @@ export function OrganizationView({ organization, onUpdateOrganization }: Organiz
     </div>
   );
 }
-
