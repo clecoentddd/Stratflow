@@ -26,6 +26,10 @@ export default function OrganizationStrategyPage({ params }: { params: { orgId: 
 
     if (org) {
       setOrganization(org);
+    } else {
+      // If not found, it might be a new org not yet persisted.
+      // For now, we show notFound, but a better implementation might handle this.
+      notFound();
     }
     setIsLoading(false);
   }, [orgId]);
@@ -66,7 +70,8 @@ export default function OrganizationStrategyPage({ params }: { params: { orgId: 
   }
 
   if (!organization) {
-    notFound();
+    // This will be handled by the notFound() in useEffect, but as a fallback.
+    return notFound();
   }
   
   return (
@@ -74,10 +79,12 @@ export default function OrganizationStrategyPage({ params }: { params: { orgId: 
       <AppHeader />
       <main className="p-4 md:p-6 flex-1">
         <div className="mb-6">
-          <Link href="/organizations">
-            <Button variant="outline">
-              <ChevronLeft className="mr-2 h-4 w-4" />
-              Back to Organizations
+          <Link href="/organizations" passHref>
+            <Button variant="outline" asChild>
+              <a>
+                <ChevronLeft className="mr-2 h-4 w-4" />
+                Back to Organizations
+              </a>
             </Button>
           </Link>
         </div>
@@ -90,4 +97,3 @@ export default function OrganizationStrategyPage({ params }: { params: { orgId: 
     </div>
   );
 }
-
