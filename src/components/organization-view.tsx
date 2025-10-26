@@ -89,7 +89,7 @@ export function OrganizationView({ organization }: OrganizationViewProps) {
             </Card>
 
             {node.children && node.children.length > 0 && (
-              <div className="mt-4 space-y-4">
+              <div className="pl-8 mt-4">
                 {node.children.map((child, childIndex) => (
                   <OrgNodeView 
                     key={child.id} 
@@ -106,4 +106,3 @@ export function OrganizationView({ organization }: OrganizationViewProps) {
     </div>
   );
 }
-
