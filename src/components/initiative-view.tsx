@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, Save, XCircle, Trash2 } from "lucide-react";
+import { Plus, Save, XCircle, Trash2, Search, Milestone, ListChecks, Target } from "lucide-react";
 import {
   AccordionContent,
   AccordionItem,
@@ -21,6 +21,13 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import type { Initiative, InitiativeStepKey, InitiativeItem } from "@/lib/types";
 import { cn } from "@/lib/utils";
+
+const iconMap = {
+    Search,
+    Milestone,
+    ListChecks,
+    Target
+};
 
 interface InitiativeItemViewProps {
   item: InitiativeItem;
@@ -132,11 +139,13 @@ export function InitiativeView({
           />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-4 items-start gap-4">
-          {initiative.steps.map((step) => (
+          {initiative.steps.map((step) => {
+            const Icon = iconMap[step.iconName as keyof typeof iconMap];
+            return (
             <Card key={step.key} className="bg-background h-full">
             <CardHeader className="flex flex-row items-center justify-between p-4 pb-2">
                 <CardTitle className="text-base font-medium flex items-center gap-2">
-                <step.icon className="h-4 w-4 text-muted-foreground" />
+                {Icon && <Icon className="h-4 w-4 text-muted-foreground" />}
                 {step.title}
                 </CardTitle>
                 <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => onAddInitiativeItem(initiative.id, step.key)}>
@@ -160,7 +169,7 @@ export function InitiativeView({
                 </div>
             </CardContent>
             </Card>
-          ))}
+          )})}
         </div>
       </AccordionContent>
     </AccordionItem>

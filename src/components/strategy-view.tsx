@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Plus, GripVertical } from "lucide-react";
+import { Plus, GripVertical, FilePenLine, Rocket, CheckCircle2, Archive } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -14,7 +14,6 @@ import {
 import {
   Accordion,
 } from "@/components/ui/accordion";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -24,6 +23,13 @@ import { Input } from "@/components/ui/input";
 import type { Strategy, Initiative, StrategyState, InitiativeStepKey, InitiativeItem } from "@/lib/types";
 import { InitiativeView } from "./initiative-view";
 import { cn } from "@/lib/utils";
+
+const iconMap = {
+    FilePenLine,
+    Rocket,
+    CheckCircle2,
+    Archive,
+};
 
 interface StrategyViewProps {
   strategy: Strategy;
@@ -55,7 +61,7 @@ export function StrategyView({
   }, [strategy.initiatives]);
 
   const currentStateInfo = strategyStates.find(s => s.value === strategy.state) || strategyStates[0];
-  const CurrentStateIcon = currentStateInfo.icon;
+  const CurrentStateIcon = iconMap[currentStateInfo.iconName];
 
   const handleAddInitiative = () => {
     if (newInitiativeName.trim()) {
@@ -89,12 +95,14 @@ export function StrategyView({
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                {strategyStates.map(state => (
+                {strategyStates.map(state => {
+                  const Icon = iconMap[state.iconName];
+                  return (
                   <DropdownMenuItem key={state.value} onClick={() => onUpdateStrategy({ state: state.value })}>
-                    <state.icon className={cn("mr-2 h-4 w-4", state.colorClass)} />
+                    <Icon className={cn("mr-2 h-4 w-4", state.colorClass)} />
                     <span>{state.label}</span>
                   </DropdownMenuItem>
-                ))}
+                )})}
               </DropdownMenuContent>
             </DropdownMenu>
             <Button variant="ghost" size="icon" className="h-8 w-8 cursor-grab active:cursor-grabbing">

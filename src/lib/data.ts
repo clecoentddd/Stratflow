@@ -1,37 +1,29 @@
-import {
-  Archive,
-  CheckCircle2,
-  FilePenLine,
-  ListChecks,
-  Milestone,
-  Rocket,
-  Search,
-  Target,
-} from "lucide-react";
-import type { Stream, StrategyState, InitiativeStep, Organization } from "./types";
+import type { InitiativeStep, Organization } from "./types";
 
-const initiativeStepsTemplate: Omit<InitiativeStep, "items">[] = [
+const initiativeStepsTemplate: Omit<InitiativeStep, "items" | "icon"> & { iconName: string }[] = [
   {
     key: "diagnostic",
     title: "Diagnostic",
-    icon: Search,
+    iconName: "Search",
   },
   {
     key: "overallApproach",
     title: "Overall Approach",
-    icon: Milestone,
+    iconName: "Milestone",
   },
   {
     key: "actions",
     title: "Actions",
-    icon: ListChecks,
+    iconName: "ListChecks",
   },
   {
     key: "proximateObjectives",
     title: "Proximate Objectives",
-    icon: Target,
+    iconName: "Target",
   },
 ];
+
+const getInitiativeSteps = () => initiativeStepsTemplate.map(({iconName, ...rest}) => ({...rest, items: []}))
 
 export const initialOrganizations: Organization[] = [
   {
@@ -52,10 +44,10 @@ export const initialOrganizations: Organization[] = [
               name: "Market Research & Analysis",
               progression: 80,
               steps: [
-                { ...initiativeStepsTemplate[0], items: [{ id: "item-1", text: "Analyze competitor pricing" }, {id: "item-2", text: "Survey target user base"}] },
-                { ...initiativeStepsTemplate[1], items: [{ id: "item-3", text: "Define phased rollout plan" }] },
-                { ...initiativeStepsTemplate[2], items: [] },
-                { ...initiativeStepsTemplate[3], items: [{ id: "item-4", text: "Achieve 500 survey responses" }] },
+                { key: "diagnostic", title: "Diagnostic", iconName: "Search", items: [{ id: "item-1", text: "Analyze competitor pricing" }, {id: "item-2", text: "Survey target user base"}] },
+                { key: "overallApproach", title: "Overall Approach", iconName: "Milestone", items: [{ id: "item-3", text: "Define phased rollout plan" }] },
+                { key: "actions", title: "Actions", iconName: "ListChecks", items: [] },
+                { key: "proximateObjectives", title: "Proximate Objectives", iconName: "Target", items: [{ id: "item-4", text: "Achieve 500 survey responses" }] },
               ],
             },
             {
@@ -63,10 +55,10 @@ export const initialOrganizations: Organization[] = [
               name: "Alpha/Beta Testing Program",
               progression: 45,
               steps: [
-                  { ...initiativeStepsTemplate[0], items: [{ id: "item-5", text: "Identify potential beta testers" }] },
-                  { ...initiativeStepsTemplate[1], items: [{ id: "item-6", text: "Establish feedback collection mechanism" }] },
-                  { ...initiativeStepsTemplate[2], items: [{ id: "item-7", text: "Onboard 20 beta testers" }, {id: "item-8", text: "Triage initial feedback reports"}] },
-                  { ...initiativeStepsTemplate[3], items: [{ id: "item-9", text: "Get 80% tester satisfaction" }] },
+                  { key: "diagnostic", title: "Diagnostic", iconName: "Search", items: [{ id: "item-5", text: "Identify potential beta testers" }] },
+                  { key: "overallApproach", title: "Overall Approach", iconName: "Milestone", items: [{ id: "item-6", text: "Establish feedback collection mechanism" }] },
+                  { key: "actions", title: "Actions", iconName: "ListChecks", items: [{ id: "item-7", text: "Onboard 20 beta testers" }, {id: "item-8", text: "Triage initial feedback reports"}] },
+                  { key: "proximateObjectives", title: "Proximate Objectives", iconName: "Target", items: [{ id: "item-9", text: "Get 80% tester satisfaction" }] },
               ],
             },
           ],
@@ -89,10 +81,10 @@ export const initialOrganizations: Organization[] = [
                   name: "Complete Compliance Review",
                   progression: 100,
                   steps: [
-                      { ...initiativeStepsTemplate[0], items: [] },
-                      { ...initiativeStepsTemplate[1], items: [] },
-                      { ...initiativeStepsTemplate[2], items: [{ id: "item-10", text: "Get legal sign-off on ToS" }] },
-                      { ...initiativeStepsTemplate[3], items: [] },
+                      { key: "diagnostic", title: "Diagnostic", iconName: "Search", items: [] },
+                      { key: "overallApproach", title: "Overall Approach", iconName: "Milestone", items: [] },
+                      { key: "actions", title: "Actions", iconName: "ListChecks", items: [{ id: "item-10", text: "Get legal sign-off on ToS" }] },
+                      { key: "proximateObjectives", title: "Proximate Objectives", iconName: "Target", items: [] },
                   ],
               }
           ],
@@ -127,18 +119,25 @@ export const initialOrganizations: Organization[] = [
 export const strategyStates: {
   value: StrategyState;
   label: string;
-  icon: React.ComponentType<{ className?: string }>;
+  iconName: 'FilePenLine' | 'Rocket' | 'CheckCircle2' | 'Archive';
   colorClass: string;
 }[] = [
-  { value: "Draft", label: "Draft", icon: FilePenLine, colorClass: "text-blue-600" },
-  { value: "Open", label: "Open", icon: Rocket, colorClass: "text-green-600" },
-  { value: "Closed", label: "Closed", icon: CheckCircle2, colorClass: "text-gray-500" },
-  { value: "Obsolete", label: "Obsolete", icon: Archive, colorClass: "text-gray-500" },
+  { value: "Draft", label: "Draft", iconName: 'FilePenLine', colorClass: "text-blue-600" },
+  { value: "Open", label: "Open", iconName: 'Rocket', colorClass: "text-green-600" },
+  { value: "Closed", label: "Closed", iconName: 'CheckCircle2', colorClass: "text-gray-500" },
+  { value: "Obsolete", label: "Obsolete", iconName: 'Archive', colorClass: "text-gray-500" },
 ];
 
 export const newInitiativeTemplate = (id: string, name: string) => ({
     id,
     name,
     progression: 0,
-    steps: initiativeStepsTemplate.map(step => ({...step, items: []})),
-})
+    steps: initiativeStepsTemplate.map(step => ({
+      key: step.key,
+      title: step.title,
+      iconName: step.iconName,
+      items: []
+    })),
+});
+
+import type { StrategyState } from "./types";

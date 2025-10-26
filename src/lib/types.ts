@@ -1,5 +1,3 @@
-import type { LucideIcon } from 'lucide-react';
-
 export type StrategyState = 'Draft' | 'Open' | 'Closed' | 'Obsolete' | 'Deleted';
 
 export type InitiativeItem = {
@@ -12,7 +10,7 @@ export type InitiativeStepKey = 'diagnostic' | 'overallApproach' | 'actions' | '
 export type InitiativeStep = {
   key: InitiativeStepKey;
   title: string;
-  icon: LucideIcon;
+  iconName: string;
   items: InitiativeItem[];
 };
 
