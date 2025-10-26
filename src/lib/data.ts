@@ -25,96 +25,88 @@ const initiativeStepsTemplate: {
 
 export const initialOrganizations: Organization[] = [
   {
-    id: "org-1",
-    name: "Innovate Inc.",
-    structure: [
-      {
-        id: 'node-1',
-        title: 'Board of Directors',
-        description: 'Oversees the company\'s direction.',
-        level: 0,
-        stream: {
-          id: 'stream-bod',
-          name: 'Board-Level Strategic Goals',
-          strategies: [
-            { id: 'bod-strat-1', description: 'Grow market share by 5% YoY', timeframe: '2025', state: 'Open', initiatives: [] },
-          ]
-        },
-        children: [
-          {
-            id: 'node-2',
-            title: 'CEO',
-            description: 'Chief Executive Officer',
-            level: 1,
-            stream: {
-              id: 'stream-ceo',
-              name: 'CEO Directives',
-              strategies: [
-                { id: 'ceo-strat-1', description: 'Execute on Q4 2024 Product Launch', timeframe: 'Q4 2024', state: 'Open', initiatives: [] },
-                { id: 'ceo-strat-2', description: 'Improve operational efficiency', timeframe: '2025', state: 'Draft', initiatives: [] },
-              ]
+    id: "org-bod",
+    name: "Board of Directors",
+    purpose: "Oversees the company's direction.",
+    context: "Highest governing body.",
+    level: 0,
+    stream: {
+      id: "stream-bod",
+      name: "Board-Level Strategic Goals",
+      strategies: [
+        { id: "bod-strat-1", description: "Grow market share by 5% YoY", timeframe: "2025", state: "Open", initiatives: [] },
+      ]
+    },
+  },
+  {
+    id: "org-ceo",
+    name: "CEO",
+    purpose: "Leads the company and executes the board's vision.",
+    context: "Chief Executive Officer.",
+    level: 1,
+    stream: {
+      id: "stream-ceo",
+      name: "CEO Directives",
+      strategies: [
+        { id: "ceo-strat-1", description: "Execute on Q4 2024 Product Launch", timeframe: "Q4 2024", state: "Open", initiatives: [] },
+        { id: "ceo-strat-2", description: "Improve operational efficiency", timeframe: "2025", state: "Draft", initiatives: [] },
+      ]
+    },
+  },
+  { 
+    id: 'org-cfo', 
+    name: 'CFO', 
+    purpose: 'Manages the company\'s finances.',
+    context: 'Chief Financial Officer', 
+    level: 2, 
+    stream: { id: 'stream-cfo', name: 'Financial Strategy', strategies: [] }, 
+  },
+  { 
+    id: 'org-cto', 
+    name: 'CTO', 
+    purpose: 'Leads technology and engineering.',
+    context: 'Chief Technology Officer', 
+    level: 2, 
+    stream: {
+      id: "cto-stream-1",
+      name: "Technology Roadmap",
+      strategies: [
+        {
+          id: "strat-1",
+          description: "Develop and launch the new 'Innovate' feature set.",
+          timeframe: "Q4 2024",
+          state: "Open",
+          initiatives: [
+            {
+              id: "init-1-1",
+              name: "Market Research & Analysis",
+              progression: 80,
+              steps: [
+                { key: "diagnostic", title: "Diagnostic", iconName: "Search", items: [{ id: "item-1", text: "Analyze competitor pricing" }, {id: "item-2", text: "Survey target user base"}] },
+                { key: "overallApproach", title: "Overall Approach", iconName: "Milestone", items: [{ id: "item-3", text: "Define phased rollout plan" }] },
+                { key: "actions", title: "Actions", iconName: "ListChecks", items: [] },
+                { key: "proximateObjectives", title: "Proximate Objectives", iconName: "Target", items: [{ id: "item-4", text: "Achieve 500 survey responses" }] },
+              ],
             },
-            children: [
-              { 
-                id: 'node-3', 
-                title: 'CFO', 
-                description: 'Chief Financial Officer', 
-                level: 2, 
-                stream: { id: 'stream-cfo', name: 'Financial Strategy', strategies: [] }, 
-                children: [] 
-              },
-              { 
-                id: 'node-4', 
-                title: 'CTO', 
-                description: 'Chief Technology Officer', 
-                level: 2, 
-                stream: {
-                  id: "cto-stream-1",
-                  name: "Technology Roadmap",
-                  strategies: [
-                    {
-                      id: "strat-1",
-                      description: "Develop and launch the new 'Innovate' feature set.",
-                      timeframe: "Q4 2024",
-                      state: "Open",
-                      initiatives: [
-                        {
-                          id: "init-1-1",
-                          name: "Market Research & Analysis",
-                          progression: 80,
-                          steps: [
-                            { key: "diagnostic", title: "Diagnostic", iconName: "Search", items: [{ id: "item-1", text: "Analyze competitor pricing" }, {id: "item-2", text: "Survey target user base"}] },
-                            { key: "overallApproach", title: "Overall Approach", iconName: "Milestone", items: [{ id: "item-3", text: "Define phased rollout plan" }] },
-                            { key: "actions", title: "Actions", iconName: "ListChecks", items: [] },
-                            { key: "proximateObjectives", title: "Proximate Objectives", iconName: "Target", items: [{ id: "item-4", text: "Achieve 500 survey responses" }] },
-                          ],
-                        },
-                      ],
-                    },
-                     {
-                      id: "strat-2",
-                      description: "Marketing and go-to-market strategy.",
-                      timeframe: "Q4 2024",
-                      state: "Draft",
-                      initiatives: [],
-                    },
-                  ],
-                },
-                children: [] 
-              },
-              { 
-                id: 'node-5', 
-                title: 'CMO', 
-                description: 'Chief Marketing Officer', 
-                level: 2, 
-                stream: { id: 'stream-cmo', name: 'Marketing & Growth', strategies: [] }, 
-                children: [] 
-              },
-            ]
-          }
-        ]
-      }
-    ]
+          ],
+        },
+          {
+          id: "strat-2",
+          description: "Marketing and go-to-market strategy.",
+          timeframe: "Q4 2024",
+          state: "Draft",
+          initiatives: [],
+        },
+      ],
+    },
+  },
+  { 
+    id: 'org-cmo', 
+    name: 'CMO', 
+    purpose: 'Leads marketing and growth initiatives.',
+    context: 'Chief Marketing Officer', 
+    level: 2, 
+    stream: { id: 'stream-cmo', name: 'Marketing & Growth', strategies: [] }, 
   },
 ];
 

@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import { Plus } from "lucide-react";
 
 import type { Stream, Strategy, StrategyState, InitiativeStepKey, InitiativeItem, Initiative } from "@/lib/types";
@@ -23,12 +23,17 @@ const strategyOrder: Record<StrategyState, number> = {
 interface DashboardProps {
     stream: Stream;
     streamName: string;
+    onUpdateStream: (stream: Stream) => void;
 }
 
-export function Dashboard({ stream: initialStream, streamName }: DashboardProps) {
+export function Dashboard({ stream: initialStream, streamName, onUpdateStream }: DashboardProps) {
   const { toast } = useToast();
   const [stream, setStream] = useState<Stream>(initialStream);
   const [isCreateStrategyOpen, setCreateStrategyOpen] = useState(false);
+
+  useEffect(() => {
+      onUpdateStream(stream);
+  }, [stream, onUpdateStream]);
 
   const sortedStrategies = useMemo(() => {
     if (!stream?.strategies) return [];

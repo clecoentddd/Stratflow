@@ -18,7 +18,7 @@ import { Textarea } from "./ui/textarea";
 interface CreateOrganizationDialogProps {
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
-  onCreate: (name: string, title: string, description: string, level: number) => void;
+  onCreate: (name: string, purpose: string, context: string, level: number) => void;
 }
 
 export function CreateOrganizationDialog({
@@ -27,18 +27,18 @@ export function CreateOrganizationDialog({
   onCreate,
 }: CreateOrganizationDialogProps) {
   const [name, setName] = useState("");
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
+  const [purpose, setPurpose] = useState("");
+  const [context, setContext] = useState("");
   const [level, setLevel] = useState("0");
 
 
   const handleSubmit = () => {
     const levelNum = parseInt(level, 10);
-    if (name.trim() && title.trim() && !isNaN(levelNum)) {
-      onCreate(name.trim(), title.trim(), description.trim(), levelNum);
+    if (name.trim() && purpose.trim() && !isNaN(levelNum)) {
+      onCreate(name.trim(), purpose.trim(), context.trim(), levelNum);
       setName("");
-      setTitle("");
-      setDescription("");
+      setPurpose("");
+      setContext("");
       setLevel("0");
       onOpenChange(false);
     }
@@ -50,7 +50,7 @@ export function CreateOrganizationDialog({
         <DialogHeader>
           <DialogTitle>Create New Organization</DialogTitle>
           <DialogDescription>
-            Give your new organization a name and define its first node.
+            Define a new organization with its name, purpose, context, and level.
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
@@ -60,35 +60,37 @@ export function CreateOrganizationDialog({
               id="name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="e.g., Innovate Inc."
-            />
-          </div>
-          <div className="grid w-full max-w-sm items-center gap-1.5">
-            <Label htmlFor="title">Node Title</Label>
-            <Input
-              id="title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="e.g., Board of Directors"
+              placeholder="e.g., CEO"
             />
           </div>
           <div className="grid w-full gap-1.5">
-            <Label htmlFor="description">Node Description</Label>
+            <Label htmlFor="purpose">Purpose</Label>
             <Textarea
-              id="description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="e.g., Oversees the company's direction."
+              id="purpose"
+              value={purpose}
+              onChange={(e) => setPurpose(e.target.value)}
+              placeholder="e.g., Leads the company and executes the board's vision."
+              rows={3}
+            />
+          </div>
+           <div className="grid w-full gap-1.5">
+            <Label htmlFor="context">Context</Label>
+            <Textarea
+              id="context"
+              value={context}
+              onChange={(e) => setContext(e.target.value)}
+              placeholder="e.g., Sits within the executive leadership team."
+              rows={2}
             />
           </div>
           <div className="grid w-full max-w-sm items-center gap-1.5">
-            <Label htmlFor="level">Node Level</Label>
+            <Label htmlFor="level">Level</Label>
             <Input
               id="level"
               type="number"
               value={level}
               onChange={(e) => setLevel(e.target.value)}
-              placeholder="e.g., 0"
+              placeholder="e.g., 0 for top-level"
             />
           </div>
         </div>
@@ -97,7 +99,7 @@ export function CreateOrganizationDialog({
           <Button
             type="submit"
             onClick={handleSubmit}
-            disabled={!name.trim() || !title.trim()}
+            disabled={!name.trim() || !purpose.trim()}
           >
             Create Organization
           </Button>

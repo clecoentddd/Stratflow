@@ -15,7 +15,7 @@ export type InitiativeStep = {
 };
 
 export type Initiative = {
-  id: string;
+  id:string;
   name: string;
   progression: number;
   steps: InitiativeStep[];
@@ -35,17 +35,11 @@ export type Stream = {
   strategies: Strategy[];
 };
 
-export type OrgNode = {
-  id: string;
-  title: string;
-  description: string;
-  level: number;
-  children: OrgNode[];
-  stream: Stream;
-};
-
 export type Organization = {
   id: string;
   name: string;
-  structure: OrgNode[];
+  purpose: string;
+  context: string;
+  level: number;
+  stream: Stream;
 };
