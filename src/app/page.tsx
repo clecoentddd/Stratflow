@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Plus } from "lucide-react";
 import { initialOrganizations as defaultOrgs } from "@/lib/data";
@@ -12,40 +12,20 @@ import { Button } from "@/components/ui/button";
 import { CreateOrganizationDialog } from "@/components/create-organization-dialog";
 
 export default function Home() {
-  const [organizations, setOrganizations] = useState<Organization[]>(defaultOrgs);
+  const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [isCreateOrgOpen, setCreateOrgOpen] = useState(false);
+
+  useEffect(() => {
+    // This would be where you fetch data from a backend.
+    // For now, we load it into state.
+    setOrganizations(defaultOrgs);
+  }, []);
 
   const handleCreateOrganization = (name: string) => {
     const newOrg: Organization = {
       id: `org-${Date.now()}`,
       name,
-      structure: [
-        {
-          id: 'node-1',
-          title: 'Board of Directors',
-          description: 'Oversees the company\'s direction.',
-          level: 0,
-          stream: {
-            id: 'stream-bod',
-            name: 'Board-Level Strategic Goals',
-            strategies: []
-          },
-          children: [
-            {
-              id: 'node-2',
-              title: 'CEO',
-              description: 'Chief Executive Officer',
-              level: 1,
-              stream: {
-                id: 'stream-ceo',
-                name: 'CEO Directives',
-                strategies: []
-              },
-              children: []
-            }
-          ]
-        }
-      ]
+      structure: [], // Start with an empty structure
     };
     setOrganizations(prev => [...prev, newOrg]);
     setCreateOrgOpen(false);
