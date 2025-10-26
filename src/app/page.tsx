@@ -14,7 +14,7 @@ export default function Home() {
         </div>
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {initialOrganizations.map((org) => (
-            <Link href={`/organizations/${org.id}`} key={org.id}>
+            <Link href={`/organization/${org.id}`} key={org.id}>
               <Card className="hover:shadow-lg transition-shadow cursor-pointer">
                 <CardHeader>
                   <CardTitle>{org.name}</CardTitle>

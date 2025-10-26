@@ -41,11 +41,11 @@ export type OrgNode = {
   description: string;
   level: number;
   children: OrgNode[];
+  stream: Stream;
 };
 
 export type Organization = {
   id: string;
   name: string;
-  stream: Stream;
   structure: OrgNode[];
 };

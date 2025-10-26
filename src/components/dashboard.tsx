@@ -4,7 +4,7 @@
 import { useState, useMemo, useCallback } from "react";
 import { Plus } from "lucide-react";
 
-import type { Stream, Strategy, StrategyState, InitiativeStepKey, InitiativeItem } from "@/lib/types";
+import type { Stream, Strategy, StrategyState, InitiativeStepKey, InitiativeItem, Initiative } from "@/lib/types";
 import { newInitiativeTemplate } from "@/lib/data";
 import { useToast } from "@/hooks/use-toast";
 
@@ -22,9 +22,10 @@ const strategyOrder: Record<StrategyState, number> = {
 
 interface DashboardProps {
     stream: Stream;
+    streamName: string;
 }
 
-export function Dashboard({ stream: initialStream }: DashboardProps) {
+export function Dashboard({ stream: initialStream, streamName }: DashboardProps) {
   const { toast } = useToast();
   const [stream, setStream] = useState<Stream>(initialStream);
   const [isCreateStrategyOpen, setCreateStrategyOpen] = useState(false);
@@ -140,7 +141,7 @@ export function Dashboard({ stream: initialStream }: DashboardProps) {
     <div>
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold font-headline">
-            {stream?.name || "Strategy Board"}
+            {streamName || "Strategy Board"}
           </h2>
           <Button onClick={() => setCreateStrategyOpen(true)}>
             <Plus className="mr-2 h-4 w-4" />
