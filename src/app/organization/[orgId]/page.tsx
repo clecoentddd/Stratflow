@@ -11,7 +11,8 @@ import { AppHeader } from "@/components/header";
 import { Button } from "@/components/ui/button";
 import { Dashboard } from "@/components/dashboard";
 
-export default function OrganizationStrategyPage({ params: { orgId } }: { params: { orgId: string } }) {
+export default function OrganizationStrategyPage({ params }: { params: { orgId: string } }) {
+  const { orgId } = params;
   const [organization, setOrganization] = useState<Organization | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -25,8 +26,6 @@ export default function OrganizationStrategyPage({ params: { orgId } }: { params
 
     if (org) {
       setOrganization(org);
-    } else {
-      notFound();
     }
     setIsLoading(false);
   }, [orgId]);
