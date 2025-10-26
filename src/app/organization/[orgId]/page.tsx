@@ -9,8 +9,7 @@ import { useState, useEffect } from 'react';
 import type { Organization } from '@/lib/types';
 
 
-export default function OrganizationPage({ params }: { params: { orgId: string } }) {
-  const { orgId } = params;
+export default function OrganizationPage({ params: { orgId } }: { params: { orgId: string } }) {
   const [organization, setOrganization] = useState<Organization | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
