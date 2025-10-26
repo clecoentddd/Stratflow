@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ChevronLeft } from "lucide-react";
@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Dashboard } from "@/components/dashboard";
 
 export default function OrganizationStrategyPage({ params }: { params: { orgId: string } }) {
-  const { orgId } = params;
+  const { orgId } = use(params);
   const [organization, setOrganization] = useState<Organization | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -73,11 +73,9 @@ export default function OrganizationStrategyPage({ params }: { params: { orgId: 
       <main className="p-4 md:p-6 flex-1">
         <div className="mb-6">
           <Link href="/organizations" legacyBehavior>
-            <Button asChild>
-                <a>
-                    <ChevronLeft className="mr-2 h-4 w-4" />
-                    Back to Organizations
-                </a>
+            <Button variant="outline">
+              <ChevronLeft className="mr-2 h-4 w-4" />
+              Back to Organizations
             </Button>
           </Link>
         </div>
