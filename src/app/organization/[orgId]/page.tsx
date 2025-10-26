@@ -7,6 +7,9 @@ import { OrganizationView } from '@/components/organization-view';
 import { notFound } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import type { Organization } from '@/lib/types';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { ChevronLeft } from 'lucide-react';
 
 
 export default function OrganizationPage({ params: { orgId } }: { params: { orgId: string } }) {
@@ -87,6 +90,14 @@ export default function OrganizationPage({ params: { orgId } }: { params: { orgI
     <div className="flex flex-col min-h-screen">
       <AppHeader />
       <main className="p-4 md:p-6 flex-1">
+        <div className="mb-6">
+            <Link href="/organizations">
+                <Button variant="outline">
+                <ChevronLeft className="mr-2 h-4 w-4" />
+                Back to Organizations
+                </Button>
+            </Link>
+        </div>
         <OrganizationView organization={organization} onUpdateOrganization={handleUpdateOrganization} />
       </main>
     </div>

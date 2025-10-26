@@ -1,94 +1,33 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Plus } from "lucide-react";
-import { initialOrganizations as defaultOrgs } from "@/lib/data";
-import type { Organization, OrgNode } from "@/lib/types";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AppHeader } from "@/components/header";
 import { Button } from "@/components/ui/button";
-import { CreateOrganizationDialog } from "@/components/create-organization-dialog";
+import { ArrowRight } from "lucide-react";
 
-export default function Home() {
-  const [organizations, setOrganizations] = useState<Organization[]>([]);
-  const [isCreateOrgOpen, setCreateOrgOpen] = useState(false);
-
-  useEffect(() => {
-    // In a real app, you might fetch this from localStorage or a backend
-    const storedOrgs = localStorage.getItem("organizations");
-    if (storedOrgs) {
-      setOrganizations(JSON.parse(storedOrgs));
-    } else {
-      setOrganizations(defaultOrgs);
-    }
-  }, []);
-
-  useEffect(() => {
-    // Persist to localStorage whenever organizations change
-    if (organizations.length > 0) {
-      localStorage.setItem("organizations", JSON.stringify(organizations));
-    }
-  }, [organizations]);
-
-
-  const handleCreateOrganization = (name: string, title: string, description: string, level: number) => {
-    const orgId = `org-${Date.now()}`;
-    const newNode: OrgNode = {
-      id: `node-${Date.now()}`,
-      title,
-      description,
-      level,
-      children: [],
-      stream: {
-        id: `stream-${Date.now()}`,
-        name: `${title} Strategy Stream`,
-        strategies: [],
-      },
-    };
-    
-    const newOrg: Organization = {
-      id: orgId,
-      name,
-      structure: [newNode],
-    };
-    setOrganizations(prev => [...prev, newOrg]);
-  };
-
+export default function WelcomePage() {
   return (
     <div className="flex flex-col min-h-screen">
       <AppHeader />
-      <main className="p-4 md:p-6 flex-1">
-        <div className="flex items-center justify-between mb-6">
-          <h1 className="text-3xl font-bold font-headline">Organizations</h1>
-          <Button onClick={() => setCreateOrgOpen(true)}>
-            <Plus className="mr-2 h-4 w-4" />
-            New Organization
-          </Button>
-        </div>
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {organizations.map((org) => (
-            <Link href={`/organization/${org.id}`} key={org.id}>
-              <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-                <CardHeader>
-                  <CardTitle>{org.name}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-muted-foreground">
-                    Click to view organization structure and strategy streams.
-                  </p>
-                </CardContent>
-              </Card>
-            </Link>
-          ))}
+      <main className="flex-1 flex flex-col items-center justify-center text-center p-4">
+        <div className="max-w-2xl">
+            <h1 className="text-5xl font-bold font-headline tracking-tight">
+                Welcome to StratFlow
+            </h1>
+            <p className="mt-6 text-lg text-muted-foreground">
+                The ultimate tool for visualizing, planning, and executing your organizational strategy. Turn your vision into actionable initiatives and track your progress with clarity.
+            </p>
+            <div className="mt-10">
+                <Link href="/organizations">
+                    <Button size="lg">
+                        Go to My Organizations
+                        <ArrowRight className="ml-2 h-5 w-5" />
+                    </Button>
+                </Link>
+            </div>
         </div>
       </main>
-      <CreateOrganizationDialog 
-        isOpen={isCreateOrgOpen}
-        onOpenChange={setCreateOrgOpen}
-        onCreate={handleCreateOrganization}
-      />
     </div>
   );
 }
