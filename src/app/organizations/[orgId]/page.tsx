@@ -1,3 +1,4 @@
+
 import { initialOrganizations } from '@/lib/data';
 import { AppHeader } from '@/components/header';
 import { OrganizationView } from '@/components/organization-view';
