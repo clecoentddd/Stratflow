@@ -15,40 +15,55 @@ export default function OrganizationPage({ params }: { params: { orgId: string }
 
   useEffect(() => {
     const storedOrgsString = localStorage.getItem("organizations");
-    const allOrgs: Organization[] = storedOrgsString ? JSON.parse(storedOrgsString) : initialOrganizations;
+    let allOrgs: Organization[] = [];
+    if (storedOrgsString) {
+      try {
+        allOrgs = JSON.parse(storedOrgsString);
+      } catch (e) {
+        console.error("Failed to parse organizations from localStorage", e);
+        allOrgs = initialOrganizations;
+      }
+    } else {
+      allOrgs = initialOrganizations;
+    }
     
     let org = allOrgs.find(o => o.id === params.orgId);
 
     if (org) {
+      // Use a deep copy to avoid direct state mutation issues
       setOrganization(JSON.parse(JSON.stringify(org)));
     } else {
-        // If not found in localStorage, check initial data as a fallback
-        org = initialOrganizations.find(o => o.id === params.orgId);
-        if (org) {
-            setOrganization(JSON.parse(JSON.stringify(org)));
-        }
+      // Fallback for safety, though should not be hit if navigation is correct
+      org = initialOrganizations.find(o => o.id === params.orgId);
+      if (org) {
+          setOrganization(JSON.parse(JSON.stringify(org)));
+      }
     }
     setIsLoading(false);
   }, [params.orgId]);
 
   useEffect(() => {
-    if (organization) {
+    // This effect persists the updated organization back to localStorage
+    if (organization && !isLoading) {
       const storedOrgsString = localStorage.getItem("organizations");
       const allOrgs: Organization[] = storedOrgsString ? JSON.parse(storedOrgsString) : initialOrganizations;
+      
       const orgIndex = allOrgs.findIndex(o => o.id === organization.id);
       
       let updatedOrgs;
       if (orgIndex !== -1) {
+          // Found the existing org, replace it
           updatedOrgs = [...allOrgs];
           updatedOrgs[orgIndex] = organization;
       } else {
+          // Org not found (should be rare), add it
           updatedOrgs = [...allOrgs, organization];
       }
       localStorage.setItem("organizations", JSON.stringify(updatedOrgs));
     }
-  }, [organization]);
+  }, [organization, isLoading]);
 
-
+  // The single source of truth for updating the organization's state
   const handleUpdateOrganization = (updatedOrg: Organization) => {
     setOrganization(updatedOrg);
   };

@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "./ui/button";
 import { Plus } from "lucide-react";
 import { AddNodeDialog } from "./add-node-dialog";
+import { newInitiativeTemplate } from "@/lib/data";
 
 interface OrgNodeViewProps {
   node: OrgNode;
@@ -87,50 +88,52 @@ export function OrganizationView({ organization, onUpdateOrganization }: Organiz
   const findNodeAndAddChild = (nodes: OrgNode[], parentId: string, newNode: OrgNode): OrgNode[] => {
     return nodes.map(node => {
       if (node.id === parentId) {
+        // Parent found, add new node to its children
         return {
           ...node,
           children: [...node.children, newNode],
         };
       }
       if (node.children && node.children.length > 0) {
+        // Recursively search in children
         return {
           ...node,
           children: findNodeAndAddChild(node.children, parentId, newNode),
         };
       }
-      return node;
+      return node; // No match, return node as is
     });
   };
   
-  const findNodeLevel = (nodes: OrgNode[], nodeId: string, currentLevel: number): number => {
+  const findNodeLevel = (nodes: OrgNode[], nodeId: string): number => {
       for (const node of nodes) {
           if (node.id === nodeId) {
               return node.level;
           }
-          if (node.children) {
-              const foundLevel = findNodeLevel(node.children, nodeId, currentLevel + 1);
+          if (node.children && node.children.length > 0) {
+              const foundLevel = findNodeLevel(node.children, nodeId);
               if (foundLevel !== -1) {
                   return foundLevel;
               }
           }
       }
-      return -1;
+      return -1; // Indicates node not found
   };
 
   const handleAddNode = (parentId: string, title: string, description: string) => {
-    // Deep clone the organization to ensure we don't mutate state directly
+    // Deep clone the organization to ensure we trigger a state update
     const newOrg = JSON.parse(JSON.stringify(organization));
 
-    let parentLevel = -1;
+    let parentLevel = -1; // Default for root nodes
     if (parentId !== newOrg.id) {
-        parentLevel = findNodeLevel(newOrg.structure, parentId, 0);
+        parentLevel = findNodeLevel(newOrg.structure, parentId);
     }
    
     const newNode: OrgNode = {
       id: `node-${Date.now()}`,
       title,
       description,
-      level: parentLevel + 1,
+      level: parentLevel + 1, // Child level is parent level + 1
       children: [],
       stream: {
         id: `stream-${Date.now()}`,
@@ -140,15 +143,19 @@ export function OrganizationView({ organization, onUpdateOrganization }: Organiz
     };
 
     if (parentId === newOrg.id) {
+        // Add as a top-level (root) node
         newOrg.structure.push(newNode);
     } else {
+        // Add as a child to an existing node
         newOrg.structure = findNodeAndAddChild(newOrg.structure, parentId, newNode);
     }
 
+    // Pass the entire updated organization object up to the parent
     onUpdateOrganization(newOrg);
   };
   
   const handleAddRootNode = (title: string, description: string) => {
+    // Use the organization's ID as the parentId for root nodes
     handleAddNode(organization.id, title, description);
   }
 
@@ -166,17 +173,18 @@ export function OrganizationView({ organization, onUpdateOrganization }: Organiz
       </div>
       
       <div className="space-y-4">
-        {organization.structure.map((node, index) => (
-          <OrgNodeView 
-            key={node.id} 
-            node={node} 
-            orgId={organization.id}
-            isLast={index === organization.structure.length - 1}
-            onAddNode={handleAddNode}
-          />
-        ))}
-        {organization.structure.length === 0 && (
-             <div className="text-center py-20 border-2 border-dashed rounded-lg">
+        {organization.structure.length > 0 ? (
+          organization.structure.map((node, index) => (
+            <OrgNodeView 
+              key={node.id} 
+              node={node} 
+              orgId={organization.id}
+              isLast={index === organization.structure.length - 1}
+              onAddNode={handleAddNode}
+            />
+          ))
+        ) : (
+            <div className="text-center py-20 border-2 border-dashed rounded-lg">
                 <h3 className="text-xl font-medium text-muted-foreground">This organization has no structure yet.</h3>
                 <p className="text-muted-foreground mt-2">Get started by adding a top-level node.</p>
             </div>
