@@ -27,8 +27,6 @@ export default function OrganizationStrategyPage({ params }: { params: { orgId: 
     if (org) {
       setOrganization(org);
     } else {
-      // If not found, it might be a new org not yet persisted.
-      // For now, we show notFound, but a better implementation might handle this.
       notFound();
     }
     setIsLoading(false);
@@ -53,9 +51,7 @@ export default function OrganizationStrategyPage({ params }: { params: { orgId: 
   }, [organization]);
   
   const handleUpdateStream = (updatedStream: Organization['stream']) => {
-    if (organization) {
-      setOrganization(prev => prev ? ({...prev, stream: updatedStream }) : null);
-    }
+    setOrganization(prev => prev ? ({...prev, stream: updatedStream }) : null);
   }
 
   if (isLoading) {
@@ -70,7 +66,6 @@ export default function OrganizationStrategyPage({ params }: { params: { orgId: 
   }
 
   if (!organization) {
-    // This will be handled by the notFound() in useEffect, but as a fallback.
     return notFound();
   }
   
@@ -79,11 +74,11 @@ export default function OrganizationStrategyPage({ params }: { params: { orgId: 
       <AppHeader />
       <main className="p-4 md:p-6 flex-1">
         <div className="mb-6">
-          <Link href="/organizations">
-            <Button variant="outline">
+          <Link href="/organizations" legacyBehavior>
+            <a className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">
               <ChevronLeft className="mr-2 h-4 w-4" />
               Back to Organizations
-            </Button>
+            </a>
           </Link>
         </div>
         <Dashboard 
