@@ -11,8 +11,7 @@ import { AppHeader } from "@/components/header";
 import { Button } from "@/components/ui/button";
 import { Dashboard } from "@/components/dashboard";
 
-export default function OrganizationStrategyPage({ params }: { params: { orgId: string } }) {
-  const { orgId } = params;
+export default function OrganizationStrategyPage({ params: { orgId } }: { params: { orgId: string } }) {
   const [organization, setOrganization] = useState<Organization | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -75,10 +74,12 @@ export default function OrganizationStrategyPage({ params }: { params: { orgId: 
       <main className="p-4 md:p-6 flex-1">
         <div className="mb-6">
           <Link href="/organizations" legacyBehavior>
-            <a className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">
-              <ChevronLeft className="mr-2 h-4 w-4" />
-              Back to Organizations
-            </a>
+            <Button asChild>
+                <a>
+                    <ChevronLeft className="mr-2 h-4 w-4" />
+                    Back to Organizations
+                </a>
+            </Button>
           </Link>
         </div>
         <Dashboard 
