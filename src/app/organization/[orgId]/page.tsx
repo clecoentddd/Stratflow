@@ -11,11 +11,12 @@ import { AppHeader } from "@/components/header";
 import { Dashboard } from "@/components/dashboard";
 import { Button } from "@/components/ui/button";
 
-export default function OrganizationStrategyPage({ params: { orgId } }: { params: { orgId: string } }) {
+export default function OrganizationStrategyPage({ params }: { params: { orgId: string } }) {
   const [organization, setOrganization] = useState<Organization | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    const orgId = params.orgId;
     const storedOrgsString = localStorage.getItem("organizations");
     let allOrgs: Organization[] = storedOrgsString
       ? JSON.parse(storedOrgsString)
@@ -27,7 +28,7 @@ export default function OrganizationStrategyPage({ params: { orgId } }: { params
       setOrganization(JSON.parse(JSON.stringify(org)));
     }
     setIsLoading(false);
-  }, [orgId]);
+  }, [params.orgId]);
 
   useEffect(() => {
     if (organization && !isLoading) {
