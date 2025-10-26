@@ -11,10 +11,9 @@ import { AppHeader } from "@/components/header";
 import { Dashboard } from "@/components/dashboard";
 import { Button } from "@/components/ui/button";
 
-export default function OrganizationStrategyPage({ params }: { params: { orgId: string } }) {
+export default function OrganizationStrategyPage({ params: { orgId } }: { params: { orgId: string } }) {
   const [organization, setOrganization] = useState<Organization | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const { orgId } = params;
 
   useEffect(() => {
     const storedOrgsString = localStorage.getItem("organizations");
