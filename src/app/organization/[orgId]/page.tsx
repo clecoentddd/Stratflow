@@ -9,25 +9,34 @@ import type { Organization } from '@/lib/types';
 
 
 export default function OrganizationPage({ params }: { params: { orgId: string } }) {
-  const [organizations, setOrganizations] = useState(initialOrganizations);
   const [organization, setOrganization] = useState<Organization | null>(null);
 
   useEffect(() => {
-    const org = organizations.find(o => o.id === params.orgId);
+    const org = initialOrganizations.find(o => o.id === params.orgId);
     if(org) {
-      setOrganization(org);
+      // Deep copy to prevent mutation issues
+      setOrganization(JSON.parse(JSON.stringify(org)));
     } else {
-        // Create a new org if not found
-        const newOrg = { id: params.orgId, name: "New Organization", structure: [] };
+        const newOrg: Organization = { id: params.orgId, name: "New Organization", structure: [] };
+        // In a real app, you might want to persist this new org, 
+        // but for now, we just set it in state.
+        // We add it to the initialOrganizations array for demonstration if you navigate away and back,
+        // but this is temporary and will be lost on a full page reload.
+        initialOrganizations.push(newOrg);
         setOrganization(newOrg);
-        setOrganizations(prev => [...prev, newOrg]);
     }
-  }, [params.orgId, organizations]);
+  }, [params.orgId]);
 
 
   const handleUpdateOrganization = (updatedOrg: Organization) => {
-    setOrganizations(prevOrgs => prevOrgs.map(o => o.id === updatedOrg.id ? updatedOrg : o));
-    setOrganization(updatedOrg);
+    // Deep copy the updated organization to ensure React re-renders
+    setOrganization(JSON.parse(JSON.stringify(updatedOrg)));
+
+    // Also update the in-memory array
+    const orgIndex = initialOrganizations.findIndex(o => o.id === updatedOrg.id);
+    if (orgIndex !== -1) {
+        initialOrganizations[orgIndex] = updatedOrg;
+    }
   };
   
   if (!organization) {
