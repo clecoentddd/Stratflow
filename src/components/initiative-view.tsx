@@ -1,7 +1,8 @@
 
 "use client";
 
-import { Plus, Trash2 } from "lucide-react";
+import { useState } from "react";
+import { Plus, Save, XCircle, Trash2 } from "lucide-react";
 import {
   AccordionContent,
   AccordionItem,
@@ -14,11 +15,83 @@ import {
     CardTitle,
   } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
-import type { Initiative, InitiativeStepKey } from "@/lib/types";
+import { Textarea } from "@/components/ui/textarea";
+import type { Initiative, InitiativeStepKey, InitiativeItem } from "@/lib/types";
+
+interface InitiativeItemViewProps {
+  item: InitiativeItem;
+  stepKey: InitiativeStepKey;
+  initiativeId: string;
+  onUpdateInitiativeItem: (initiativeId: string, stepKey: InitiativeStepKey, itemId: string, newText: string) => void;
+  onDeleteInitiativeItem: (initiativeId: string, stepKey: InitiativeStepKey, itemId: string) => void;
+}
+
+function InitiativeItemView({ item, stepKey, initiativeId, onUpdateInitiativeItem, onDeleteInitiativeItem }: InitiativeItemViewProps) {
+  const [isEditing, setIsEditing] = useState(item.text === "");
+  const [editText, setEditText] = useState(item.text);
+
+  const handleSave = () => {
+    if (editText.trim() !== item.text) {
+      onUpdateInitiativeItem(initiativeId, stepKey, item.id, editText);
+    }
+    setIsEditing(false);
+  };
+
+  const handleCancel = () => {
+    setEditText(item.text);
+    setIsEditing(false);
+    if(item.text === "") {
+        onDeleteInitiativeItem(initiativeId, stepKey, item.id);
+    }
+  };
+  
+  const handleDelete = () => {
+    onDeleteInitiativeItem(initiativeId, stepKey, item.id);
+  }
+
+  if (isEditing) {
+    return (
+      <div className="space-y-2">
+        <Textarea
+          value={editText}
+          onChange={(e) => setEditText(e.target.value)}
+          placeholder="Describe an item..."
+          autoFocus
+          rows={3}
+        />
+        <div className="flex justify-end gap-2">
+          <Button size="sm" variant="outline" onClick={handleCancel}>
+            <XCircle className="mr-2" />
+            Cancel
+          </Button>
+          <Button size="sm" onClick={handleSave} disabled={!editText.trim()}>
+            <Save className="mr-2" />
+            Save
+          </Button>
+          {item.text && (
+             <Button size="sm" variant="destructive" onClick={handleDelete}>
+                <Trash2 className="mr-2" />
+                Delete
+             </Button>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div 
+        onClick={() => setIsEditing(true)} 
+        className="block p-2 rounded-md hover:bg-accent/50 cursor-pointer min-h-[5rem]"
+    >
+      <p className="text-sm line-clamp-3 whitespace-pre-wrap">{item.text}</p>
+    </div>
+  );
+}
+
 
 interface InitiativeViewProps {
   initiative: Initiative;
@@ -71,16 +144,14 @@ export function InitiativeView({
             <CardContent>
                 <div className="space-y-2">
                 {step.items.length > 0 ? step.items.map((item) => (
-                    <div key={item.id} className="flex items-center gap-2">
-                    <Input
-                        value={item.text}
-                        onChange={(e) => onUpdateInitiativeItem(initiative.id, step.key, item.id, e.target.value)}
-                        placeholder="Describe an item..."
+                    <InitiativeItemView 
+                      key={item.id}
+                      item={item}
+                      stepKey={step.key}
+                      initiativeId={initiative.id}
+                      onUpdateInitiativeItem={onUpdateInitiativeItem}
+                      onDeleteInitiativeItem={onDeleteInitiativeItem}
                     />
-                    <Button size="icon" variant="ghost" className="h-9 w-9 shrink-0" onClick={() => onDeleteInitiativeItem(initiative.id, step.key, item.id)}>
-                        <Trash2 className="h-4 w-4 text-destructive/80" />
-                    </Button>
-                    </div>
                 )) : (
                     <p className="text-sm text-muted-foreground text-center py-2">No items yet.</p>
                 )}
