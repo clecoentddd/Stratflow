@@ -3,7 +3,7 @@
 
 import Link from "next/link";
 import { AppHeader } from "@/components/header";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 

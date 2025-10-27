@@ -8,9 +8,10 @@ import { ChevronLeft } from "lucide-react";
 import { initialOrganizations } from "@/lib/data";
 import type { Organization, RadarItem } from "@/lib/types";
 import { AppHeader } from "@/components/header";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { RadarDashboard } from "@/components/radar-dashboard";
 import { useToast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils";
 
 export default function RadarPage() {
   const params = useParams();
@@ -116,12 +117,10 @@ export default function RadarPage() {
       <AppHeader />
       <main className="p-4 md:p-6 flex-1">
         <div className="mb-6">
-          <Button asChild variant="outline">
-            <Link href="/organizations">
+          <Link href="/organizations" className={cn(buttonVariants({ variant: "outline" }))}>
               <ChevronLeft className="mr-2 h-4 w-4" />
               Back to Organizations
-            </Link>
-          </Button>
+          </Link>
         </div>
         <RadarDashboard
             organizationName={organization.name}

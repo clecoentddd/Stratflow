@@ -8,8 +8,9 @@ import { ChevronLeft } from "lucide-react";
 import { initialOrganizations } from "@/lib/data";
 import type { Organization } from "@/lib/types";
 import { AppHeader } from "@/components/header";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { Dashboard } from "@/components/dashboard";
+import { cn } from "@/lib/utils";
 
 export default function OrganizationStrategyPage() {
   const params = useParams();
@@ -18,6 +19,7 @@ export default function OrganizationStrategyPage() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    // This effect runs only on the client, after the component has mounted.
     if (!orgId) return;
     const storedOrgsString = localStorage.getItem("organizations");
     let allOrgs: Organization[] = storedOrgsString
@@ -33,7 +35,8 @@ export default function OrganizationStrategyPage() {
   }, [orgId]);
   
   useEffect(() => {
-    if (organization) {
+    // This effect also runs only on the client.
+    if (organization && !isLoading) {
       const storedOrgsString = localStorage.getItem("organizations");
       const allOrgs: Organization[] = storedOrgsString ? JSON.parse(storedOrgsString) : initialOrganizations;
       
@@ -48,7 +51,7 @@ export default function OrganizationStrategyPage() {
       }
       localStorage.setItem("organizations", JSON.stringify(updatedOrgs));
     }
-  }, [organization]);
+  }, [organization, isLoading]);
   
   const handleUpdateStream = (updatedStream: Organization['stream']) => {
     setOrganization(prev => prev ? ({...prev, stream: updatedStream }) : null);
@@ -74,12 +77,10 @@ export default function OrganizationStrategyPage() {
       <AppHeader />
       <main className="p-4 md:p-6 flex-1">
         <div className="mb-6">
-          <Button asChild variant="outline">
-            <Link href="/organizations">
+          <Link href="/organizations" className={cn(buttonVariants({ variant: "outline" }))}>
               <ChevronLeft className="mr-2 h-4 w-4" />
               Back to Organizations
-            </Link>
-          </Button>
+          </Link>
         </div>
         <Dashboard 
             stream={organization.stream} 

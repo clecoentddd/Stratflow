@@ -10,11 +10,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import type { RadarItem } from "@/lib/types";
 import Link from 'next/link';
 import { format, parseISO } from 'date-fns';
+import { cn } from "@/lib/utils";
 
 interface RadarItemCardProps {
   item: RadarItem;
@@ -69,12 +70,10 @@ export function RadarItemCard({ item, onEdit, onDelete }: RadarItemCardProps) {
       <CardFooter className="flex justify-between items-center text-xs text-muted-foreground">
             <div className="flex items-center gap-4">
                 {item.zoom_in && (
-                    <Button asChild variant="link" className="p-0 h-auto text-xs">
-                      <Link href={item.zoom_in}>
-                          Zoom In
-                          <ExternalLink className="ml-2 h-3 w-3" />
-                      </Link>
-                    </Button>
+                    <Link href={item.zoom_in} className={cn(buttonVariants({ variant: "link" }), "p-0 h-auto text-xs")}>
+                        Zoom In
+                        <ExternalLink className="ml-2 h-3 w-3" />
+                    </Link>
                 )}
             </div>
              <div>
