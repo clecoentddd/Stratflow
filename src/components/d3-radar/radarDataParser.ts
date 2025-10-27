@@ -90,8 +90,8 @@ export const calculateItemPosition = (item: any, indexInGroup: number, totalInGr
     
     // Spread items within the quadrant, leaving padding
     const availableAngle = (Math.PI / 2) - (2 * anglePadding);
-    const angleStep = availableAngle / (totalInGroup > 1 ? totalInGroup -1 : 1);
-    
+    const angleStep = totalInGroup > 1 ? availableAngle / (totalInGroup - 1) : availableAngle;
+
     let angle;
     if (totalInGroup === 1) {
         // Center the single item
@@ -105,16 +105,9 @@ export const calculateItemPosition = (item: any, indexInGroup: number, totalInGr
     const finalX = distRadius * Math.cos(angle);
     const finalY = distRadius * Math.sin(angle);
     
-    // D3's coordinate system has Y increasing downwards.
-    // Our quadrants start top-right (quadrant 0) and go clockwise.
-    // Visual mapping needs to be adjusted based on D3's default angle calculation.
-    // Let's adjust based on expected visual quadrants (Top-Right, Top-Left, Bottom-Left, Bottom-Right)
-    
-    const visualAngle = angle - (Math.PI/2); // Rotate by -90 degrees
-
     return {
-        x: distRadius * Math.cos(visualAngle),
-        y: distRadius * Math.sin(visualAngle)
+        x: finalX,
+        y: finalY
     };
 };
 
@@ -140,3 +133,5 @@ export default {
   calculateItemPosition,
   getCategoryLabels
 };
+
+    

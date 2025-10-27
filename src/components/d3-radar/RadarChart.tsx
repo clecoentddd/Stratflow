@@ -34,7 +34,16 @@ const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: a
     }));
 
     const drawQuadrants = (g: d3.Selection<SVGGElement, unknown, null, undefined>, radius: number) => {
-        radarConfig.visual.quadrantColors.forEach((color, i) => {
+        // This draws the visual quadrants, which D3 numbers differently.
+        // D3: 0: Top-Right, 1: Top-Left, 2: Bottom-Left, 3: Bottom-Right
+        const visualQuadrantColors = [
+            radarConfig.visual.quadrantColors[3], // Config Q3 -> D3 Q0
+            radarConfig.visual.quadrantColors[2], // Config Q2 -> D3 Q1
+            radarConfig.visual.quadrantColors[1], // Config Q1 -> D3 Q2
+            radarConfig.visual.quadrantColors[0], // Config Q0 -> D3 Q3
+        ];
+
+        visualQuadrantColors.forEach((color, i) => {
             g.append("path")
                 .attr("d", d3.arc()
                     .innerRadius(0)
@@ -49,57 +58,19 @@ const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: a
     };
 
     const drawCategoryLabels = (g: d3.Selection<SVGGElement, unknown, null, undefined>, radius: number) => {
-        
-        const sortedCategories = Object.values(radarConfig.categories)
-            .sort((a, b) => a.quadrantIndex - b.quadrantIndex);
-
-        const categoriesByConfigIndex: { [key: number]: any } = {};
-        sortedCategories.forEach(cat => {
-            categoriesByConfigIndex[cat.quadrantIndex] = cat;
-        });
-        
-        const BASE_OFFSET_FACTOR = 1.05; 
-        const baseOffset = radius * BASE_OFFSET_FACTOR;
-        
-        const HORIZONTAL_CENTER_FACTOR = 0.75; 
-        const horizontalOffset = baseOffset * HORIZONTAL_CENTER_FACTOR;
-
-        const PADDING_PX = 10;
-        
-        const D3_VISUAL_POSITIONS = [
-            // D3 Index 0: Top-Right (Capability label)
-            { x: horizontalOffset + PADDING_PX, y: (baseOffset * -1) - PADDING_PX, anchor: 'middle' }, 
-            
-            // D3 Index 1: Top-Left (Business label)
-            { x: (horizontalOffset * -1) - PADDING_PX, y: (baseOffset * -1) - PADDING_PX, anchor: 'middle' }, 
-            
-            // D3 Index 2: Bottom-Left (Operating Model label)
-            { x: (horizontalOffset * -1) - PADDING_PX, y: baseOffset + PADDING_PX, anchor: 'middle' }, 
-            
-            // D3 Index 3: Bottom-Right (People & Knowledge label)
-            { x: horizontalOffset + PADDING_PX, y: baseOffset + PADDING_PX, anchor: 'middle' },
-        ];
-        
-        const ROTATIONAL_MAPPING: { [key: number]: number } = {
-            0: 3, // Config Q0 (P&K) goes to D3 Visual Q3 (Bottom-Right)
-            1: 2, // Config Q1 (Op. Model) goes to D3 Visual Q2 (Bottom-Left)
-            2: 1, // Config Q2 (Business) goes to D3 Visual Q1 (Top-Left)
-            3: 0, // Config Q3 (Capabilities) goes to D3 Visual Q0 (Top-Right)
-        };
-        
-        Object.values(categoriesByConfigIndex).forEach(catData => {
-            const configIndex = catData.quadrantIndex;
-            
-            const d3VisualIndex = ROTATIONAL_MAPPING[configIndex];
-            const pos = D3_VISUAL_POSITIONS[d3VisualIndex];
+        const offset = radius * 1.1; // Place labels just outside the main circle
+        Object.values(radarConfig.categories).forEach(cat => {
+            const angle = ((Math.PI / 2) * cat.quadrantIndex) + (Math.PI / 4); // Center angle of the quadrant
+            const x = offset * Math.cos(angle);
+            const y = offset * Math.sin(angle);
             
             g.append("text")
-                .attr("x", pos.x) 
-                .attr("y", pos.y)
-                .attr("text-anchor", pos.anchor)
-                .text(catData.label)
+                .attr("x", x) 
+                .attr("y", y)
+                .attr("text-anchor", "middle")
+                .text(cat.label)
                 .classed(styles.categoryLabel, true)
-                .attr("data-quadrant", d3VisualIndex);
+                .attr("data-quadrant", cat.quadrantIndex);
         });
     };
 
@@ -205,11 +176,11 @@ const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: a
     useEffect(() => {
         if (!svgRef.current) return;
         const padding = 20;
-        const svgSize = radius * 2 + 100;
+        const svgSize = radius * 2 + 120; // Added padding for labels
         const totalWidth = svgSize + padding * 2;
         const zoomFactor = 2;
         
-        const shiftFactor = 0.55; 
+        const shiftFactor = 0.5;
 
         const svg = d3.select(svgRef.current)
             .attr('width', totalWidth)
@@ -233,20 +204,13 @@ const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: a
             let tX = 0, tY = 0;
             const translationValue = radius * shiftFactor;
 
-            const ROTATIONAL_MAPPING: { [key: number]: number } = {
-                0: 3, // Config Q0 (P&K) maps to D3 Visual Q3 (Bottom-Right)
-                1: 2, // Config Q1 (Op. Model) maps to D3 Visual Q2 (Bottom-Left)
-                2: 1, // Config Q2 (Business) maps to D3 Visual Q1 (Top-Left)
-                3: 0, // Config Q3 (Capabilities) maps to D3 Visual Q0 (Top-Right)
-            };
-            
-            const visualQuadrant = ROTATIONAL_MAPPING[activeQuadrant];
-
-            switch (visualQuadrant) {
-                case 0: tX = -translationValue; tY = translationValue; break; // D3 Visual Q0 (Top-Right): X-, Y+
-                case 1: tX = translationValue; tY = translationValue; break;  // D3 Visual Q1 (Top-Left): X+, Y+
-                case 2: tX = translationValue; tY = -translationValue; break; // D3 Visual Q2 (Bottom-Left): X+, Y-
-                case 3: tX = -translationValue; tY = -translationValue; break; // D3 Visual Q3 (Bottom-Right): X-, Y-
+            // D3's coordinate system is different from what we might intuitively think.
+            // This switch maps the CONFIG quadrant index to the correct visual translation.
+            switch (activeQuadrant) {
+                case 0: tX = -translationValue; tY = -translationValue; break; // Bottom-Right -> moves top-left
+                case 1: tX = translationValue;  tY = -translationValue; break; // Bottom-Left -> moves top-right
+                case 2: tX = translationValue;  tY = translationValue; break;  // Top-Left -> moves bottom-right
+                case 3: tX = -translationValue; tY = translationValue; break;  // Top-Right -> moves bottom-left
             }
 
             transformString = `translate(${totalWidth / 2}, ${svgSize / 2}) scale(${zoomFactor}) translate(${tX}, ${tY})`;
@@ -337,5 +301,6 @@ const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: a
 
 export default RadarChart;
 
+    
     
     
