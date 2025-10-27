@@ -130,11 +130,15 @@ export default function OrganizationsPage() {
                                     <CardContent className="flex-grow">
                                         <p className="text-sm text-muted-foreground mb-4">{org.context}</p>
                                         <div className="flex flex-wrap gap-2">
-                                            <Link href={`/organization/${org.id}`} asChild>
-                                                <Button>View Strategy Stream</Button>
+                                            <Link href={`/organization/${org.id}`} legacyBehavior passHref>
+                                                <Button asChild>
+                                                  <a>View Strategy Stream</a>
+                                                </Button>
                                             </Link>
-                                            <Link href={`/organization/${org.id}/radar`} asChild>
-                                                <Button variant="secondary">View Radar</Button>
+                                            <Link href={`/organization/${org.id}/radar`} legacyBehavior passHref>
+                                                <Button asChild variant="secondary">
+                                                  <a>View Radar</a>
+                                                </Button>
                                             </Link>
                                         </div>
                                     </CardContent>
