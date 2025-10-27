@@ -6,10 +6,10 @@ import Link from "next/link";
 import { notFound, useParams } from "next/navigation";
 import { ChevronLeft } from "lucide-react";
 import { initialOrganizations } from "@/lib/data";
-import type { Organization, RadarItem } from "@/lib/types";
+import type { Organization, Dashboard } from "@/lib/types";
 import { AppHeader } from "@/components/header";
 import { Button } from "@/components/ui/button";
-import { Dashboard } from "@/components/dashboard";
+import { StrategyDashboard } from "@/components/dashboard";
 
 export default function OrganizationStrategyPage() {
   const params = useParams();
@@ -53,8 +53,8 @@ export default function OrganizationStrategyPage() {
     }
   }, [organization, isLoading]);
   
-  const handleUpdateStream = (updatedStream: Organization['stream']) => {
-    setOrganization(prev => prev ? ({...prev, stream: updatedStream }) : null);
+  const handleUpdateDashboard = (updatedDashboard: Dashboard) => {
+    setOrganization(prev => prev ? ({...prev, dashboard: updatedDashboard }) : null);
   }
 
   if (isLoading) {
@@ -84,11 +84,11 @@ export default function OrganizationStrategyPage() {
               </Button>
           </Link>
         </div>
-        <Dashboard 
-            stream={organization.stream}
+        <StrategyDashboard 
+            dashboard={organization.dashboard}
             radarItems={organization.radar}
-            streamName={`${organization.name} - Strategy Stream`}
-            onUpdateStream={handleUpdateStream}
+            dashboardName={`${organization.name} - Strategy Dashboard`}
+            onUpdateDashboard={handleUpdateDashboard}
         />
       </main>
     </div>

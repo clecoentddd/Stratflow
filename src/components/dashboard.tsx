@@ -5,7 +5,7 @@
 import { useState, useMemo, useCallback } from "react";
 import { Plus } from "lucide-react";
 
-import type { Stream, Strategy, StrategyState, InitiativeStepKey, InitiativeItem, Initiative, RadarItem } from "@/lib/types";
+import type { Dashboard, Strategy, StrategyState, InitiativeStepKey, InitiativeItem, Initiative, RadarItem } from "@/lib/types";
 import { newInitiativeTemplate } from "@/lib/data";
 import { useToast } from "@/hooks/use-toast";
 
@@ -21,27 +21,27 @@ const strategyOrder: Record<StrategyState, number> = {
   Deleted: 5,
 };
 
-interface DashboardProps {
-    stream: Stream;
+interface StrategyDashboardProps {
+    dashboard: Dashboard;
     radarItems: RadarItem[];
-    streamName: string;
-    onUpdateStream: (stream: Stream) => void;
+    dashboardName: string;
+    onUpdateDashboard: (dashboard: Dashboard) => void;
 }
 
-export function Dashboard({ stream, radarItems, streamName, onUpdateStream }: DashboardProps) {
+export function StrategyDashboard({ dashboard, radarItems, dashboardName, onUpdateDashboard }: StrategyDashboardProps) {
   const { toast } = useToast();
   const [isCreateStrategyOpen, setCreateStrategyOpen] = useState(false);
 
   const sortedStrategies = useMemo(() => {
-    if (!stream?.strategies) return [];
+    if (!dashboard?.strategies) return [];
     
-    return [...stream.strategies].sort((a, b) => {
+    return [...dashboard.strategies].sort((a, b) => {
         return strategyOrder[a.state] - strategyOrder[b.state];
     });
-  }, [stream]);
+  }, [dashboard]);
   
-  const updateStream = (updater: (currentStream: Stream) => Stream) => {
-    onUpdateStream(updater(stream));
+  const updateDashboard = (updater: (currentDashboard: Dashboard) => Dashboard) => {
+    onUpdateDashboard(updater(dashboard));
   };
 
   const handleCreateStrategy = useCallback((description: string, timeframe: string) => {
@@ -52,17 +52,17 @@ export function Dashboard({ stream, radarItems, streamName, onUpdateStream }: Da
       state: "Draft",
       initiatives: [],
     };
-    updateStream(prev => ({ ...prev, strategies: [...prev.strategies, newStrategy] }));
+    updateDashboard(prev => ({ ...prev, strategies: [...prev.strategies, newStrategy] }));
     toast({
         title: "Strategy Created",
         description: `A new strategy has been added.`,
     });
-  }, [toast, updateStream]);
+  }, [toast, updateDashboard]);
 
   const handleCreateInitiative = useCallback((strategyId: string, initiativeName: string) => {
     const newInitiative = newInitiativeTemplate(`init-${Date.now()}`, initiativeName);
     
-    updateStream(prev => ({
+    updateDashboard(prev => ({
       ...prev,
       strategies: prev.strategies.map(strategy => {
         if (strategy.id !== strategyId) return strategy;
@@ -73,27 +73,27 @@ export function Dashboard({ stream, radarItems, streamName, onUpdateStream }: Da
       })
     }));
     toast({ title: "Initiative Added", description: `"${initiativeName}" has been added.` });
-  }, [toast, updateStream]);
+  }, [toast, updateDashboard]);
 
   const handleUpdateStrategy = useCallback((strategyId: string, updatedValues: Partial<Strategy>) => {
-    updateStream(prev => ({
+    updateDashboard(prev => ({
       ...prev,
       strategies: prev.strategies.map(s => s.id === strategyId ? { ...s, ...updatedValues } : s)
     }));
-  }, [updateStream]);
+  }, [updateDashboard]);
   
   const handleUpdateInitiative = useCallback((strategyId: string, initiativeId: string, updatedValues: Partial<Initiative>) => {
-    updateStream(prev => ({
+    updateDashboard(prev => ({
       ...prev,
       strategies: prev.strategies.map(s => s.id === strategyId ? {
         ...s,
         initiatives: s.initiatives.map(i => i.id === initiativeId ? { ...i, ...updatedValues } : i)
       } : s)
     }));
-  }, [updateStream]);
+  }, [updateDashboard]);
 
   const handleUpdateInitiativeItem = useCallback((strategyId: string, initiativeId: string, stepKey: InitiativeStepKey, itemId: string, newText: string) => {
-    updateStream(prev => ({
+    updateDashboard(prev => ({
         ...prev,
         strategies: prev.strategies.map(s => s.id === strategyId ? {
             ...s,
@@ -106,11 +106,11 @@ export function Dashboard({ stream, radarItems, streamName, onUpdateStream }: Da
             } : i)
         } : s)
     }));
-  }, [updateStream]);
+  }, [updateDashboard]);
 
   const handleAddInitiativeItem = useCallback((strategyId: string, initiativeId: string, stepKey: InitiativeStepKey) => {
     const newItem: InitiativeItem = { id: `item-${Date.now()}`, text: "" };
-    updateStream(prev => ({
+    updateDashboard(prev => ({
         ...prev,
         strategies: prev.strategies.map(s => s.id === strategyId ? {
             ...s,
@@ -124,10 +124,10 @@ export function Dashboard({ stream, radarItems, streamName, onUpdateStream }: Da
         } : s)
     }));
     toast({ title: "Item Added", description: `A new item has been added to the initiative.` });
-  }, [toast, updateStream]);
+  }, [toast, updateDashboard]);
 
   const handleDeleteInitiativeItem = useCallback((strategyId: string, initiativeId: string, stepKey: InitiativeStepKey, itemId: string) => {
-    updateStream(prev => ({
+    updateDashboard(prev => ({
         ...prev,
         strategies: prev.strategies.map(s => s.id === strategyId ? {
             ...s,
@@ -141,13 +141,13 @@ export function Dashboard({ stream, radarItems, streamName, onUpdateStream }: Da
         } : s)
     }));
     toast({ title: "Item Removed", variant: "destructive" });
-  }, [toast, updateStream]);
+  }, [toast, updateDashboard]);
 
   return (
     <div>
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold font-headline">
-            {streamName || "Strategy Board"}
+            {dashboardName || "Strategy Board"}
           </h2>
           <Button onClick={() => setCreateStrategyOpen(true)}>
             <Plus className="mr-2 h-4 w-4" />

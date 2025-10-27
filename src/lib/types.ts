@@ -32,7 +32,7 @@ export type Strategy = {
   initiatives: Initiative[];
 };
 
-export type Stream = {
+export type Dashboard = {
   id:string;
   name: string;
   strategies: Strategy[];
@@ -69,7 +69,6 @@ export type Organization = {
   purpose: string;
   context: string;
   level: number;
-  stream: Stream;
+  dashboard: Dashboard;
   radar: RadarItem[];
 };
-

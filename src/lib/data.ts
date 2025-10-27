@@ -33,7 +33,7 @@ export const initialOrganizations: Organization[] = [
     purpose: "Oversees the company's direction.",
     context: "Highest governing body.",
     level: 0,
-    stream: {
+    dashboard: {
       id: "stream-bod",
       name: "Board-Level Strategic Goals",
       strategies: [
@@ -48,7 +48,7 @@ export const initialOrganizations: Organization[] = [
     purpose: "Leads the company and executes the board's vision.",
     context: "Chief Executive Officer.",
     level: 1,
-    stream: {
+    dashboard: {
       id: "stream-ceo",
       name: "CEO Directives",
       strategies: [
@@ -64,7 +64,7 @@ export const initialOrganizations: Organization[] = [
     purpose: 'Manages the company\'s finances.',
     context: 'Chief Financial Officer', 
     level: 2, 
-    stream: { id: 'stream-cfo', name: 'Financial Strategy', strategies: [] },
+    dashboard: { id: 'stream-cfo', name: 'Financial Strategy', strategies: [] },
     radar: [],
   },
   { 
@@ -73,7 +73,7 @@ export const initialOrganizations: Organization[] = [
     purpose: 'Leads technology and engineering.',
     context: 'Chief Technology Officer', 
     level: 2, 
-    stream: {
+    dashboard: {
       id: "cto-stream-1",
       name: "Technology Roadmap",
       strategies: [
@@ -259,7 +259,7 @@ export const initialOrganizations: Organization[] = [
     purpose: 'Leads marketing and growth initiatives.',
     context: 'Chief Marketing Officer', 
     level: 2, 
-    stream: { id: 'stream-cmo', name: 'Marketing & Growth', strategies: [] },
+    dashboard: { id: 'stream-cmo', name: 'Marketing & Growth', strategies: [] },
     radar: [],
   },
 ];

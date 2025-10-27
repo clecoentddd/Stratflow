@@ -57,9 +57,9 @@ export default function OrganizationsPage() {
       purpose,
       context,
       level,
-      stream: {
-        id: `stream-${Date.now()}`,
-        name: `${name} Strategy Stream`,
+      dashboard: {
+        id: `dashboard-${Date.now()}`,
+        name: `${name} Strategy Dashboard`,
         strategies: [],
       },
       radar: [],
@@ -145,7 +145,7 @@ export default function OrganizationsPage() {
                                         <p className="text-sm text-muted-foreground mb-4">{org.context}</p>
                                         <div className="flex flex-wrap gap-2">
                                             <Link href={`/organization/${org.id}`} asChild>
-                                              <Button>View Strategy Stream</Button>
+                                              <Button>View Strategy Dashboard</Button>
                                             </Link>
                                             <Link href={`/organization/${org.id}/radar`} asChild>
                                               <Button variant="accent">View Radar</Button>
