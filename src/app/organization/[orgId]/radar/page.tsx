@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import { useState, useEffect, use } from "react";
@@ -114,7 +115,7 @@ export default function RadarPage({ params }: { params: { orgId: string } }) {
       <AppHeader />
       <main className="p-4 md:p-6 flex-1">
         <div className="mb-6">
-          <Link href="/organizations" asChild>
+          <Link href="/organizations">
             <Button variant="outline">
               <ChevronLeft className="mr-2 h-4 w-4" />
               Back to Organizations
