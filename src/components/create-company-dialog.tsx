@@ -19,11 +19,13 @@ import type { CreateCompanyCommand } from "@/lib/domain/companies/commands";
 interface CreateCompanyDialogProps {
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
+  onCompanyCreated: () => void;
 }
 
 export function CreateCompanyDialog({
   isOpen,
   onOpenChange,
+  onCompanyCreated,
 }: CreateCompanyDialogProps) {
   const [name, setName] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -59,10 +61,8 @@ export function CreateCompanyDialog({
       // Reset form and close dialog
       setName("");
       onOpenChange(false);
+      onCompanyCreated();
       
-      // We could add a callback here if needed, e.g., onCompanyCreated()
-      // For now, the user can navigate to the organizations page to see the effect.
-
     } catch (error) {
       console.error(error);
       toast({
