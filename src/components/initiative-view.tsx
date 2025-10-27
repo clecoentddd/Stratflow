@@ -155,10 +155,6 @@ export function InitiativeView({
         </div>
         
         <div className="mb-6">
-            <Label className="flex items-center gap-2 mb-2">
-                <Link2 className="h-4 w-4" />
-                Radar Tags
-            </Label>
             <div className="flex items-center gap-4">
                  <Button variant="outline" size="sm" onClick={() => setLinkRadarOpen(true)}>
                     Tag radar item
