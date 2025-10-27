@@ -301,38 +301,36 @@ const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: a
                         </button>
                     )}
                 </div>
+                <div className={tooltipStyles.tooltipPanel} 
+                    onMouseEnter={() => {}}
+                    onMouseLeave={() => setTooltipData({ visible: false, item: null })}
+                >
+                    {tooltipData.visible && tooltipData.item ? (
+                        <div ref={tooltipRef} className={tooltipStyles.tooltip}>
+                            <div className={tooltipStyles.row}><span className={tooltipStyles.label}>Name:</span><span className={tooltipStyles.value}>{tooltipData.item.name}</span></div>
+                            <div className={tooltipStyles.row}><span className={tooltipStyles.label}>Type:</span><span className={tooltipStyles.value}>{tooltipData.item.type}</span></div>
+                            <div className={tooltipStyles.row}><span className={tooltipStyles.label}>Category:</span><span className={tooltipStyles.value}>{tooltipData.item.raw.category}</span></div>
+                            <div className={tooltipStyles.row}><span className={tooltipStyles.label}>Distance:</span><span className={tooltipStyles.value}>{tooltipData.item.raw.distance}</span></div>
+                            <div className={tooltipStyles.row}><span className={tooltipStyles.label}>Impact:</span><span className={tooltipStyles.value}>{tooltipData.item.raw.impact}</span></div>
+                            <div className={tooltipStyles.row}><span className={tooltipStyles.label}>Tolerance:</span><span className={tooltipStyles.value}>{tooltipData.item.raw.tolerance}</span></div>
+                            {tooltipData.item.zoom_in && (
+                                <div className={tooltipStyles.row}><span className={tooltipStyles.label}>Zoom to:</span><span className={tooltipStyles.link}>{tooltipData.item.zoom_in.name}</span></div>
+                            )}
+                            {onEditClick && (
+                                <button className={tooltipStyles.editButton} onClick={() => onEditClick(tooltipData.item)}>
+                                    <span className={tooltipStyles.editIcon}>✏️</span><span>Edit</span>
+                                </button>
+                            )}
+                        </div>
+                    ) : (
+                        <div className={tooltipStyles.tooltipPlaceholder}>Hover over items to see details</div>
+                    )}
+                </div>
             </div>
 
             <div className={styles.middlePanel}>
                 <svg ref={svgRef}></svg>
             </div>
-
-            <div className={tooltipStyles.tooltipPanel} 
-                onMouseEnter={() => {}}
-                onMouseLeave={() => setTooltipData({ visible: false, item: null })}
-            >
-                {tooltipData.visible && tooltipData.item ? (
-                    <div ref={tooltipRef} className={tooltipStyles.tooltip}>
-                        <div className={tooltipStyles.row}><span className={tooltipStyles.label}>Name:</span><span className={tooltipStyles.value}>{tooltipData.item.name}</span></div>
-                        <div className={tooltipStyles.row}><span className={tooltipStyles.label}>Type:</span><span className={tooltipStyles.value}>{tooltipData.item.type}</span></div>
-                        <div className={tooltipStyles.row}><span className={tooltipStyles.label}>Category:</span><span className={tooltipStyles.value}>{tooltipData.item.raw.category}</span></div>
-                        <div className={tooltipStyles.row}><span className={tooltipStyles.label}>Distance:</span><span className={tooltipStyles.value}>{tooltipData.item.raw.distance}</span></div>
-                        <div className={tooltipStyles.row}><span className={tooltipStyles.label}>Impact:</span><span className={tooltipStyles.value}>{tooltipData.item.raw.impact}</span></div>
-                        <div className={tooltipStyles.row}><span className={tooltipStyles.label}>Tolerance:</span><span className={tooltipStyles.value}>{tooltipData.item.raw.tolerance}</span></div>
-                        {tooltipData.item.zoom_in && (
-                            <div className={tooltipStyles.row}><span className={tooltipStyles.label}>Zoom to:</span><span className={tooltipStyles.link}>{tooltipData.item.zoom_in.name}</span></div>
-                        )}
-                        {onEditClick && (
-                            <button className={tooltipStyles.editButton} onClick={() => onEditClick(tooltipData.item)}>
-                                <span className={tooltipStyles.editIcon}>✏️</span><span>Edit</span>
-                            </button>
-                        )}
-                    </div>
-                ) : (
-                    <div className={tooltipStyles.tooltipPlaceholder}>Hover over items to see details</div>
-                )}
-            </div>
-
         </div>
     );
 };

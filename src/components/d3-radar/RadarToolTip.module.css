@@ -2,18 +2,17 @@
    🎯 Tooltip Panel Layout
    ================================ */
 .tooltipPanel {
-    flex: 0 0 auto;
-    min-width: 280px; 
-    max-width: 280px; 
+    flex: 1; /* Allow panel to grow */
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     align-items: stretch;
-    padding: 20px 16px 0 16px;
+    padding: 20px 0 0 0; /* Adjusted padding */
     gap: 16px;
     box-sizing: border-box;
     transition: all 0.3s ease;
     color: white;
+    width: 100%; /* Ensure it takes full width of parent */
 }
 
 /* ADD THIS RULE: Force Inter on all nested HTML/SVG text elements */
@@ -152,13 +151,8 @@
     .tooltipPanel {
         flex: none;
         max-width: none;
-        /* Note: width: 100%; was removed in previous steps to fix the overflow issue, 
-           meaning the panel will now size based on its content (220px) 
-           unless the main container changes to flex-direction: column. */
         padding: 16px;
     }
-
-    /* DELETED: The empty/redundant ruleset for .tooltip, .tooltipPlaceholder */
     
     .label {
         min-width: 60px;
