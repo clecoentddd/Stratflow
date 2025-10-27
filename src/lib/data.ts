@@ -12,6 +12,7 @@ const newInitiativeTemplate = (id: string, name: string) => ({
       iconName: step.iconName,
       items: []
     })),
+    linkedRadarItemIds: [],
 });
 
 const initiativeStepsTemplate: {
@@ -92,6 +93,7 @@ export const initialOrganizations: Organization[] = [
                 { key: "actions", title: "Actions", iconName: "ListChecks", items: [] },
                 { key: "proximateObjectives", title: "Proximate Objectives", iconName: "Target", items: [{ id: "item-4", text: "Achieve 500 survey responses" }] },
               ],
+              linkedRadarItemIds: ['radar-item-1'],
             },
           ],
         },

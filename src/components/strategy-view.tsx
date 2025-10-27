@@ -20,7 +20,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { strategyStates } from "@/lib/data";
 import { Input } from "@/components/ui/input";
 
-import type { Strategy, Initiative, StrategyState, InitiativeStepKey, InitiativeItem } from "@/lib/types";
+import type { Strategy, Initiative, StrategyState, InitiativeStepKey, InitiativeItem, RadarItem } from "@/lib/types";
 import { InitiativeView } from "./initiative-view";
 import { cn } from "@/lib/utils";
 
@@ -33,6 +33,7 @@ const iconMap = {
 
 interface StrategyViewProps {
   strategy: Strategy;
+  radarItems: RadarItem[];
   isFocused: boolean;
   onCreateInitiative: (initiativeName: string) => void;
   onUpdateStrategy: (updatedValues: Partial<Strategy>) => void;
@@ -43,7 +44,8 @@ interface StrategyViewProps {
 }
 
 export function StrategyView({ 
-    strategy, 
+    strategy,
+    radarItems,
     isFocused,
     onCreateInitiative, 
     onUpdateStrategy, 
@@ -128,7 +130,12 @@ export function StrategyView({
             {strategy.initiatives.length > 0 ? (
                 <Accordion type="multiple" className="w-full">
                     {strategy.initiatives.map(initiative => (
-                        <InitiativeView key={initiative.id} initiative={initiative} {...initiativeHandlers} />
+                        <InitiativeView 
+                            key={initiative.id} 
+                            initiative={initiative} 
+                            radarItems={radarItems} 
+                            {...initiativeHandlers} 
+                        />
                     ))}
                 </Accordion>
             ) : (

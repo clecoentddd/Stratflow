@@ -1,10 +1,11 @@
 
+
 "use client";
 
 import { useState, useMemo, useCallback } from "react";
 import { Plus } from "lucide-react";
 
-import type { Stream, Strategy, StrategyState, InitiativeStepKey, InitiativeItem, Initiative } from "@/lib/types";
+import type { Stream, Strategy, StrategyState, InitiativeStepKey, InitiativeItem, Initiative, RadarItem } from "@/lib/types";
 import { newInitiativeTemplate } from "@/lib/data";
 import { useToast } from "@/hooks/use-toast";
 
@@ -22,11 +23,12 @@ const strategyOrder: Record<StrategyState, number> = {
 
 interface DashboardProps {
     stream: Stream;
+    radarItems: RadarItem[];
     streamName: string;
     onUpdateStream: (stream: Stream) => void;
 }
 
-export function Dashboard({ stream, streamName, onUpdateStream }: DashboardProps) {
+export function Dashboard({ stream, radarItems, streamName, onUpdateStream }: DashboardProps) {
   const { toast } = useToast();
   const [isCreateStrategyOpen, setCreateStrategyOpen] = useState(false);
 
@@ -161,6 +163,7 @@ export function Dashboard({ stream, streamName, onUpdateStream }: DashboardProps
                       <StrategyView 
                           key={strategy.id} 
                           strategy={strategy} 
+                          radarItems={radarItems}
                           isFocused={isFocused}
                           onCreateInitiative={(initiativeName) => handleCreateInitiative(strategy.id, initiativeName)}
                           onUpdateStrategy={(updatedValues) => handleUpdateStrategy(strategy.id, updatedValues)}

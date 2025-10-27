@@ -2,7 +2,8 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, Save, XCircle, Trash2, Search, Milestone, ListChecks, Target } from "lucide-react";
+import Link from 'next/link';
+import { Plus, Save, XCircle, Trash2, Search, Milestone, ListChecks, Target, Link2, Badge } from "lucide-react";
 import {
   AccordionContent,
   AccordionItem,
@@ -19,8 +20,9 @@ import { Progress } from "@/components/ui/progress";
 import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import type { Initiative, InitiativeStepKey, InitiativeItem } from "@/lib/types";
+import type { Initiative, InitiativeStepKey, InitiativeItem, RadarItem } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { LinkRadarItemsDialog } from './link-radar-items-dialog';
 
 const iconMap = {
     Search,
@@ -104,6 +106,7 @@ function InitiativeItemView({ item, stepKey, initiativeId, onUpdateInitiativeIte
 
 interface InitiativeViewProps {
   initiative: Initiative;
+  radarItems: RadarItem[];
   onUpdateInitiative: (initiativeId: string, updatedValues: Partial<Initiative>) => void;
   onUpdateInitiativeItem: (initiativeId: string, stepKey: InitiativeStepKey, itemId: string, newText: string) => void;
   onAddInitiativeItem: (initiativeId: string, stepKey: InitiativeStepKey) => void;
@@ -112,11 +115,23 @@ interface InitiativeViewProps {
 
 export function InitiativeView({ 
     initiative,
+    radarItems,
     onUpdateInitiative,
     onUpdateInitiativeItem,
     onAddInitiativeItem,
     onDeleteInitiativeItem
 }: InitiativeViewProps) {
+
+  const [isLinkRadarOpen, setLinkRadarOpen] = useState(false);
+
+  const handleLinkRadarItems = (selectedIds: string[]) => {
+    onUpdateInitiative(initiative.id, { linkedRadarItemIds: selectedIds });
+  };
+  
+  const linkedItems = (initiative.linkedRadarItemIds || [])
+    .map(id => radarItems.find(item => item.id === id))
+    .filter((item): item is RadarItem => !!item);
+
   return (
     <AccordionItem value={initiative.id}>
       <AccordionTrigger className="hover:bg-accent/50 px-4 rounded-md">
@@ -138,6 +153,32 @@ export function InitiativeView({
             step={1}
           />
         </div>
+        
+        <div className="mb-6">
+            <div className="flex items-center justify-between mb-2">
+                <Label className="flex items-center gap-2">
+                    <Link2 className="h-4 w-4" />
+                    Linked Radar Items
+                </Label>
+                <Button variant="outline" size="sm" onClick={() => setLinkRadarOpen(true)}>
+                    Link Items
+                </Button>
+            </div>
+             {linkedItems.length > 0 ? (
+                <div className="flex flex-wrap gap-2">
+                    {linkedItems.map(item => (
+                        <Link href={`/organization/${item.radarId}/radar#${item.id}`} key={item.id}>
+                            <Badge variant={item.type === 'Threat' ? 'destructive' : 'default'}>
+                                {item.name}
+                            </Badge>
+                        </Link>
+                    ))}
+                </div>
+            ) : (
+                <p className="text-sm text-muted-foreground">No radar items linked yet.</p>
+            )}
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-4 items-start gap-4">
           {initiative.steps.map((step) => {
             const Icon = iconMap[step.iconName as keyof typeof iconMap];
@@ -171,6 +212,14 @@ export function InitiativeView({
             </Card>
           )})}
         </div>
+
+        <LinkRadarItemsDialog
+            isOpen={isLinkRadarOpen}
+            onOpenChange={setLinkRadarOpen}
+            availableItems={radarItems}
+            linkedItemIds={initiative.linkedRadarItemIds || []}
+            onLinkItems={handleLinkRadarItems}
+        />
       </AccordionContent>
     </AccordionItem>
   );

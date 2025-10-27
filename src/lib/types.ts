@@ -21,6 +21,7 @@ export type Initiative = {
   name: string;
   progression: number;
   steps: InitiativeStep[];
+  linkedRadarItemIds?: string[];
 };
 
 export type Strategy = {

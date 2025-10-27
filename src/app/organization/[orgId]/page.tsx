@@ -6,7 +6,7 @@ import Link from "next/link";
 import { notFound, useParams } from "next/navigation";
 import { ChevronLeft } from "lucide-react";
 import { initialOrganizations } from "@/lib/data";
-import type { Organization } from "@/lib/types";
+import type { Organization, RadarItem } from "@/lib/types";
 import { AppHeader } from "@/components/header";
 import { Button } from "@/components/ui/button";
 import { Dashboard } from "@/components/dashboard";
@@ -28,6 +28,7 @@ export default function OrganizationStrategyPage() {
     let org = allOrgs.find(o => o.id === orgId);
 
     if (org) {
+      if (!org.radar) org.radar = [];
       setOrganization(org);
     }
     setIsLoading(false);
@@ -76,7 +77,7 @@ export default function OrganizationStrategyPage() {
       <AppHeader />
       <main className="p-4 md:p-6 flex-1">
         <div className="mb-6">
-          <Link href="/organizations" asChild>
+          <Link href="/organizations" passHref>
               <Button variant="outline">
                 <ChevronLeft className="mr-2 h-4 w-4" />
                 Back to Organizations
@@ -84,7 +85,8 @@ export default function OrganizationStrategyPage() {
           </Link>
         </div>
         <Dashboard 
-            stream={organization.stream} 
+            stream={organization.stream}
+            radarItems={organization.radar}
             streamName={`${organization.name} - Strategy Stream`}
             onUpdateStream={handleUpdateStream}
         />
