@@ -56,9 +56,9 @@ export function LinkRadarItemsDialog({
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Link Radar Items</DialogTitle>
+          <DialogTitle>Tag Radar Items</DialogTitle>
           <DialogDescription>
-            Select the radar items to associate with this initiative.
+            Select radar items to tag this initiative with.
           </DialogDescription>
         </DialogHeader>
         <ScrollArea className="max-h-72">
@@ -86,7 +86,7 @@ export function LinkRadarItemsDialog({
         </ScrollArea>
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
-          <Button onClick={handleSave}>Save Links</Button>
+          <Button onClick={handleSave}>Save Tags</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

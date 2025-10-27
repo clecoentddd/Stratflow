@@ -155,28 +155,28 @@ export function InitiativeView({
         </div>
         
         <div className="mb-6">
-            <div className="flex items-center justify-between mb-2">
-                <Label className="flex items-center gap-2">
-                    <Link2 className="h-4 w-4" />
-                    Linked Radar Items
-                </Label>
-                <Button variant="outline" size="sm" onClick={() => setLinkRadarOpen(true)}>
-                    Link Items
+            <Label className="flex items-center gap-2 mb-2">
+                <Link2 className="h-4 w-4" />
+                Radar Tags
+            </Label>
+            <div className="flex items-center gap-4">
+                 <Button variant="outline" size="sm" onClick={() => setLinkRadarOpen(true)}>
+                    Tag radar item
                 </Button>
+                {linkedItems.length > 0 ? (
+                    <div className="flex flex-wrap gap-2">
+                        {linkedItems.map(item => (
+                            <Link href={`/organization/${item.radarId}/radar#${item.id}`} key={item.id}>
+                                <Badge variant={item.type === 'Threat' ? 'destructive' : 'default'}>
+                                    {item.name}
+                                </Badge>
+                            </Link>
+                        ))}
+                    </div>
+                ) : (
+                    <p className="text-sm text-muted-foreground">No radar items tagged yet.</p>
+                )}
             </div>
-             {linkedItems.length > 0 ? (
-                <div className="flex flex-wrap gap-2">
-                    {linkedItems.map(item => (
-                        <Link href={`/organization/${item.radarId}/radar#${item.id}`} key={item.id}>
-                            <Badge variant={item.type === 'Threat' ? 'destructive' : 'default'}>
-                                {item.name}
-                            </Badge>
-                        </Link>
-                    ))}
-                </div>
-            ) : (
-                <p className="text-sm text-muted-foreground">No radar items linked yet.</p>
-            )}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-4 items-start gap-4">
