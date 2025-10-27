@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import { useState } from "react";
@@ -7,8 +8,7 @@ import { RadarItemDialog } from "@/components/radar-item-dialog";
 import { RadarItemCard } from "@/components/radar-item-card";
 import { Button } from "@/components/ui/button";
 import type { RadarItem, Organization } from "@/lib/types";
-import RadarChart from "@/components/radar-chart";
-import { mapRadarItems } from "@/lib/radar-mappers";
+import RadarChart from "@/components/d3-radar/RadarChart";
 
 
 interface RadarDashboardProps {
@@ -28,8 +28,14 @@ export function RadarDashboard({ organizationName, radarItems, onUpsertItem, onD
     setEditingItem(item);
     setDialogOpen(true);
   };
+  
+  const handleEditClick = (item: any) => {
+      const fullItem = radarItems.find(i => i.id === item.id);
+      if (fullItem) {
+          handleOpenDialog(fullItem);
+      }
+  }
 
-  const radarChartItems = mapRadarItems(radarItems);
 
   return (
     <div>
@@ -40,9 +46,18 @@ export function RadarDashboard({ organizationName, radarItems, onUpsertItem, onD
           New Radar Item
         </Button>
       </div>
+      
+      <div className="bg-black text-white p-4 rounded-lg">
+          <RadarChart
+              items={radarItems}
+              radius={300}
+              onEditClick={handleEditClick}
+              onCreateClick={() => handleOpenDialog()}
+          />
+      </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        <div className="lg:col-span-7 space-y-4">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mt-8">
+        <div className="lg:col-span-12 space-y-4">
             <h2 className="text-2xl font-semibold font-headline">Radar Items</h2>
             {radarItems.length > 0 ? (
                 <div className="space-y-4">
@@ -61,12 +76,6 @@ export function RadarDashboard({ organizationName, radarItems, onUpsertItem, onD
                     <p className="text-muted-foreground mt-2">Get started by creating a new radar item.</p>
                 </div>
             )}
-        </div>
-        <div className="lg:col-span-5">
-            <h2 className="text-2xl font-semibold font-headline mb-4">Radar Visualization</h2>
-            <div className="sticky top-20">
-                <RadarChart items={radarChartItems} onEditItem={handleOpenDialog} rawItems={radarItems} />
-            </div>
         </div>
       </div>
 

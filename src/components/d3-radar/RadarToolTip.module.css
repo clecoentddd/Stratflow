@@ -1,0 +1,166 @@
+/* ================================
+   🎯 Tooltip Panel Layout
+   ================================ */
+.tooltipPanel {
+    flex: 0 0 auto;
+    min-width: 280px; 
+    max-width: 280px; 
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    padding: 20px 16px 0 16px;
+    gap: 16px;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+    color: white;
+}
+
+/* ADD THIS RULE: Force Inter on all nested HTML/SVG text elements */
+.tooltipPanel * {
+    font-family: 'Inter', sans-serif;
+}
+
+/* Tooltip placeholder when nothing is selected */
+.tooltipPlaceholder {
+    width: 100%;
+    min-height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background: rgba(10, 15, 15, 0.4);
+    backdrop-filter: blur(4px);
+    color: #666;
+    border-radius: 6px;
+    box-sizing: border-box;
+    padding: 24px;
+    transition: all 0.3s ease;
+    font-size: 13px;
+    letter-spacing: 0.3px;
+}
+
+/* ================================
+   🧭 Tooltip Active Content
+   ================================ */
+.tooltip {
+    width: 100%;
+    box-sizing: border-box;
+    border-radius: 6px;
+    padding: 16px;
+    background: rgba(20, 25, 25, 0.7);
+    backdrop-filter: blur(6px);
+    color: #e8e8e8;
+    border: 1px solid rgba(0, 204, 136, 0.2);
+    transition: all 0.3s ease;
+}
+
+/* ... (keyframes remain unchanged) ... */
+
+/* ================================
+   📊 Tooltip Field Rows
+   ================================ */
+.row {
+    margin-bottom: 10px;
+    line-height: 1.6;
+    display: flex;
+    align-items: baseline;
+}
+
+.label {
+    font-weight: 600;
+    color: #00cc88;
+    margin-right: 10px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    min-width: 80px;
+}
+
+.value {
+    color: #e8e8e8;
+    font-size: 13px;
+}
+
+/* ================================
+   🔗 Links (Zoom-in / related)
+   ================================ */
+.link {
+    color: #5fb3d9;
+    text-decoration: none;
+    cursor: pointer;
+    border-bottom: 1px solid rgba(95, 179, 217, 0.3);
+    transition: all 0.2s ease;
+}
+
+.link:hover {
+    color: #7ec9e8;
+    border-bottom-color: rgba(126, 201, 232, 0.6);
+}
+
+/* ================================
+   🧰 Tooltip Buttons
+   ================================ */
+.editButton {
+    background-color: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(0, 204, 136, 0.3);
+    color: #00cc88;
+    padding: 6px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all 0.25s ease;
+    margin-top: 16px;
+    width: auto;
+    font-size: 11px;
+    font-weight: 500;
+}
+
+.editButton .editIcon {
+    color: #FFD580;
+    font-size: 13px;
+}
+
+.editButton:hover {
+    background-color: rgba(0, 204, 136, 0.1);
+    border-color: rgba(0, 204, 136, 0.5);
+    color: #00ff9f;
+    transform: translateY(-1px);
+}
+
+.editButton:hover .editIcon {
+    color: #FFB347;
+}
+
+/* ================================
+   🕶 Misc
+   ================================ */
+.mutedText {
+    color: #777;
+    font-style: italic;
+    font-size: 13px;
+    font-weight: 300;
+}
+
+/* ================================
+   📱 Responsive
+   ================================ */
+@media (max-width: 1024px) {
+    .tooltipPanel {
+        flex: none;
+        max-width: none;
+        /* Note: width: 100%; was removed in previous steps to fix the overflow issue, 
+           meaning the panel will now size based on its content (220px) 
+           unless the main container changes to flex-direction: column. */
+        padding: 16px;
+    }
+
+    /* DELETED: The empty/redundant ruleset for .tooltip, .tooltipPlaceholder */
+    
+    .label {
+        min-width: 60px;
+    }
+}
