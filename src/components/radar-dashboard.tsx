@@ -7,6 +7,9 @@ import { RadarItemDialog } from "@/components/radar-item-dialog";
 import { RadarItemCard } from "@/components/radar-item-card";
 import { Button } from "@/components/ui/button";
 import type { RadarItem, Organization } from "@/lib/types";
+import RadarChart from "@/components/radar-chart";
+import { mapRadarItems } from "@/lib/radar-mappers";
+
 
 interface RadarDashboardProps {
   organizationName: string;
@@ -26,6 +29,8 @@ export function RadarDashboard({ organizationName, radarItems, onUpsertItem, onD
     setDialogOpen(true);
   };
 
+  const radarChartItems = mapRadarItems(radarItems);
+
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
@@ -37,7 +42,7 @@ export function RadarDashboard({ organizationName, radarItems, onUpsertItem, onD
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        <div className="lg:col-span-8 space-y-4">
+        <div className="lg:col-span-7 space-y-4">
             <h2 className="text-2xl font-semibold font-headline">Radar Items</h2>
             {radarItems.length > 0 ? (
                 <div className="space-y-4">
@@ -57,10 +62,10 @@ export function RadarDashboard({ organizationName, radarItems, onUpsertItem, onD
                 </div>
             )}
         </div>
-        <div className="lg:col-span-4">
-            <h2 className="text-2xl font-semibold font-headline">Radar Visualization</h2>
-            <div className="mt-4 w-full aspect-square bg-muted rounded-lg border-2 border-dashed flex items-center justify-center">
-                <p className="text-muted-foreground">Radar Placeholder</p>
+        <div className="lg:col-span-5">
+            <h2 className="text-2xl font-semibold font-headline mb-4">Radar Visualization</h2>
+            <div className="sticky top-20">
+                <RadarChart items={radarChartItems} onEditItem={handleOpenDialog} rawItems={radarItems} />
             </div>
         </div>
       </div>
@@ -71,6 +76,7 @@ export function RadarDashboard({ organizationName, radarItems, onUpsertItem, onD
         onSave={onUpsertItem}
         item={editingItem}
         organizations={organizations}
+        currentOrgId={currentOrgId}
       />
     </div>
   );
