@@ -8,7 +8,7 @@ import { initialOrganizations as defaultOrgs } from "@/lib/data";
 import type { Organization } from "@/lib/types";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { AppHeader } from "@/components/header";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { CreateOrganizationDialog } from "@/components/create-organization-dialog";
 import {
   AlertDialog,
@@ -21,7 +21,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { cn } from "@/lib/utils";
 
 export default function OrganizationsPage() {
   const [organizations, setOrganizations] = useState<Organization[]>([]);
@@ -145,8 +144,12 @@ export default function OrganizationsPage() {
                                     <CardContent className="flex-grow">
                                         <p className="text-sm text-muted-foreground mb-4">{org.context}</p>
                                         <div className="flex flex-wrap gap-2">
-                                            <Link href={`/organization/${org.id}`} className={cn(buttonVariants())}>View Strategy Stream</Link>
-                                            <Link href={`/organization/${org.id}/radar`} className={cn(buttonVariants({ variant: "secondary" }))}>View Radar</Link>
+                                            <Link href={`/organization/${org.id}`} asChild>
+                                              <Button>View Strategy Stream</Button>
+                                            </Link>
+                                            <Link href={`/organization/${org.id}/radar`} asChild>
+                                              <Button variant="secondary">View Radar</Button>
+                                            </Link>
                                         </div>
                                     </CardContent>
                                 </Card>

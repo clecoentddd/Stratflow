@@ -3,7 +3,7 @@
 
 import Link from "next/link";
 import { AppHeader } from "@/components/header";
-import { buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -20,9 +20,11 @@ export default function WelcomePage() {
                 The ultimate tool for visualizing, planning, and executing your organizational strategy. Turn your vision into actionable initiatives and track your progress with clarity.
             </p>
             <div className="mt-10">
-                <Link href="/organizations" className={cn(buttonVariants({ size: "lg" }))}>
-                    Go to My Organizations
-                    <ArrowRight className="ml-2 h-5 w-5" />
+                <Link href="/organizations" asChild>
+                    <Button size="lg">
+                        Go to My Organizations
+                        <ArrowRight className="ml-2 h-5 w-5" />
+                    </Button>
                 </Link>
             </div>
         </div>

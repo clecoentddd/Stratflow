@@ -8,9 +8,8 @@ import { ChevronLeft } from "lucide-react";
 import { initialOrganizations } from "@/lib/data";
 import type { Organization } from "@/lib/types";
 import { AppHeader } from "@/components/header";
-import { buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { Dashboard } from "@/components/dashboard";
-import { cn } from "@/lib/utils";
 
 export default function OrganizationStrategyPage() {
   const params = useParams();
@@ -77,9 +76,11 @@ export default function OrganizationStrategyPage() {
       <AppHeader />
       <main className="p-4 md:p-6 flex-1">
         <div className="mb-6">
-          <Link href="/organizations" className={cn(buttonVariants({ variant: "outline" }))}>
-              <ChevronLeft className="mr-2 h-4 w-4" />
-              Back to Organizations
+          <Link href="/organizations" asChild>
+              <Button variant="outline">
+                <ChevronLeft className="mr-2 h-4 w-4" />
+                Back to Organizations
+              </Button>
           </Link>
         </div>
         <Dashboard 
