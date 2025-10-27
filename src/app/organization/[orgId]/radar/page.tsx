@@ -62,15 +62,27 @@ export default function RadarPage({ params }: { params: { orgId: string } }) {
     const radar = organization.radar || [];
     const existingItemIndex = radar.findIndex(item => item.id === itemToUpsert.id);
     let newRadar: RadarItem[];
+
+    const now = new Date().toISOString();
+    let toastTitle: string;
+    let toastDescription: string;
+
     if (existingItemIndex > -1) {
+      itemToUpsert.updated_at = now;
       newRadar = [...radar];
       newRadar[existingItemIndex] = itemToUpsert;
-      toast({ title: "Radar Item Updated", description: `"${itemToUpsert.title}" has been updated.` });
+      toastTitle = "Radar Item Updated";
+      toastDescription = `"${itemToUpsert.name}" has been updated.`;
     } else {
+      itemToUpsert.created_at = now;
+      itemToUpsert.radarId = organization.id;
       newRadar = [...radar, itemToUpsert];
-      toast({ title: "Radar Item Created", description: `"${itemToUpsert.title}" has been added.` });
+      toastTitle = "Radar Item Created";
+      toastDescription = `"${itemToUpsert.name}" has been added.`;
     }
+    
     handleUpdateRadar(newRadar);
+    toast({ title: toastTitle, description: toastDescription });
   };
 
   const handleDeleteRadarItem = (itemId: string) => {
@@ -79,7 +91,7 @@ export default function RadarPage({ params }: { params: { orgId: string } }) {
     const itemToDelete = radar.find(item => item.id === itemId);
     const newRadar = radar.filter(item => item.id !== itemId);
     handleUpdateRadar(newRadar);
-    toast({ title: "Radar Item Deleted", description: `"${itemToDelete?.title}" has been deleted.`, variant: "destructive" });
+    toast({ title: "Radar Item Deleted", description: `"${itemToDelete?.name}" has been deleted.`, variant: "destructive" });
   }
 
   if (isLoading) {

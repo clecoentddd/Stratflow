@@ -1,4 +1,5 @@
 
+
 export type StrategyState = 'Draft' | 'Open' | 'Closed' | 'Obsolete' | 'Deleted';
 
 export type InitiativeItem = {
@@ -45,16 +46,19 @@ export type RadarTolerance = 'High' | 'Medium' | 'Low';
 
 export type RadarItem = {
   id: string;
-  title: string;
-  detection: string;
-  assessment: string;
-  decision: string;
+  radarId: string;
+  name: string;
+  detect: string;
+  assess: string;
+  respond: string;
   type: RadarItemType;
   category: RadarCategory;
   distance: RadarDistance;
   impact: RadarImpact;
   tolerance: RadarTolerance;
-  zoomInLink?: string;
+  zoom_in: string | null;
+  created_at: string;
+  updated_at: string | null;
 };
 
 
@@ -67,3 +71,4 @@ export type Organization = {
   stream: Stream;
   radar: RadarItem[];
 };
+

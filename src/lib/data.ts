@@ -1,4 +1,5 @@
 
+
 import type { Organization, StrategyState, RadarItemType, RadarCategory, RadarDistance, RadarImpact, RadarTolerance } from "./types";
 
 const newInitiativeTemplate = (id: string, name: string) => ({
@@ -106,16 +107,19 @@ export const initialOrganizations: Organization[] = [
     radar: [
         {
             id: 'radar-item-1',
-            title: 'AI-driven Automation',
-            detection: 'Competitors are leveraging AI to automate customer support.',
-            assessment: 'This poses a medium-term threat to our market position if we don\'t adapt. It could reduce our operational costs significantly.',
-            decision: 'Initiate a pilot project to explore AI chatbot solutions for customer service.',
+            radarId: 'org-cto',
+            name: 'AI-driven Automation',
+            detect: 'Competitors are leveraging AI to automate customer support.',
+            assess: 'This poses a medium-term threat to our market position if we don\'t adapt. It could reduce our operational costs significantly.',
+            respond: 'Initiate a pilot project to explore AI chatbot solutions for customer service.',
             type: 'Opportunity',
             category: 'Operating Model',
             distance: 'Detected',
             impact: 'Medium',
             tolerance: 'Medium',
-            zoomInLink: ''
+            zoom_in: null,
+            created_at: new Date().toISOString(),
+            updated_at: null,
         }
     ],
   },

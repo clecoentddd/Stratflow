@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import type { RadarItem } from "@/lib/types";
 import Link from 'next/link';
+import { format, parseISO } from 'date-fns';
 
 interface RadarItemCardProps {
   item: RadarItem;
@@ -22,12 +23,15 @@ interface RadarItemCardProps {
 }
 
 export function RadarItemCard({ item, onEdit, onDelete }: RadarItemCardProps) {
+  const createdAt = item.created_at ? format(parseISO(item.created_at), "PPP") : 'N/A';
+  const updatedAt = item.updated_at ? format(parseISO(item.updated_at), "PPP") : null;
+
   return (
     <Card>
       <CardHeader>
         <div className="flex justify-between items-start">
             <div>
-                <CardTitle>{item.title}</CardTitle>
+                <CardTitle>{item.name}</CardTitle>
                 <div className="flex flex-wrap gap-2 mt-2">
                     <Badge variant={item.type === 'Threat' ? 'destructive' : 'default'}>{item.type}</Badge>
                     <Badge variant="secondary">{item.category}</Badge>
@@ -50,28 +54,34 @@ export function RadarItemCard({ item, onEdit, onDelete }: RadarItemCardProps) {
         <div className="space-y-4">
             <div>
                 <h4 className="font-semibold">What have you detected?</h4>
-                <p className="text-sm text-muted-foreground">{item.detection}</p>
+                <p className="text-sm text-muted-foreground">{item.detect}</p>
             </div>
             <div>
                 <h4 className="font-semibold">What is your assessment?</h4>
-                <p className="text-sm text-muted-foreground">{item.assessment}</p>
+                <p className="text-sm text-muted-foreground">{item.assess}</p>
             </div>
             <div>
                 <h4 className="font-semibold">What decisions could you take?</h4>
-                <p className="text-sm text-muted-foreground">{item.decision}</p>
+                <p className="text-sm text-muted-foreground">{item.respond}</p>
             </div>
         </div>
       </CardContent>
-      {item.zoomInLink && (
-        <CardFooter>
-            <Link href={item.zoomInLink} target="_blank" rel="noopener noreferrer">
-                <Button variant="link" className="p-0 h-auto">
-                    Zoom In
-                    <ExternalLink className="ml-2 h-4 w-4" />
-                </Button>
-            </Link>
-        </CardFooter>
-      )}
+      <CardFooter className="flex justify-between items-center text-xs text-muted-foreground">
+            <div className="flex items-center gap-4">
+                {item.zoom_in && (
+                    <Link href={item.zoom_in} target="_blank" rel="noopener noreferrer">
+                        <Button variant="link" className="p-0 h-auto text-xs">
+                            Zoom In
+                            <ExternalLink className="ml-2 h-3 w-3" />
+                        </Button>
+                    </Link>
+                )}
+            </div>
+             <div>
+                <span>Created: {createdAt}</span>
+                {updatedAt && <span className="ml-4"> | Updated: {updatedAt}</span>}
+             </div>
+      </CardFooter>
     </Card>
   );
 }

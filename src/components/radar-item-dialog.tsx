@@ -26,32 +26,39 @@ interface RadarItemDialogProps {
   onSave: (item: RadarItem) => void;
   item: RadarItem | null;
   organizations: Organization[];
+  currentOrgId: string;
 }
 
-const defaultItem: Omit<RadarItem, 'id'> = {
-  title: "",
-  detection: "",
-  assessment: "",
-  decision: "",
+const defaultItem: Omit<RadarItem, 'id' | 'radarId' | 'created_at' | 'updated_at'> = {
+  name: "",
+  detect: "",
+  assess: "",
+  respond: "",
   type: "Threat",
   category: "Business",
   distance: "Detected",
   impact: "Low",
   tolerance: "Medium",
-  zoomInLink: "",
+  zoom_in: null,
 };
 
-export function RadarItemDialog({ isOpen, onOpenChange, onSave, item, organizations }: RadarItemDialogProps) {
-  const [formData, setFormData] = useState<Omit<RadarItem, 'id'>>(defaultItem);
+export function RadarItemDialog({ isOpen, onOpenChange, onSave, item, organizations, currentOrgId }: RadarItemDialogProps) {
+  const [formData, setFormData] = useState(defaultItem);
   const [isZoomInOpen, setZoomInOpen] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
-      setFormData(item ? { ...item } : defaultItem);
+      if (item) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { id, radarId, created_at, updated_at, ...editableFields } = item;
+        setFormData(editableFields);
+      } else {
+        setFormData(defaultItem);
+      }
     }
   }, [isOpen, item]);
 
-  const handleChange = (field: keyof typeof formData, value: string) => {
+  const handleChange = (field: keyof typeof formData, value: string | null) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
   
@@ -62,20 +69,26 @@ export function RadarItemDialog({ isOpen, onOpenChange, onSave, item, organizati
   };
 
   const handleSubmit = () => {
-    if (!formData.title) return;
+    if (!formData.name) return;
+    
+    const now = new Date().toISOString();
     const finalItem: RadarItem = {
-      id: item?.id || `radar-${Date.now()}`,
+      ...defaultItem,
       ...formData,
+      id: item?.id || `radar-${Date.now()}`,
+      radarId: item?.radarId || currentOrgId,
+      created_at: item?.created_at || now,
+      updated_at: item ? now : null,
     };
     onSave(finalItem);
     onOpenChange(false);
   };
   
-  const isFormValid = formData.title.trim() !== "";
+  const isFormValid = formData.name.trim() !== "";
   
   const getZoomLinkOrgName = () => {
-    if (!formData.zoomInLink) return "Select a radar...";
-    const org = organizations.find(o => formData.zoomInLink?.includes(o.id));
+    if (!formData.zoom_in) return "Select a radar...";
+    const org = organizations.find(o => formData.zoom_in?.includes(o.id));
     return org ? `${org.name} Radar` : "Select a radar...";
   }
 
@@ -91,21 +104,21 @@ export function RadarItemDialog({ isOpen, onOpenChange, onSave, item, organizati
           </DialogHeader>
           <div className="grid gap-6 py-4">
             <div className="space-y-2">
-              <Label htmlFor="title">Title</Label>
-              <Input id="title" value={formData.title} onChange={(e) => handleChange('title', e.target.value)} placeholder="A concise title for the item" />
+              <Label htmlFor="name">Title</Label>
+              <Input id="name" value={formData.name} onChange={(e) => handleChange('name', e.target.value)} placeholder="A concise title for the item" />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="detection">What have you detected?</Label>
-              <Textarea id="detection" value={formData.detection} onChange={(e) => handleChange('detection', e.target.value)} placeholder="Describe the signal or event." rows={3}/>
+              <Label htmlFor="detect">What have you detected?</Label>
+              <Textarea id="detect" value={formData.detect} onChange={(e) => handleChange('detect', e.target.value)} placeholder="Describe the signal or event." rows={3}/>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="assessment">What is your assessment?</Label>
-              <Textarea id="assessment" value={formData.assessment} onChange={(e) => handleChange('assessment', e.target.value)} placeholder="Analyze the potential impact and implications." rows={3}/>
+              <Label htmlFor="assess">What is your assessment?</Label>
+              <Textarea id="assess" value={formData.assess} onChange={(e) => handleChange('assess', e.target.value)} placeholder="Analyze the potential impact and implications." rows={3}/>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="decision">What decisions could you take?</Label>
-              <Textarea id="decision" value={formData.decision} onChange={(e) => handleChange('decision', e.target.value)} placeholder="Outline potential actions or strategies." rows={3}/>
+              <Label htmlFor="respond">What decisions could you take?</Label>
+              <Textarea id="respond" value={formData.respond} onChange={(e) => handleChange('respond', e.target.value)} placeholder="Outline potential actions or strategies." rows={3}/>
             </div>
 
             <div className="space-y-4">
@@ -167,7 +180,7 @@ export function RadarItemDialog({ isOpen, onOpenChange, onSave, item, organizati
             </div>
             
             <div className="space-y-2">
-                <Label htmlFor="zoomInLink">Zoom In Link (Optional)</Label>
+                <Label htmlFor="zoom_in">Zoom In Link (Optional)</Label>
                 <Button variant="outline" className="w-full justify-start font-normal" onClick={() => setZoomInOpen(true)}>
                     {getZoomLinkOrgName()}
                 </Button>
@@ -185,8 +198,8 @@ export function RadarItemDialog({ isOpen, onOpenChange, onSave, item, organizati
         isOpen={isZoomInOpen}
         onOpenChange={setZoomInOpen}
         organizations={organizations}
-        onSelect={(link) => handleChange('zoomInLink', link)}
-        currentOrgId={item?.id.split('-')[1] ?? ''}
+        onSelect={(link) => handleChange('zoom_in', link)}
+        currentOrgId={currentOrgId}
       />
     </>
   );
