@@ -189,13 +189,13 @@ const RadarChart: React.FC<RadarChartProps> = ({ items, onEditItem, rawItems }) 
     return (
         <div className="w-full relative">
             <svg ref={svgRef}></svg>
-            {selectedBlip && popoverTargetRef.current && (
+            {selectedBlip && (
                  <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
                      <PopoverTrigger asChild>
                         <div style={{
                              position: 'absolute',
-                             left: `${popoverTargetRef.current.getBoundingClientRect().left + window.scrollX - svgRef.current!.getBoundingClientRect().left}px`,
-                             top: `${popoverTarget-ref.current!.getBoundingClientRect().top + window.scrollY - svgRef.current!.getBoundingClientRect().top}px`,
+                             left: `${selectedBlip.x + dimensions.width / 2}px`,
+                             top: `${selectedBlip.y + dimensions.height / 2}px`,
                              width: '1px',
                              height: '1px'
                         }} />
@@ -242,3 +242,5 @@ const RadarChart: React.FC<RadarChartProps> = ({ items, onEditItem, rawItems }) 
 };
 
 export default RadarChart;
+
+    
