@@ -43,7 +43,7 @@ const defaultItem: Omit<RadarItem, 'id' | 'radarId' | 'created_at' | 'updated_at
 };
 
 export function RadarItemDialog({ isOpen, onOpenChange, onSave, item, organizations, currentOrgId }: RadarItemDialogProps) {
-  const [formData, setFormData] = useState(defaultItem);
+  const [formData, setFormData] = useState<Omit<RadarItem, 'id' | 'radarId' | 'created_at' | 'updated_at'>>(defaultItem);
   const [isZoomInOpen, setZoomInOpen] = useState(false);
 
   useEffect(() => {
@@ -78,13 +78,13 @@ export function RadarItemDialog({ isOpen, onOpenChange, onSave, item, organizati
       id: item?.id || `radar-${Date.now()}`,
       radarId: item?.radarId || currentOrgId,
       created_at: item?.created_at || now,
-      updated_at: item ? now : null,
+      updated_at: item ? now : (item?.created_at || null),
     };
     onSave(finalItem);
     onOpenChange(false);
   };
   
-  const isFormValid = formData.name.trim() !== "";
+  const isFormValid = formData.name?.trim() !== "";
   
   const getZoomLinkOrgName = () => {
     if (!formData.zoom_in) return "Select a radar...";
@@ -204,3 +204,4 @@ export function RadarItemDialog({ isOpen, onOpenChange, onSave, item, organizati
     </>
   );
 }
+ 
