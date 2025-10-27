@@ -15,6 +15,8 @@ import { Badge } from "@/components/ui/badge";
 import type { RadarItem } from "@/lib/types";
 import Link from 'next/link';
 import { format, parseISO } from 'date-fns';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+
 
 interface RadarItemCardProps {
   item: RadarItem;
@@ -69,12 +71,21 @@ export function RadarItemCard({ item, onEdit, onDelete }: RadarItemCardProps) {
       <CardFooter className="flex justify-between items-center text-xs text-muted-foreground">
             <div className="flex items-center gap-4">
                 {item.zoom_in && (
-                    <Link href={item.zoom_in} asChild>
-                        <Button variant="link" className="p-0 h-auto text-xs">
-                            Zoom In
-                            <ExternalLink className="ml-2 h-3 w-3" />
-                        </Button>
-                    </Link>
+                    <TooltipProvider>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <Link href={item.zoom_in} asChild>
+                                    <Button variant="link" className="p-0 h-auto text-xs">
+                                        Zoom In
+                                        <ExternalLink className="ml-2 h-3 w-3" />
+                                    </Button>
+                                </Link>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                <p>Navigate to {item.zoom_in}</p>
+                            </TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
                 )}
             </div>
              <div>
@@ -85,5 +96,3 @@ export function RadarItemCard({ item, onEdit, onDelete }: RadarItemCardProps) {
     </Card>
   );
 }
-
-    
