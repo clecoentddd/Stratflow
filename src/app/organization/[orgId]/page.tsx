@@ -73,7 +73,7 @@ export default function OrganizationStrategyPage({ params }: { params: { orgId: 
       <AppHeader />
       <main className="p-4 md:p-6 flex-1">
         <div className="mb-6">
-          <Link href="/organizations">
+          <Link href="/organizations" asChild>
             <Button variant="outline">
               <ChevronLeft className="mr-2 h-4 w-4" />
               Back to Organizations
