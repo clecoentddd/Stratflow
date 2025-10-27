@@ -66,6 +66,16 @@ export function RadarItemCard({ item, onEdit, onDelete }: RadarItemCardProps) {
                 <h4 className="font-semibold">What decisions could you take?</h4>
                 <p className="text-sm text-muted-foreground">{item.respond}</p>
             </div>
+             {item.zoom_in && (
+              <div className="pt-4 border-t">
+                <Link href={item.zoom_in} asChild>
+                    <Button>
+                        <ExternalLink className="mr-2 h-4 w-4" />
+                        Open Linked Radar
+                    </Button>
+                </Link>
+              </div>
+            )}
         </div>
       </CardContent>
       <CardFooter className="flex justify-between items-center text-xs text-muted-foreground">
