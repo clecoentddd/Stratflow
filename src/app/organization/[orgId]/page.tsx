@@ -1,9 +1,9 @@
 
 "use client";
 
-import { useState, useEffect, use } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, useParams } from "next/navigation";
 import { ChevronLeft } from "lucide-react";
 import { initialOrganizations } from "@/lib/data";
 import type { Organization } from "@/lib/types";
@@ -11,13 +11,14 @@ import { AppHeader } from "@/components/header";
 import { Button } from "@/components/ui/button";
 import { Dashboard } from "@/components/dashboard";
 
-export default function OrganizationStrategyPage({ params }: { params: { orgId: string } }) {
-  const resolvedParams = use(params);
-  const orgId = resolvedParams.orgId;
+export default function OrganizationStrategyPage() {
+  const params = useParams();
+  const orgId = params.orgId as string;
   const [organization, setOrganization] = useState<Organization | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    if (!orgId) return;
     const storedOrgsString = localStorage.getItem("organizations");
     let allOrgs: Organization[] = storedOrgsString
       ? JSON.parse(storedOrgsString)

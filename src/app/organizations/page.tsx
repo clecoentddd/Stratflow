@@ -43,8 +43,7 @@ export default function OrganizationsPage() {
   }, []);
 
   useEffect(() => {
-    // Only set localStorage if organizations have been loaded and we are not in the initial loading state
-    if (!isLoading && organizations.length > 0) {
+    if (!isLoading) {
       localStorage.setItem("organizations", JSON.stringify(organizations));
     }
   }, [organizations, isLoading]);
@@ -68,7 +67,7 @@ export default function OrganizationsPage() {
   
   const handleResetData = () => {
     localStorage.removeItem("organizations");
-    window.location.reload();
+    setOrganizations(defaultOrgs);
   };
 
   const groupedOrganizations = useMemo(() => {

@@ -1,9 +1,9 @@
 
 "use client";
 
-import { useState, useEffect, use } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, useParams } from "next/navigation";
 import { ChevronLeft } from "lucide-react";
 import { initialOrganizations } from "@/lib/data";
 import type { Organization, RadarItem } from "@/lib/types";
@@ -12,14 +12,16 @@ import { Button } from "@/components/ui/button";
 import { RadarDashboard } from "@/components/radar-dashboard";
 import { useToast } from "@/hooks/use-toast";
 
-export default function RadarPage({ params }: { params: { orgId: string } }) {
-  const { orgId } = use(params);
+export default function RadarPage() {
+  const params = useParams();
+  const orgId = params.orgId as string;
   const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [organization, setOrganization] = useState<Organization | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
 
   useEffect(() => {
+    if (!orgId) return;
     const storedOrgsString = localStorage.getItem("organizations");
     const allOrgs: Organization[] = storedOrgsString
       ? JSON.parse(storedOrgsString)
@@ -38,7 +40,7 @@ export default function RadarPage({ params }: { params: { orgId: string } }) {
   }, [orgId]);
   
   useEffect(() => {
-    if (organizations.length > 0) {
+    if (organizations.length > 0 && !isLoading) {
       localStorage.setItem("organizations", JSON.stringify(organizations));
     }
     // Update the single organization state if it's in the main list
@@ -47,7 +49,7 @@ export default function RadarPage({ params }: { params: { orgId: string } }) {
       setOrganization(currentOrg);
     }
 
-  }, [organizations, orgId]);
+  }, [organizations, orgId, isLoading]);
 
   const handleUpdateRadar = (updatedRadar: RadarItem[]) => {
     setOrganizations(prevOrgs => 
