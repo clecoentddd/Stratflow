@@ -19,12 +19,12 @@ export default function WelcomePage() {
                 The ultimate tool for visualizing, planning, and executing your organizational strategy. Turn your vision into actionable initiatives and track your progress with clarity.
             </p>
             <div className="mt-10">
-                <Button asChild size="lg">
-                  <Link href="/organizations">
-                    Go to My Organizations
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Link>
-                </Button>
+                <Link href="/organizations" asChild>
+                    <Button size="lg">
+                        Go to My Organizations
+                        <ArrowRight className="ml-2 h-5 w-5" />
+                    </Button>
+                </Link>
             </div>
         </div>
       </main>
