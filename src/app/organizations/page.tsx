@@ -150,8 +150,7 @@ export default function OrganizationsPage() {
                 </div>
             )}
         </div>
-      </main>
-      <CreateOrganizationDialog 
+      </main>      <CreateOrganizationDialog 
         isOpen={isCreateOrgOpen}
         onOpenChange={setCreateOrgOpen}
         onCreate={handleCreateOrganization}
