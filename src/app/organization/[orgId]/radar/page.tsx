@@ -28,6 +28,10 @@ export default function RadarPage({ params }: { params: { orgId: string } }) {
     let org = allOrgs.find(o => o.id === orgId);
 
     if (org) {
+      // Ensure radar property exists
+      if (!org.radar) {
+        org.radar = [];
+      }
       setOrganization(org);
     }
     setIsLoading(false);
@@ -57,14 +61,15 @@ export default function RadarPage({ params }: { params: { orgId: string } }) {
   
   const handleUpsertRadarItem = (itemToUpsert: RadarItem) => {
     if (!organization) return;
-    const existingItemIndex = organization.radar.findIndex(item => item.id === itemToUpsert.id);
+    const radar = organization.radar || [];
+    const existingItemIndex = radar.findIndex(item => item.id === itemToUpsert.id);
     let newRadar: RadarItem[];
     if (existingItemIndex > -1) {
-      newRadar = [...organization.radar];
+      newRadar = [...radar];
       newRadar[existingItemIndex] = itemToUpsert;
       toast({ title: "Radar Item Updated", description: `"${itemToUpsert.title}" has been updated.` });
     } else {
-      newRadar = [...organization.radar, itemToUpsert];
+      newRadar = [...radar, itemToUpsert];
       toast({ title: "Radar Item Created", description: `"${itemToUpsert.title}" has been added.` });
     }
     handleUpdateRadar(newRadar);
@@ -72,7 +77,8 @@ export default function RadarPage({ params }: { params: { orgId: string } }) {
 
   const handleDeleteRadarItem = (itemId: string) => {
     if (!organization) return;
-    const newRadar = organization.radar.filter(item => item.id !== itemId);
+    const radar = organization.radar || [];
+    const newRadar = radar.filter(item => item.id !== itemId);
     handleUpdateRadar(newRadar);
     toast({ title: "Radar Item Deleted", variant: "destructive" });
   }
@@ -106,7 +112,7 @@ export default function RadarPage({ params }: { params: { orgId: string } }) {
         </div>
         <RadarDashboard
             organizationName={organization.name}
-            radarItems={organization.radar}
+            radarItems={organization.radar || []}
             onUpsertItem={handleUpsertRadarItem}
             onDeleteItem={handleDeleteRadarItem}
         />

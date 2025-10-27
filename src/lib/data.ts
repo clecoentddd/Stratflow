@@ -115,6 +115,7 @@ export const initialOrganizations: Organization[] = [
             distance: 'Detected',
             impact: 'Medium',
             tolerance: 'Medium',
+            zoomInLink: ''
         }
     ],
   },
