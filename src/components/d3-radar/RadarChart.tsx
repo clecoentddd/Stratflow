@@ -2,6 +2,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import * as d3 from 'd3';
 import { GetRadarName } from './GetRadarData';
 import styles from './RadarChart.module.css';
@@ -19,12 +20,19 @@ const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: a
     const tooltipRef = useRef<HTMLDivElement>(null);
     const [tooltipData, setTooltipData] = useState({ visible: false, item: null as any | null });
     const [activeQuadrant, setActiveQuadrant] = useState<number | null>(null);
+    const router = useRouter();
 
     const handleQuadrantZoom = (idx: number) => {
         setActiveQuadrant(activeQuadrant === idx ? null : idx);
     };
 
     const handleReset = () => setActiveQuadrant(null);
+    
+    const handleZoomInClick = (url: string) => {
+        if (url) {
+            router.push(url);
+        }
+    };
 
     const quadrantLabels = Object.values(radarConfig.categories)
     .sort((a, b) => a.label.localeCompare(b.label)) 
@@ -34,13 +42,11 @@ const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: a
     }));
 
     const drawQuadrants = (g: d3.Selection<SVGGElement, unknown, null, undefined>, radius: number) => {
-        // This draws the visual quadrants, which D3 numbers differently.
-        // D3: 0: Top-Right, 1: Top-Left, 2: Bottom-Left, 3: Bottom-Right
         const visualQuadrantColors = [
-            radarConfig.visual.quadrantColors[3], // Config Q3 -> D3 Q0
-            radarConfig.visual.quadrantColors[2], // Config Q2 -> D3 Q1
-            radarConfig.visual.quadrantColors[1], // Config Q1 -> D3 Q2
-            radarConfig.visual.quadrantColors[0], // Config Q0 -> D3 Q3
+            radarConfig.visual.quadrantColors[3],
+            radarConfig.visual.quadrantColors[2],
+            radarConfig.visual.quadrantColors[1],
+            radarConfig.visual.quadrantColors[0],
         ];
 
         visualQuadrantColors.forEach((color, i) => {
@@ -137,7 +143,8 @@ const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: a
             .classed(styles.chartTextNormal, true);
     };
     
-    const fetchRadarName = async (zoom_in: string) => await GetRadarName(zoom_in);
+    const fetchRadarName = async (orgId: string) => await GetRadarName(orgId);
+    
     const getImpactClass = (impact: string) => {
         switch (impact) {
             case 'Low': return styles.lowImpact;
@@ -205,14 +212,12 @@ const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: a
         if (activeQuadrant !== null) {
             let tX = 0, tY = 0;
             const translationValue = radius * shiftFactor;
-
-            // D3's coordinate system is different from what we might intuitively think.
-            // This switch maps the CONFIG quadrant index to the correct visual translation.
+            
             switch (activeQuadrant) {
-                case 0: tX = -translationValue; tY = -translationValue; break; // Bottom-Right -> moves top-left
-                case 1: tX = translationValue;  tY = -translationValue; break; // Bottom-Left -> moves top-right
-                case 2: tX = translationValue;  tY = translationValue; break;  // Top-Left -> moves bottom-right
-                case 3: tX = -translationValue; tY = translationValue; break;  // Top-Right -> moves bottom-left
+                case 0: tX = -translationValue; tY = -translationValue; break; 
+                case 1: tX = translationValue;  tY = -translationValue; break; 
+                case 2: tX = translationValue;  tY = translationValue; break;  
+                case 3: tX = -translationValue; tY = translationValue; break;  
             }
 
             transformString = `translate(${totalWidth / 2}, ${svgSize / 2}) scale(${zoomFactor}) translate(${tX}, ${tY})`;
@@ -280,7 +285,15 @@ const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: a
                             <div className={tooltipStyles.row}><span className={tooltipStyles.label}>Impact:</span><span className={tooltipStyles.value}>{tooltipData.item.raw.impact}</span></div>
                             <div className={tooltipStyles.row}><span className={tooltipStyles.label}>Tolerance:</span><span className={tooltipStyles.value}>{tooltipData.item.raw.tolerance}</span></div>
                             {tooltipData.item.zoom_in && (
-                                <div className={tooltipStyles.row}><span className={tooltipStyles.label}>Zoom to:</span><span className={tooltipStyles.link}>{tooltipData.item.zoom_in.name}</span></div>
+                                <div className={tooltipStyles.row}>
+                                    <span className={tooltipStyles.label}>Zoom to:</span>
+                                    <span 
+                                        className={tooltipStyles.link} 
+                                        onClick={() => handleZoomInClick(tooltipData.item.zoom_in.id)}
+                                    >
+                                        {tooltipData.item.zoom_in.name}
+                                    </span>
+                                </div>
                             )}
                             {onEditClick && (
                                 <button className={tooltipStyles.editButton} onClick={() => onEditClick(tooltipData.item)}>
@@ -302,9 +315,5 @@ const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: a
 };
 
 export default RadarChart;
-
-    
-    
-    
 
     
