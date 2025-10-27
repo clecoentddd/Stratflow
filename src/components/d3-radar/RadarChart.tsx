@@ -116,7 +116,9 @@ const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: a
                 d3.select(this).select('circle').attr('r', size * 2);
                 let zoomData = null;
                 if (item.zoom_in) {
-                    const radarName = await fetchRadarName(item.zoom_in);
+                    const urlParts = item.zoom_in.split('/');
+                    const orgId = urlParts[2];
+                    const radarName = await fetchRadarName(orgId);
                     zoomData = { id: item.zoom_in, name: radarName };
                 }
                 setTooltipData({ visible: true, item: { ...item, zoom_in: zoomData } });
@@ -293,7 +295,7 @@ const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: a
             </div>
 
             <div className={styles.middlePanel}>
-                <svg ref={svgRef}></svg>
+                <svg ref={svgRef} className={styles.radarWrapper}></svg>
             </div>
         </div>
     );
@@ -303,4 +305,6 @@ export default RadarChart;
 
     
     
+    
+
     

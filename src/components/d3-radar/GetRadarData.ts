@@ -29,14 +29,16 @@ export async function GetRadarData(radarId: string) {
 export async function GetRadarName(radarId: string) {
   try {
     const storedOrgsString = localStorage.getItem("organizations");
-    if (!storedOrgsString) return 'No name available';
+    if (!storedOrgsString) return 'Organization Not Found';
     
     const allOrgs = JSON.parse(storedOrgsString);
     const org = allOrgs.find((o: any) => o.id === radarId);
 
-    return org?.name || 'No name available';
+    return org?.name || 'Unknown Organization';
   } catch (err) {
     console.error('Unexpected error in GetRadarName:', err);
     return 'Error fetching organisation';
   }
 }
+
+    
