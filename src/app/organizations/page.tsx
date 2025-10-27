@@ -1,76 +1,41 @@
 
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import Link from "next/link";
-import { Plus, RotateCcw } from "lucide-react";
-import { initialOrganizations as defaultOrgs } from "@/lib/data";
+import { Plus } from "lucide-react";
 import type { Organization } from "@/lib/types";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { AppHeader } from "@/components/header";
 import { Button } from "@/components/ui/button";
 import { CreateOrganizationDialog } from "@/components/create-organization-dialog";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 
 export default function OrganizationsPage() {
   const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [isCreateOrgOpen, setCreateOrgOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    // This effect runs only on the client, after the component has mounted.
-    const storedOrgs = localStorage.getItem("organizations");
-    if (storedOrgs) {
-      try {
-        setOrganizations(JSON.parse(storedOrgs));
-      } catch (error) {
-        console.error("Failed to parse organizations from localStorage", error);
-        setOrganizations(defaultOrgs);
+  const fetchOrganizations = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch('/api/organizations');
+      if (!response.ok) {
+        throw new Error('Failed to fetch organizations');
       }
-    } else {
-      setOrganizations(defaultOrgs);
+      const data = await response.json();
+      setOrganizations(data);
+    } catch (error) {
+      console.error("Failed to fetch organizations from API", error);
+      setOrganizations([]); // Set to empty array on error
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   }, []);
 
   useEffect(() => {
-    // This effect also runs only on the client.
-    if (!isLoading) {
-      localStorage.setItem("organizations", JSON.stringify(organizations));
-    }
-  }, [organizations, isLoading]);
+    fetchOrganizations();
+  }, [fetchOrganizations]);
 
-  const handleCreateOrganization = (name: string, purpose: string, context: string, level: number) => {
-    const newOrg: Organization = {
-      id: `org-${Date.now()}`,
-      name,
-      purpose,
-      context,
-      level,
-      dashboard: {
-        id: `dashboard-${Date.now()}`,
-        name: `${name} Strategy Dashboard`,
-        strategies: [],
-      },
-      radar: [],
-    };
-    setOrganizations(prev => [...prev, newOrg]);
-  };
-  
-  const handleResetData = () => {
-    localStorage.removeItem("organizations");
-    setOrganizations(defaultOrgs);
-  };
 
   const groupedOrganizations = useMemo(() => {
     const groups: { [key: number]: Organization[] } = {};
@@ -101,26 +66,6 @@ export default function OrganizationsPage() {
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-3xl font-bold font-headline">Organizations</h1>
           <div className="flex items-center gap-2">
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button variant="outline">
-                  <RotateCcw className="mr-2 h-4 w-4" />
-                  Reset Data
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    This will reset all application data to its original state, deleting any changes you've made.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction onClick={handleResetData}>Continue</AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
             <Button onClick={() => setCreateOrgOpen(true)}>
               <Plus className="mr-2 h-4 w-4" />
               New Organization
@@ -168,7 +113,7 @@ export default function OrganizationsPage() {
       <CreateOrganizationDialog 
         isOpen={isCreateOrgOpen}
         onOpenChange={setCreateOrgOpen}
-        onCreate={handleCreateOrganization}
+        onOrganizationCreated={fetchOrganizations}
       />
     </div>
   );

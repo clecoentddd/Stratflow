@@ -34,7 +34,7 @@ export const initialOrganizations: Organization[] = [
     context: "Highest governing body.",
     level: 0,
     dashboard: {
-      id: "stream-bod",
+      id: "dashboard-bod",
       name: "Board-Level Strategic Goals",
       strategies: [
         { id: "bod-strat-1", description: "Grow market share by 5% YoY", timeframe: "2025", state: "Open", initiatives: [] },
@@ -49,7 +49,7 @@ export const initialOrganizations: Organization[] = [
     context: "Chief Executive Officer.",
     level: 1,
     dashboard: {
-      id: "stream-ceo",
+      id: "dashboard-ceo",
       name: "CEO Directives",
       strategies: [
         { id: "ceo-strat-1", description: "Execute on Q4 2024 Product Launch", timeframe: "Q4 2024", state: "Open", initiatives: [] },
@@ -64,7 +64,7 @@ export const initialOrganizations: Organization[] = [
     purpose: 'Manages the company\'s finances.',
     context: 'Chief Financial Officer', 
     level: 2, 
-    dashboard: { id: 'stream-cfo', name: 'Financial Strategy', strategies: [] },
+    dashboard: { id: 'dashboard-cfo', name: 'Financial Strategy', strategies: [] },
     radar: [],
   },
   { 
@@ -74,7 +74,7 @@ export const initialOrganizations: Organization[] = [
     context: 'Chief Technology Officer', 
     level: 2, 
     dashboard: {
-      id: "cto-stream-1",
+      id: "dashboard-cto-1",
       name: "Technology Roadmap",
       strategies: [
         {
@@ -259,7 +259,7 @@ export const initialOrganizations: Organization[] = [
     purpose: 'Leads marketing and growth initiatives.',
     context: 'Chief Marketing Officer', 
     level: 2, 
-    dashboard: { id: 'stream-cmo', name: 'Marketing & Growth', strategies: [] },
+    dashboard: { id: 'dashboard-cmo', name: 'Marketing & Growth', strategies: [] },
     radar: [],
   },
 ];

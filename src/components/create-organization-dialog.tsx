@@ -2,6 +2,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   Dialog,
   DialogContent,
@@ -14,33 +15,75 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "./ui/textarea";
+import { useToast } from "@/hooks/use-toast";
+import type { CreateOrganizationCommand } from "@/lib/types";
 
 interface CreateOrganizationDialogProps {
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
-  onCreate: (name: string, purpose: string, context: string, level: number) => void;
+  onOrganizationCreated: () => void;
 }
 
 export function CreateOrganizationDialog({
   isOpen,
   onOpenChange,
-  onCreate,
+  onOrganizationCreated
 }: CreateOrganizationDialogProps) {
   const [name, setName] = useState("");
   const [purpose, setPurpose] = useState("");
   const [context, setContext] = useState("");
   const [level, setLevel] = useState("0");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { toast } = useToast();
 
-
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const levelNum = parseInt(level, 10);
-    if (name.trim() && purpose.trim() && !isNaN(levelNum)) {
-      onCreate(name.trim(), purpose.trim(), context.trim(), levelNum);
+    if (!name.trim() || !purpose.trim() || isNaN(levelNum)) {
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    const command: CreateOrganizationCommand = {
+      name: name.trim(),
+      purpose: purpose.trim(),
+      context: context.trim(),
+      level: levelNum,
+    };
+
+    try {
+      const response = await fetch('/api/organizations', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(command),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to create organization');
+      }
+
+      toast({
+        title: "Organization Created",
+        description: `"${command.name}" has been successfully created.`,
+      });
+
+      // Reset form and close dialog
       setName("");
       setPurpose("");
       setContext("");
       setLevel("0");
       onOpenChange(false);
+      onOrganizationCreated(); // Callback to trigger re-fetch
+
+    } catch (error) {
+      console.error(error);
+      toast({
+        title: "Error",
+        description: "Could not create the organization. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -61,6 +104,7 @@ export function CreateOrganizationDialog({
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="e.g., CEO"
+              disabled={isSubmitting}
             />
           </div>
           <div className="grid w-full gap-1.5">
@@ -71,6 +115,7 @@ export function CreateOrganizationDialog({
               onChange={(e) => setPurpose(e.target.value)}
               placeholder="e.g., Leads the company and executes the board's vision."
               rows={3}
+              disabled={isSubmitting}
             />
           </div>
            <div className="grid w-full gap-1.5">
@@ -81,6 +126,7 @@ export function CreateOrganizationDialog({
               onChange={(e) => setContext(e.target.value)}
               placeholder="e.g., Sits within the executive leadership team."
               rows={2}
+              disabled={isSubmitting}
             />
           </div>
           <div className="grid w-full max-w-sm items-center gap-1.5">
@@ -91,17 +137,18 @@ export function CreateOrganizationDialog({
               value={level}
               onChange={(e) => setLevel(e.target.value)}
               placeholder="e.g., 0 for top-level"
+              disabled={isSubmitting}
             />
           </div>
         </div>
         <DialogFooter>
-          <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
+          <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={isSubmitting}>Cancel</Button>
           <Button
             type="submit"
             onClick={handleSubmit}
-            disabled={!name.trim() || !purpose.trim()}
+            disabled={!name.trim() || !purpose.trim() || isSubmitting}
           >
-            Create Organization
+            {isSubmitting ? "Creating..." : "Create Organization"}
           </Button>
         </DialogFooter>
       </DialogContent>
