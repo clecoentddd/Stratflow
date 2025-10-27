@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -14,8 +14,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "./ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import type { CreateOrganizationCommand } from "@/lib/domain/organizations/commands";
+import type { Company } from "@/lib/types";
 
 interface CreateOrganizationDialogProps {
   isOpen: boolean;
@@ -26,27 +34,58 @@ interface CreateOrganizationDialogProps {
 export function CreateOrganizationDialog({
   isOpen,
   onOpenChange,
-  onOrganizationCreated
+  onOrganizationCreated,
 }: CreateOrganizationDialogProps) {
   const [name, setName] = useState("");
   const [purpose, setPurpose] = useState("");
   const [context, setContext] = useState("");
   const [level, setLevel] = useState("0");
+  const [companyId, setCompanyId] = useState<string | undefined>(undefined);
+  const [companies, setCompanies] = useState<Company[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
+  useEffect(() => {
+    if (isOpen) {
+      const fetchCompanies = async () => {
+        try {
+          const response = await fetch('/api/companies');
+          if (!response.ok) {
+            throw new Error('Failed to fetch companies');
+          }
+          const data: Company[] = await response.json();
+          setCompanies(data);
+          if (data.length > 0 && !companyId) {
+            setCompanyId(data[0].id);
+          }
+        } catch (error) {
+          console.error("Failed to fetch companies", error);
+          toast({ title: "Error", description: "Could not load companies.", variant: "destructive" });
+        }
+      };
+      fetchCompanies();
+    }
+  }, [isOpen, toast, companyId]);
+
+  const resetForm = () => {
+    setName("");
+    setPurpose("");
+    setContext("");
+    setLevel("0");
+    setCompanyId(companies.length > 0 ? companies[0].id : undefined);
+  };
+
   const handleSubmit = async () => {
     const levelNum = parseInt(level, 10);
-    if (!name.trim() || !purpose.trim() || isNaN(levelNum)) {
-      return;
+    if (!name.trim() || !purpose.trim() || isNaN(levelNum) || !companyId) {
+        toast({ title: "Missing Information", description: "Please fill out all fields, including selecting a company.", variant: "destructive" });
+        return;
     }
 
     setIsSubmitting(true);
 
-    // For now, we hardcode the company ID.
-    // In the future, this might come from a context or prop.
     const command: CreateOrganizationCommand = {
-      companyId: "company-1", 
+      companyId,
       name: name.trim(),
       purpose: purpose.trim(),
       context: context.trim(),
@@ -69,14 +108,9 @@ export function CreateOrganizationDialog({
         description: `"${command.name}" has been successfully created.`,
       });
 
-      // Reset form and close dialog
-      setName("");
-      setPurpose("");
-      setContext("");
-      setLevel("0");
+      resetForm();
       onOpenChange(false);
       onOrganizationCreated(); // Callback to trigger re-fetch
-
     } catch (error) {
       console.error(error);
       toast({
@@ -88,6 +122,8 @@ export function CreateOrganizationDialog({
       setIsSubmitting(false);
     }
   };
+  
+  const isFormValid = name.trim() && purpose.trim() && companyId;
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -95,10 +131,25 @@ export function CreateOrganizationDialog({
         <DialogHeader>
           <DialogTitle>Create New Organization</DialogTitle>
           <DialogDescription>
-            Define a new organization with its name, purpose, context, and level.
+            Define a new organization within a company.
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
+          <div className="grid w-full max-w-sm items-center gap-1.5">
+            <Label htmlFor="company">Company</Label>
+            <Select value={companyId} onValueChange={setCompanyId} disabled={isSubmitting || companies.length === 0}>
+                <SelectTrigger>
+                    <SelectValue placeholder="Select a company" />
+                </SelectTrigger>
+                <SelectContent>
+                    {companies.length > 0 ? companies.map(c => (
+                        <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+                    )) : (
+                        <SelectItem value="no-company" disabled>No companies available</SelectItem>
+                    )}
+                </SelectContent>
+            </Select>
+          </div>
           <div className="grid w-full max-w-sm items-center gap-1.5">
             <Label htmlFor="name">Organization Name</Label>
             <Input
@@ -120,7 +171,7 @@ export function CreateOrganizationDialog({
               disabled={isSubmitting}
             />
           </div>
-           <div className="grid w-full gap-1.5">
+          <div className="grid w-full gap-1.5">
             <Label htmlFor="context">Context</Label>
             <Textarea
               id="context"
@@ -144,13 +195,20 @@ export function CreateOrganizationDialog({
           </div>
         </div>
         <DialogFooter>
-          <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={isSubmitting}>Cancel</Button>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => onOpenChange(false)}
+            disabled={isSubmitting}
+          >
+            Cancel
+          </Button>
           <Button
             type="submit"
             onClick={handleSubmit}
-            disabled={!name.trim() || !purpose.trim() || isSubmitting}
+            disabled={!isFormValid || isSubmitting}
           >
-            {isSubmitting ? "Creating..." : "Create Organization"}
+            {isSubmitting ? 'Creating...' : 'Create Organization'}
           </Button>
         </DialogFooter>
       </DialogContent>

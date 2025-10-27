@@ -1,57 +1,90 @@
 
+import type { CompanyEvent } from '@/lib/domain/companies/events';
 import { initialOrganizations } from '@/lib/data';
-import type { OrganizationEvent, OrganizationCreatedEvent } from '@/lib/domain/organizations/events';
-import type { Organization } from '@/lib/types';
-import { applyEventsToOrganization } from './projections';
+import type {
+  OrganizationEvent,
+  OrganizationCreatedEvent,
+} from '@/lib/domain/organizations/events';
+import type { Organization, Company } from '@/lib/types';
+import { applyEventsToOrganization, applyEventsToCompany } from './projections';
 
 // --- Mock Event Store (In-Memory) ---
 // In a real app, this would be a database like Supabase, DynamoDB, or a dedicated event store.
 
-let events: OrganizationEvent[] = [];
-
-// Define a default company for seeding purposes
-const DEFAULT_COMPANY_ID = "company-1";
+type AllEvents = OrganizationEvent | CompanyEvent;
+let events: AllEvents[] = [];
 
 // Seed the event store with initial data
 const seedEvents = () => {
-    if (events.length > 0) return; // Don't re-seed
+  if (events.length > 0) return; // Don't re-seed
 
-    console.log("Seeding event store...");
-    const seedEvents: OrganizationCreatedEvent[] = initialOrganizations.map(org => ({
-        type: 'OrganizationCreated',
-        aggregateId: org.id,
-        timestamp: new Date().toISOString(),
-        payload: {
-            id: org.id,
-            companyId: DEFAULT_COMPANY_ID, // Associate with the default company
-            name: org.name,
-            purpose: org.purpose,
-            context: org.context,
-            level: org.level,
-        },
+  console.log('Seeding event store...');
+  const DEFAULT_COMPANY_ID = 'company-1';
+
+  // 1. Create the Company first
+  const companyCreatedEvent: CompanyEvent = {
+    type: 'CompanyCreated',
+    entity: 'company',
+    aggregateId: DEFAULT_COMPANY_ID,
+    timestamp: new Date().toISOString(),
+    payload: {
+      id: DEFAULT_COMPANY_ID,
+      name: 'Default Company',
+    },
+  };
+
+  // 2. Create Organizations linked to that Company
+  const organizationCreatedEvents: OrganizationCreatedEvent[] =
+    initialOrganizations.map((org) => ({
+      type: 'OrganizationCreated',
+      entity: 'organization',
+      aggregateId: org.id,
+      timestamp: new Date().toISOString(),
+      payload: {
+        id: org.id,
+        companyId: DEFAULT_COMPANY_ID, // Associate with the default company
+        name: org.name,
+        purpose: org.purpose,
+        context: org.context,
+        level: org.level,
+      },
     }));
-    events.push(...seedEvents);
 
-    // Also need to apply these seed events to the projection
-    const initialProjection = seedEvents.reduce((acc, event) => {
-        // The state of an organization is built by replaying events.
-        // For a new org, the initial state is null.
-        const org = applyEventsToOrganization(null, [event]);
-        if(org) {
-            // We also need to transfer the dashboard and radar data from the initial static data
-            const initialOrgData = initialOrganizations.find(io => io.id === org.id);
-            if (initialOrgData) {
-                org.dashboard = initialOrgData.dashboard;
-                org.radar = initialOrgData.radar;
-            }
-            acc[org.id] = org;
+  const seedEvents: AllEvents[] = [
+    companyCreatedEvent,
+    ...organizationCreatedEvents,
+  ];
+
+  events.push(...seedEvents);
+
+  // --- This is a bit of a hack for the mock DB to sync projections ---
+  // In a real system, this might be a message queue or a DB trigger.
+  const initialCompanyProjections: Record<string, Company> = {};
+  const initialOrgProjections: Record<string, Organization> = {};
+
+  seedEvents.forEach((event) => {
+    if (event.entity === 'company') {
+      const company = applyEventsToCompany(null, [event]);
+      if (company) {
+        initialCompanyProjections[company.id] = company;
+      }
+    } else if (event.entity === 'organization') {
+      const org = applyEventsToOrganization(null, [event]);
+      if (org) {
+        const initialOrgData = initialOrganizations.find(
+          (io) => io.id === org.id
+        );
+        if (initialOrgData) {
+          org.dashboard = initialOrgData.dashboard;
+          org.radar = initialOrgData.radar;
         }
-        return acc;
-    }, {} as Record<string, Organization>);
+        initialOrgProjections[org.id] = org;
+      }
+    }
+  });
 
-    // This is a bit of a hack for the mock DB to sync projection and event store
-    const { _setInitialProjections } = require('./projections');
-    _setInitialProjections(initialProjection);
+  const { _setInitialProjections } = require('./projections');
+  _setInitialProjections(initialOrgProjections, initialCompanyProjections);
 };
 
 // --- Adaptation Layer ---
@@ -62,13 +95,15 @@ const seedEvents = () => {
  * Saves a batch of events to the event store.
  * @param newEvents - An array of events to save.
  */
-export const saveEvents = async (newEvents: OrganizationEvent[]): Promise<void> => {
-    // In a real DB, this would be a transactional write.
-    return new Promise(resolve => {
-        events.push(...newEvents);
-        console.log(`Saved ${newEvents.length} events. Total events: ${events.length}`);
-        resolve();
-    });
+export const saveEvents = async (newEvents: AllEvents[]): Promise<void> => {
+  // In a real DB, this would be a transactional write.
+  return new Promise((resolve) => {
+    events.push(...newEvents);
+    console.log(
+      `Saved ${newEvents.length} events. Total events: ${events.length}`
+    );
+    resolve();
+  });
 };
 
 /**
@@ -76,21 +111,22 @@ export const saveEvents = async (newEvents: OrganizationEvent[]): Promise<void> 
  * @param aggregateId - The ID of the aggregate.
  * @returns An array of events.
  */
-export const getEventsFor = async (aggregateId: string): Promise<OrganizationEvent[]> => {
-    return new Promise(resolve => {
-        const aggregateEvents = events.filter(e => e.aggregateId === aggregateId);
-        resolve(aggregateEvents);
-    });
+export const getEventsFor = async (
+  aggregateId: string
+): Promise<AllEvents[]> => {
+  return new Promise((resolve) => {
+    const aggregateEvents = events.filter((e) => e.aggregateId === aggregateId);
+    resolve(aggregateEvents);
+  });
 };
 
 /**
  * Retrieves all events in the store.
  * NOTE: This is for projection rebuilding and would be handled differently in a real system.
  */
-export const _getAllEvents = async (): Promise<OrganizationEvent[]> => {
-    return new Promise(resolve => resolve(events));
+export const _getAllEvents = async (): Promise<AllEvents[]> => {
+  return new Promise((resolve) => resolve(events));
 };
-
 
 // Initialize seed data
 seedEvents();

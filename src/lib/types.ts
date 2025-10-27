@@ -1,5 +1,4 @@
 
-
 export type StrategyState = 'Draft' | 'Open' | 'Closed' | 'Obsolete' | 'Deleted';
 
 export type InitiativeItem = {
@@ -62,10 +61,14 @@ export type RadarItem = {
   updated_at: string | null;
 };
 
+export type Company = {
+  id: string;
+  name: string;
+};
 
 export type Organization = {
   id: string;
-  companyId: string; // <-- New field
+  companyId: string;
   name: string;
   purpose: string;
   context: string;
