@@ -25,6 +25,7 @@ import {
 export default function OrganizationsPage() {
   const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [isCreateOrgOpen, setCreateOrgOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const storedOrgs = localStorage.getItem("organizations");
@@ -38,14 +39,15 @@ export default function OrganizationsPage() {
     } else {
       setOrganizations(defaultOrgs);
     }
+    setIsLoading(false);
   }, []);
 
   useEffect(() => {
-    // Only set localStorage if organizations have been loaded
-    if (organizations.length > 0) {
+    // Only set localStorage if organizations have been loaded and we are not in the initial loading state
+    if (!isLoading && organizations.length > 0) {
       localStorage.setItem("organizations", JSON.stringify(organizations));
     }
-  }, [organizations]);
+  }, [organizations, isLoading]);
 
   const handleCreateOrganization = (name: string, purpose: string, context: string, level: number) => {
     const newOrg: Organization = {
@@ -79,6 +81,17 @@ export default function OrganizationsPage() {
     });
     return Object.entries(groups).sort(([a], [b]) => parseInt(a) - parseInt(b));
   }, [organizations]);
+
+  if (isLoading) {
+    return (
+        <div className="flex flex-col min-h-screen">
+            <AppHeader />
+            <main className="p-4 md:p-6 flex-1 flex items-center justify-center">
+                <p>Loading Organizations...</p>
+            </main>
+        </div>
+    );
+  }
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -130,12 +143,12 @@ export default function OrganizationsPage() {
                                     <CardContent className="flex-grow">
                                         <p className="text-sm text-muted-foreground mb-4">{org.context}</p>
                                         <div className="flex flex-wrap gap-2">
-                                            <Link href={`/organization/${org.id}`} asChild>
-                                                <Button>View Strategy Stream</Button>
-                                            </Link>
-                                            <Link href={`/organization/${org.id}/radar`} asChild>
-                                                <Button variant="secondary">View Radar</Button>
-                                            </Link>
+                                            <Button asChild>
+                                                <Link href={`/organization/${org.id}`}>View Strategy Stream</Link>
+                                            </Button>
+                                            <Button asChild variant="secondary">
+                                                <Link href={`/organization/${org.id}/radar`}>View Radar</Link>
+                                            </Button>
                                         </div>
                                     </CardContent>
                                 </Card>

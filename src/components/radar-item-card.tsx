@@ -69,12 +69,12 @@ export function RadarItemCard({ item, onEdit, onDelete }: RadarItemCardProps) {
       <CardFooter className="flex justify-between items-center text-xs text-muted-foreground">
             <div className="flex items-center gap-4">
                 {item.zoom_in && (
-                    <Link href={item.zoom_in} asChild>
-                      <Button variant="link" className="p-0 h-auto text-xs">
+                    <Button asChild variant="link" className="p-0 h-auto text-xs">
+                      <Link href={item.zoom_in}>
                           Zoom In
                           <ExternalLink className="ml-2 h-3 w-3" />
-                      </Button>
-                    </Link>
+                      </Link>
+                    </Button>
                 )}
             </div>
              <div>
