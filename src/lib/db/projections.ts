@@ -1,5 +1,7 @@
 
-import type { Organization, OrganizationEvent, OrganizationCreatedEvent } from '@/lib/types';
+import type { Organization } from '@/lib/types';
+import type { OrganizationEvent } from '@/lib/domain/organizations/events';
+
 
 // --- Mock Projection Store (In-Memory) ---
 // This acts as our read-optimized database. It's updated whenever events are saved.

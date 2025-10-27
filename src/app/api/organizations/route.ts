@@ -7,11 +7,8 @@ import {
     applyEventsToOrganization
 } from '@/lib/db/projections';
 import { saveEvents } from '@/lib/db/event-store';
-import type { 
-    CreateOrganizationCommand, 
-    OrganizationCreatedEvent,
-    Organization
-} from '@/lib/types';
+import type { CreateOrganizationCommand } from '@/lib/domain/organizations/commands';
+import type { OrganizationCreatedEvent } from '@/lib/domain/organizations/events';
 
 
 // --- Vertical Slice: GET Organizations ---

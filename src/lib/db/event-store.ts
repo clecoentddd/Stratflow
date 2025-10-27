@@ -1,6 +1,7 @@
 
 import { initialOrganizations } from '@/lib/data';
-import type { OrganizationEvent, OrganizationCreatedEvent, Organization } from '@/lib/types';
+import type { OrganizationEvent, OrganizationCreatedEvent } from '@/lib/domain/organizations/events';
+import type { Organization } from '@/lib/types';
 import { applyEventsToOrganization } from './projections';
 
 // --- Mock Event Store (In-Memory) ---

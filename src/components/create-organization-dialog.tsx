@@ -2,7 +2,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import {
   Dialog,
   DialogContent,
@@ -16,7 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "./ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import type { CreateOrganizationCommand } from "@/lib/types";
+import type { CreateOrganizationCommand } from "@/lib/domain/organizations/commands";
 
 interface CreateOrganizationDialogProps {
   isOpen: boolean;
