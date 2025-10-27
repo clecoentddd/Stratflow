@@ -39,9 +39,9 @@ export type Stream = {
 // Radar Types
 export type RadarItemType = 'Threat' | 'Opportunity';
 export type RadarCategory = 'Business' | 'Operating Model' | 'Capabilities' | 'People & Knowledge';
-export type RadarDistance = 'Detected' | 'Assessing' | 'Assessed' | 'Responding';
+export type RadarDistance = 'Detected' | 'Assessing' | 'Assessed' | 'Responding' | 'Responded';
 export type RadarImpact = 'Low' | 'Medium' | 'High';
-export type RadarTolerance = 'High' | 'Medium';
+export type RadarTolerance = 'High' | 'Medium' | 'Low';
 
 export type RadarItem = {
   id: string;

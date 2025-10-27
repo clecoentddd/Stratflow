@@ -6,16 +6,18 @@ import { Plus } from "lucide-react";
 import { RadarItemDialog } from "@/components/radar-item-dialog";
 import { RadarItemCard } from "@/components/radar-item-card";
 import { Button } from "@/components/ui/button";
-import type { RadarItem } from "@/lib/types";
+import type { RadarItem, Organization } from "@/lib/types";
 
 interface RadarDashboardProps {
   organizationName: string;
   radarItems: RadarItem[];
   onUpsertItem: (item: RadarItem) => void;
   onDeleteItem: (itemId: string) => void;
+  organizations: Organization[];
+  currentOrgId: string;
 }
 
-export function RadarDashboard({ organizationName, radarItems, onUpsertItem, onDeleteItem }: RadarDashboardProps) {
+export function RadarDashboard({ organizationName, radarItems, onUpsertItem, onDeleteItem, organizations, currentOrgId }: RadarDashboardProps) {
   const [isDialogOpen, setDialogOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<RadarItem | null>(null);
 
@@ -44,7 +46,7 @@ export function RadarDashboard({ organizationName, radarItems, onUpsertItem, onD
                             key={item.id} 
                             item={item} 
                             onEdit={() => handleOpenDialog(item)}
-                            onDelete={() => onDeleteItem(item.id)}
+                            onDeleteItem={() => onDeleteItem(item.id)}
                         />
                     ))}
                 </div>
@@ -68,6 +70,7 @@ export function RadarDashboard({ organizationName, radarItems, onUpsertItem, onD
         onOpenChange={setDialogOpen}
         onSave={onUpsertItem}
         item={editingItem}
+        organizations={organizations}
       />
     </div>
   );

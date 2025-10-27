@@ -13,22 +13,22 @@ import { RadarDashboard } from "@/components/radar-dashboard";
 import { useToast } from "@/hooks/use-toast";
 
 export default function RadarPage({ params }: { params: { orgId: string } }) {
-  const resolvedParams = use(params);
-  const orgId = resolvedParams.orgId;
+  const { orgId } = use(params);
+  const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [organization, setOrganization] = useState<Organization | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
 
   useEffect(() => {
     const storedOrgsString = localStorage.getItem("organizations");
-    let allOrgs: Organization[] = storedOrgsString
+    const allOrgs: Organization[] = storedOrgsString
       ? JSON.parse(storedOrgsString)
       : initialOrganizations;
     
-    let org = allOrgs.find(o => o.id === orgId);
+    setOrganizations(allOrgs);
+    const org = allOrgs.find(o => o.id === orgId);
 
     if (org) {
-      // Ensure radar property exists
       if (!org.radar) {
         org.radar = [];
       }
@@ -38,25 +38,23 @@ export default function RadarPage({ params }: { params: { orgId: string } }) {
   }, [orgId]);
   
   useEffect(() => {
-    if (organization) {
-      const storedOrgsString = localStorage.getItem("organizations");
-      const allOrgs: Organization[] = storedOrgsString ? JSON.parse(storedOrgsString) : initialOrganizations;
-      
-      const orgIndex = allOrgs.findIndex(o => o.id === organization.id);
-      
-      let updatedOrgs;
-      if (orgIndex !== -1) {
-          updatedOrgs = [...allOrgs];
-          updatedOrgs[orgIndex] = organization;
-      } else {
-          updatedOrgs = [...allOrgs, organization];
-      }
-      localStorage.setItem("organizations", JSON.stringify(updatedOrgs));
+    if (organizations.length > 0) {
+      localStorage.setItem("organizations", JSON.stringify(organizations));
     }
-  }, [organization]);
+    // Update the single organization state if it's in the main list
+    const currentOrg = organizations.find(o => o.id === orgId);
+    if(currentOrg) {
+      setOrganization(currentOrg);
+    }
+
+  }, [organizations, orgId]);
 
   const handleUpdateRadar = (updatedRadar: RadarItem[]) => {
-    setOrganization(prev => prev ? ({ ...prev, radar: updatedRadar }) : null);
+    setOrganizations(prevOrgs => 
+        prevOrgs.map(org => 
+            org.id === orgId ? { ...org, radar: updatedRadar } : org
+        )
+    );
   };
   
   const handleUpsertRadarItem = (itemToUpsert: RadarItem) => {
@@ -78,9 +76,10 @@ export default function RadarPage({ params }: { params: { orgId: string } }) {
   const handleDeleteRadarItem = (itemId: string) => {
     if (!organization) return;
     const radar = organization.radar || [];
+    const itemToDelete = radar.find(item => item.id === itemId);
     const newRadar = radar.filter(item => item.id !== itemId);
     handleUpdateRadar(newRadar);
-    toast({ title: "Radar Item Deleted", variant: "destructive" });
+    toast({ title: "Radar Item Deleted", description: `"${itemToDelete?.title}" has been deleted.`, variant: "destructive" });
   }
 
   if (isLoading) {
@@ -115,6 +114,8 @@ export default function RadarPage({ params }: { params: { orgId: string } }) {
             radarItems={organization.radar || []}
             onUpsertItem={handleUpsertRadarItem}
             onDeleteItem={handleDeleteRadarItem}
+            organizations={organizations}
+            currentOrgId={organization.id}
         />
       </main>
     </div>

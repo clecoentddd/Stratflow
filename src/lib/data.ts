@@ -146,9 +146,9 @@ export const strategyStates: {
 export const radarAttributes = {
   types: ['Threat', 'Opportunity'] as RadarItemType[],
   categories: ['Business', 'Operating Model', 'Capabilities', 'People & Knowledge'] as RadarCategory[],
-  distances: ['Detected', 'Assessing', 'Assessed', 'Responding'] as RadarDistance[],
+  distances: ['Detected', 'Assessing', 'Assessed', 'Responding', 'Responded'] as RadarDistance[],
   impacts: ['Low', 'Medium', 'High'] as RadarImpact[],
-  tolerances: ['High', 'Medium'] as RadarTolerance[],
+  tolerances: ['High', 'Medium', 'Low'] as RadarTolerance[],
 };
 
 export { newInitiativeTemplate };
