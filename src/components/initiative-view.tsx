@@ -3,7 +3,7 @@
 
 import { useState } from "react";
 import Link from 'next/link';
-import { Plus, Save, XCircle, Trash2, Search, Milestone, ListChecks, Target, Link2, Badge } from "lucide-react";
+import { Plus, Save, XCircle, Trash2, Search, Milestone, ListChecks, Target, Link2 } from "lucide-react";
 import {
   AccordionContent,
   AccordionItem,
@@ -23,6 +23,7 @@ import { Textarea } from "@/components/ui/textarea";
 import type { Initiative, InitiativeStepKey, InitiativeItem, RadarItem } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { LinkRadarItemsDialog } from './link-radar-items-dialog';
+import { Badge } from "@/components/ui/badge";
 
 const iconMap = {
     Search,
