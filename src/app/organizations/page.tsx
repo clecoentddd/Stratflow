@@ -89,10 +89,10 @@ export default function OrganizationsPage() {
                                     <CardContent className="flex-grow">
                                         <p className="text-sm text-muted-foreground mb-4">{org.context}</p>
                                         <div className="flex flex-wrap gap-2">
-                                            <Link href={`/organization/${org.id}`} asChild>
+                                            <Link href={`/organization/${org.id}`}>
                                               <Button>View Strategy Dashboard</Button>
                                             </Link>
-                                            <Link href={`/organization/${org.id}/radar`} asChild>
+                                            <Link href={`/organization/${org.id}/radar`}>
                                               <Button variant="accent">View Radar</Button>
                                             </Link>
                                         </div>
