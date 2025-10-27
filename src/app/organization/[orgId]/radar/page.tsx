@@ -114,12 +114,10 @@ export default function RadarPage({ params }: { params: { orgId: string } }) {
       <AppHeader />
       <main className="p-4 md:p-6 flex-1">
         <div className="mb-6">
-          <Link href="/organizations" legacyBehavior passHref>
-            <Button asChild variant="outline">
-              <a>
-                <ChevronLeft className="mr-2 h-4 w-4" />
-                Back to Organizations
-              </a>
+          <Link href="/organizations" asChild>
+            <Button variant="outline">
+              <ChevronLeft className="mr-2 h-4 w-4" />
+              Back to Organizations
             </Button>
           </Link>
         </div>
