@@ -27,7 +27,7 @@ export function AppHeader() {
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="relative h-8 w-8 rounded-full">
             <Avatar className="h-9 w-9">
-              <AvatarImage src="/placeholder-user.jpg" alt="@shadcn" />
+              <AvatarImage src="https://picsum.photos/seed/user-avatar/40/40" alt="User avatar" />
               <AvatarFallback>
                 <User />
               </AvatarFallback>
