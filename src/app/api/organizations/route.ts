@@ -33,8 +33,8 @@ export async function POST(request: NextRequest) {
     try {
         // 1. Parse and Validate the Command
         const command: CreateOrganizationCommand = await request.json();
-        if (!command.name || !command.purpose) {
-            return NextResponse.json({ message: 'Name and purpose are required' }, { status: 400 });
+        if (!command.name || !command.purpose || !command.companyId) {
+            return NextResponse.json({ message: 'Company ID, name, and purpose are required' }, { status: 400 });
         }
 
         // 2. Command Handler Logic
@@ -47,6 +47,7 @@ export async function POST(request: NextRequest) {
             timestamp: new Date().toISOString(),
             payload: {
                 id: newOrgId,
+                companyId: command.companyId,
                 name: command.name,
                 purpose: command.purpose,
                 context: command.context,

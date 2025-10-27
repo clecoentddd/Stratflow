@@ -65,6 +65,7 @@ export type RadarItem = {
 
 export type Organization = {
   id: string;
+  companyId: string; // <-- New field
   name: string;
   purpose: string;
   context: string;
@@ -84,6 +85,7 @@ export type Event<T extends string, P> = {
 
 export type OrganizationCreatedEvent = Event<'OrganizationCreated', {
     id: string;
+    companyId: string; // <-- New field
     name: string;
     purpose: string;
     context: string;
@@ -95,6 +97,7 @@ export type OrganizationEvent = OrganizationCreatedEvent; // Add more events lik
 
 // --- Commands ---
 export type CreateOrganizationCommand = {
+    companyId: string; // <-- New field
     name: string;
     purpose: string;
     context: string;

@@ -29,6 +29,7 @@ const initiativeStepsTemplate: {
 export const initialOrganizations: Organization[] = [
   {
     id: "org-bod",
+    companyId: "company-1",
     name: "Board of Directors",
     purpose: "Oversees the company's direction.",
     context: "Highest governing body.",
@@ -44,6 +45,7 @@ export const initialOrganizations: Organization[] = [
   },
   {
     id: "org-ceo",
+    companyId: "company-1",
     name: "CEO",
     purpose: "Leads the company and executes the board's vision.",
     context: "Chief Executive Officer.",
@@ -59,7 +61,8 @@ export const initialOrganizations: Organization[] = [
     radar: [],
   },
   { 
-    id: 'org-cfo', 
+    id: 'org-cfo',
+    companyId: "company-1",
     name: 'CFO', 
     purpose: 'Manages the company\'s finances.',
     context: 'Chief Financial Officer', 
@@ -68,7 +71,8 @@ export const initialOrganizations: Organization[] = [
     radar: [],
   },
   { 
-    id: 'org-cto', 
+    id: 'org-cto',
+    companyId: "company-1",
     name: 'CTO', 
     purpose: 'Leads technology and engineering.',
     context: 'Chief Technology Officer', 
@@ -254,7 +258,8 @@ export const initialOrganizations: Organization[] = [
     ],
   },
   { 
-    id: 'org-cmo', 
+    id: 'org-cmo',
+    companyId: "company-1",
     name: 'CMO', 
     purpose: 'Leads marketing and growth initiatives.',
     context: 'Chief Marketing Officer', 

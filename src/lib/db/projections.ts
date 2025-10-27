@@ -24,6 +24,7 @@ export const applyEventsToOrganization = (
                 // For a created event, we ignore the initial state and create a new one.
                 return {
                     id: event.payload.id,
+                    companyId: event.payload.companyId,
                     name: event.payload.name,
                     purpose: event.payload.purpose,
                     context: event.payload.context,

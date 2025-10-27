@@ -44,7 +44,10 @@ export function CreateOrganizationDialog({
 
     setIsSubmitting(true);
 
+    // For now, we hardcode the company ID.
+    // In the future, this might come from a context or prop.
     const command: CreateOrganizationCommand = {
+      companyId: "company-1", 
       name: name.trim(),
       purpose: purpose.trim(),
       context: context.trim(),

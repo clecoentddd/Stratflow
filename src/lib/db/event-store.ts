@@ -8,6 +8,9 @@ import { applyEventsToOrganization } from './projections';
 
 let events: OrganizationEvent[] = [];
 
+// Define a default company for seeding purposes
+const DEFAULT_COMPANY_ID = "company-1";
+
 // Seed the event store with initial data
 const seedEvents = () => {
     if (events.length > 0) return; // Don't re-seed
@@ -19,6 +22,7 @@ const seedEvents = () => {
         timestamp: new Date().toISOString(),
         payload: {
             id: org.id,
+            companyId: DEFAULT_COMPANY_ID, // Associate with the default company
             name: org.name,
             purpose: org.purpose,
             context: org.context,
