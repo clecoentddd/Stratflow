@@ -133,10 +133,6 @@ export default function RadarPage() {
                 </Link>
                 <h1 className="text-3xl font-bold font-headline">{organization.name} - Radar</h1>
             </div>
-            <Button onClick={() => handleOpenDialog()}>
-                <Plus className="mr-2 h-4 w-4" />
-                New Radar Item
-            </Button>
         </div>
         <RadarDashboard
             radarItems={organization.radar || []}

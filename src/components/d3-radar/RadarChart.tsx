@@ -279,6 +279,9 @@ const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: a
         <div className={styles.centeringWrapper}>
             
             <div className={styles.leftPanel}>
+                <button className={styles.createButton} onClick={onCreateClick}>
+                    Create Radar Item
+                </button>
                 <div className={zoomStyles.zoomControls}>
                     <span className={zoomStyles.zoomTitle}>Zoom into a quadrant:</span>
                     
