@@ -4,13 +4,14 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { notFound, useParams } from "next/navigation";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, Plus } from "lucide-react";
 import { initialOrganizations } from "@/lib/data";
 import type { Organization, RadarItem } from "@/lib/types";
 import { AppHeader } from "@/components/header";
 import { Button } from "@/components/ui/button";
 import { RadarDashboard } from "@/components/radar-dashboard";
 import { useToast } from "@/hooks/use-toast";
+import { RadarItemDialog } from "@/components/radar-item-dialog";
 
 export default function RadarPage() {
   const params = useParams();
@@ -18,6 +19,8 @@ export default function RadarPage() {
   const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [organization, setOrganization] = useState<Organization | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isDialogOpen, setDialogOpen] = useState(false);
+  const [editingItem, setEditingItem] = useState<RadarItem | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -96,6 +99,11 @@ export default function RadarPage() {
     toast({ title: "Radar Item Deleted", description: `"${itemToDelete?.name}" has been deleted.`, variant: "destructive" });
   }
 
+  const handleOpenDialog = (item: RadarItem | null = null) => {
+    setEditingItem(item);
+    setDialogOpen(true);
+  };
+
   if (isLoading) {
     return (
       <div className="flex flex-col min-h-screen">
@@ -115,23 +123,39 @@ export default function RadarPage() {
     <div className="flex flex-col min-h-screen">
       <AppHeader />
       <main className="p-4 md:p-6 flex-1">
-        <div className="mb-6">
-          <Link href="/organizations" asChild>
-              <Button variant="outline">
-                <ChevronLeft className="mr-2 h-4 w-4" />
-                Back to Organizations
-              </Button>
-          </Link>
+        <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-4">
+                 <Link href="/organizations">
+                    <Button variant="outline">
+                        <ChevronLeft className="mr-2 h-4 w-4" />
+                        Back to Organizations
+                    </Button>
+                </Link>
+                <h1 className="text-3xl font-bold font-headline">{organization.name} - Radar</h1>
+            </div>
+            <Button onClick={() => handleOpenDialog()}>
+                <Plus className="mr-2 h-4 w-4" />
+                New Radar Item
+            </Button>
         </div>
         <RadarDashboard
-            organizationName={organization.name}
             radarItems={organization.radar || []}
             onUpsertItem={handleUpsertRadarItem}
             onDeleteItem={handleDeleteRadarItem}
             organizations={organizations}
             currentOrgId={organization.id}
+            onEditItem={handleOpenDialog}
+            onCreateItem={() => handleOpenDialog()}
         />
       </main>
+      <RadarItemDialog
+        isOpen={isDialogOpen}
+        onOpenChange={setDialogOpen}
+        onSave={handleUpsertRadarItem}
+        item={editingItem}
+        organizations={organizations}
+        currentOrgId={organization.id}
+      />
     </div>
   );
 }

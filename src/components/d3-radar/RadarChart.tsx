@@ -205,7 +205,7 @@ const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: a
     useEffect(() => {
         if (!svgRef.current) return;
         const padding = 20;
-        const svgSize = radius * 2 + 100;
+        const svgSize = radius * 2 + (radius * 0.1); // Reduced height
         const totalWidth = svgSize + padding * 2;
         const zoomFactor = 2;
         
@@ -279,9 +279,6 @@ const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: a
         <div className={styles.centeringWrapper}>
             
             <div className={styles.leftPanel}>
-                <button className={styles.createButton} onClick={onCreateClick}>
-                    Create Radar Item
-                </button>
                 <div className={zoomStyles.zoomControls}>
                     <span className={zoomStyles.zoomTitle}>Zoom into a quadrant:</span>
                     

@@ -2,57 +2,39 @@
 
 "use client";
 
-import { useState } from "react";
-import { Plus } from "lucide-react";
-import { RadarItemDialog } from "@/components/radar-item-dialog";
 import { RadarItemCard } from "@/components/radar-item-card";
-import { Button } from "@/components/ui/button";
 import type { RadarItem, Organization } from "@/lib/types";
 import RadarChart from "@/components/d3-radar/RadarChart";
 
 
 interface RadarDashboardProps {
-  organizationName: string;
   radarItems: RadarItem[];
   onUpsertItem: (item: RadarItem) => void;
   onDeleteItem: (itemId: string) => void;
   organizations: Organization[];
   currentOrgId: string;
+  onEditItem: (item: RadarItem) => void;
+  onCreateItem: () => void;
 }
 
-export function RadarDashboard({ organizationName, radarItems, onUpsertItem, onDeleteItem, organizations, currentOrgId }: RadarDashboardProps) {
-  const [isDialogOpen, setDialogOpen] = useState(false);
-  const [editingItem, setEditingItem] = useState<RadarItem | null>(null);
+export function RadarDashboard({ radarItems, onUpsertItem, onDeleteItem, organizations, currentOrgId, onEditItem, onCreateItem }: RadarDashboardProps) {
 
-  const handleOpenDialog = (item: RadarItem | null = null) => {
-    setEditingItem(item);
-    setDialogOpen(true);
-  };
-  
   const handleEditClick = (item: any) => {
       const fullItem = radarItems.find(i => i.id === item.id);
       if (fullItem) {
-          handleOpenDialog(fullItem);
+          onEditItem(fullItem);
       }
   }
 
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-bold font-headline">{organizationName} - Radar</h1>
-        <Button onClick={() => handleOpenDialog()}>
-          <Plus className="mr-2 h-4 w-4" />
-          New Radar Item
-        </Button>
-      </div>
-      
       <div className="bg-black text-white p-4 rounded-lg">
           <RadarChart
               items={radarItems}
               radius={300}
               onEditClick={handleEditClick}
-              onCreateClick={() => handleOpenDialog()}
+              onCreateClick={onCreateItem}
           />
       </div>
 
@@ -65,7 +47,7 @@ export function RadarDashboard({ organizationName, radarItems, onUpsertItem, onD
                         <RadarItemCard 
                             key={item.id} 
                             item={item} 
-                            onEdit={() => handleOpenDialog(item)}
+                            onEdit={() => onEditItem(item)}
                             onDeleteItem={() => onDeleteItem(item.id)}
                         />
                     ))}
@@ -78,15 +60,6 @@ export function RadarDashboard({ organizationName, radarItems, onUpsertItem, onD
             )}
         </div>
       </div>
-
-      <RadarItemDialog
-        isOpen={isDialogOpen}
-        onOpenChange={setDialogOpen}
-        onSave={onUpsertItem}
-        item={editingItem}
-        organizations={organizations}
-        currentOrgId={currentOrgId}
-      />
     </div>
   );
 }
