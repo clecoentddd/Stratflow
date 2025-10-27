@@ -1,6 +1,6 @@
 
 import { initialOrganizations } from '@/lib/data';
-import type { OrganizationEvent, OrganizationCreatedEvent } from '@/lib/types';
+import type { OrganizationEvent, OrganizationCreatedEvent, Organization } from '@/lib/types';
 import { applyEventsToOrganization } from './projections';
 
 // --- Mock Event Store (In-Memory) ---
@@ -29,10 +29,20 @@ const seedEvents = () => {
 
     // Also need to apply these seed events to the projection
     const initialProjection = seedEvents.reduce((acc, event) => {
-        const org = applyEventsToOrganization([], [event]);
-        if(org) acc[org.id] = org;
+        // The state of an organization is built by replaying events.
+        // For a new org, the initial state is null.
+        const org = applyEventsToOrganization(null, [event]);
+        if(org) {
+            // We also need to transfer the dashboard and radar data from the initial static data
+            const initialOrgData = initialOrganizations.find(io => io.id === org.id);
+            if (initialOrgData) {
+                org.dashboard = initialOrgData.dashboard;
+                org.radar = initialOrgData.radar;
+            }
+            acc[org.id] = org;
+        }
         return acc;
-    }, {} as any);
+    }, {} as Record<string, Organization>);
 
     // This is a bit of a hack for the mock DB to sync projection and event store
     const { _setInitialProjections } = require('./projections');
