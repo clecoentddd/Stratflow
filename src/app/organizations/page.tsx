@@ -3,13 +3,24 @@
 
 import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
-import { Plus } from "lucide-react";
+import { Plus, RotateCcw } from "lucide-react";
 import { initialOrganizations as defaultOrgs } from "@/lib/data";
 import type { Organization } from "@/lib/types";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { AppHeader } from "@/components/header";
 import { Button } from "@/components/ui/button";
 import { CreateOrganizationDialog } from "@/components/create-organization-dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 
 export default function OrganizationsPage() {
   const [organizations, setOrganizations] = useState<Organization[]>([]);
@@ -18,7 +29,12 @@ export default function OrganizationsPage() {
   useEffect(() => {
     const storedOrgs = localStorage.getItem("organizations");
     if (storedOrgs) {
-      setOrganizations(JSON.parse(storedOrgs));
+      try {
+        setOrganizations(JSON.parse(storedOrgs));
+      } catch (error) {
+        console.error("Failed to parse organizations from localStorage", error);
+        setOrganizations(defaultOrgs);
+      }
     } else {
       setOrganizations(defaultOrgs);
     }
@@ -47,6 +63,11 @@ export default function OrganizationsPage() {
     };
     setOrganizations(prev => [...prev, newOrg]);
   };
+  
+  const handleResetData = () => {
+    localStorage.removeItem("organizations");
+    window.location.reload();
+  };
 
   const groupedOrganizations = useMemo(() => {
     const groups: { [key: number]: Organization[] } = {};
@@ -65,10 +86,32 @@ export default function OrganizationsPage() {
       <main className="p-4 md:p-6 flex-1">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-3xl font-bold font-headline">Organizations</h1>
-          <Button onClick={() => setCreateOrgOpen(true)}>
-            <Plus className="mr-2 h-4 w-4" />
-            New Organization
-          </Button>
+          <div className="flex items-center gap-2">
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="outline">
+                  <RotateCcw className="mr-2 h-4 w-4" />
+                  Reset Data
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This will reset all application data to its original state, deleting any changes you've made.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction onClick={handleResetData}>Continue</AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+            <Button onClick={() => setCreateOrgOpen(true)}>
+              <Plus className="mr-2 h-4 w-4" />
+              New Organization
+            </Button>
+          </div>
         </div>
         <div className="space-y-8">
             {groupedOrganizations.length > 0 ? (
