@@ -1,4 +1,5 @@
-import type { Organization, StrategyState } from "./types";
+
+import type { Organization, StrategyState, RadarItemType, RadarCategory, RadarDistance, RadarImpact, RadarTolerance } from "./types";
 
 const newInitiativeTemplate = (id: string, name: string) => ({
     id,
@@ -37,6 +38,7 @@ export const initialOrganizations: Organization[] = [
         { id: "bod-strat-1", description: "Grow market share by 5% YoY", timeframe: "2025", state: "Open", initiatives: [] },
       ]
     },
+    radar: [],
   },
   {
     id: "org-ceo",
@@ -52,6 +54,7 @@ export const initialOrganizations: Organization[] = [
         { id: "ceo-strat-2", description: "Improve operational efficiency", timeframe: "2025", state: "Draft", initiatives: [] },
       ]
     },
+    radar: [],
   },
   { 
     id: 'org-cfo', 
@@ -59,7 +62,8 @@ export const initialOrganizations: Organization[] = [
     purpose: 'Manages the company\'s finances.',
     context: 'Chief Financial Officer', 
     level: 2, 
-    stream: { id: 'stream-cfo', name: 'Financial Strategy', strategies: [] }, 
+    stream: { id: 'stream-cfo', name: 'Financial Strategy', strategies: [] },
+    radar: [],
   },
   { 
     id: 'org-cto', 
@@ -99,6 +103,20 @@ export const initialOrganizations: Organization[] = [
         },
       ],
     },
+    radar: [
+        {
+            id: 'radar-item-1',
+            title: 'AI-driven Automation',
+            detection: 'Competitors are leveraging AI to automate customer support.',
+            assessment: 'This poses a medium-term threat to our market position if we don\'t adapt. It could reduce our operational costs significantly.',
+            decision: 'Initiate a pilot project to explore AI chatbot solutions for customer service.',
+            type: 'Opportunity',
+            category: 'Operating Model',
+            distance: 'Detected',
+            impact: 'Medium',
+            tolerance: 'Medium',
+        }
+    ],
   },
   { 
     id: 'org-cmo', 
@@ -106,7 +124,8 @@ export const initialOrganizations: Organization[] = [
     purpose: 'Leads marketing and growth initiatives.',
     context: 'Chief Marketing Officer', 
     level: 2, 
-    stream: { id: 'stream-cmo', name: 'Marketing & Growth', strategies: [] }, 
+    stream: { id: 'stream-cmo', name: 'Marketing & Growth', strategies: [] },
+    radar: [],
   },
 ];
 
@@ -122,5 +141,13 @@ export const strategyStates: {
   { value: "Closed", label: "Closed", iconName: 'CheckCircle2', colorClass: "text-gray-500" },
   { value: "Obsolete", label: "Obsolete", iconName: 'Archive', colorClass: "text-gray-500" },
 ];
+
+export const radarAttributes = {
+  types: ['Threat', 'Opportunity'] as RadarItemType[],
+  categories: ['Business', 'Operating Model', 'Capabilities', 'People & Knowledge'] as RadarCategory[],
+  distances: ['Detected', 'Assessing', 'Assessed', 'Responding'] as RadarDistance[],
+  impacts: ['Low', 'Medium', 'High'] as RadarImpact[],
+  tolerances: ['High', 'Medium'] as RadarTolerance[],
+};
 
 export { newInitiativeTemplate };

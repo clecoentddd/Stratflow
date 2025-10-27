@@ -1,3 +1,4 @@
+
 export type StrategyState = 'Draft' | 'Open' | 'Closed' | 'Obsolete' | 'Deleted';
 
 export type InitiativeItem = {
@@ -35,6 +36,28 @@ export type Stream = {
   strategies: Strategy[];
 };
 
+// Radar Types
+export type RadarItemType = 'Threat' | 'Opportunity';
+export type RadarCategory = 'Business' | 'Operating Model' | 'Capabilities' | 'People & Knowledge';
+export type RadarDistance = 'Detected' | 'Assessing' | 'Assessed' | 'Responding';
+export type RadarImpact = 'Low' | 'Medium' | 'High';
+export type RadarTolerance = 'High' | 'Medium';
+
+export type RadarItem = {
+  id: string;
+  title: string;
+  detection: string;
+  assessment: string;
+  decision: string;
+  type: RadarItemType;
+  category: RadarCategory;
+  distance: RadarDistance;
+  impact: RadarImpact;
+  tolerance: RadarTolerance;
+  zoomInLink?: string;
+};
+
+
 export type Organization = {
   id: string;
   name: string;
@@ -42,4 +65,5 @@ export type Organization = {
   context: string;
   level: number;
   stream: Stream;
+  radar: RadarItem[];
 };

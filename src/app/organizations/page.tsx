@@ -25,6 +25,7 @@ export default function OrganizationsPage() {
   }, []);
 
   useEffect(() => {
+    // Only set localStorage if organizations have been loaded
     if (organizations.length > 0) {
       localStorage.setItem("organizations", JSON.stringify(organizations));
     }
@@ -42,6 +43,7 @@ export default function OrganizationsPage() {
         name: `${name} Strategy Stream`,
         strategies: [],
       },
+      radar: [],
     };
     setOrganizations(prev => [...prev, newOrg]);
   };
@@ -77,16 +79,21 @@ export default function OrganizationsPage() {
                         </h2>
                         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                             {orgs.map((org) => (
-                                <Card key={org.id} className="hover:shadow-lg transition-shadow">
+                                <Card key={org.id} className="hover:shadow-lg transition-shadow flex flex-col">
                                     <CardHeader>
                                         <CardTitle>{org.name}</CardTitle>
                                         <CardDescription>{org.purpose}</CardDescription>
                                     </CardHeader>
-                                    <CardContent>
+                                    <CardContent className="flex-grow">
                                         <p className="text-sm text-muted-foreground mb-4">{org.context}</p>
-                                        <Link href={`/organization/${org.id}`}>
-                                            <Button>View Strategy Stream</Button>
-                                        </Link>
+                                        <div className="flex flex-wrap gap-2">
+                                            <Link href={`/organization/${org.id}`}>
+                                                <Button>View Strategy Stream</Button>
+                                            </Link>
+                                            <Link href={`/organization/${org.id}/radar`}>
+                                                <Button variant="secondary">View Radar</Button>
+                                            </Link>
+                                        </div>
                                     </CardContent>
                                 </Card>
                             ))}
