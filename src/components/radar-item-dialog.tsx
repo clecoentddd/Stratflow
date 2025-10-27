@@ -51,7 +51,10 @@ export function RadarItemDialog({ isOpen, onOpenChange, onSave, item, organizati
       if (item) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { id, radarId, created_at, updated_at, ...editableFields } = item;
-        setFormData(editableFields);
+        setFormData({
+            ...defaultItem, // ensure all fields are present
+            ...editableFields
+        });
       } else {
         setFormData(defaultItem);
       }
@@ -204,4 +207,5 @@ export function RadarItemDialog({ isOpen, onOpenChange, onSave, item, organizati
     </>
   );
 }
- 
+
+    
