@@ -148,7 +148,7 @@ export default function OrganizationsPage() {
                                               <Button>View Strategy Stream</Button>
                                             </Link>
                                             <Link href={`/organization/${org.id}/radar`} asChild>
-                                              <Button variant="secondary">View Radar</Button>
+                                              <Button variant="accent">View Radar</Button>
                                             </Link>
                                         </div>
                                     </CardContent>
