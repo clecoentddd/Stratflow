@@ -1,8 +1,10 @@
+
 .centeringWrapper {
     width: 100%;
     display: flex;
-    justify-content: center;
+    justify-content: flex-start; /* Aligns content to the left */
     flex-wrap: wrap;
+    gap: 20px; /* Adds space between panels */
 }
 
 .radarContainer {
@@ -36,11 +38,13 @@
     align-items: center;
     box-sizing: border-box;
     padding: 24px;
+    margin-right: 40px; /* Pushes the radar chart to the right */
 }
 
 .middlePanel {
     display: flex;
     justify-content: center;
+    flex: 1; /* Allows the radar chart to take up available space */
 }
 
 /* Radar wrapper - flexible, fills remaining space */
