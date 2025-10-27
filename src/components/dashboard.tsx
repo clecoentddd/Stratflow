@@ -52,7 +52,10 @@ export function StrategyDashboard({ dashboard, radarItems, dashboardName, onUpda
       state: "Draft",
       initiatives: [],
     };
-    updateDashboard(prev => ({ ...prev, strategies: [...prev.strategies, newStrategy] }));
+    updateDashboard(prev => ({ 
+        ...prev, 
+        strategies: [...(prev?.strategies || []), newStrategy] 
+    }));
     toast({
         title: "Strategy Created",
         description: `A new strategy has been added.`,
