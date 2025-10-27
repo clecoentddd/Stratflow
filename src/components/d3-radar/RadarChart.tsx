@@ -205,7 +205,7 @@ const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: a
     useEffect(() => {
         if (!svgRef.current) return;
         const padding = 20;
-        const svgSize = radius * 2 + (radius * 0.1); // Reduced height
+        const svgSize = radius * 2 + 100;
         const totalWidth = svgSize + padding * 2;
         const zoomFactor = 2;
         
@@ -337,4 +337,5 @@ const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: a
 
 export default RadarChart;
 
+    
     
