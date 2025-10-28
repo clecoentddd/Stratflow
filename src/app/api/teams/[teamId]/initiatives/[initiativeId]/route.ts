@@ -94,7 +94,12 @@ export async function PUT(request: NextRequest, { params }: { params: { teamId: 
 export async function DELETE(request: NextRequest, { params }: { params: { teamId: string, initiativeId: string } }) {
     try {
         const { teamId, initiativeId } = params;
-        const command: Omit<DeleteInitiativeCommand, 'initiativeId'> = await request.json();
+        const requestBody: { strategyId: string } = await request.json();
+
+        const command: DeleteInitiativeCommand = {
+            initiativeId: initiativeId,
+            strategyId: requestBody.strategyId,
+        };
 
         // 1. Validation
         const team = await getTeamByIdProjection(teamId);
