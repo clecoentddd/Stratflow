@@ -4,7 +4,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { notFound, useParams } from "next/navigation";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, ShieldAlert } from "lucide-react";
 import { initialOrganizations } from "@/lib/data";
 import type { Organization, Dashboard } from "@/lib/types";
 import { AppHeader } from "@/components/header";
@@ -76,13 +76,21 @@ export default function OrganizationStrategyPage() {
     <div className="flex flex-col min-h-screen">
       <AppHeader />
       <main className="p-4 md:p-6 flex-1">
-        <div className="mb-6">
-          <Link href="/organizations" passHref>
-              <Button variant="outline">
-                <ChevronLeft className="mr-2 h-4 w-4" />
-                Back to Organizations
-              </Button>
-          </Link>
+        <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-4">
+                 <Link href="/organizations">
+                    <Button variant="outline">
+                        <ChevronLeft className="mr-2 h-4 w-4" />
+                        Back to Organizations
+                    </Button>
+                </Link>
+                 <Link href={`/organization/${orgId}/radar`}>
+                    <Button variant="outline">
+                        <ShieldAlert className="mr-2 h-4 w-4" />
+                        View Radar
+                    </Button>
+                </Link>
+            </div>
         </div>
         <StrategyDashboard 
             dashboard={organization.dashboard}

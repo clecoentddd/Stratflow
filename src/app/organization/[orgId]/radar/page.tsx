@@ -4,7 +4,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { notFound, useParams } from "next/navigation";
-import { ChevronLeft, Plus } from "lucide-react";
+import { ChevronLeft, Plus, KanbanSquare } from "lucide-react";
 import { initialOrganizations } from "@/lib/data";
 import type { Organization, RadarItem } from "@/lib/types";
 import { AppHeader } from "@/components/header";
@@ -131,8 +131,14 @@ export default function RadarPage() {
                         Back to Organizations
                     </Button>
                 </Link>
-                <h1 className="text-3xl font-bold font-headline">{organization.name} - Radar</h1>
+                <Link href={`/organization/${orgId}`}>
+                    <Button variant="outline">
+                        <KanbanSquare className="mr-2 h-4 w-4" />
+                        View Strategy Dashboard
+                    </Button>
+                </Link>
             </div>
+             <h1 className="text-3xl font-bold font-headline">{organization.name} - Radar</h1>
         </div>
         <RadarDashboard
             radarItems={organization.radar || []}
