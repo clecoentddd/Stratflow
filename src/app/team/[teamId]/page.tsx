@@ -16,6 +16,7 @@ export default function TeamStrategyPage() {
   const teamId = params.teamId as string;
   const [team, setTeam] = useState<Team | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isCreateStrategyOpen, setCreateStrategyOpen] = useState(false);
   const { toast } = useToast();
 
   const fetchTeamData = useCallback(async (showLoading = true) => {
@@ -104,12 +105,20 @@ export default function TeamStrategyPage() {
             <div className="flex-1 text-center">
                  <h1 className="text-3xl font-bold font-headline">{team.name} - Strategy</h1>
             </div>
+            <div className="flex items-center gap-4">
+                <Button onClick={() => setCreateStrategyOpen(true)}>
+                    <Plus className="mr-2 h-4 w-4" />
+                    New Strategy
+                </Button>
+            </div>
         </div>
         <StrategyDashboard 
             initialDashboard={team.dashboard}
             radarItems={team.radar || []}
             orgId={teamId}
             onDataChange={() => fetchTeamData(false)}
+            isCreateStrategyOpen={isCreateStrategyOpen}
+            setCreateStrategyOpen={setCreateStrategyOpen}
         />
       </main>
     </div>

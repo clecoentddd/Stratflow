@@ -25,6 +25,8 @@ interface StrategyDashboardProps {
     radarItems: RadarItem[];
     orgId: string;
     onDataChange: () => void;
+    isCreateStrategyOpen: boolean;
+    setCreateStrategyOpen: (isOpen: boolean) => void;
 }
 
 export function StrategyDashboard({ 
@@ -32,9 +34,10 @@ export function StrategyDashboard({
   radarItems, 
   orgId,
   onDataChange,
+  isCreateStrategyOpen,
+  setCreateStrategyOpen,
 }: StrategyDashboardProps) {
   const [dashboard, setDashboard] = useState(initialDashboard);
-  const [isCreateStrategyOpen, setCreateStrategyOpen] = useState(false);
   const { toast } = useToast();
 
   console.log("--- StrategyDashboard: Render ---");
@@ -100,13 +103,6 @@ export function StrategyDashboard({
   
   return (
     <div>
-        <div className="flex items-center justify-end mb-6">
-          <Button onClick={() => setCreateStrategyOpen(true)}>
-            <Plus className="mr-2 h-4 w-4" />
-            New Strategy
-          </Button>
-        </div>
-
         <div className="space-y-6">
           {sortedStrategies.length > 0 ? (
               sortedStrategies.map(strategy => {
