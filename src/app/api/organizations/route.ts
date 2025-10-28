@@ -114,16 +114,22 @@ export async function PUT(request: NextRequest) {
         await saveEvents([event]);
 
         // 5. Synchronously Update Projection
-        const eventsForOrg = await getEventsFor(id);
-        const updatedOrgState = applyEventsToOrganization(null, eventsForOrg);
+        // Re-read all events for the aggregate to rebuild its state accurately
+        const allEventsForOrg = await getEventsFor(id);
+        const updatedOrgState = applyEventsToOrganization(null, allEventsForOrg);
         
         if (updatedOrgState) {
-            // We need to preserve dashboard and radar data which are not part of the event sourcing model for now
-            updatedOrgState.dashboard = existingOrg.dashboard;
-            updatedOrgState.radar = existingOrg.radar;
+            // Because dashboard and radar are not fully event-sourced yet, we must preserve them from the previous state.
+            // This is a crucial step to prevent data loss on update.
+            if (existingOrg.dashboard) {
+               updatedOrgState.dashboard = existingOrg.dashboard;
+            }
+            if(existingOrg.radar) {
+                updatedOrgState.radar = existingOrg.radar;
+            }
             updateOrganizationProjection(updatedOrgState);
         } else {
-            throw new Error('Failed to apply event to update organization state.');
+            throw new Error('Failed to apply events to update organization state.');
         }
 
         return NextResponse.json(updatedOrgState, { status: 200 });
