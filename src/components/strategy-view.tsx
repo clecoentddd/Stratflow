@@ -50,6 +50,10 @@ export function StrategyView({
 
   const isSaving = strategy.id.startsWith('strat-temp-');
 
+  useEffect(() => {
+    setStrategy(initialStrategy);
+  }, [initialStrategy]);
+
   const overallProgression = useMemo(() => {
     if (strategy.initiatives.length === 0) return 0;
     const total = strategy.initiatives.reduce(
@@ -97,7 +101,7 @@ export function StrategyView({
 
 
   const handleUpdateStrategy = useCallback((updatedValues: Partial<Strategy>) => {
-    const command: UpdateStrategyCommand = { ...updatedValues };
+    const command: UpdateStrategyCommand = { ...updatedValues, strategyId: strategy.id };
     
     setStrategy(prev => ({...prev, ...updatedValues}));
     

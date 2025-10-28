@@ -93,4 +93,3 @@ export type StrategyEvent =
   | InitiativeItemAddedEvent
   | InitiativeItemUpdatedEvent
   | InitiativeItemDeletedEvent;
-
