@@ -44,7 +44,6 @@ function InitiativeItemView({ item, onSave, onDelete }: InitiativeItemViewProps)
   };
 
   const handleCancel = () => {
-    // If the item was new and is being cancelled, trigger deletion.
     if (item.text === "" && item.id.startsWith('temp-')) {
         onDelete(item.id);
     } else {
@@ -117,36 +116,47 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
   useEffect(() => {
     setInitiative(initialInitiative);
   }, [initialInitiative]);
-
-  console.log(`--- InitiativeView (${initiative.name}): Render ---`);
   
+  const fireAndForget = (
+    promise: Promise<Response>,
+    successMessage: string,
+    errorMessage: string
+  ) => {
+    promise
+        .then(async res => {
+            if (!res.ok) {
+                const errorData = await res.json().catch(() => ({}));
+                console.error("Fire-and-forget failed server-side.", errorData);
+                throw new Error(errorData.message || errorMessage);
+            }
+            // If it's a create operation, we might want to sync back the real ID.
+            // For now, we rely on the parent's refresh.
+        })
+        .then(() => onInitiativeChange()) // Refresh parent on success
+        .catch(err => {
+            console.error(err.message);
+            toast({ title: "Save Error", description: err.message, variant: "destructive" });
+            onInitiativeChange(); // Rollback on error
+        });
+  };
+
+
   const handleUpdateInitiative = (updatedValues: Partial<Initiative>) => {
     const command = { ...updatedValues };
-    console.log(`InitiativeView: handleUpdateInitiative for ${initiative.id}`, command);
     setInitiative(prev => ({ ...prev, ...updatedValues })); 
-    fetch(`/api/organizations/${orgId}/initiatives/${initiative.id}`, {
+    
+    const promise = fetch(`/api/organizations/${orgId}/initiatives/${initiative.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(command)
-    })
-    .then(async res => {
-        if (!res.ok) {
-            const errorData = await res.json().catch(() => ({}));
-            throw new Error(errorData.message || "Could not update initiative progression.");
-        }
-    })
-    .catch(err => {
-      console.error(err);
-      toast({ title: "Save Error", description: err.message, variant: "destructive" });
-      onInitiativeChange();
     });
+    fireAndForget(promise, "Initiative updated.", "Could not update initiative.");
   };
 
   const handleAddInitiativeItem = (stepKey: InitiativeStepKey) => {
     const tempId = `temp-${uuidv4()}`;
     const newItem: InitiativeItemType = { id: tempId, text: "" };
     
-    console.log(`InitiativeView: handleAddInitiativeItem to step ${stepKey}`, newItem);
     setInitiative(prev => {
         const newInitiative = JSON.parse(JSON.stringify(prev));
         const step = newInitiative.steps.find((s: any) => s.key === stepKey);
@@ -158,33 +168,39 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
   };
   
   const handleSaveInitiativeItem = (itemId: string, newText: string, stepKey: InitiativeStepKey) => {
-    console.log(`InitiativeView: handleSaveInitiativeItem for ${itemId}`, { text: newText });
-
-    // If the text is empty for a new temporary item, just delete it locally.
+      // If the text is empty for a new temporary item, just delete it locally.
     if (itemId.startsWith('temp-') && newText.trim() === '') {
         handleDeleteInitiativeItem(itemId, stepKey);
         return;
     }
 
-    // CREATE (POST) if the item is new
     if (itemId.startsWith('temp-')) {
+        // CREATE (POST) if the item is new
         const command: AddInitiativeItemCommand = {
             initiativeId: initiative.id,
             stepKey,
             item: { id: '', text: newText }, 
         };
+        
+        const optimisticInitiative = { ...initiative };
+        const step = optimisticInitiative.steps.find(s => s.key === stepKey);
+        if(step) {
+            const item = step.items.find(i => i.id === itemId);
+            if(item) item.text = newText;
+        }
+        setInitiative(optimisticInitiative);
+
+
         fetch(`/api/organizations/${orgId}/initiative-items`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(command)
         })
         .then(res => {
-            if (!res.ok) throw new Error("Server failed to create item.");
+            if(!res.ok) throw new Error("Server failed to create item.");
             return res.json();
         })
         .then((savedItem: InitiativeItemType) => {
-            console.log("Item created, replacing temp item", { tempId: itemId, savedItem });
-            // Full refresh to sync state correctly after creation
             onInitiativeChange(); 
         })
         .catch(err => {
@@ -196,7 +212,6 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
         // UPDATE (PUT) if the item already exists
         const command: UpdateInitiativeItemCommand = { initiativeId: initiative.id, itemId, text: newText };
         
-        // Optimistic update for existing items
         setInitiative(prev => {
             const newInitiative = JSON.parse(JSON.stringify(prev));
             for (const step of newInitiative.steps) {
@@ -209,21 +224,16 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
             return newInitiative;
         });
 
-        fetch(`/api/organizations/${orgId}/initiative-items/${itemId}`, {
+        const promise = fetch(`/api/organizations/${orgId}/initiative-items/${itemId}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(command)
-        }).catch(err => {
-            console.error("Could not save item changes.", err);
-            toast({ title: "Save Error", description: "Could not save item changes.", variant: "destructive" });
-            onInitiativeChange(); // Rollback on error
         });
+        fireAndForget(promise, "Item saved.", "Could not save item changes.");
     }
   };
 
   const handleDeleteInitiativeItem = (itemId: string, stepKey: InitiativeStepKey) => {
-    console.log(`InitiativeView: handleDeleteInitiativeItem for ${itemId}`);
-    
     setInitiative(prev => {
         const newInitiative = JSON.parse(JSON.stringify(prev));
         const step = newInitiative.steps.find((s: any) => s.key === stepKey);
@@ -235,12 +245,8 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
     
     if (itemId.startsWith('temp-')) return;
 
-    fetch(`/api/organizations/${orgId}/initiative-items/${itemId}`, { method: 'DELETE' })
-    .catch(err => {
-        console.error("Failed to delete item.", err);
-        toast({ title: "Delete Error", description: "Failed to delete item.", variant: "destructive" });
-        onInitiativeChange();
-    });
+    const promise = fetch(`/api/organizations/${orgId}/initiative-items/${itemId}`, { method: 'DELETE' });
+    fireAndForget(promise, "Item deleted.", "Failed to delete item.");
   };
 
   const handleLinkRadarItems = (selectedIds: string[]) => {
