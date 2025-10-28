@@ -4,8 +4,7 @@
 import { useState, useMemo } from "react";
 import { Plus } from "lucide-react";
 
-import type { Dashboard, Strategy, StrategyState, Initiative, RadarItem, InitiativeStepKey } from "@/lib/types";
-import { useToast } from "@/hooks/use-toast";
+import type { Dashboard, Strategy, StrategyState, RadarItem } from "@/lib/types";
 
 import { Button } from "@/components/ui/button";
 import { CreateStrategyDialog } from "@/components/create-strategy-dialog";
@@ -23,23 +22,21 @@ interface StrategyDashboardProps {
     dashboard: Dashboard;
     radarItems: RadarItem[];
     dashboardName: string;
+    orgId: string;
     onCreateStrategy: (description: string, timeframe: string) => void;
     onUpdateStrategy: (strategyId: string, updatedValues: Partial<Strategy>) => void;
     onCreateInitiative: (strategyId: string, initiativeName: string) => void;
-    onUpdateInitiative: (initiativeId: string, updatedValues: Partial<Initiative>) => void;
-    onAddInitiativeItem: (initiativeId: string, stepKey: InitiativeStepKey) => void;
-    onUpdateInitiativeItem: (initiativeId: string, itemId: string, newText: string) => void;
-    onDeleteInitiativeItem: (initiativeId: string, itemId: string) => void;
 }
 
 export function StrategyDashboard({ 
   dashboard, 
   radarItems, 
   dashboardName,
+  orgId,
   onCreateStrategy,
-  ...handlers 
+  onUpdateStrategy,
+  onCreateInitiative
 }: StrategyDashboardProps) {
-  const { toast } = useToast();
   const [isCreateStrategyOpen, setCreateStrategyOpen] = useState(false);
 
   const sortedStrategies = useMemo(() => {
@@ -77,12 +74,9 @@ export function StrategyDashboard({
                           strategy={strategy} 
                           radarItems={radarItems}
                           isFocused={isFocused}
-                          onUpdateStrategy={(updatedValues) => handlers.onUpdateStrategy(strategy.id, updatedValues)}
-                          onCreateInitiative={(initiativeName) => handlers.onCreateInitiative(strategy.id, initiativeName)}
-                          onUpdateInitiative={handlers.onUpdateInitiative}
-                          onAddInitiativeItem={handlers.onAddInitiativeItem}
-                          onUpdateInitiativeItem={handlers.onUpdateInitiativeItem}
-                          onDeleteInitiativeItem={handlers.onDeleteInitiativeItem}
+                          orgId={orgId}
+                          onUpdateStrategy={(updatedValues) => onUpdateStrategy(strategy.id, updatedValues)}
+                          onCreateInitiative={(initiativeName) => onCreateInitiative(strategy.id, initiativeName)}
                       />
                   )
               })

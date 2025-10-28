@@ -20,7 +20,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { strategyStates } from "@/lib/data";
 import { Input } from "@/components/ui/input";
 
-import type { Strategy, Initiative, StrategyState, InitiativeStepKey, InitiativeItem, RadarItem } from "@/lib/types";
+import type { Strategy, RadarItem } from "@/lib/types";
 import { InitiativeView } from "./initiative-view";
 import { cn } from "@/lib/utils";
 
@@ -35,24 +35,18 @@ interface StrategyViewProps {
   strategy: Strategy;
   radarItems: RadarItem[];
   isFocused: boolean;
+  orgId: string;
   onCreateInitiative: (initiativeName: string) => void;
   onUpdateStrategy: (updatedValues: Partial<Strategy>) => void;
-  onUpdateInitiative: (initiativeId: string, updatedValues: Partial<Initiative>) => void;
-  onAddInitiativeItem: (initiativeId: string, stepKey: InitiativeStepKey) => void;
-  onUpdateInitiativeItem: (initiativeId: string, itemId: string, newText: string) => void;
-  onDeleteInitiativeItem: (initiativeId: string, itemId: string) => void;
 }
 
 export function StrategyView({ 
     strategy,
     radarItems,
     isFocused,
+    orgId,
     onCreateInitiative, 
     onUpdateStrategy, 
-    onUpdateInitiative,
-    onAddInitiativeItem,
-    onUpdateInitiativeItem,
-    onDeleteInitiativeItem
 }: StrategyViewProps) {
   const [newInitiativeName, setNewInitiativeName] = useState("");
 
@@ -135,12 +129,9 @@ export function StrategyView({
                     {strategy.initiatives.map(initiative => (
                         <InitiativeView 
                             key={initiative.id} 
-                            initiative={initiative} 
-                            radarItems={radarItems} 
-                            onUpdateInitiative={onUpdateInitiative} 
-                            onAddInitiativeItem={onAddInitiativeItem}
-                            onUpdateInitiativeItem={onUpdateInitiativeItem}
-                            onDeleteInitiativeItem={onDeleteInitiativeItem}
+                            initialInitiative={initiative} 
+                            radarItems={radarItems}
+                            orgId={orgId}
                         />
                     ))}
                 </Accordion>

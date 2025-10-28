@@ -4,39 +4,31 @@
 import { useState, useEffect } from "react";
 import Link from 'next/link';
 import { Plus, Trash2, Search, Milestone, ListChecks, Target, Link2 } from "lucide-react";
+import { v4 as uuidv4 } from 'uuid';
+import { useToast } from "@/hooks/use-toast";
 import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import {
-    Card,
-    CardContent,
-    CardHeader,
-    CardTitle,
-  } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import type { Initiative, InitiativeStepKey, InitiativeItem, RadarItem } from "@/lib/types";
-import { cn } from "@/lib/utils";
 import { LinkRadarItemsDialog } from './link-radar-items-dialog';
 import { Badge } from "@/components/ui/badge";
+import type { Initiative, InitiativeStepKey, InitiativeItem, RadarItem, UpdateInitiativeCommand } from "@/lib/types";
+import type { AddInitiativeItemCommand, UpdateInitiativeItemCommand, DeleteInitiativeItemCommand } from '@/lib/domain/strategy/commands';
 
-const iconMap = {
-    Search,
-    Milestone,
-    ListChecks,
-    Target
-};
+const iconMap = { Search, Milestone, ListChecks, Target };
 
 interface InitiativeItemViewProps {
   item: InitiativeItem;
   initiativeId: string;
-  onUpdateInitiativeItem: (initiativeId: string, itemId: string, newText: string) => void;
-  onDeleteInitiativeItem: (initiativeId: string, itemId: string) => void;
+  onUpdateInitiativeItem: (itemId: string, newText: string) => void;
+  onDeleteInitiativeItem: (itemId: string) => void;
 }
 
 function InitiativeItemView({ item, initiativeId, onUpdateInitiativeItem, onDeleteInitiativeItem }: InitiativeItemViewProps) {
@@ -44,36 +36,30 @@ function InitiativeItemView({ item, initiativeId, onUpdateInitiativeItem, onDele
   const [editText, setEditText] = useState(item.text);
 
   useEffect(() => {
-    // This effect ensures that if a new, empty item is passed in,
-    // the component enters editing mode.
     if (item.text === "") {
-        setIsEditing(true);
+      setIsEditing(true);
     }
-    // We also want to sync the editText if the external prop changes
-    // This handles cases where state might be re-synced from the server.
-    setEditText(item.text);
   }, [item.text]);
-
 
   const handleSave = () => {
     if (editText.trim() !== item.text) {
-      onUpdateInitiativeItem(initiativeId, item.id, editText);
+      onUpdateInitiativeItem(item.id, editText);
     }
     setIsEditing(false);
   };
 
   const handleCancel = () => {
     if (item.text === "") {
-        onDeleteInitiativeItem(initiativeId, item.id);
+        onDeleteInitiativeItem(item.id);
     } else {
         setEditText(item.text);
         setIsEditing(false);
     }
   };
-  
+
   const handleDelete = () => {
-    onDeleteInitiativeItem(initiativeId, item.id);
-  }
+    onDeleteInitiativeItem(item.id);
+  };
 
   if (isEditing) {
     return (
@@ -114,29 +100,113 @@ function InitiativeItemView({ item, initiativeId, onUpdateInitiativeItem, onDele
   );
 }
 
-
 interface InitiativeViewProps {
-  initiative: Initiative;
+  initialInitiative: Initiative;
   radarItems: RadarItem[];
-  onUpdateInitiative: (initiativeId: string, updatedValues: Partial<Initiative>) => void;
-  onAddInitiativeItem: (initiativeId: string, stepKey: InitiativeStepKey) => void;
-  onUpdateInitiativeItem: (initiativeId: string, itemId: string, newText: string) => void;
-  onDeleteInitiativeItem: (initiativeId: string, itemId: string) => void;
+  orgId: string;
 }
 
-export function InitiativeView({ 
-    initiative,
-    radarItems,
-    onUpdateInitiative,
-    onAddInitiativeItem,
-    onUpdateInitiativeItem,
-    onDeleteInitiativeItem
-}: InitiativeViewProps) {
-
+export function InitiativeView({ initialInitiative, radarItems, orgId }: InitiativeViewProps) {
+  const [initiative, setInitiative] = useState(initialInitiative);
   const [isLinkRadarOpen, setLinkRadarOpen] = useState(false);
+  const { toast } = useToast();
+
+  const fireAndForget = (url: string, method: string, body: any, errorMessage: string) => {
+    fetch(url, {
+      method,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    }).catch(err => {
+      console.error(errorMessage, err);
+      toast({ title: "Save Error", description: errorMessage, variant: "destructive" });
+    });
+  };
+
+  const handleUpdateInitiative = (updatedValues: Partial<Initiative>) => {
+    const command = { ...updatedValues };
+    fireAndForget(`/api/organizations/${orgId}/initiatives/${initiative.id}`, 'PUT', command, "Could not update initiative progression.");
+    setInitiative(prev => ({ ...prev, ...updatedValues }));
+  };
+
+  const handleAddInitiativeItem = (stepKey: InitiativeStepKey) => {
+    const tempId = `temp-${uuidv4()}`;
+    const newItem: InitiativeItem = { id: tempId, text: "" };
+    
+    setInitiative(prev => {
+        const newInitiative = JSON.parse(JSON.stringify(prev));
+        const step = newInitiative.steps.find((s: any) => s.key === stepKey);
+        if (step) {
+            step.items.push(newItem);
+        }
+        return newInitiative;
+    });
+
+    const command: AddInitiativeItemCommand = { initiativeId: initiative.id, stepKey };
+    
+    fetch(`/api/organizations/${orgId}/initiative-items`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(command),
+    })
+    .then(res => res.json())
+    .then((savedItem: InitiativeItem) => {
+      // Replace temporary item with the one from the server (which has the real ID)
+      setInitiative(prev => {
+          const newInitiative = JSON.parse(JSON.stringify(prev));
+           for (const step of newInitiative.steps) {
+                const itemIndex = step.items.findIndex((i: InitiativeItem) => i.id === tempId);
+                if (itemIndex > -1) {
+                    step.items[itemIndex] = savedItem;
+                    break;
+                }
+            }
+          return newInitiative;
+      })
+    })
+    .catch(err => {
+        console.error("Failed to add item:", err);
+        toast({ title: "Error", description: "Failed to add item. It may not be saved.", variant: "destructive" });
+        // Rollback optimistic update
+        setInitiative(prev => {
+            const newInitiative = JSON.parse(JSON.stringify(prev));
+            for (const step of newInitiative.steps) {
+                step.items = step.items.filter((i: InitiativeItem) => i.id !== tempId);
+            }
+            return newInitiative;
+        })
+    });
+  };
+
+  const handleUpdateInitiativeItem = (itemId: string, newText: string) => {
+    const command: UpdateInitiativeItemCommand = { initiativeId: initiative.id, itemId, text: newText };
+    fireAndForget(`/api/organizations/${orgId}/initiative-items/${itemId}`, 'PUT', command, "Could not save item changes.");
+    setInitiative(prev => {
+        const newInitiative = JSON.parse(JSON.stringify(prev));
+        for (const step of newInitiative.steps) {
+            const item = step.items.find((i: InitiativeItem) => i.id === itemId);
+            if (item) {
+                item.text = newText;
+                break;
+            }
+        }
+        return newInitiative;
+    });
+  };
+
+  const handleDeleteInitiativeItem = (itemId: string) => {
+    const command: DeleteInitiativeItemCommand = { initiativeId: initiative.id, itemId };
+     fireAndForget(`/api/organizations/${orgId}/initiative-items/${itemId}`, 'DELETE', command, "Failed to delete item.");
+     setInitiative(prev => {
+        const newInitiative = JSON.parse(JSON.stringify(prev));
+        for (const step of newInitiative.steps) {
+            step.items = step.items.filter((i: InitiativeItem) => i.id !== itemId);
+        }
+        return newInitiative;
+    });
+  };
 
   const handleLinkRadarItems = (selectedIds: string[]) => {
-    onUpdateInitiative(initiative.id, { linkedRadarItemIds: selectedIds });
+    handleUpdateInitiative({ linkedRadarItemIds: selectedIds });
   };
   
   const linkedItems = (initiative.linkedRadarItemIds || [])
@@ -159,7 +229,7 @@ export function InitiativeView({
           <Label>Overall Progression: {initiative.progression}%</Label>
           <Slider
             value={[initiative.progression]}
-            onValueChange={(value) => onUpdateInitiative(initiative.id, { progression: value[0] })}
+            onValueChange={(value) => handleUpdateInitiative({ progression: value[0] })}
             max={100}
             step={1}
           />
@@ -196,7 +266,7 @@ export function InitiativeView({
                 {Icon && <Icon className="h-4 w-4 text-muted-foreground" />}
                 {step.title}
                 </CardTitle>
-                <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => onAddInitiativeItem(initiative.id, step.key)}>
+                <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => handleAddInitiativeItem(step.key)}>
                 <Plus className="h-4 w-4" />
                 </Button>
             </CardHeader>
@@ -207,8 +277,8 @@ export function InitiativeView({
                       key={item.id}
                       item={item}
                       initiativeId={initiative.id}
-                      onUpdateInitiativeItem={onUpdateInitiativeItem}
-                      onDeleteInitiativeItem={onDeleteInitiativeItem}
+                      onUpdateInitiativeItem={handleUpdateInitiativeItem}
+                      onDeleteInitiativeItem={handleDeleteInitiativeItem}
                     />
                 )) : (
                     <p className="text-sm text-muted-foreground text-center py-2">No items yet.</p>

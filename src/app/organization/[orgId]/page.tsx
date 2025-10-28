@@ -4,9 +4,8 @@
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { notFound, useParams } from "next/navigation";
-import { ChevronLeft, Radar, TrendingUp } from "lucide-react";
-import { v4 as uuidv4 } from 'uuid';
-import type { Organization, Strategy, Initiative, InitiativeItem } from "@/lib/types";
+import { ChevronLeft, Radar } from "lucide-react";
+import type { Organization, Strategy } from "@/lib/types";
 import { AppHeader } from "@/components/header";
 import { Button } from "@/components/ui/button";
 import { StrategyDashboard } from "@/components/dashboard";
@@ -15,10 +14,6 @@ import type {
   CreateStrategyCommand,
   UpdateStrategyCommand,
   CreateInitiativeCommand,
-  UpdateInitiativeCommand,
-  AddInitiativeItemCommand,
-  UpdateInitiativeItemCommand,
-  DeleteInitiativeItemCommand
 } from "@/lib/domain/strategy/commands";
 
 export default function OrganizationStrategyPage() {
@@ -30,7 +25,10 @@ export default function OrganizationStrategyPage() {
 
   const fetchOrganizationData = useCallback(async () => {
     if (!orgId) return;
-    setIsLoading(true);
+    // Don't set loading to true on background refreshes
+    if (!organization) {
+      setIsLoading(true);
+    }
     try {
       const response = await fetch(`/api/organizations/${orgId}/radar`);
       if (response.status === 404) {
@@ -52,11 +50,12 @@ export default function OrganizationStrategyPage() {
     } finally {
       setIsLoading(false);
     }
-  }, [orgId, toast]);
+  }, [orgId, toast, organization]);
 
   useEffect(() => {
     fetchOrganizationData();
-  }, [fetchOrganizationData]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [orgId]); // Only run on initial orgId load
 
   const handleApiCall = async (url: string, method: string, body: any, successMessage: string) => {
     try {
@@ -71,6 +70,8 @@ export default function OrganizationStrategyPage() {
         throw new Error(errorData.message || `Failed to perform action.`);
       }
       
+      // We re-fetch data for actions that create/delete top-level entities
+      // Child components will handle their own optimistic updates
       await fetchOrganizationData();
 
       toast({
@@ -100,158 +101,7 @@ export default function OrganizationStrategyPage() {
 
   const handleCreateInitiative = (strategyId: string, initiativeName: string) => {
     const command: CreateInitiativeCommand = { strategyId, name: initiativeName };
-    const originalOrganization = organization;
-    
-    // Optimistic UI Update
-    fetch(`/api/organizations/${orgId}/initiatives`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(command),
-    })
-    .then(response => {
-        if (!response.ok) throw new Error('Failed to create initiative on server');
-        return response.json();
-    })
-    .then(data => {
-        fetchOrganizationData(); // Refresh to get the new initiative
-        toast({
-          title: "Success",
-          description: `Initiative "${initiativeName}" has been added.`,
-        });
-    })
-    .catch((error) => {
-        console.error(error);
-        toast({
-            title: "Error",
-            description: "Failed to create initiative. Reverting...",
-            variant: "destructive",
-        });
-        if(originalOrganization) setOrganization(originalOrganization);
-    });
-  };
-
-  const handleUpdateInitiative = (initiativeId: string, updatedValues: any) => {
-    const command: UpdateInitiativeCommand = { initiativeId, ...updatedValues };
-    handleApiCall(`/api/organizations/${orgId}/initiatives/${initiativeId}`, 'PUT', command, "Initiative has been updated.");
-  };
-  
-  const handleAddInitiativeItem = async (initiativeId: string, stepKey: string) => {
-    const command: AddInitiativeItemCommand = { initiativeId, stepKey };
-    
-    // Optimistic UI Update
-    const tempId = `temp-${uuidv4()}`;
-    const newItem: InitiativeItem = { id: tempId, text: "" };
-
-    setOrganization(prevOrg => {
-      if (!prevOrg) return null;
-      const newOrg = JSON.parse(JSON.stringify(prevOrg));
-      for (const strategy of newOrg.dashboard.strategies) {
-          const initiative = strategy.initiatives.find((i: any) => i.id === initiativeId);
-          if (initiative) {
-              const step = initiative.steps.find((s: any) => s.key === stepKey);
-              if (step) {
-                  step.items.push(newItem);
-              }
-              break;
-          }
-      }
-      return newOrg;
-    });
-
-    // Send command to backend and re-sync silently
-    try {
-      const response = await fetch(`/api/organizations/${orgId}/initiative-items`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(command),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to save new item to server.');
-      }
-      
-      // Silently refresh data in the background to get the permanent ID
-      await fetchOrganizationData();
-
-    } catch (error: any) {
-      console.error(error);
-      toast({
-        title: "Error",
-        description: "Could not save item. Your changes may not be persisted.",
-        variant: "destructive",
-      });
-      // Roll back by fetching data again
-      await fetchOrganizationData();
-    }
-  };
-
-  const handleUpdateInitiativeItem = (initiativeId: string, itemId: string, newText: string) => {
-    const command: UpdateInitiativeItemCommand = { initiativeId, itemId, text: newText };
-    // Fire-and-forget the update to the backend. The component state is managed locally.
-    fetch(`/api/organizations/${orgId}/initiative-items/${itemId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(command),
-      }).catch(err => {
-        // Optional: handle background error, maybe with a less intrusive notification
-        console.error("Failed to save item in background:", err);
-         toast({
-          title: "Save Error",
-          description: "Could not save item changes to the server.",
-          variant: "destructive",
-        });
-      });
-  };
-  
-  const handleDeleteInitiativeItem = (initiativeId: string, itemId: string) => {
-    const command: DeleteInitiativeItemCommand = { initiativeId, itemId };
-    
-    const originalOrganization = organization;
-    
-    // Optimistic UI update
-    setOrganization(prevOrg => {
-        if (!prevOrg) return null;
-        const newOrg = JSON.parse(JSON.stringify(prevOrg));
-        for (const strategy of newOrg.dashboard.strategies) {
-            const initiative = strategy.initiatives.find(i => i.id === initiativeId);
-            if (initiative) {
-                for (const step of initiative.steps) {
-                    const itemIndex = step.items.findIndex((item: InitiativeItem) => item.id === itemId);
-                    if (itemIndex > -1) {
-                        step.items.splice(itemIndex, 1);
-                        break; 
-                    }
-                }
-            }
-        }
-        return newOrg;
-    });
-
-    // Send command to backend
-    fetch(`/api/organizations/${orgId}/initiative-items/${itemId}`, {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(command),
-    })
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Failed to delete on server');
-      }
-       toast({
-        title: "Success",
-        description: "Initiative item deleted.",
-      });
-    })
-    .catch((error) => {
-      console.error(error);
-      toast({
-        title: "Error",
-        description: "Failed to delete item. Restoring...",
-        variant: "destructive",
-      });
-      // Rollback on failure
-      if (originalOrganization) setOrganization(originalOrganization);
-    });
+    handleApiCall(`/api/organizations/${orgId}/initiatives`, 'POST', command, `Initiative "${initiativeName}" has been added.`);
   };
 
   if (isLoading) {
@@ -307,13 +157,10 @@ export default function OrganizationStrategyPage() {
             dashboard={organization.dashboard}
             radarItems={organization.radar || []}
             dashboardName={`${organization.name} - Strategy Dashboard`}
+            orgId={orgId}
             onCreateStrategy={handleCreateStrategy}
             onUpdateStrategy={handleUpdateStrategy}
             onCreateInitiative={handleCreateInitiative}
-            onUpdateInitiative={handleUpdateInitiative}
-            onAddInitiativeItem={handleAddInitiativeItem}
-            onUpdateInitiativeItem={handleUpdateInitiativeItem}
-            onDeleteInitiativeItem={handleDeleteInitiativeItem}
         />
       </main>
     </div>
