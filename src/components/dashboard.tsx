@@ -123,7 +123,6 @@ export function StrategyDashboard({
                           radarItems={radarItems}
                           isFocused={isFocused}
                           orgId={orgId}
-                          onStrategyChange={onDataChange}
                       />
                   )
               })

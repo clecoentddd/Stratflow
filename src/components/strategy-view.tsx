@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import { Plus, GripVertical, FilePenLine, Rocket, CheckCircle2, Archive } from "lucide-react";
 import {
   Card,
@@ -33,7 +33,6 @@ interface StrategyViewProps {
   radarItems: RadarItem[];
   isFocused: boolean;
   orgId: string;
-  onStrategyChange: () => void;
 }
 
 export function StrategyView({ 
@@ -41,11 +40,14 @@ export function StrategyView({
     radarItems,
     isFocused,
     orgId,
-    onStrategyChange,
 }: StrategyViewProps) {
   const [strategy, setStrategy] = useState(initialStrategy);
   const [newInitiativeName, setNewInitiativeName] = useState("");
   const { toast } = useToast();
+
+  useEffect(() => {
+    setStrategy(initialStrategy);
+  }, [initialStrategy]);
 
   console.log(`--- StrategyView (${strategy.description}): Render ---`);
 
@@ -61,7 +63,7 @@ export function StrategyView({
   const currentStateInfo = strategyStates.find(s => s.value === strategy.state) || strategyStates[0];
   const CurrentStateIcon = iconMap[currentStateInfo.iconName];
   
-  const handleApiCall = async (url: string, method: string, body: any, successMessage: string) => {
+  const handleApiCall = useCallback(async (url: string, method: string, body: any, successMessage: string) => {
     console.log(`StrategyView: handleApiCall (${method} ${url})`, body);
     try {
       const response = await fetch(url, {
@@ -75,13 +77,14 @@ export function StrategyView({
         throw new Error(errorData.message || `Failed to perform action.`);
       }
       
+      const data = await response.json();
+
       toast({
         title: "Success",
         description: successMessage,
       });
-      // After a successful API call that changes data, we should re-fetch from the parent.
-      onStrategyChange();
 
+      return data;
     } catch (error: any) {
       console.error(error);
       toast({
@@ -89,60 +92,73 @@ export function StrategyView({
         description: error.message || "An unexpected error occurred.",
         variant: "destructive",
       });
-      // For critical failures, a rollback might be needed by re-fetching
-      onStrategyChange();
+      // A rollback might be needed on failure. For now, we log the error.
+      // A more robust implementation might involve a global state management library.
     }
-  };
+  }, [toast]);
 
-  const handleUpdateStrategy = (updatedValues: Partial<Strategy>) => {
+
+  const handleUpdateStrategy = useCallback((updatedValues: Partial<Strategy>) => {
     const command: UpdateStrategyCommand = { strategyId: strategy.id, ...updatedValues };
     console.log(`StrategyView: handleUpdateStrategy for ${strategy.id}`, command);
+    
     // Optimistic update of local state
     setStrategy(prev => ({...prev, ...updatedValues}));
+    
     // Fire API call, which will trigger parent refresh on success/failure
     handleApiCall(`/api/organizations/${orgId}/strategies/${strategy.id}`, 'PUT', command, "Strategy has been updated.");
-  };
+  }, [strategy.id, orgId, handleApiCall]);
 
-  const handleCreateInitiative = (initiativeName: string) => {
+  const handleCreateInitiative = useCallback((initiativeName: string) => {
+    if (strategy.id.startsWith('strat-temp-')) {
+        toast({
+            title: "Please wait",
+            description: "The strategy is still being saved. Please try again in a moment.",
+            variant: "destructive"
+        });
+        return;
+    }
+
     const command: CreateInitiativeCommand = { strategyId: strategy.id, name: initiativeName };
     console.log(`StrategyView: handleCreateInitiative for ${strategy.id}`, command);
     
-    // Fire and forget API call
-     fetch(`/api/organizations/${orgId}/initiatives`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(command),
-    })
-    .then(async res => {
-        if (!res.ok) {
-            const errorData = await res.json();
-            throw new Error(errorData.message || 'Failed to create initiative');
-        }
-        return res.json();
-    })
-    .then(data => {
-        console.log("Initiative created successfully, server data:", data);
-        toast({ title: "Success", description: `Initiative "${initiativeName}" created.` });
-        onStrategyChange(); // Tell parent to re-fetch data
-    })
-    .catch(error => {
-        console.error("Failed to create initiative:", error);
-        toast({
-            title: "Error",
-            description: `Could not create initiative: ${error.message}`,
-            variant: "destructive",
+    const tempId = `init-${uuidv4()}`;
+    const newInitiative = newInitiativeTemplate(tempId, initiativeName);
+    
+    // Optimistic update
+    setStrategy(prev => ({
+        ...prev,
+        initiatives: [...prev.initiatives, newInitiative]
+    }));
+    
+    handleApiCall(`/api/organizations/${orgId}/initiatives`, 'POST', command, `Initiative "${initiativeName}" created.`)
+        .then(data => {
+            if (data?.initiativeId) {
+                // Replace temporary ID with the real one from the server
+                setStrategy(prev => ({
+                    ...prev,
+                    initiatives: prev.initiatives.map(init => 
+                        init.id === tempId ? { ...init, id: data.initiativeId } : init
+                    )
+                }));
+            }
         });
-        onStrategyChange(); // Re-fetch to rollback any inconsistencies
-    });
 
     setNewInitiativeName("");
-  };
+  }, [strategy.id, orgId, handleApiCall, toast]);
 
   const handleAddInitiative = () => {
     if (newInitiativeName.trim()) {
       handleCreateInitiative(newInitiativeName.trim());
     }
   };
+
+  const onInitiativeChanged = useCallback(() => {
+    // This function will be called by InitiativeView when an item inside it changes.
+    // We can refetch the specific strategy if needed, but for now we trust the optimistic updates.
+    console.log(`StrategyView (${strategy.id}): An initiative inside has changed.`);
+  }, [strategy.id]);
+
 
   return (
     <Card className={cn(
@@ -207,7 +223,7 @@ export function StrategyView({
                             initialInitiative={initiative} 
                             radarItems={radarItems}
                             orgId={orgId}
-                            onInitiativeChange={onStrategyChange}
+                            onInitiativeChange={onInitiativeChanged}
                         />
                     ))}
                 </Accordion>
