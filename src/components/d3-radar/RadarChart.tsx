@@ -43,10 +43,10 @@ const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: a
 
     const drawQuadrants = (g: d3.Selection<SVGGElement, unknown, null, undefined>, radius: number) => {
         const visualQuadrantColors = [
-            radarConfig.visual.quadrantColors[0], // Bottom-right
-            radarConfig.visual.quadrantColors[1], // Bottom-left
-            radarConfig.visual.quadrantColors[2], // Top-left
-            radarConfig.visual.quadrantColors[3], // Top-right
+            radarConfig.visual.quadrantColors[0],
+            radarConfig.visual.quadrantColors[1],
+            radarConfig.visual.quadrantColors[2],
+            radarConfig.visual.quadrantColors[3],
         ];
 
         visualQuadrantColors.forEach((color, i) => {
