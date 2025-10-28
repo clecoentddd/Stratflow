@@ -235,13 +235,12 @@ export function StrategyView({
                       strategy.state === 'Open' && 'bg-green-100 text-green-800 hover:bg-green-200',
                       (strategy.state === 'Closed' || strategy.state === 'Obsolete') && 'bg-gray-100 text-gray-800 hover:bg-gray-200',
                   )}
-                  onClick={(e) => e.stopPropagation()}
                   >
                     <CurrentStateIcon className="mr-2 h-4 w-4" />
                     {strategy.state}
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
+                <DropdownMenuContent align="end">
                   {strategyStates.map(state => {
                     const Icon = iconMap[state.iconName];
                     return (
@@ -317,5 +316,7 @@ export function StrategyView({
     </>
   );
 }
+
+    
 
     

@@ -297,14 +297,16 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
   return (
     <>
     <AccordionItem value={initiative.id}>
-      <AccordionTrigger className="hover:bg-accent/50 px-4 rounded-md">
-        <div className="flex-1 text-left">
-          <p className="font-medium">{initiative.name}</p>
-          <div className="flex items-center gap-2 mt-1">
-            <Progress value={initiative.progression} className="h-1 w-32" />
-            <span className="text-xs text-muted-foreground">{initiative.progression}%</span>
-          </div>
-        </div>
+      <div className="flex items-center justify-between hover:bg-accent/50 rounded-md">
+        <AccordionTrigger className="flex-1 text-left px-4 py-2">
+            <div className="flex-1 text-left">
+            <p className="font-medium">{initiative.name}</p>
+            <div className="flex items-center gap-2 mt-1">
+                <Progress value={initiative.progression} className="h-1 w-32" />
+                <span className="text-xs text-muted-foreground">{initiative.progression}%</span>
+            </div>
+            </div>
+        </AccordionTrigger>
         <div className="flex items-center gap-1 pr-2">
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -324,7 +326,7 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
                 </DropdownMenuContent>
             </DropdownMenu>
         </div>
-      </AccordionTrigger>
+      </div>
       <AccordionContent className="p-4 bg-muted/20">
         <div className="mb-6">
           <Label>Overall Progression: {initiative.progression}%</Label>
@@ -424,5 +426,7 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
     </>
   );
 }
+
+    
 
     
