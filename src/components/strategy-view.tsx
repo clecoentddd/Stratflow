@@ -106,27 +106,32 @@ export function StrategyView({
     const command: UpdateStrategyCommand = { strategyId: strategy.id, ...updatedValues };
     console.log(`StrategyView: handleUpdateStrategy for ${strategy.id}`, command);
     
-    // Optimistic update of local state
     setStrategy(prev => ({...prev, ...updatedValues}));
     
-    // Fire API call, which will trigger parent refresh on success/failure
     handleApiCall(`/api/organizations/${orgId}/strategies/${strategy.id}`, 'PUT', command, "Strategy has been updated.");
   }, [strategy.id, orgId, handleApiCall]);
 
   const handleCreateInitiative = useCallback(() => {
-    if (!newInitiativeName.trim()) return;
-
-    if (isSaving) {
+    if (!newInitiativeName.trim() || isSaving) {
+      if (isSaving) {
         toast({
-            title: "Please wait",
-            description: "The strategy is still being saved. Please try again in a moment.",
-            variant: "destructive"
+          title: "Please wait",
+          description: "The strategy is still being saved. Please try again in a moment.",
+          variant: "destructive",
         });
-        return;
+      }
+      return;
     }
 
     const command: CreateInitiativeCommand = { strategyId: strategy.id, name: newInitiativeName.trim() };
-    console.log(`StrategyView: handleCreateInitiative for ${strategy.id}`, command);
+    const tempId = `init-temp-${uuidv4()}`;
+    const newInitiative = newInitiativeTemplate(tempId, command.name);
+
+    // Optimistic UI Update
+    setStrategy(prev => ({
+      ...prev,
+      initiatives: [...prev.initiatives, newInitiative]
+    }));
     
     setNewInitiativeName(""); // Clear input immediately
     
