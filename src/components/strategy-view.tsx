@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useMemo } from "react";
-import { Plus, GripVertical, FilePenLine, Rocket, CheckCircle2, Archive, Search, Milestone, ListChecks, Target } from "lucide-react";
+import { Plus, GripVertical, FilePenLine, Rocket, CheckCircle2, Archive } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -48,9 +48,11 @@ export function StrategyView({
 
   const isSaving = strategy.id.startsWith('strat-temp-');
 
-  useEffect(() => {
-    setStrategy(initialStrategy);
-  }, [initialStrategy]);
+  // This useEffect was causing the input bug. By removing it, we prevent the
+  // component's state from being reset on every parent re-render.
+  // useEffect(() => {
+  //   setStrategy(initialStrategy);
+  // }, [initialStrategy]);
 
   const overallProgression = useMemo(() => {
     if (strategy.initiatives.length === 0) return 0;
