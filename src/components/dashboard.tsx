@@ -52,7 +52,7 @@ export function StrategyDashboard({
     setCreateStrategyOpen(false);
     
     const command: CreateStrategyCommand = { description, timeframe };
-    const tempId = `strat-${uuidv4()}`;
+    const tempId = `strat-temp-${uuidv4()}`;
 
     // Optimistic UI Update
     const newStrategy: Strategy = {
@@ -123,6 +123,7 @@ export function StrategyDashboard({
                           radarItems={radarItems}
                           isFocused={isFocused}
                           orgId={orgId}
+                          onStrategyChange={onDataChange}
                       />
                   )
               })

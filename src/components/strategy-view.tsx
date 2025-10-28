@@ -33,6 +33,7 @@ interface StrategyViewProps {
   radarItems: RadarItem[];
   isFocused: boolean;
   orgId: string;
+  onStrategyChange: () => void;
 }
 
 export function StrategyView({ 
@@ -40,16 +41,19 @@ export function StrategyView({
     radarItems,
     isFocused,
     orgId,
+    onStrategyChange
 }: StrategyViewProps) {
   const [strategy, setStrategy] = useState(initialStrategy);
   const [newInitiativeName, setNewInitiativeName] = useState("");
   const { toast } = useToast();
 
+  const isSaving = strategy.id.startsWith('strat-temp-');
+
+  console.log(`--- StrategyView (${strategy.description}): Render (isSaving: ${isSaving}) ---`);
+
   useEffect(() => {
     setStrategy(initialStrategy);
   }, [initialStrategy]);
-
-  console.log(`--- StrategyView (${strategy.description}): Render ---`);
 
   const overallProgression = useMemo(() => {
     if (strategy.initiatives.length === 0) return 0;
@@ -83,7 +87,8 @@ export function StrategyView({
         title: "Success",
         description: successMessage,
       });
-
+      
+      onStrategyChange();
       return data;
     } catch (error: any) {
       console.error(error);
@@ -92,10 +97,9 @@ export function StrategyView({
         description: error.message || "An unexpected error occurred.",
         variant: "destructive",
       });
-      // A rollback might be needed on failure. For now, we log the error.
-      // A more robust implementation might involve a global state management library.
+       onStrategyChange();
     }
-  }, [toast]);
+  }, [toast, onStrategyChange]);
 
 
   const handleUpdateStrategy = useCallback((updatedValues: Partial<Strategy>) => {
@@ -109,8 +113,10 @@ export function StrategyView({
     handleApiCall(`/api/organizations/${orgId}/strategies/${strategy.id}`, 'PUT', command, "Strategy has been updated.");
   }, [strategy.id, orgId, handleApiCall]);
 
-  const handleCreateInitiative = useCallback((initiativeName: string) => {
-    if (strategy.id.startsWith('strat-temp-')) {
+  const handleCreateInitiative = useCallback(() => {
+    if (!newInitiativeName.trim()) return;
+
+    if (isSaving) {
         toast({
             title: "Please wait",
             description: "The strategy is still being saved. Please try again in a moment.",
@@ -119,45 +125,19 @@ export function StrategyView({
         return;
     }
 
-    const command: CreateInitiativeCommand = { strategyId: strategy.id, name: initiativeName };
+    const command: CreateInitiativeCommand = { strategyId: strategy.id, name: newInitiativeName.trim() };
     console.log(`StrategyView: handleCreateInitiative for ${strategy.id}`, command);
     
-    const tempId = `init-${uuidv4()}`;
-    const newInitiative = newInitiativeTemplate(tempId, initiativeName);
+    setNewInitiativeName(""); // Clear input immediately
     
-    // Optimistic update
-    setStrategy(prev => ({
-        ...prev,
-        initiatives: [...prev.initiatives, newInitiative]
-    }));
-    
-    handleApiCall(`/api/organizations/${orgId}/initiatives`, 'POST', command, `Initiative "${initiativeName}" created.`)
-        .then(data => {
-            if (data?.initiativeId) {
-                // Replace temporary ID with the real one from the server
-                setStrategy(prev => ({
-                    ...prev,
-                    initiatives: prev.initiatives.map(init => 
-                        init.id === tempId ? { ...init, id: data.initiativeId } : init
-                    )
-                }));
-            }
-        });
+    handleApiCall(`/api/organizations/${orgId}/initiatives`, 'POST', command, `Initiative "${command.name}" created.`);
 
-    setNewInitiativeName("");
-  }, [strategy.id, orgId, handleApiCall, toast]);
-
-  const handleAddInitiative = () => {
-    if (newInitiativeName.trim()) {
-      handleCreateInitiative(newInitiativeName.trim());
-    }
-  };
+  }, [strategy.id, orgId, handleApiCall, toast, isSaving, newInitiativeName]);
 
   const onInitiativeChanged = useCallback(() => {
-    // This function will be called by InitiativeView when an item inside it changes.
-    // We can refetch the specific strategy if needed, but for now we trust the optimistic updates.
-    console.log(`StrategyView (${strategy.id}): An initiative inside has changed.`);
-  }, [strategy.id]);
+    console.log(`StrategyView (${strategy.id}): An initiative inside has changed. Triggering parent refresh.`);
+    onStrategyChange();
+  }, [strategy.id, onStrategyChange]);
 
 
   return (
@@ -235,13 +215,14 @@ export function StrategyView({
       <CardFooter className="bg-muted/50 p-4 rounded-b-lg">
         <div className="flex w-full items-center gap-2">
           <Input 
-            placeholder="Name your new initiative..." 
+            placeholder={isSaving ? "Saving strategy..." : "Name your new initiative..."}
             value={newInitiativeName}
             onChange={(e) => setNewInitiativeName(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleAddInitiative()}
+            onKeyDown={(e) => e.key === 'Enter' && handleCreateInitiative()}
             className="bg-background"
+            disabled={isSaving}
           />
-          <Button onClick={handleAddInitiative} disabled={!newInitiativeName.trim()}>
+          <Button onClick={handleCreateInitiative} disabled={!newInitiativeName.trim() || isSaving}>
             <Plus className="mr-2 h-4 w-4" /> Add Initiative
           </Button>
         </div>
