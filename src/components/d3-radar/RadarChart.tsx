@@ -66,7 +66,7 @@ const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: a
     };
 
     const quadrantLabels = Object.values(radarConfig.categories)
-    .sort((a, b) => a.label.localeCompare(b.label)) 
+    .sort((a, b) => a.quadrantIndex - b.quadrantIndex) // Ensure order is 0, 1, 2, 3
     .map(category => ({
         label: category.label,
         configIndex: category.quadrantIndex
@@ -76,10 +76,10 @@ const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: a
         g.selectAll(".quadrant-fill").remove();
 
         const visualQuadrantColors = [
-            radarConfig.visual.quadrantColors[0], 
-            radarConfig.visual.quadrantColors[1],
-            radarConfig.visual.quadrantColors[2],
-            radarConfig.visual.quadrantColors[3]
+            radarConfig.visual.quadrantColors[2], // Business (Top-Left)
+            radarConfig.visual.quadrantColors[3], // Capabilities (Top-Right)
+            radarConfig.visual.quadrantColors[0], // People & Knowledge (Bottom-Right)
+            radarConfig.visual.quadrantColors[1]  // Operating Model (Bottom-Left)
         ];
     
         visualQuadrantColors.forEach((color, i) => {
@@ -98,7 +98,7 @@ const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: a
     };
 
     const drawCategoryLabels = (g: d3.Selection<SVGGElement, unknown, null, undefined>, radius: number) => {
-        const offset = radius * 1.26; 
+        const offset = radius * 1.05; 
 
         Object.values(radarConfig.categories).forEach(cat => {
             const angle = (Math.PI / 2) * cat.quadrantIndex + (Math.PI / 4); 
@@ -106,9 +106,10 @@ const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: a
             const x = offset * Math.cos(angle);
             let y = offset * Math.sin(angle);
             
-             if (cat.quadrantIndex === 2 || cat.quadrantIndex === 3) {
-                y *= 1.2;
-            } else { 
+            // Further adjust y for top/bottom placement
+            if (cat.quadrantIndex === 2 || cat.quadrantIndex === 3) { // Top quadrants
+                y *= 0.8;
+            } else { // Bottom quadrants
                 y *= 1.2;
             }
 
@@ -248,10 +249,16 @@ const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: a
             });
 
         // Attach zoom behavior but disable user interaction with it initially
-        svg.call(zoom).on("wheel.zoom", null);
+        svg.call(zoom);
         
-        g.attr('transform', `translate(${centerX}, ${centerY})`);
+        // Store zoom behavior on the node to be accessible by handlers
+        (svg.node() as any).__zoom = zoom;
 
+        // Set initial transform to center the group
+        const initialTransform = d3.zoomIdentity.translate(centerX, centerY);
+        g.attr('transform', initialTransform.toString());
+        zoom.transform(svg as any, initialTransform);
+        
         drawQuadrants(g, radius);
         drawCategoryLabels(g, radius);
         drawRadarGrid(g, radius);
@@ -367,6 +374,7 @@ export default RadarChart;
 
 
     
+
 
 
 
