@@ -166,7 +166,7 @@ const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: a
     const drawOpportunity = (group: d3.Selection<SVGGElement, unknown, null, undefined>, item: any, x: number, y: number, size: number) => {
         const color = item.color || '#00cc88';
         const impactClass = getImpactClass(item.raw?.impact);
-        group.append('circle').attr('cx', x).attr('cy', y).attr('r', size).attr('fill', 'none').attr('stroke', color).attr('stroke-width', 2).attr('class', impactClass || styles.defaultImpact);
+        group.append('circle').attr('cx', x).attr('cy', y).attr('r', size).attr('fill', 'none').attr('stroke', color).attr('stroke-width', 2).attr('class', impactClass || styles.defaultImpact).classed(styles.itemGlowEffect, true);
         group.append('circle').attr('cx', x).attr('cy', y).attr('r', size * 0.7).attr('fill', color).attr('stroke', 'none').attr('class', impactClass || styles.defaultImpact);
     };
 
@@ -314,3 +314,6 @@ export default RadarChart;
 
     
 
+
+
+    
