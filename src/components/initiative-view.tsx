@@ -35,12 +35,11 @@ const iconMap = {
 interface InitiativeItemViewProps {
   item: InitiativeItem;
   initiativeId: string;
-  stepKey: InitiativeStepKey;
   onUpdateInitiativeItem: (initiativeId: string, itemId: string, newText: string) => void;
   onDeleteInitiativeItem: (initiativeId: string, itemId: string) => void;
 }
 
-function InitiativeItemView({ item, initiativeId, stepKey, onUpdateInitiativeItem, onDeleteInitiativeItem }: InitiativeItemViewProps) {
+function InitiativeItemView({ item, initiativeId, onUpdateInitiativeItem, onDeleteInitiativeItem }: InitiativeItemViewProps) {
   const [isEditing, setIsEditing] = useState(item.text === "");
   const [editText, setEditText] = useState(item.text);
 
@@ -52,10 +51,12 @@ function InitiativeItemView({ item, initiativeId, stepKey, onUpdateInitiativeIte
   };
 
   const handleCancel = () => {
-    setEditText(item.text);
-    setIsEditing(false);
-    if(item.text === "") {
+    if (item.text === "") {
+        // If the item was newly created and is being cancelled without saving, delete it.
         onDeleteInitiativeItem(initiativeId, item.id);
+    } else {
+        setEditText(item.text);
+        setIsEditing(false);
     }
   };
   
@@ -65,7 +66,7 @@ function InitiativeItemView({ item, initiativeId, stepKey, onUpdateInitiativeIte
 
   if (isEditing) {
     return (
-      <div className="space-y-2 p-2 border rounded-md">
+      <div className="space-y-2 p-2 border rounded-md bg-background shadow-md">
         <Textarea
           value={editText}
           onChange={(e) => setEditText(e.target.value)}
@@ -73,23 +74,21 @@ function InitiativeItemView({ item, initiativeId, stepKey, onUpdateInitiativeIte
           autoFocus
           rows={3}
           className="text-sm"
+          onBlur={handleSave}
         />
-        <div className="flex justify-end gap-2">
-          <Button size="sm" variant="outline" onClick={handleCancel}>
-            Cancel
-          </Button>
-          <Button size="sm" onClick={handleSave} disabled={!editText.trim()}>
-            Save
-          </Button>
-        </div>
-        {item.text && (
-            <div className="pt-2 border-t">
-             <Button size="sm" variant="destructive-outline" onClick={handleDelete}>
-                <Trash2 className="mr-2 h-4 w-4" />
-                Delete
-             </Button>
+        <div className="flex justify-between items-center">
+            <Button size="icon" variant="ghost" className="text-destructive hover:bg-destructive/10" onClick={handleDelete}>
+                <Trash2 className="h-4 w-4" />
+            </Button>
+            <div className="flex gap-2">
+                <Button size="sm" variant="outline" onClick={handleCancel}>
+                    Cancel
+                </Button>
+                <Button size="sm" onClick={handleSave} disabled={!editText.trim()}>
+                    Save
+                </Button>
             </div>
-        )}
+        </div>
       </div>
     );
   }
@@ -196,7 +195,6 @@ export function InitiativeView({
                     <InitiativeItemView 
                       key={item.id}
                       item={item}
-                      stepKey={step.key}
                       initiativeId={initiative.id}
                       onUpdateInitiativeItem={onUpdateInitiativeItem}
                       onDeleteInitiativeItem={onDeleteInitiativeItem}

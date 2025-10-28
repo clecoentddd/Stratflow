@@ -4,7 +4,7 @@
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { notFound, useParams } from "next/navigation";
-import { ChevronLeft, ShieldAlert } from "lucide-react";
+import { ChevronLeft, Radar, TrendingUp } from "lucide-react";
 import type { Organization, Strategy, InitiativeItem } from "@/lib/types";
 import { AppHeader } from "@/components/header";
 import { Button } from "@/components/ui/button";
@@ -151,12 +151,84 @@ export default function OrganizationStrategyPage() {
 
   const handleUpdateInitiativeItem = (initiativeId: string, itemId: string, newText: string) => {
     const command: UpdateInitiativeItemCommand = { initiativeId, itemId, text: newText };
-    handleApiCall(`/api/organizations/${orgId}/initiative-items/${itemId}`, 'PUT', command, "Initiative item saved.");
+    // This is a fire-and-forget save. We can add optimistic UI here as well,
+    // but for now, we just don't do a full refresh.
+    fetch(`/api/organizations/${orgId}/initiative-items/${itemId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(command),
+      }).then(response => {
+        if (response.ok) {
+          toast({ title: "Success", description: "Initiative item saved." });
+        } else {
+           toast({ title: "Error", description: "Failed to save item.", variant: "destructive" });
+        }
+      }).catch(err => {
+        toast({ title: "Error", description: "Failed to save item.", variant: "destructive" });
+      });
   };
   
   const handleDeleteInitiativeItem = (initiativeId: string, itemId: string) => {
     const command: DeleteInitiativeItemCommand = { initiativeId, itemId };
-    handleApiCall(`/api/organizations/${orgId}/initiative-items/${itemId}`, 'DELETE', command, "Initiative item deleted.");
+    
+    // --- Optimistic UI Update ---
+    const originalOrganization = organization;
+    
+    // 1. Immediately update the local state
+    setOrganization(prevOrg => {
+        if (!prevOrg) return null;
+
+        const newOrg = JSON.parse(JSON.stringify(prevOrg)); // Deep copy
+        let itemFoundAndRemoved = false;
+
+        for (const strategy of newOrg.dashboard.strategies) {
+            for (const initiative of strategy.initiatives) {
+                if (initiative.id === initiativeId) {
+                    for (const step of initiative.steps) {
+                        const initialItemCount = step.items.length;
+                        step.items = step.items.filter(item => item.id !== itemId);
+                        if (step.items.length < initialItemCount) {
+                            itemFoundAndRemoved = true;
+                            break;
+                        }
+                    }
+                }
+                if (itemFoundAndRemoved) break;
+            }
+            if (itemFoundAndRemoved) break;
+        }
+        return newOrg;
+    });
+
+    toast({
+        title: "Success",
+        description: "Initiative item deleted.",
+    });
+
+
+    // 2. Send the API request in the background
+    fetch(`/api/organizations/${orgId}/initiative-items/${itemId}`, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(command),
+    })
+    .then(response => {
+      if (!response.ok) {
+        // 3. If it fails, revert the state and show an error
+        throw new Error('Failed to delete on server');
+      }
+      // On success, do nothing. The UI is already correct.
+    })
+    .catch((error) => {
+      console.error(error);
+      toast({
+        title: "Error",
+        description: "Failed to delete item. Restoring...",
+        variant: "destructive",
+      });
+      // Rollback
+      setOrganization(originalOrganization);
+    });
   };
 
   if (isLoading) {
@@ -201,7 +273,7 @@ export default function OrganizationStrategyPage() {
                 </Link>
                  <Link href={`/organization/${orgId}/radar`}>
                     <Button variant="outline">
-                        <ShieldAlert className="mr-2 h-4 w-4" />
+                        <Radar className="mr-2 h-4 w-4" />
                         View Radar
                     </Button>
                 </Link>

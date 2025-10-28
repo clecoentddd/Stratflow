@@ -4,7 +4,7 @@
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { notFound, useParams } from "next/navigation";
-import { ChevronLeft, Plus, KanbanSquare } from "lucide-react";
+import { ChevronLeft, Plus, TrendingUp } from "lucide-react";
 import type { Organization, RadarItem } from "@/lib/types";
 import { AppHeader } from "@/components/header";
 import { Button } from "@/components/ui/button";
@@ -29,7 +29,7 @@ export default function RadarPage() {
     try {
       // Fetch the specific organization for the radar
       const orgResponse = await fetch(`/api/organizations/${orgId}/radar`);
-      if (orgResponse.status === 404) {
+       if (orgResponse.status === 404) {
         notFound();
         return;
       }
@@ -180,7 +180,7 @@ export default function RadarPage() {
             </Link>
             <Link href={`/organization/${orgId}`}>
               <Button variant="outline">
-                <KanbanSquare className="mr-2 h-4 w-4" />
+                <TrendingUp className="mr-2 h-4 w-4" />
                 View Strategy Dashboard
               </Button>
             </Link>
