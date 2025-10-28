@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useMemo, useEffect, useCallback } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { Plus, GripVertical, FilePenLine, Rocket, CheckCircle2, Archive } from "lucide-react";
 import {
   Card,
@@ -50,10 +50,6 @@ export function StrategyView({
   const isSaving = strategy.id.startsWith('strat-temp-');
 
   console.log(`--- StrategyView (${strategy.description}): Render (isSaving: ${isSaving}) ---`);
-
-  useEffect(() => {
-    setStrategy(initialStrategy);
-  }, [initialStrategy]);
 
   const overallProgression = useMemo(() => {
     if (strategy.initiatives.length === 0) return 0;
