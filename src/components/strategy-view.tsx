@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useMemo } from "react";
-import { Plus, GripVertical, FilePenLine, Rocket, CheckCircle2, Archive, Edit, MoreVertical } from "lucide-react";
+import { Plus, Edit, MoreVertical } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -27,7 +27,7 @@ import { v4 as uuidv4 } from "uuid";
 import { EditStrategyDialog } from "./edit-strategy-dialog";
 import { AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
 
-const iconMap = { FilePenLine, Rocket, CheckCircle2, Archive };
+const iconMap = { FilePenLine: Edit, Rocket: Plus, CheckCircle2: Plus, Archive: Plus };
 
 interface StrategyViewProps {
   initialStrategy: Strategy;
@@ -67,7 +67,7 @@ export function StrategyView({
   }, [strategy.initiatives]);
 
   const currentStateInfo = strategyStates.find(s => s.value === strategy.state) || strategyStates[0];
-  const CurrentStateIcon = iconMap[currentStateInfo.iconName];
+  const CurrentStateIcon = iconMap[currentStateInfo.iconName as keyof typeof iconMap] || Edit;
   
   const handleUpdateStrategy = useCallback(async (updatedValues: Partial<Strategy>) => {
     const originalStrategy = strategy;
@@ -233,7 +233,7 @@ export function StrategyView({
                         </div>
                     </AccordionTrigger>
                     <div className="flex items-center gap-1 pl-2">
-                        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setEditStrategyOpen(true)}>
+                         <Button variant="ghost" size="icon" className="h-8 w-8" onClick={(e) => { e.stopPropagation(); setEditStrategyOpen(true); }}>
                             <Edit className="h-4 w-4" />
                         </Button>
                         <DropdownMenu>
@@ -243,14 +243,14 @@ export function StrategyView({
                                     strategy.state === 'Draft' && 'bg-blue-100 text-blue-800 hover:bg-blue-200',
                                     strategy.state === 'Open' && 'bg-green-100 text-green-800 hover:bg-green-200',
                                     (strategy.state === 'Closed' || strategy.state === 'Obsolete') && 'bg-gray-100 text-gray-800 hover:bg-gray-200',
-                                )}>
+                                )} onClick={(e) => e.stopPropagation()}>
                                 <CurrentStateIcon className="mr-2 h-4 w-4" />
                                 {strategy.state}
                                 </Button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
+                            <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
                                 {strategyStates.map(state => {
-                                const Icon = iconMap[state.iconName];
+                                const Icon = iconMap[state.iconName as keyof typeof iconMap] || Edit;
                                 return (
                                 <DropdownMenuItem key={state.value} onClick={() => handleUpdateStrategy({ state: state.value })}>
                                     <Icon className={cn("mr-2 h-4 w-4", state.colorClass)} />
