@@ -23,7 +23,6 @@ const strategyOrder: Record<StrategyState, number> = {
 interface StrategyDashboardProps {
     initialDashboard: Dashboard;
     radarItems: RadarItem[];
-    dashboardName: string;
     orgId: string;
     onDataChange: () => void;
 }
@@ -31,7 +30,6 @@ interface StrategyDashboardProps {
 export function StrategyDashboard({ 
   initialDashboard, 
   radarItems, 
-  dashboardName,
   orgId,
   onDataChange,
 }: StrategyDashboardProps) {

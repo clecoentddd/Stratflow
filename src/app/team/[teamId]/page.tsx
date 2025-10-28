@@ -4,7 +4,7 @@
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { notFound, useParams } from "next/navigation";
-import { ChevronLeft, Radar } from "lucide-react";
+import { ChevronLeft, Plus, Radar } from "lucide-react";
 import type { Team } from "@/lib/types";
 import { AppHeader } from "@/components/header";
 import { Button } from "@/components/ui/button";
@@ -101,12 +101,13 @@ export default function TeamStrategyPage() {
                     </Button>
                 </Link>
             </div>
-             <h1 className="text-3xl font-bold font-headline">{team.name} - Strategy</h1>
+            <div className="flex-1 text-center">
+                 <h1 className="text-3xl font-bold font-headline">{team.name} - Strategy</h1>
+            </div>
         </div>
         <StrategyDashboard 
             initialDashboard={team.dashboard}
             radarItems={team.radar || []}
-            dashboardName={`${team.name} - Strategy Dashboard`}
             orgId={teamId}
             onDataChange={() => fetchTeamData(false)}
         />
