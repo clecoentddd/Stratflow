@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from 'next/link';
 import { Plus, Trash2, Search, Milestone, ListChecks, Target, Edit, MoreVertical } from "lucide-react";
 import { v4 as uuidv4 } from 'uuid';
