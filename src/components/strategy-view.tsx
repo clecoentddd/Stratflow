@@ -141,8 +141,12 @@ export function StrategyView({
     }
 
     setCreatingInitiative(true);
-    const command: CreateInitiativeCommand = { strategyId: strategy.id, name: newInitiativeName.trim() };
     const tempId = `init-temp-${uuidv4()}`;
+    const command: CreateInitiativeCommand = { 
+        strategyId: strategy.id, 
+        name: newInitiativeName.trim(),
+        tempId: tempId,
+    };
     const newInitiative = newInitiativeTemplate(tempId, command.name);
 
     // Optimistic UI Update

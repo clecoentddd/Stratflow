@@ -109,7 +109,10 @@ export const applyEventsToTeam = (
                 ...team.dashboard,
                 strategies: team.dashboard.strategies.map(s => {
                     if (s.id !== event.payload.strategyId) return s;
-                    const newInitiative: Initiative = event.payload.template;
+                    const newInitiative: Initiative = {
+                      ...event.payload.template,
+                      tempId: event.payload.tempId, // Store tempId for lookup
+                    };
                     return { ...s, initiatives: [...s.initiatives, newInitiative] };
                 })
             }

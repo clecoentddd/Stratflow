@@ -25,6 +25,9 @@ export async function POST(request: NextRequest, { params }: { params: { teamId:
     if (!command.name) {
       return NextResponse.json({ message: 'Initiative name is required' }, { status: 400 });
     }
+    if (!command.tempId) {
+        return NextResponse.json({ message: 'Temporary ID is required' }, { status: 400 });
+    }
 
     // 2. Create Event
     const initiativeId = `init-${uuidv4()}`;
@@ -36,6 +39,7 @@ export async function POST(request: NextRequest, { params }: { params: { teamId:
       payload: {
         strategyId: command.strategyId,
         initiativeId: initiativeId,
+        tempId: command.tempId,
         name: command.name,
         template: newInitiativeTemplate(initiativeId, command.name),
       },

@@ -18,9 +18,11 @@ export async function POST(request: NextRequest, { params }: { params: { teamId:
     if (!team) {
       return NextResponse.json({ message: 'Team not found' }, { status: 404 });
     }
+    // Find initiative by real ID or temporary ID
     const initiative = team.dashboard.strategies
         .flatMap(s => s.initiatives)
-        .find(i => i.id === command.initiativeId);
+        .find(i => i.id === command.initiativeId || i.tempId === command.initiativeId);
+        
     if (!initiative) {
         return NextResponse.json({ message: 'Initiative not found' }, { status: 404 });
     }
@@ -44,7 +46,7 @@ export async function POST(request: NextRequest, { params }: { params: { teamId:
       aggregateId: teamId,
       timestamp: new Date().toISOString(),
       payload: {
-        initiativeId: command.initiativeId,
+        initiativeId: initiative.id, // Use the real ID for the event
         stepKey: command.stepKey,
         item: newItem,
       },

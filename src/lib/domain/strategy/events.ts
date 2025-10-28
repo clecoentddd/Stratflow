@@ -29,6 +29,7 @@ export type InitiativeCreatedEvent = Event<
   {
     strategyId: string;
     initiativeId: string;
+    tempId: string; // Add temporary ID for optimistic UI
     name: string;
     template: {
       id: string;

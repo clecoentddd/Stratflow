@@ -17,6 +17,7 @@ export type InitiativeStep = {
 
 export type Initiative = {
   id:string;
+  tempId?: string; // Add temporary ID for optimistic UI
   name: string;
   progression: number;
   steps: InitiativeStep[];
