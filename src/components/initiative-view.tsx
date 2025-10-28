@@ -37,8 +37,7 @@ function InitiativeItemView({ item, orgId, initiativeId, stepKey, onUpdate, onDe
 
   useEffect(() => {
     // If the item is new (text is empty), automatically enter editing mode.
-    // This effect will run whenever the item prop changes.
-    if (item.text === "") {
+    if (item.text === "" && item.id.startsWith('temp-')) {
       setIsEditing(true);
     }
   }, [item]);
@@ -108,6 +107,8 @@ interface InitiativeViewProps {
   orgId: string;
   onInitiativeChange: () => void;
 }
+
+const iconMap = { Search, Milestone, ListChecks, Target };
 
 export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiativeChange }: InitiativeViewProps) {
   const [initiative, setInitiative] = useState(initialInitiative);
