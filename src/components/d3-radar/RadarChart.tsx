@@ -42,24 +42,27 @@ const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: a
     }));
 
     const drawQuadrants = (g: d3.Selection<SVGGElement, unknown, null, undefined>, radius: number) => {
+        g.selectAll(".quadrant-fill").remove(); // Clear previous quadrant fills
+    
         const visualQuadrantColors = [
-            radarConfig.visual.quadrantColors[0],
-            radarConfig.visual.quadrantColors[1],
-            radarConfig.visual.quadrantColors[2],
-            radarConfig.visual.quadrantColors[3],
+            radarConfig.visual.quadrantColors[2], // Business - top-left
+            radarConfig.visual.quadrantColors[3], // Capabilities - top-right
+            radarConfig.visual.quadrantColors[1], // Operating Model - bottom-left
+            radarConfig.visual.quadrantColors[0]  // People & Knowledge - bottom-right
         ];
-
+    
         visualQuadrantColors.forEach((color, i) => {
+            const path = d3.arc()
+                .innerRadius(0)
+                .outerRadius(radius)
+                .startAngle((Math.PI / 2) * i)
+                .endAngle((Math.PI / 2) * (i + 1));
+            
             g.append("path")
-                .attr("d", d3.arc()
-                    .innerRadius(0)
-                    .outerRadius(radius)
-                    .startAngle((Math.PI / 2) * i)
-                    .endAngle((Math.PI / 2) * (i + 1)) as any
-                )
+                .attr("d", path as any)
                 .attr("fill", color)
                 .attr("stroke", radarConfig.visual.gridColor)
-                .attr("data-quadrant", i); 
+                .attr("data-quadrant", i);
         });
     };
 
@@ -72,9 +75,10 @@ const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: a
             const x = offset * Math.cos(angle);
             let y = offset * Math.sin(angle);
             
+            // For top quadrants (2 and 3), make y more negative to move up
             if (cat.quadrantIndex === 2 || cat.quadrantIndex === 3) {
                 y *= 1.2;
-            } else { 
+            } else { // For bottom quadrants (0 and 1), make y more positive to move down
                 y *= 1.2;
             }
 
@@ -258,7 +262,7 @@ const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: a
             .duration(750)
             .attr('transform', transformString);
             
-    }, [items, radius, activeQuadrant]);
+    }, [items, radius, activeQuadrant, router]);
 
     useEffect(() => {
         if (tooltipData.visible && tooltipData.item && tooltipRef.current) {
@@ -341,4 +345,5 @@ export default RadarChart;
 
 
     
+
 
