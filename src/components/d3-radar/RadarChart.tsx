@@ -199,21 +199,18 @@ const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: a
         const centerX = totalWidth / 2;
         const centerY = svgSize / 2;
 
-        // Correctly apply initial transform to center the group
-        g.attr('transform', `translate(${centerX}, ${centerY})`);
-        
-        // Define the zoom handler function
         const zoomed = (event: d3.D3ZoomEvent<SVGSVGElement, unknown>) => {
             g.attr('transform', event.transform.toString());
         };
 
-        // Create and configure the zoom behavior
         const zoom = d3.zoom<SVGSVGElement, unknown>()
-            .scaleExtent([0.5, 8]) // Example: allow zooming from 0.5x to 8x
+            .scaleExtent([0.5, 8])
             .on("zoom", zoomed);
         
-        // Attach the zoom behavior to the SVG element
-        svg.call(zoom);
+        svg.call(zoom as any);
+
+        const initialTransform = d3.zoomIdentity.translate(centerX, centerY);
+        g.attr('transform', initialTransform.toString());
         
         drawQuadrants(g, radius);
         drawCategoryLabels(g, radius);
