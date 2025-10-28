@@ -27,11 +27,15 @@ export async function POST(request: NextRequest, { params }: { params: { orgId: 
     if (!command.stepKey) {
         return NextResponse.json({ message: 'Step key is required' }, { status: 400 });
     }
+    if (!command.item || typeof command.item.text !== 'string') {
+        return NextResponse.json({ message: 'Item text is required' }, { status: 400 });
+    }
+
 
     // 2. Create Event
     const newItem: InitiativeItem = {
         id: `item-${uuidv4()}`,
-        text: "" // Start with empty text, to be edited by user
+        text: command.item.text // Use the text from the command
     };
 
     const event: InitiativeItemAddedEvent = {

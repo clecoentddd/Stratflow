@@ -1,6 +1,6 @@
 
 // --- Commands ---
-import type { Strategy, StrategyState } from '@/lib/types';
+import type { Strategy, StrategyState, InitiativeItem } from '@/lib/types';
 
 export type CreateStrategyCommand = {
   description: string;
@@ -25,6 +25,7 @@ export type UpdateInitiativeCommand = {
 export type AddInitiativeItemCommand = {
     initiativeId: string;
     stepKey: string;
+    item: Omit<InitiativeItem, 'id'>; // The text for the new item.
 };
 
 export type UpdateInitiativeItemCommand = {
