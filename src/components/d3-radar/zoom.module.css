@@ -72,25 +72,3 @@
   border-color: rgba(255, 100, 100, 0.6);
   color: #ff4c4c;
 }
-
-/* Create Radar Item button */
-.createButton {
-  background-color: #00ff9f;
-  color: #0a0f0f;
-  font-family: 'Inter', sans-serif;
-  font-size: 12px;
-  font-weight: 600;
-  padding: 8px 14px;
-  border-radius: 6px;
-  border: none;
-  cursor: pointer;
-  width: 100%;
-  margin-bottom: 16px;
-  transition: all 0.25s ease;
-}
-
-.createButton:hover {
-  background-color: #00cc88;
-  color: #ffffff;
-  transform: translateY(-1px);
-}
