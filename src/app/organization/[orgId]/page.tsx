@@ -139,11 +139,6 @@ export default function OrganizationStrategyPage() {
         return newOrg;
       });
 
-      toast({
-        title: "Success",
-        description: "New item added to initiative.",
-      });
-
     } catch (error: any) {
       console.error(error);
       toast({
