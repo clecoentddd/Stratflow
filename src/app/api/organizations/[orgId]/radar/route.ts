@@ -3,7 +3,6 @@ import { NextResponse, NextRequest } from 'next/server';
 import { v4 as uuidv4 } from 'uuid';
 import {
   getOrganizationByIdProjection,
-  updateOrganizationProjection,
   applyEventsToOrganization,
 } from '@/lib/db/projections';
 import { saveEvents, getEventsFor } from '@/lib/db/event-store';
@@ -18,7 +17,6 @@ export async function GET(request: NextRequest, { params }: { params: { orgId: s
       return NextResponse.json({ message: 'Organization not found' }, { status: 404 });
     }
     // Return the full organization object, which includes the radar array.
-    // The frontend will handle the case where the radar array is empty.
     return NextResponse.json(organization);
   } catch (error) {
     console.error('Failed to get radar items:', error);
@@ -59,15 +57,14 @@ export async function POST(request: NextRequest, { params }: { params: { orgId: 
     // 3. Save Event(s) to Event Store
     await saveEvents([event]);
 
-    // 4. Synchronously Update Projection
-    const updatedOrgState = applyEventsToOrganization(organization, [event]);
+    // 4. Re-project to get the latest state for the response
+    const allEventsForOrg = await getEventsFor(orgId);
+    const updatedOrgState = applyEventsToOrganization(null, allEventsForOrg);
 
-    if (updatedOrgState) {
-      updateOrganizationProjection(updatedOrgState);
-    } else {
+    if (!updatedOrgState) {
       throw new Error('Failed to apply event to create radar item.');
     }
-
+    
     return NextResponse.json(updatedOrgState, { status: 201 });
   } catch (error) {
     console.error('Failed to create radar item:', error);
@@ -106,17 +103,11 @@ export async function PUT(request: NextRequest, { params }: { params: { orgId: s
         // 3. Save Event(s) to Event Store
         await saveEvents([event]);
         
-        // 4. Synchronously Update Projection
+        // 4. Re-project to get the latest state for the response
         const allEventsForOrg = await getEventsFor(orgId);
         const updatedOrgState = applyEventsToOrganization(null, allEventsForOrg);
 
-        if (updatedOrgState) {
-            // Preserve dashboard data as it's not event-sourced yet
-            if(organization.dashboard) {
-               updatedOrgState.dashboard = organization.dashboard; 
-            }
-            updateOrganizationProjection(updatedOrgState);
-        } else {
+        if (!updatedOrgState) {
             throw new Error('Failed to apply event to update radar item.');
         }
 
@@ -162,11 +153,11 @@ export async function DELETE(request: NextRequest, { params }: { params: { orgId
         // 3. Save Event
         await saveEvents([event]);
         
-        // 4. Update Projection
-        const updatedOrgState = applyEventsToOrganization(organization, [event]);
-        if(updatedOrgState) {
-            updateOrganizationProjection(updatedOrgState);
-        } else {
+        // 4. Re-project to get the latest state for the response
+        const allEventsForOrg = await getEventsFor(orgId);
+        const updatedOrgState = applyEventsToOrganization(null, allEventsForOrg);
+
+        if(!updatedOrgState) {
              throw new Error('Failed to apply delete event to radar item.');
         }
 

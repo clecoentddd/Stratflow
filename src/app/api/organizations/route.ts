@@ -3,7 +3,6 @@ import { NextResponse, NextRequest } from 'next/server';
 import { v4 as uuidv4 } from 'uuid';
 import {
   getOrganizationsProjection,
-  updateOrganizationProjection,
   applyEventsToOrganization,
   getOrganizationByIdProjection,
 } from '@/lib/db/projections';
@@ -12,7 +11,6 @@ import type { CreateOrganizationCommand, UpdateOrganizationCommand } from '@/lib
 import type { OrganizationCreatedEvent, OrganizationUpdatedEvent, OrganizationEvent } from '@/lib/domain/organizations/events';
 
 // --- Vertical Slice: GET Organizations ---
-// This handles fetching the read-model (projection).
 export async function GET(request: NextRequest) {
   try {
     const organizations = await getOrganizationsProjection();
@@ -27,7 +25,6 @@ export async function GET(request: NextRequest) {
 }
 
 // --- Vertical Slice: Create Organization ---
-// This handles the command to create a new organization.
 export async function POST(request: NextRequest) {
   try {
     // 1. Parse and Validate the Command
@@ -61,12 +58,10 @@ export async function POST(request: NextRequest) {
     // 4. Save Event(s) to Event Store
     await saveEvents([event]);
 
-    // 5. Synchronously Update Projection
+    // 5. Re-project from events to get the created state for the response
     const newOrgState = applyEventsToOrganization(null, [event]);
 
-    if (newOrgState) {
-      updateOrganizationProjection(newOrgState);
-    } else {
+    if (!newOrgState) {
       throw new Error('Failed to apply event to create organization state.');
     }
 
@@ -113,22 +108,11 @@ export async function PUT(request: NextRequest) {
         // 4. Save Event to Event Store
         await saveEvents([event]);
 
-        // 5. Synchronously Update Projection
-        // Re-read all events for the aggregate to rebuild its state accurately
+        // 5. Re-project all events for the aggregate to rebuild its state accurately for the response
         const allEventsForOrg = await getEventsFor(id);
         const updatedOrgState = applyEventsToOrganization(null, allEventsForOrg);
         
-        if (updatedOrgState) {
-            // Because dashboard and radar are not fully event-sourced yet, we must preserve them from the previous state.
-            // This is a crucial step to prevent data loss on update.
-            if (existingOrg.dashboard) {
-               updatedOrgState.dashboard = existingOrg.dashboard;
-            }
-            if(existingOrg.radar) {
-                updatedOrgState.radar = existingOrg.radar;
-            }
-            updateOrganizationProjection(updatedOrgState);
-        } else {
+        if (!updatedOrgState) {
             throw new Error('Failed to apply events to update organization state.');
         }
 

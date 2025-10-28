@@ -3,7 +3,6 @@ import { NextResponse, NextRequest } from 'next/server';
 import { v4 as uuidv4 } from 'uuid';
 import {
   getCompaniesProjection,
-  updateCompanyProjection,
   applyEventsToCompany,
 } from '@/lib/db/projections';
 import { saveEvents } from '@/lib/db/event-store';
@@ -54,14 +53,8 @@ export async function POST(request: NextRequest) {
     // 4. Save Event(s) to Event Store
     await saveEvents([event]);
 
-    // 5. Synchronously Update Projection
+    // 5. Build new state for the response
     const newCompanyState = applyEventsToCompany(null, [event]);
-
-    if (newCompanyState) {
-      updateCompanyProjection(newCompanyState);
-    } else {
-      throw new Error('Failed to apply event to create company state.');
-    }
 
     return NextResponse.json(newCompanyState, { status: 201 });
   } catch (error) {
