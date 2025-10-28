@@ -17,6 +17,8 @@ export async function GET(request: NextRequest, { params }: { params: { orgId: s
     if (!organization) {
       return NextResponse.json({ message: 'Organization not found' }, { status: 404 });
     }
+    // Return the full organization object, which includes the radar array.
+    // The frontend will handle the case where the radar array is empty.
     return NextResponse.json(organization);
   } catch (error) {
     console.error('Failed to get radar items:', error);
@@ -109,7 +111,10 @@ export async function PUT(request: NextRequest, { params }: { params: { orgId: s
         const updatedOrgState = applyEventsToOrganization(null, allEventsForOrg);
 
         if (updatedOrgState) {
-            updatedOrgState.dashboard = organization.dashboard; // Preserve dashboard
+            // Preserve dashboard data as it's not event-sourced yet
+            if(organization.dashboard) {
+               updatedOrgState.dashboard = organization.dashboard; 
+            }
             updateOrganizationProjection(updatedOrgState);
         } else {
             throw new Error('Failed to apply event to update radar item.');

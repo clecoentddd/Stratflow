@@ -37,6 +37,12 @@ export default function RadarPage() {
         throw new Error("Failed to fetch organization data");
       }
       const orgData = await orgResponse.json();
+      
+      // If the API returns null/undefined for any reason, treat as not found.
+      if (!orgData) {
+        notFound();
+        return;
+      }
       setOrganization(orgData);
 
       // Fetch all organizations for linking purposes
@@ -48,6 +54,7 @@ export default function RadarPage() {
     } catch (error) {
       console.error("Failed to fetch data:", error);
       toast({ title: "Error", description: "Could not load radar data.", variant: "destructive" });
+      setOrganization(null); // Ensure we don't show stale data on error
     } finally {
       setIsLoading(false);
     }
