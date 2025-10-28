@@ -16,6 +16,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import type { Strategy } from "@/lib/types";
+import type { UpdateStrategyCommand } from "@/lib/domain/strategy/commands";
 
 interface EditStrategyDialogProps {
   isOpen: boolean;
@@ -56,7 +57,8 @@ export function EditStrategyDialog({
 
     setIsSubmitting(true);
 
-    const command = {
+    const command: UpdateStrategyCommand = {
+      strategyId: strategy.id,
       description: description.trim(),
       timeframe: timeframe.trim(),
     };
