@@ -1,3 +1,4 @@
+
 // Event Sourcing and CQRS Types
 export type Event<T extends string, P> = {
   type: T;
@@ -19,5 +20,15 @@ export type OrganizationCreatedEvent = Event<
   }
 >;
 
+export type OrganizationUpdatedEvent = Event<
+    'OrganizationUpdated',
+    {
+        name: string;
+        purpose: string;
+        context: string;
+    }
+>;
+
+
 // Union of all events related to an Organization
-export type OrganizationEvent = OrganizationCreatedEvent; // Add more events like OrganizationUpdated, etc.
+export type OrganizationEvent = OrganizationCreatedEvent | OrganizationUpdatedEvent;

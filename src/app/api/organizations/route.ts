@@ -5,10 +5,11 @@ import {
   getOrganizationsProjection,
   updateOrganizationProjection,
   applyEventsToOrganization,
+  getOrganizationByIdProjection,
 } from '@/lib/db/projections';
-import { saveEvents } from '@/lib/db/event-store';
-import type { CreateOrganizationCommand } from '@/lib/domain/organizations/commands';
-import type { OrganizationCreatedEvent } from '@/lib/domain/organizations/events';
+import { saveEvents, getEventsFor } from '@/lib/db/event-store';
+import type { CreateOrganizationCommand, UpdateOrganizationCommand } from '@/lib/domain/organizations/commands';
+import type { OrganizationCreatedEvent, OrganizationUpdatedEvent, OrganizationEvent } from '@/lib/domain/organizations/events';
 
 // --- Vertical Slice: GET Organizations ---
 // This handles fetching the read-model (projection).
@@ -58,11 +59,9 @@ export async function POST(request: NextRequest) {
     };
 
     // 4. Save Event(s) to Event Store
-    // In a real system, this would be a single transaction.
     await saveEvents([event]);
 
     // 5. Synchronously Update Projection
-    // Re-create the state from its events. For a new org, this is just the creation event.
     const newOrgState = applyEventsToOrganization(null, [event]);
 
     if (newOrgState) {
@@ -79,4 +78,58 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
+}
+
+// --- Vertical Slice: Update Organization ---
+export async function PUT(request: NextRequest) {
+    try {
+        // 1. Parse and Validate Command
+        const command: UpdateOrganizationCommand = await request.json();
+        if (!command.id || !command.name || !command.purpose) {
+            return NextResponse.json({ message: 'ID, name, and purpose are required' }, { status: 400 });
+        }
+
+        // 2. Command Handler Logic
+        const { id, name, purpose, context } = command;
+
+        const existingOrg = await getOrganizationByIdProjection(id);
+        if (!existingOrg) {
+            return NextResponse.json({ message: 'Organization not found' }, { status: 404 });
+        }
+
+        // 3. Create Event
+        const event: OrganizationUpdatedEvent = {
+            type: 'OrganizationUpdated',
+            entity: 'organization',
+            aggregateId: id,
+            timestamp: new Date().toISOString(),
+            payload: {
+                name,
+                purpose,
+                context,
+            },
+        };
+
+        // 4. Save Event to Event Store
+        await saveEvents([event]);
+
+        // 5. Synchronously Update Projection
+        const eventsForOrg = await getEventsFor(id);
+        const updatedOrgState = applyEventsToOrganization(null, eventsForOrg);
+        
+        if (updatedOrgState) {
+            // We need to preserve dashboard and radar data which are not part of the event sourcing model for now
+            updatedOrgState.dashboard = existingOrg.dashboard;
+            updatedOrgState.radar = existingOrg.radar;
+            updateOrganizationProjection(updatedOrgState);
+        } else {
+            throw new Error('Failed to apply event to update organization state.');
+        }
+
+        return NextResponse.json(updatedOrgState, { status: 200 });
+
+    } catch (error) {
+        console.error('Failed to update organization:', error);
+        return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
+    }
 }

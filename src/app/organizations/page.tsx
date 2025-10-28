@@ -3,16 +3,25 @@
 
 import { useState, useEffect, useMemo, useCallback } from "react";
 import Link from "next/link";
-import { Plus } from "lucide-react";
+import { Plus, MoreHorizontal, Pencil, Eye, ShieldAlert } from "lucide-react";
 import type { Organization } from "@/lib/types";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { AppHeader } from "@/components/header";
 import { Button } from "@/components/ui/button";
 import { CreateOrganizationDialog } from "@/components/create-organization-dialog";
+import { EditOrganizationDialog } from "@/components/edit-organization-dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export default function OrganizationsPage() {
   const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [isCreateOrgOpen, setCreateOrgOpen] = useState(false);
+  const [isEditOrgOpen, setEditOrgOpen] = useState(false);
+  const [editingOrg, setEditingOrg] = useState<Organization | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchOrganizations = useCallback(async () => {
@@ -26,7 +35,7 @@ export default function OrganizationsPage() {
       setOrganizations(data);
     } catch (error) {
       console.error("Failed to fetch organizations from API", error);
-      setOrganizations([]); // Set to empty array on error
+      setOrganizations([]);
     } finally {
       setIsLoading(false);
     }
@@ -36,6 +45,10 @@ export default function OrganizationsPage() {
     fetchOrganizations();
   }, [fetchOrganizations]);
 
+  const handleEditClick = (org: Organization) => {
+    setEditingOrg(org);
+    setEditOrgOpen(true);
+  };
 
   const groupedOrganizations = useMemo(() => {
     const groups: { [key: number]: Organization[] } = {};
@@ -82,20 +95,40 @@ export default function OrganizationsPage() {
                         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                             {orgs.map((org) => (
                                 <Card key={org.id} className="hover:shadow-lg transition-shadow flex flex-col">
-                                    <CardHeader>
-                                        <CardTitle>{org.name}</CardTitle>
-                                        <CardDescription>{org.purpose}</CardDescription>
+                                    <CardHeader className="flex flex-row justify-between items-start">
+                                        <div>
+                                            <CardTitle>{org.name}</CardTitle>
+                                            <CardDescription>{org.purpose}</CardDescription>
+                                        </div>
+                                        <div className="flex items-center">
+                                            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleEditClick(org)}>
+                                                <Pencil className="h-4 w-4" />
+                                            </Button>
+                                            <DropdownMenu>
+                                                <DropdownMenuTrigger asChild>
+                                                    <Button variant="ghost" size="icon" className="h-8 w-8">
+                                                        <MoreHorizontal className="h-4 w-4" />
+                                                    </Button>
+                                                </DropdownMenuTrigger>
+                                                <DropdownMenuContent align="end">
+                                                    <DropdownMenuItem asChild>
+                                                        <Link href={`/organization/${org.id}`}>
+                                                            <Eye className="mr-2 h-4 w-4" />
+                                                            View Strategy
+                                                        </Link>
+                                                    </DropdownMenuItem>
+                                                    <DropdownMenuItem asChild>
+                                                        <Link href={`/organization/${org.id}/radar`}>
+                                                            <ShieldAlert className="mr-2 h-4 w-4" />
+                                                            View Radar
+                                                        </Link>
+                                                    </DropdownMenuItem>
+                                                </DropdownMenuContent>
+                                            </DropdownMenu>
+                                        </div>
                                     </CardHeader>
                                     <CardContent className="flex-grow">
-                                        <p className="text-sm text-muted-foreground mb-4">{org.context}</p>
-                                        <div className="flex flex-wrap gap-2">
-                                            <Link href={`/organization/${org.id}`}>
-                                              <Button>View Strategy Dashboard</Button>
-                                            </Link>
-                                            <Link href={`/organization/${org.id}/radar`}>
-                                              <Button variant="accent">View Radar</Button>
-                                            </Link>
-                                        </div>
+                                        <p className="text-sm text-muted-foreground">{org.context}</p>
                                     </CardContent>
                                 </Card>
                             ))}
@@ -115,6 +148,17 @@ export default function OrganizationsPage() {
         onOpenChange={setCreateOrgOpen}
         onOrganizationCreated={fetchOrganizations}
       />
+      {editingOrg && (
+        <EditOrganizationDialog
+            isOpen={isEditOrgOpen}
+            onOpenChange={setEditOrgOpen}
+            organization={editingOrg}
+            onOrganizationUpdated={() => {
+                setEditingOrg(null);
+                fetchOrganizations();
+            }}
+        />
+      )}
     </div>
   );
 }

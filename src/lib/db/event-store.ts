@@ -62,26 +62,32 @@ const seedEvents = () => {
   const initialCompanyProjections: Record<string, Company> = {};
   const initialOrgProjections: Record<string, Organization> = {};
 
-  seedEvents.forEach((event) => {
-    if (event.entity === 'company') {
-      const company = applyEventsToCompany(null, [event]);
-      if (company) {
-        initialCompanyProjections[company.id] = company;
-      }
-    } else if (event.entity === 'organization') {
-      const org = applyEventsToOrganization(null, [event]);
-      if (org) {
-        const initialOrgData = initialOrganizations.find(
-          (io) => io.id === org.id
-        );
-        if (initialOrgData) {
-          org.dashboard = initialOrgData.dashboard;
-          org.radar = initialOrgData.radar;
-        }
-        initialOrgProjections[org.id] = org;
-      }
+  const companyEvents = seedEvents.filter(e => e.entity === 'company');
+  const orgEvents = seedEvents.filter(e => e.entity === 'organization');
+
+  // Project companies first
+  companyEvents.forEach((event) => {
+    const company = applyEventsToCompany(initialCompanyProjections[event.aggregateId] || null, [event]);
+    if (company) {
+      initialCompanyProjections[company.id] = company;
     }
   });
+  
+  // Project organizations
+  orgEvents.forEach((event) => {
+    const org = applyEventsToOrganization(initialOrgProjections[event.aggregateId] || null, [event]);
+    if (org) {
+      const initialOrgData = initialOrganizations.find(
+        (io) => io.id === org.id
+      );
+      if (initialOrgData) {
+        org.dashboard = initialOrgData.dashboard;
+        org.radar = initialOrgData.radar;
+      }
+      initialOrgProjections[org.id] = org;
+    }
+  });
+
 
   const { _setInitialProjections } = require('./projections');
   _setInitialProjections(initialOrgProjections, initialCompanyProjections);

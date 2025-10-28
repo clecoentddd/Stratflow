@@ -40,10 +40,14 @@ export const applyEventsToOrganization = (
           },
           radar: [],
         };
-      // Add other event types here (e.g., 'OrganizationUpdated')
-      // case 'OrganizationUpdated':
-      //     if (!org) return null; // Cannot update a non-existent org
-      //     return { ...org, ...event.payload };
+      case 'OrganizationUpdated':
+          if (!org) return null; // Cannot update a non-existent org
+          return { 
+              ...org,
+              name: event.payload.name,
+              purpose: event.payload.purpose,
+              context: event.payload.context,
+            };
       default:
         return org;
     }
