@@ -5,6 +5,7 @@ import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { notFound, useParams } from "next/navigation";
 import { ChevronLeft, Radar, TrendingUp } from "lucide-react";
+import { v4 as uuidv4 } from 'uuid';
 import type { Organization, Strategy, Initiative, InitiativeItem } from "@/lib/types";
 import { AppHeader } from "@/components/header";
 import { Button } from "@/components/ui/button";
@@ -66,7 +67,6 @@ export default function OrganizationStrategyPage() {
         throw new Error(errorData.message || `Failed to perform action.`);
       }
       
-      // Re-fetch data to reflect changes
       await fetchOrganizationData();
 
       toast({
@@ -98,7 +98,6 @@ export default function OrganizationStrategyPage() {
     const command: CreateInitiativeCommand = { strategyId, name: initiativeName };
     const originalOrganization = organization;
 
-    // Optimistic UI update
     fetch(`/api/organizations/${orgId}/initiatives`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -109,7 +108,6 @@ export default function OrganizationStrategyPage() {
         return response.json();
     })
     .then(data => {
-        // Full re-fetch to get the complete new initiative from the backend projection
         fetchOrganizationData();
         toast({
           title: "Success",
@@ -123,7 +121,6 @@ export default function OrganizationStrategyPage() {
             description: "Failed to create initiative. Reverting...",
             variant: "destructive",
         });
-        // Rollback
         if(originalOrganization) setOrganization(originalOrganization);
     });
   };
@@ -135,6 +132,28 @@ export default function OrganizationStrategyPage() {
   
   const handleAddInitiativeItem = async (initiativeId: string, stepKey: string) => {
     const command: AddInitiativeItemCommand = { initiativeId, stepKey };
+    
+    // Optimistic UI Update
+    const tempId = `temp-${uuidv4()}`;
+    const newItem: InitiativeItem = { id: tempId, text: "" };
+
+    setOrganization(prevOrg => {
+      if (!prevOrg) return null;
+      const newOrg = JSON.parse(JSON.stringify(prevOrg));
+      for (const strategy of newOrg.dashboard.strategies) {
+          const initiative = strategy.initiatives.find((i: any) => i.id === initiativeId);
+          if (initiative) {
+              const step = initiative.steps.find((s: any) => s.key === stepKey);
+              if (step) {
+                  step.items.push(newItem);
+              }
+              break;
+          }
+      }
+      return newOrg;
+    });
+
+    // Send command to backend and re-sync silently
     try {
       const response = await fetch(`/api/organizations/${orgId}/initiative-items`, {
         method: 'POST',
@@ -143,45 +162,26 @@ export default function OrganizationStrategyPage() {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to add item.');
+        throw new Error('Failed to save new item to server.');
       }
-      
-      const newItem = await response.json();
 
-      // Update state locally instead of full refresh
-      setOrganization(prevOrg => {
-        if (!prevOrg) return null;
-        
-        const newOrg = JSON.parse(JSON.stringify(prevOrg)); // Deep copy
-        
-        for (const strategy of newOrg.dashboard.strategies) {
-            const initiative = strategy.initiatives.find((i: any) => i.id === initiativeId);
-            if (initiative) {
-                const step = initiative.steps.find((s: any) => s.key === stepKey);
-                if (step) {
-                    step.items.push(newItem);
-                }
-                break;
-            }
-        }
-        return newOrg;
-      });
+      // Silently refresh data to get permanent ID
+      await fetchOrganizationData();
 
     } catch (error: any) {
       console.error(error);
       toast({
         title: "Error",
-        description: error.message || "An unexpected error occurred.",
+        description: "Could not save item. Your changes may not be persisted.",
         variant: "destructive",
       });
+      // Optionally roll back by fetching data again
+      await fetchOrganizationData();
     }
   };
 
   const handleUpdateInitiativeItem = (initiativeId: string, itemId: string, newText: string) => {
     const command: UpdateInitiativeItemCommand = { initiativeId, itemId, text: newText };
-    // This is a fire-and-forget save. We can add optimistic UI here as well,
-    // but for now, we just don't do a full refresh.
     fetch(`/api/organizations/${orgId}/initiative-items/${itemId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -189,6 +189,24 @@ export default function OrganizationStrategyPage() {
       }).then(response => {
         if (response.ok) {
           toast({ title: "Success", description: "Initiative item saved." });
+           // Also update local state to avoid needing a full refresh
+          setOrganization(prevOrg => {
+              if (!prevOrg) return null;
+              const newOrg = JSON.parse(JSON.stringify(prevOrg));
+              for (const strategy of newOrg.dashboard.strategies) {
+                  const initiative = strategy.initiatives.find(i => i.id === initiativeId);
+                  if (initiative) {
+                      for (const step of initiative.steps) {
+                          const item = step.items.find((item: InitiativeItem) => item.id === itemId);
+                          if (item) {
+                              item.text = newText;
+                              return newOrg;
+                          }
+                      }
+                  }
+              }
+              return newOrg;
+          });
         } else {
            toast({ title: "Error", description: "Failed to save item.", variant: "destructive" });
         }
@@ -200,15 +218,11 @@ export default function OrganizationStrategyPage() {
   const handleDeleteInitiativeItem = (initiativeId: string, itemId: string) => {
     const command: DeleteInitiativeItemCommand = { initiativeId, itemId };
     
-    // --- Optimistic UI Update ---
     const originalOrganization = organization;
     
-    // 1. Immediately update the local state
     setOrganization(prevOrg => {
         if (!prevOrg) return null;
-
-        const newOrg = JSON.parse(JSON.stringify(prevOrg)); // Deep copy
-        
+        const newOrg = JSON.parse(JSON.stringify(prevOrg));
         for (const strategy of newOrg.dashboard.strategies) {
             const initiative = strategy.initiatives.find(i => i.id === initiativeId);
             if (initiative) {
@@ -216,7 +230,7 @@ export default function OrganizationStrategyPage() {
                     const itemIndex = step.items.findIndex((item: InitiativeItem) => item.id === itemId);
                     if (itemIndex > -1) {
                         step.items.splice(itemIndex, 1);
-                        return newOrg; // Exit after modification
+                        break; 
                     }
                 }
             }
@@ -229,7 +243,6 @@ export default function OrganizationStrategyPage() {
         description: "Initiative item deleted.",
     });
 
-    // 2. Send the API request in the background
     fetch(`/api/organizations/${orgId}/initiative-items/${itemId}`, {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
@@ -237,10 +250,8 @@ export default function OrganizationStrategyPage() {
     })
     .then(response => {
       if (!response.ok) {
-        // 3. If it fails, revert the state and show an error
         throw new Error('Failed to delete on server');
       }
-      // On success, do nothing. The UI is already correct.
     })
     .catch((error) => {
       console.error(error);
@@ -249,7 +260,6 @@ export default function OrganizationStrategyPage() {
         description: "Failed to delete item. Restoring...",
         variant: "destructive",
       });
-      // Rollback
       if (originalOrganization) setOrganization(originalOrganization);
     });
   };
@@ -319,3 +329,5 @@ export default function OrganizationStrategyPage() {
     </div>
   );
 }
+
+    
