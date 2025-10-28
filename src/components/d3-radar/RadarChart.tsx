@@ -33,10 +33,10 @@ const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: a
         g.selectAll(".quadrant-fill").remove();
 
         const visualQuadrantColors = [
-            radarConfig.visual.quadrantColors[0], // People & Knowledge (Bottom-Right)
-            radarConfig.visual.quadrantColors[1], // Operating Model (Bottom-Left)
-            radarConfig.visual.quadrantColors[2], // Business (Top-Left)
-            radarConfig.visual.quadrantColors[3]  // Capabilities (Top-Right)
+            radarConfig.visual.quadrantColors[0],
+            radarConfig.visual.quadrantColors[1],
+            radarConfig.visual.quadrantColors[2],
+            radarConfig.visual.quadrantColors[3]
         ];
     
         visualQuadrantColors.forEach((color, i) => {
@@ -198,7 +198,7 @@ const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: a
         const g = svg.append('g').attr('class', 'main-radar-group');
         const centerX = totalWidth / 2;
         const centerY = svgSize / 2;
-
+        
         const zoomed = (event: d3.D3ZoomEvent<SVGSVGElement, unknown>) => {
             g.attr('transform', event.transform.toString());
         };
