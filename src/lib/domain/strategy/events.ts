@@ -13,11 +13,13 @@ export type StrategyCreatedEvent = Event<
   }
 >;
 
-export type StrategyStateUpdatedEvent = Event<
-  'StrategyStateUpdated',
+export type StrategyUpdatedEvent = Event<
+  'StrategyUpdated',
   {
     strategyId: string;
-    state: StrategyState;
+    description?: string;
+    timeframe?: string;
+    state?: StrategyState;
   }
 >;
 
@@ -84,10 +86,11 @@ export type InitiativeItemDeletedEvent = Event<
 
 export type StrategyEvent =
   | StrategyCreatedEvent
-  | StrategyStateUpdatedEvent
+  | StrategyUpdatedEvent
   | InitiativeCreatedEvent
   | InitiativeProgressUpdatedEvent
   | InitiativeRadarItemsLinkedEvent
   | InitiativeItemAddedEvent
   | InitiativeItemUpdatedEvent
   | InitiativeItemDeletedEvent;
+

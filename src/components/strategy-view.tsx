@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useMemo } from "react";
-import { Plus, GripVertical, FilePenLine, Rocket, CheckCircle2, Archive } from "lucide-react";
+import { Plus, GripVertical, FilePenLine, Rocket, CheckCircle2, Archive, Edit } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -24,6 +24,7 @@ import type { Strategy, RadarItem, Initiative } from "@/lib/types";
 import type { CreateInitiativeCommand, UpdateStrategyCommand } from "@/lib/domain/strategy/commands";
 import { InitiativeView } from "./initiative-view";
 import { v4 as uuidv4 } from "uuid";
+import { EditStrategyDialog } from "./edit-strategy-dialog";
 
 const iconMap = { FilePenLine, Rocket, CheckCircle2, Archive };
 
@@ -44,15 +45,10 @@ export function StrategyView({
 }: StrategyViewProps) {
   const [strategy, setStrategy] = useState(initialStrategy);
   const [newInitiativeName, setNewInitiativeName] = useState("");
+  const [isEditStrategyOpen, setEditStrategyOpen] = useState(false);
   const { toast } = useToast();
 
   const isSaving = strategy.id.startsWith('strat-temp-');
-
-  // This useEffect was causing the input bug. By removing it, we prevent the
-  // component's state from being reset on every parent re-render.
-  // useEffect(() => {
-  //   setStrategy(initialStrategy);
-  // }, [initialStrategy]);
 
   const overallProgression = useMemo(() => {
     if (strategy.initiatives.length === 0) return 0;
@@ -101,7 +97,7 @@ export function StrategyView({
 
 
   const handleUpdateStrategy = useCallback((updatedValues: Partial<Strategy>) => {
-    const command: UpdateStrategyCommand = { strategyId: strategy.id, ...updatedValues };
+    const command: UpdateStrategyCommand = { ...updatedValues };
     
     setStrategy(prev => ({...prev, ...updatedValues}));
     
@@ -152,93 +148,105 @@ export function StrategyView({
 
 
   return (
-    <Card className={cn(
-        "transition-opacity",
-        !isFocused && "opacity-50 hover:opacity-100",
-        strategy.state === 'Draft' && 'border-blue-500/80 border-2',
-        strategy.state === 'Open' && 'border-green-500/80 border-2'
-    )}>
-      <CardHeader className="flex flex-row items-start justify-between">
-        <div className="flex-1">
-          <CardTitle className="font-headline text-xl">{strategy.description}</CardTitle>
-          <CardDescription className="mt-1">Timeframe: {strategy.timeframe}</CardDescription>
-        </div>
-        <div className="flex items-center gap-2">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className={cn(
-                    "font-semibold rounded-full px-3",
-                    strategy.state === 'Draft' && 'bg-blue-100 text-blue-800 hover:bg-blue-200',
-                    strategy.state === 'Open' && 'bg-green-100 text-green-800 hover:bg-green-200',
-                    (strategy.state === 'Closed' || strategy.state === 'Obsolete') && 'bg-gray-100 text-gray-800 hover:bg-gray-200',
-                )}>
-                  <CurrentStateIcon className="mr-2 h-4 w-4" />
-                  {strategy.state}
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                {strategyStates.map(state => {
-                  const Icon = iconMap[state.iconName];
-                  return (
-                  <DropdownMenuItem key={state.value} onClick={() => handleUpdateStrategy({ state: state.value })}>
-                    <Icon className={cn("mr-2 h-4 w-4", state.colorClass)} />
-                    <span>{state.label}</span>
-                  </DropdownMenuItem>
-                )})}
-              </DropdownMenuContent>
-            </DropdownMenu>
-            <Button variant="ghost" size="icon" className="h-8 w-8 cursor-grab active:cursor-grabbing">
-                <GripVertical className="h-4 w-4" />
-            </Button>
-        </div>
-      </CardHeader>
-      <CardContent>
-        <div>
-          <div className="flex justify-between items-center mb-1">
-            <span className="text-sm font-medium text-muted-foreground">Overall Progress</span>
-            <span className="text-sm font-semibold">{overallProgression}%</span>
+    <>
+      <Card className={cn(
+          "transition-opacity",
+          !isFocused && "opacity-50 hover:opacity-100",
+          strategy.state === 'Draft' && 'border-blue-500/80 border-2',
+          strategy.state === 'Open' && 'border-green-500/80 border-2'
+      )}>
+        <CardHeader className="flex flex-row items-start justify-between">
+          <div className="flex-1">
+            <CardTitle className="font-headline text-xl">{strategy.description}</CardTitle>
+            <CardDescription className="mt-1">Timeframe: {strategy.timeframe}</CardDescription>
           </div>
-          <Progress value={overallProgression} className={cn(
-            'h-2',
-            strategy.state === 'Open' && '[&>div]:bg-green-500',
-            strategy.state === 'Draft' && '[&>div]:bg-blue-500'
-          )} />
-        </div>
-        
-        <div className="mt-6">
-            <h4 className="text-lg font-semibold mb-2 font-headline">Initiatives</h4>
-            {strategy.initiatives.length > 0 ? (
-                <Accordion type="multiple" className="w-full">
-                    {strategy.initiatives.map(initiative => (
-                        <InitiativeView 
-                            key={initiative.id} 
-                            initialInitiative={initiative} 
-                            radarItems={radarItems}
-                            orgId={orgId}
-                            onInitiativeChange={onInitiativeChanged}
-                        />
-                    ))}
-                </Accordion>
-            ) : (
-                <p className="text-sm text-muted-foreground text-center py-4 border-2 border-dashed rounded-md">No initiatives for this strategy yet.</p>
-            )}
-        </div>
-      </CardContent>
-      <CardFooter className="bg-slate-50/50 p-4 rounded-b-lg">
-        <div className="flex w-full items-center gap-2">
-          <Input 
-            placeholder={isSaving ? "Saving strategy..." : "Name your new initiative..."}
-            value={newInitiativeName}
-            onChange={(e) => setNewInitiativeName(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleCreateInitiative()}
-            className="bg-background"
-            disabled={isSaving}
-          />
-          <Button onClick={handleCreateInitiative} disabled={!newInitiativeName.trim() || isSaving}>
-            <Plus className="mr-2 h-4 w-4" /> Add Initiative
-          </Button>
-        </div>
-      </CardFooter>
-    </Card>
+          <div className="flex items-center gap-2">
+              <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setEditStrategyOpen(true)}>
+                  <Edit className="h-4 w-4" />
+              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="sm" className={cn(
+                      "font-semibold rounded-full px-3",
+                      strategy.state === 'Draft' && 'bg-blue-100 text-blue-800 hover:bg-blue-200',
+                      strategy.state === 'Open' && 'bg-green-100 text-green-800 hover:bg-green-200',
+                      (strategy.state === 'Closed' || strategy.state === 'Obsolete') && 'bg-gray-100 text-gray-800 hover:bg-gray-200',
+                  )}>
+                    <CurrentStateIcon className="mr-2 h-4 w-4" />
+                    {strategy.state}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  {strategyStates.map(state => {
+                    const Icon = iconMap[state.iconName];
+                    return (
+                    <DropdownMenuItem key={state.value} onClick={() => handleUpdateStrategy({ state: state.value })}>
+                      <Icon className={cn("mr-2 h-4 w-4", state.colorClass)} />
+                      <span>{state.label}</span>
+                    </DropdownMenuItem>
+                  )})}
+                </DropdownMenuContent>
+              </DropdownMenu>
+              <Button variant="ghost" size="icon" className="h-8 w-8 cursor-grab active:cursor-grabbing">
+                  <GripVertical className="h-4 w-4" />
+              </Button>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div>
+            <div className="flex justify-between items-center mb-1">
+              <span className="text-sm font-medium text-muted-foreground">Overall Progress</span>
+              <span className="text-sm font-semibold">{overallProgression}%</span>
+            </div>
+            <Progress value={overallProgression} className={cn(
+              'h-2',
+              strategy.state === 'Open' && '[&>div]:bg-green-500',
+              strategy.state === 'Draft' && '[&>div]:bg-blue-500'
+            )} />
+          </div>
+          
+          <div className="mt-6">
+              <h4 className="text-lg font-semibold mb-2 font-headline">Initiatives</h4>
+              {strategy.initiatives.length > 0 ? (
+                  <Accordion type="multiple" className="w-full">
+                      {strategy.initiatives.map(initiative => (
+                          <InitiativeView 
+                              key={initiative.id} 
+                              initialInitiative={initiative} 
+                              radarItems={radarItems}
+                              orgId={orgId}
+                              onInitiativeChange={onInitiativeChanged}
+                          />
+                      ))}
+                  </Accordion>
+              ) : (
+                  <p className="text-sm text-muted-foreground text-center py-4 border-2 border-dashed rounded-md">No initiatives for this strategy yet.</p>
+              )}
+          </div>
+        </CardContent>
+        <CardFooter className="bg-slate-50/50 p-4 rounded-b-lg">
+          <div className="flex w-full items-center gap-2">
+            <Input 
+              placeholder={isSaving ? "Saving strategy..." : "Name your new initiative..."}
+              value={newInitiativeName}
+              onChange={(e) => setNewInitiativeName(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleCreateInitiative()}
+              className="bg-background"
+              disabled={isSaving}
+            />
+            <Button onClick={handleCreateInitiative} disabled={!newInitiativeName.trim() || isSaving}>
+              <Plus className="mr-2 h-4 w-4" /> Add Initiative
+            </Button>
+          </div>
+        </CardFooter>
+      </Card>
+      <EditStrategyDialog
+        isOpen={isEditStrategyOpen}
+        onOpenChange={setEditStrategyOpen}
+        strategy={strategy}
+        onStrategyUpdated={onStrategyChange}
+        teamId={orgId}
+      />
+    </>
   );
 }

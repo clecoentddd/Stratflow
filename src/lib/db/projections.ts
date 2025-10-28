@@ -90,13 +90,13 @@ export const applyEventsToTeam = (
             }
         };
 
-      case 'StrategyStateUpdated':
+      case 'StrategyUpdated':
         return {
             ...team,
             dashboard: {
                 ...team.dashboard,
                 strategies: team.dashboard.strategies.map(s => 
-                    s.id === event.payload.strategyId ? { ...s, state: event.payload.state } : s
+                    s.id === event.payload.strategyId ? { ...s, ...event.payload } : s
                 )
             }
         };
@@ -195,13 +195,14 @@ export const applyEventsToTeam = (
                     ...s,
                     initiatives: s.initiatives.map(i => {
                          if (i.id !== event.payload.initiativeId) return i;
-                         return {
+                         const updatedInitiative = {
                             ...i,
                             steps: i.steps.map(step => ({
                                 ...step,
                                 items: step.items.filter(item => item.id !== event.payload.itemId)
                             }))
-                         }
+                         };
+                         return updatedInitiative;
                     })
                 }))
             }
