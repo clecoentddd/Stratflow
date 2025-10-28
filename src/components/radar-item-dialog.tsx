@@ -29,7 +29,10 @@ interface RadarItemDialogProps {
   currentOrgId: string;
 }
 
-const defaultItem: Omit<RadarItem, 'id' | 'radarId' | 'created_at' | 'updated_at'> = {
+// Represents the fields a user can edit or create
+type FormData = Omit<RadarItem, 'id' | 'radarId' | 'created_at' | 'updated_at'>;
+
+const defaultFormData: FormData = {
   name: "",
   detect: "",
   assess: "",
@@ -42,30 +45,27 @@ const defaultItem: Omit<RadarItem, 'id' | 'radarId' | 'created_at' | 'updated_at
   zoom_in: null,
 };
 
+
 export function RadarItemDialog({ isOpen, onOpenChange, onSave, item, organizations, currentOrgId }: RadarItemDialogProps) {
-  const [formData, setFormData] = useState<Omit<RadarItem, 'id' | 'radarId' | 'created_at' | 'updated_at'>>(defaultItem);
+  const [formData, setFormData] = useState<FormData>(defaultFormData);
   const [isZoomInOpen, setZoomInOpen] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
       if (item) {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { id, radarId, created_at, updated_at, ...editableFields } = item;
-        setFormData({
-            ...defaultItem, // ensure all fields are present
-            ...editableFields
-        });
+        setFormData(editableFields);
       } else {
-        setFormData(defaultItem);
+        setFormData(defaultFormData);
       }
     }
   }, [isOpen, item]);
 
-  const handleChange = (field: keyof typeof formData, value: string | null) => {
+  const handleChange = (field: keyof FormData, value: string | null) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
   
-  const handleRadioChange = (field: keyof typeof formData, value: string) => {
+  const handleRadioChange = (field: keyof FormData, value: string) => {
     if (value) {
       handleChange(field, value);
     }
@@ -74,15 +74,15 @@ export function RadarItemDialog({ isOpen, onOpenChange, onSave, item, organizati
   const handleSubmit = () => {
     if (!formData.name) return;
     
-    const now = new Date().toISOString();
+    // Re-constitute the full RadarItem, adding back system-managed fields
     const finalItem: RadarItem = {
-      ...defaultItem,
       ...formData,
-      id: item?.id || `radar-${Date.now()}`,
+      id: item?.id || '', // API will generate ID for new items
       radarId: item?.radarId || currentOrgId,
-      created_at: item?.created_at || now,
-      updated_at: item ? now : (item?.created_at || null),
+      created_at: item?.created_at || '', // API will set this for new items
+      updated_at: item?.updated_at || null,
     };
+    
     onSave(finalItem);
     onOpenChange(false);
   };
@@ -192,7 +192,7 @@ export function RadarItemDialog({ isOpen, onOpenChange, onSave, item, organizati
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
             <Button type="submit" onClick={handleSubmit} disabled={!isFormValid}>
-              Save Item
+              {item ? "Save Changes" : "Create Item"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -207,5 +207,3 @@ export function RadarItemDialog({ isOpen, onOpenChange, onSave, item, organizati
     </>
   );
 }
-
-    

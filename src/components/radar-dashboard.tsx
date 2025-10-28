@@ -9,7 +9,6 @@ import RadarChart from "@/components/d3-radar/RadarChart";
 
 interface RadarDashboardProps {
   radarItems: RadarItem[];
-  onUpsertItem: (item: RadarItem) => void;
   onDeleteItem: (itemId: string) => void;
   organizations: Organization[];
   currentOrgId: string;
@@ -17,7 +16,7 @@ interface RadarDashboardProps {
   onCreateItem: () => void;
 }
 
-export function RadarDashboard({ radarItems, onUpsertItem, onDeleteItem, organizations, currentOrgId, onEditItem, onCreateItem }: RadarDashboardProps) {
+export function RadarDashboard({ radarItems, onDeleteItem, organizations, currentOrgId, onEditItem, onCreateItem }: RadarDashboardProps) {
 
   const handleEditClick = (item: any) => {
       const fullItem = radarItems.find(i => i.id === item.id);

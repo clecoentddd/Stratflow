@@ -7,6 +7,7 @@ import type {
 } from '@/lib/domain/organizations/events';
 import type { Organization, Company } from '@/lib/types';
 import { applyEventsToOrganization, applyEventsToCompany } from './projections';
+import type { RadarItemCreatedEvent } from '../domain/radar/events';
 
 // --- Mock Event Store (In-Memory) ---
 // In a real app, this would be a database like Supabase, DynamoDB, or a dedicated event store.
@@ -32,10 +33,12 @@ const seedEvents = () => {
       name: 'Default Company',
     },
   };
+  
+  let seedEventsList: AllEvents[] = [companyCreatedEvent];
 
   // 2. Create Organizations linked to that Company
-  const organizationCreatedEvents: OrganizationCreatedEvent[] =
-    initialOrganizations.map((org) => ({
+  initialOrganizations.forEach((org) => {
+    const orgCreatedEvent: OrganizationCreatedEvent = {
       type: 'OrganizationCreated',
       entity: 'organization',
       aggregateId: org.id,
@@ -48,43 +51,62 @@ const seedEvents = () => {
         context: org.context,
         level: org.level,
       },
-    }));
+    };
+    seedEventsList.push(orgCreatedEvent);
 
-  const seedEvents: AllEvents[] = [
-    companyCreatedEvent,
-    ...organizationCreatedEvents,
-  ];
+    // 3. Create Radar Items for the organization
+    if (org.radar && org.radar.length > 0) {
+        org.radar.forEach(radarItem => {
+            const radarCreatedEvent: RadarItemCreatedEvent = {
+                type: 'RadarItemCreated',
+                entity: 'organization', // Radar items are part of the Organization aggregate
+                aggregateId: org.id,
+                timestamp: radarItem.created_at || new Date().toISOString(),
+                payload: radarItem
+            };
+            seedEventsList.push(radarCreatedEvent);
+        })
+    }
+  });
 
-  events.push(...seedEvents);
+
+  events.push(...seedEventsList);
 
   // --- This is a bit of a hack for the mock DB to sync projections ---
   // In a real system, this might be a message queue or a DB trigger.
   const initialCompanyProjections: Record<string, Company> = {};
   const initialOrgProjections: Record<string, Organization> = {};
 
-  const companyEvents = seedEvents.filter(e => e.entity === 'company');
-  const orgEvents = seedEvents.filter(e => e.entity === 'organization');
+  const companyEvents = seedEventsList.filter(e => e.entity === 'company');
+  const orgEvents = seedEventsList.filter(e => e.entity === 'organization');
 
   // Project companies first
   companyEvents.forEach((event) => {
-    const company = applyEventsToCompany(initialCompanyProjections[event.aggregateId] || null, [event]);
+    const company = applyEventsToCompany(initialCompanyProjections[event.aggregateId] || null, [event as CompanyEvent]);
     if (company) {
       initialCompanyProjections[company.id] = company;
     }
   });
   
+  // Group org events by aggregateId
+  const orgEventsByAggId: Record<string, OrganizationEvent[]> = {};
+  orgEvents.forEach(event => {
+    if (!orgEventsByAggId[event.aggregateId]) {
+      orgEventsByAggId[event.aggregateId] = [];
+    }
+    orgEventsByAggId[event.aggregateId].push(event as OrganizationEvent);
+  });
+  
   // Project organizations
-  orgEvents.forEach((event) => {
-    const org = applyEventsToOrganization(initialOrgProjections[event.aggregateId] || null, [event]);
-    if (org) {
-      const initialOrgData = initialOrganizations.find(
-        (io) => io.id === org.id
-      );
-      if (initialOrgData) {
-        org.dashboard = initialOrgData.dashboard;
-        org.radar = initialOrgData.radar;
-      }
-      initialOrgProjections[org.id] = org;
+  Object.keys(orgEventsByAggId).forEach(orgId => {
+    const org = applyEventsToOrganization(null, orgEventsByAggId[orgId]);
+    if(org) {
+        // Find dashboard from initial data as it's not event sourced yet
+        const initialOrgData = initialOrganizations.find(io => io.id === org.id);
+        if (initialOrgData) {
+            org.dashboard = initialOrgData.dashboard;
+        }
+        initialOrgProjections[orgId] = org;
     }
   });
 

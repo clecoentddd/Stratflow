@@ -1,6 +1,6 @@
 
 import type { Company } from '@/lib/types';
-import type { Organization } from '@/lib/types';
+import type { Organization, RadarItem } from '@/lib/types';
 import type { CompanyEvent } from '../domain/companies/events';
 import type { OrganizationEvent } from '@/lib/domain/organizations/events';
 
@@ -48,6 +48,30 @@ export const applyEventsToOrganization = (
               purpose: event.payload.purpose,
               context: event.payload.context,
             };
+      
+      case 'RadarItemCreated':
+        if (!org) return null;
+        return {
+            ...org,
+            radar: [...org.radar, event.payload]
+        };
+
+      case 'RadarItemUpdated':
+        if (!org) return null;
+        return {
+            ...org,
+            radar: org.radar.map(item => 
+                item.id === event.payload.id ? event.payload : item
+            )
+        };
+      
+      case 'RadarItemDeleted':
+        if (!org) return null;
+        return {
+            ...org,
+            radar: org.radar.filter(item => item.id !== event.payload.id)
+        };
+
       default:
         return org;
     }
