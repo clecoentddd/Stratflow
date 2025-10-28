@@ -20,13 +20,17 @@ export async function PUT(request: NextRequest, { params }: { params: { teamId: 
     if (!strategy) {
       return NextResponse.json({ message: 'Strategy not found' }, { status: 404 });
     }
-    if (!command.state && !command.description && !command.timeframe) {
+    
+    // Command can come from state change (no description/timeframe) or dialog (all fields)
+    const hasUpdateableField = command.state || command.description || command.timeframe;
+    if (!hasUpdateableField) {
         return NextResponse.json({ message: 'No updateable fields provided' }, { status: 400 });
     }
 
     // 2. Create Event
     const payload: Partial<StrategyUpdatedEvent['payload']> = { strategyId };
     let hasChanges = false;
+    
     if (command.state && command.state !== strategy.state) {
         payload.state = command.state;
         hasChanges = true;
