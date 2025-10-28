@@ -29,7 +29,13 @@ export default function RadarPage() {
     try {
       // Fetch the specific organization for the radar
       const orgResponse = await fetch(`/api/organizations/${orgId}/radar`);
-      if (!orgResponse.ok) throw new Error("Failed to fetch organization data");
+      if (orgResponse.status === 404) {
+        notFound();
+        return;
+      }
+      if (!orgResponse.ok) {
+        throw new Error("Failed to fetch organization data");
+      }
       const orgData = await orgResponse.json();
       setOrganization(orgData);
 
@@ -137,7 +143,20 @@ export default function RadarPage() {
   }
 
   if (!organization) {
-    return notFound();
+     return (
+       <div className="flex flex-col min-h-screen">
+        <AppHeader />
+        <main className="p-4 md:p-6 flex-1 flex items-center justify-center">
+            <div className="text-center">
+                <h1 className="text-2xl font-bold">Organization Not Found</h1>
+                <p className="text-muted-foreground">The organization you are looking for does not exist.</p>
+                <Link href="/organizations" className="mt-4 inline-block">
+                    <Button>Back to Organizations</Button>
+                </Link>
+            </div>
+        </main>
+      </div>
+    )
   }
   
   return (

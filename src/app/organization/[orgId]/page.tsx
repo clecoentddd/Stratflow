@@ -22,9 +22,12 @@ export default function OrganizationStrategyPage() {
     if (!orgId) return;
     setIsLoading(true);
     try {
-      // The radar API route now returns the full organization object
       const response = await fetch(`/api/organizations/${orgId}/radar`);
-       if (!response.ok) {
+       if (response.status === 404) {
+        notFound();
+        return;
+      }
+      if (!response.ok) {
         throw new Error('Failed to fetch organization data');
       }
       const data = await response.json();
@@ -60,7 +63,21 @@ export default function OrganizationStrategyPage() {
   }
 
   if (!organization) {
-    return notFound();
+    // This case will now typically be handled by notFound(), but it's a good fallback.
+    return (
+       <div className="flex flex-col min-h-screen">
+        <AppHeader />
+        <main className="p-4 md:p-6 flex-1 flex items-center justify-center">
+            <div className="text-center">
+                <h1 className="text-2xl font-bold">Organization Not Found</h1>
+                <p className="text-muted-foreground">The organization you are looking for does not exist.</p>
+                <Link href="/organizations" className="mt-4 inline-block">
+                    <Button>Back to Organizations</Button>
+                </Link>
+            </div>
+        </main>
+      </div>
+    )
   }
   
   return (
