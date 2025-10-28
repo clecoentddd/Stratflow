@@ -5,7 +5,7 @@ import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { notFound, useParams } from "next/navigation";
 import { ChevronLeft, Radar, TrendingUp } from "lucide-react";
-import type { Organization, Strategy, InitiativeItem } from "@/lib/types";
+import type { Organization, Strategy, Initiative, InitiativeItem } from "@/lib/types";
 import { AppHeader } from "@/components/header";
 import { Button } from "@/components/ui/button";
 import { StrategyDashboard } from "@/components/dashboard";
@@ -96,7 +96,36 @@ export default function OrganizationStrategyPage() {
 
   const handleCreateInitiative = (strategyId: string, initiativeName: string) => {
     const command: CreateInitiativeCommand = { strategyId, name: initiativeName };
-    handleApiCall(`/api/organizations/${orgId}/initiatives`, 'POST', command, `Initiative "${initiativeName}" has been added.`);
+    const originalOrganization = organization;
+
+    // Optimistic UI update
+    fetch(`/api/organizations/${orgId}/initiatives`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(command),
+    })
+    .then(response => {
+        if (!response.ok) throw new Error('Failed to create initiative on server');
+        return response.json();
+    })
+    .then(data => {
+        // Full re-fetch to get the complete new initiative from the backend projection
+        fetchOrganizationData();
+        toast({
+          title: "Success",
+          description: `Initiative "${initiativeName}" has been added.`,
+        });
+    })
+    .catch((error) => {
+        console.error(error);
+        toast({
+            title: "Error",
+            description: "Failed to create initiative. Reverting...",
+            variant: "destructive",
+        });
+        // Rollback
+        if(originalOrganization) setOrganization(originalOrganization);
+    });
   };
 
   const handleUpdateInitiative = (initiativeId: string, updatedValues: any) => {
@@ -179,23 +208,18 @@ export default function OrganizationStrategyPage() {
         if (!prevOrg) return null;
 
         const newOrg = JSON.parse(JSON.stringify(prevOrg)); // Deep copy
-        let itemFoundAndRemoved = false;
-
+        
         for (const strategy of newOrg.dashboard.strategies) {
-            for (const initiative of strategy.initiatives) {
-                if (initiative.id === initiativeId) {
-                    for (const step of initiative.steps) {
-                        const initialItemCount = step.items.length;
-                        step.items = step.items.filter((item: InitiativeItem) => item.id !== itemId);
-                        if (step.items.length < initialItemCount) {
-                            itemFoundAndRemoved = true;
-                            break;
-                        }
+            const initiative = strategy.initiatives.find(i => i.id === initiativeId);
+            if (initiative) {
+                for (const step of initiative.steps) {
+                    const itemIndex = step.items.findIndex((item: InitiativeItem) => item.id === itemId);
+                    if (itemIndex > -1) {
+                        step.items.splice(itemIndex, 1);
+                        return newOrg; // Exit after modification
                     }
                 }
-                if (itemFoundAndRemoved) break;
             }
-            if (itemFoundAndRemoved) break;
         }
         return newOrg;
     });
@@ -204,7 +228,6 @@ export default function OrganizationStrategyPage() {
         title: "Success",
         description: "Initiative item deleted.",
     });
-
 
     // 2. Send the API request in the background
     fetch(`/api/organizations/${orgId}/initiative-items/${itemId}`, {
@@ -227,7 +250,7 @@ export default function OrganizationStrategyPage() {
         variant: "destructive",
       });
       // Rollback
-      setOrganization(originalOrganization);
+      if (originalOrganization) setOrganization(originalOrganization);
     });
   };
 
