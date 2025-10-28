@@ -5,11 +5,20 @@ import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { notFound, useParams } from "next/navigation";
 import { ChevronLeft, ShieldAlert } from "lucide-react";
-import type { Organization, Dashboard } from "@/lib/types";
+import type { Organization, Strategy } from "@/lib/types";
 import { AppHeader } from "@/components/header";
 import { Button } from "@/components/ui/button";
 import { StrategyDashboard } from "@/components/dashboard";
 import { useToast } from "@/hooks/use-toast";
+import type {
+  CreateStrategyCommand,
+  UpdateStrategyCommand,
+  CreateInitiativeCommand,
+  UpdateInitiativeCommand,
+  AddInitiativeItemCommand,
+  UpdateInitiativeItemCommand,
+  DeleteInitiativeItemCommand
+} from "@/lib/domain/strategy/commands";
 
 export default function OrganizationStrategyPage() {
   const params = useParams();
@@ -23,7 +32,7 @@ export default function OrganizationStrategyPage() {
     setIsLoading(true);
     try {
       const response = await fetch(`/api/organizations/${orgId}/radar`);
-       if (response.status === 404) {
+      if (response.status === 404) {
         notFound();
         return;
       }
@@ -43,13 +52,72 @@ export default function OrganizationStrategyPage() {
   useEffect(() => {
     fetchOrganizationData();
   }, [fetchOrganizationData]);
+
+  const handleApiCall = async (url: string, method: string, body: any, successMessage: string) => {
+    try {
+      const response = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || `Failed to perform action.`);
+      }
+      
+      // Re-fetch data to reflect changes
+      await fetchOrganizationData();
+
+      toast({
+        title: "Success",
+        description: successMessage,
+      });
+
+    } catch (error: any) {
+      console.error(error);
+      toast({
+        title: "Error",
+        description: error.message || "An unexpected error occurred.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleCreateStrategy = (description: string, timeframe: string) => {
+    const command: CreateStrategyCommand = { description, timeframe };
+    handleApiCall(`/api/organizations/${orgId}/strategies`, 'POST', command, "Strategy has been created.");
+  };
+
+  const handleUpdateStrategy = (strategyId: string, updatedValues: Partial<Strategy>) => {
+    const command: UpdateStrategyCommand = { strategyId, ...updatedValues };
+    handleApiCall(`/api/organizations/${orgId}/strategies/${strategyId}`, 'PUT', command, "Strategy has been updated.");
+  };
+
+  const handleCreateInitiative = (strategyId: string, initiativeName: string) => {
+    const command: CreateInitiativeCommand = { strategyId, name: initiativeName };
+    handleApiCall(`/api/organizations/${orgId}/initiatives`, 'POST', command, `Initiative "${initiativeName}" has been added.`);
+  };
+
+  const handleUpdateInitiative = (initiativeId: string, updatedValues: any) => {
+    const command: UpdateInitiativeCommand = { initiativeId, ...updatedValues };
+    handleApiCall(`/api/organizations/${orgId}/initiatives/${initiativeId}`, 'PUT', command, "Initiative has been updated.");
+  };
   
-  const handleUpdateDashboard = (updatedDashboard: Dashboard) => {
-    // This is now an optimistic update.
-    // A full implementation would save this to the backend via an API.
-    setOrganization(prev => prev ? ({...prev, dashboard: updatedDashboard }) : null);
-    toast({ title: "Dashboard Updated", description: "Changes have been saved locally." });
-  }
+  const handleAddInitiativeItem = (initiativeId: string, stepKey: string) => {
+    const command: AddInitiativeItemCommand = { initiativeId, stepKey };
+    handleApiCall(`/api/organizations/${orgId}/initiative-items`, 'POST', command, "New item added to initiative.");
+  };
+
+  const handleUpdateInitiativeItem = (initiativeId: string, itemId: string, newText: string) => {
+    const command: UpdateInitiativeItemCommand = { initiativeId, itemId, text: newText };
+    handleApiCall(`/api/organizations/${orgId}/initiative-items/${itemId}`, 'PUT', command, "Initiative item saved.");
+  };
+  
+  const handleDeleteInitiativeItem = (initiativeId: string, itemId: string) => {
+    const command: DeleteInitiativeItemCommand = { initiativeId, itemId };
+    handleApiCall(`/api/organizations/${orgId}/initiative-items/${itemId}`, 'DELETE', command, "Initiative item deleted.");
+  };
 
   if (isLoading) {
     return (
@@ -63,7 +131,6 @@ export default function OrganizationStrategyPage() {
   }
 
   if (!organization) {
-    // This case will now typically be handled by notFound(), but it's a good fallback.
     return (
        <div className="flex flex-col min-h-screen">
         <AppHeader />
@@ -105,7 +172,13 @@ export default function OrganizationStrategyPage() {
             dashboard={organization.dashboard}
             radarItems={organization.radar || []}
             dashboardName={`${organization.name} - Strategy Dashboard`}
-            onUpdateDashboard={handleUpdateDashboard}
+            onCreateStrategy={handleCreateStrategy}
+            onUpdateStrategy={handleUpdateStrategy}
+            onCreateInitiative={handleCreateInitiative}
+            onUpdateInitiative={handleUpdateInitiative}
+            onAddInitiativeItem={handleAddInitiativeItem}
+            onUpdateInitiativeItem={handleUpdateInitiativeItem}
+            onDeleteInitiativeItem={handleDeleteInitiativeItem}
         />
       </main>
     </div>

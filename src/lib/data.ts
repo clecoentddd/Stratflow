@@ -7,9 +7,11 @@ import type {
   RadarDistance,
   RadarImpact,
   RadarTolerance,
+  Initiative,
+  InitiativeStep,
 } from './types';
 
-const newInitiativeTemplate = (id: string, name: string) => ({
+const newInitiativeTemplate = (id: string, name: string): Initiative => ({
   id,
   name,
   progression: 0,

@@ -1,5 +1,6 @@
 
 import type { RadarEvent } from '../radar/events';
+import type { StrategyEvent } from '../strategy/events';
 
 // Event Sourcing and CQRS Types
 export type Event<T extends string, P> = {
@@ -33,4 +34,4 @@ export type OrganizationUpdatedEvent = Event<
 
 
 // Union of all events related to an Organization
-export type OrganizationEvent = OrganizationCreatedEvent | OrganizationUpdatedEvent | RadarEvent;
+export type OrganizationEvent = OrganizationCreatedEvent | OrganizationUpdatedEvent | RadarEvent | StrategyEvent;

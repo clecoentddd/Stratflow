@@ -38,9 +38,9 @@ interface StrategyViewProps {
   onCreateInitiative: (initiativeName: string) => void;
   onUpdateStrategy: (updatedValues: Partial<Strategy>) => void;
   onUpdateInitiative: (initiativeId: string, updatedValues: Partial<Initiative>) => void;
-  onUpdateInitiativeItem: (initiativeId: string, stepKey: InitiativeStepKey, itemId: string, newText: string) => void;
   onAddInitiativeItem: (initiativeId: string, stepKey: InitiativeStepKey) => void;
-  onDeleteInitiativeItem: (initiativeId: string, stepKey: InitiativeStepKey, itemId: string) => void;
+  onUpdateInitiativeItem: (initiativeId: string, itemId: string, newText: string) => void;
+  onDeleteInitiativeItem: (initiativeId: string, itemId: string) => void;
 }
 
 export function StrategyView({ 
@@ -49,7 +49,10 @@ export function StrategyView({
     isFocused,
     onCreateInitiative, 
     onUpdateStrategy, 
-    ...initiativeHandlers 
+    onUpdateInitiative,
+    onAddInitiativeItem,
+    onUpdateInitiativeItem,
+    onDeleteInitiativeItem
 }: StrategyViewProps) {
   const [newInitiativeName, setNewInitiativeName] = useState("");
 
@@ -134,7 +137,10 @@ export function StrategyView({
                             key={initiative.id} 
                             initiative={initiative} 
                             radarItems={radarItems} 
-                            {...initiativeHandlers} 
+                            onUpdateInitiative={onUpdateInitiative} 
+                            onAddInitiativeItem={onAddInitiativeItem}
+                            onUpdateInitiativeItem={onUpdateInitiativeItem}
+                            onDeleteInitiativeItem={onDeleteInitiativeItem}
                         />
                     ))}
                 </Accordion>

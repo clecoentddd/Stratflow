@@ -1,6 +1,6 @@
 
 import type { Company } from '@/lib/types';
-import type { Organization, RadarItem } from '@/lib/types';
+import type { Organization, RadarItem, Strategy, Initiative, InitiativeItem } from '@/lib/types';
 import type { CompanyEvent } from '../domain/companies/events';
 import type { OrganizationEvent } from '@/lib/domain/organizations/events';
 import { _getAllEvents } from './event-store';
@@ -22,109 +22,196 @@ export const applyEventsToOrganization = (
 ): Organization | null => {
   // This is the reducer function
   const finalState = events.reduce((org, event) => {
-    // This is a hack to preserve dashboard data, which is not event-sourced.
-    // In a real system, dashboard changes would also be events.
-    const existingDashboard = org?.dashboard;
+    if (!org) {
+        if (event.type === 'OrganizationCreated') {
+             return {
+                id: event.payload.id,
+                companyId: event.payload.companyId,
+                name: event.payload.name,
+                purpose: event.payload.purpose,
+                context: event.payload.context,
+                level: event.payload.level,
+                dashboard: {
+                    id: `dashboard-${event.payload.id}`,
+                    name: `${event.payload.name} Strategy Dashboard`,
+                    strategies: [],
+                },
+                radar: [],
+            };
+        }
+        return null; // Cannot process other events if org doesn't exist
+    }
 
     switch (event.type) {
       case 'OrganizationCreated':
-        const newOrg = {
-          id: event.payload.id,
-          companyId: event.payload.companyId,
-          name: event.payload.name,
-          purpose: event.payload.purpose,
-          context: event.payload.context,
-          level: event.payload.level,
-          dashboard: {
-            id: `dashboard-${event.payload.id}`,
-            name: `${event.payload.name} Strategy Dashboard`,
-            strategies: [],
-          },
-          radar: [],
-        };
-        // This is a temporary fix to bring back the initial CTO data
-        if(newOrg.id === 'org-cto') {
-          newOrg.dashboard.strategies = [
-             {
-              id: 'strat-1',
-              description: 'Develop and launch the new \'Innovate\' feature set.',
-              timeframe: 'Q4 2024',
-              state: 'Open',
-              initiatives: [
-                {
-                  id: 'init-1-1',
-                  name: 'Market Research & Analysis',
-                  progression: 80,
-                  steps: [
-                    { key: 'diagnostic', title: 'Diagnostic', iconName: 'Search', items: [{ id: 'item-1', text: 'Analyze competitor pricing' },{ id: 'item-2', text: 'Survey target user base' }],},
-                    { key: 'overallApproach', title: 'Overall Approach', iconName: 'Milestone', items: [{ id: 'item-3', text: 'Define phased rollout plan' }],},
-                    { key: 'actions', title: 'Actions', iconName: 'ListChecks', items: [] },
-                    { key: 'proximateObjectives', title: 'Proximate Objectives', iconName: 'Target', items: [{ id: 'item-4', text: 'Achieve 500 survey responses' }],},
-                  ],
-                  linkedRadarItemIds: ['radar-item-1'],
-                },
-              ],
-            },
-            {
-              id: 'strat-2',
-              description: 'Marketing and go-to-market strategy.',
-              timeframe: 'Q4 2024',
-              state: 'Draft',
-              initiatives: [],
-            },
-          ];
-        }
-        return newOrg;
+        // This should ideally only happen on the first event.
+        return org;
 
       case 'OrganizationUpdated':
-        if (!org) return null;
-        const updatedOrg = {
+        return {
           ...org,
           name: event.payload.name,
           purpose: event.payload.purpose,
           context: event.payload.context,
         };
-        if(existingDashboard) updatedOrg.dashboard = existingDashboard;
-        return updatedOrg;
 
+      // --- Radar Events ---
       case 'RadarItemCreated':
-        if (!org) return null;
-        const orgWithNewItem = {
-          ...org,
-          radar: [...(org.radar || []), event.payload],
-        };
-        if(existingDashboard) orgWithNewItem.dashboard = existingDashboard;
-        return orgWithNewItem;
+        return { ...org, radar: [...(org.radar || []), event.payload] };
 
       case 'RadarItemUpdated':
-        if (!org) return null;
-        const orgWithUpdatedItem = {
+        return {
           ...org,
           radar: (org.radar || []).map(item =>
             item.id === event.payload.id ? { ...item, ...event.payload } : item
           ),
         };
-        if(existingDashboard) orgWithUpdatedItem.dashboard = existingDashboard;
-        return orgWithUpdatedItem;
 
       case 'RadarItemDeleted':
-        if (!org) return null;
-        const orgWithDeletedItem = {
+        return {
           ...org,
           radar: (org.radar || []).filter(item => item.id !== event.payload.id),
         };
-        if(existingDashboard) orgWithDeletedItem.dashboard = existingDashboard;
-        return orgWithDeletedItem;
+
+      // --- Strategy Events ---
+      case 'StrategyCreated':
+        const newStrategy: Strategy = {
+            id: event.payload.strategyId,
+            description: event.payload.description,
+            timeframe: event.payload.timeframe,
+            state: "Draft",
+            initiatives: [],
+        };
+        return {
+            ...org,
+            dashboard: {
+                ...org.dashboard,
+                strategies: [...org.dashboard.strategies, newStrategy]
+            }
+        };
+
+      case 'StrategyStateUpdated':
+        return {
+            ...org,
+            dashboard: {
+                ...org.dashboard,
+                strategies: org.dashboard.strategies.map(s => 
+                    s.id === event.payload.strategyId ? { ...s, state: event.payload.state } : s
+                )
+            }
+        };
+      
+      // --- Initiative Events ---
+      case 'InitiativeCreated':
+        return {
+            ...org,
+            dashboard: {
+                ...org.dashboard,
+                strategies: org.dashboard.strategies.map(s => {
+                    if (s.id !== event.payload.strategyId) return s;
+                    const newInitiative: Initiative = event.payload.template;
+                    return { ...s, initiatives: [...s.initiatives, newInitiative] };
+                })
+            }
+        };
+      
+      case 'InitiativeProgressUpdated':
+        return {
+            ...org,
+            dashboard: {
+                ...org.dashboard,
+                strategies: org.dashboard.strategies.map(s => ({
+                    ...s,
+                    initiatives: s.initiatives.map(i => 
+                        i.id === event.payload.initiativeId ? { ...i, progression: event.payload.progression } : i
+                    )
+                }))
+            }
+        };
+
+      case 'InitiativeRadarItemsLinked':
+          return {
+              ...org,
+              dashboard: {
+                  ...org.dashboard,
+                  strategies: org.dashboard.strategies.map(s => ({
+                      ...s,
+                      initiatives: s.initiatives.map(i => 
+                          i.id === event.payload.initiativeId ? { ...i, linkedRadarItemIds: event.payload.linkedRadarItemIds } : i
+                      )
+                  }))
+              }
+          };
+
+      // --- Initiative Item Events ---
+      case 'InitiativeItemAdded':
+        return {
+            ...org,
+            dashboard: {
+                ...org.dashboard,
+                strategies: org.dashboard.strategies.map(s => ({
+                    ...s,
+                    initiatives: s.initiatives.map(i => {
+                        if (i.id !== event.payload.initiativeId) return i;
+                        return {
+                            ...i,
+                            steps: i.steps.map(step => 
+                                step.key === event.payload.stepKey 
+                                    ? { ...step, items: [...step.items, event.payload.item] } 
+                                    : step
+                            )
+                        };
+                    })
+                }))
+            }
+        };
+
+      case 'InitiativeItemUpdated':
+         return {
+            ...org,
+            dashboard: {
+                ...org.dashboard,
+                strategies: org.dashboard.strategies.map(s => ({
+                    ...s,
+                    initiatives: s.initiatives.map(i => ({
+                        ...i,
+                        steps: i.steps.map(step => ({
+                            ...step,
+                            items: step.items.map(item => 
+                                item.id === event.payload.itemId ? { ...item, text: event.payload.text } : item
+                            )
+                        }))
+                    }))
+                }))
+            }
+        };
+
+      case 'InitiativeItemDeleted':
+          return {
+            ...org,
+            dashboard: {
+                ...org.dashboard,
+                strategies: org.dashboard.strategies.map(s => ({
+                    ...s,
+                    initiatives: s.initiatives.map(i => {
+                         if (i.id !== event.payload.initiativeId) return i;
+                         return {
+                            ...i,
+                            steps: i.steps.map(step => ({
+                                ...step,
+                                items: step.items.filter(item => item.id !== event.payload.itemId)
+                            }))
+                         }
+                    })
+                }))
+            }
+        };
+
 
       default:
         return org;
     }
   }, initialState);
-
-  // Another hack to ensure dashboard is preserved if no org-specific events were processed
-  if (finalState && !finalState.dashboard && initialState?.dashboard) {
-    finalState.dashboard = initialState.dashboard;
-  }
 
   return finalState;
 };
@@ -221,11 +308,3 @@ export const getCompaniesProjection = async (): Promise<Company[]> => {
     }
     return Object.values(projection);
 }
-
-// DEPRECATED - No longer needed as we are not storing projections in memory.
-export const updateOrganizationProjection = (org: Organization): void => {};
-export const updateCompanyProjection = (company: Company): void => {};
-export const _setInitialProjections = (
-  initialOrgProjections: Record<string, Organization>,
-  initialCompanyProjections: Record<string, Company>
-) => {};

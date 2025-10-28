@@ -3,7 +3,7 @@
 
 import { useState } from "react";
 import Link from 'next/link';
-import { Plus, Save, XCircle, Trash2, Search, Milestone, ListChecks, Target, Link2 } from "lucide-react";
+import { Plus, Trash2, Search, Milestone, ListChecks, Target, Link2 } from "lucide-react";
 import {
   AccordionContent,
   AccordionItem,
@@ -34,19 +34,19 @@ const iconMap = {
 
 interface InitiativeItemViewProps {
   item: InitiativeItem;
-  stepKey: InitiativeStepKey;
   initiativeId: string;
-  onUpdateInitiativeItem: (initiativeId: string, stepKey: InitiativeStepKey, itemId: string, newText: string) => void;
-  onDeleteInitiativeItem: (initiativeId: string, stepKey: InitiativeStepKey, itemId: string) => void;
+  stepKey: InitiativeStepKey;
+  onUpdateInitiativeItem: (initiativeId: string, itemId: string, newText: string) => void;
+  onDeleteInitiativeItem: (initiativeId: string, itemId: string) => void;
 }
 
-function InitiativeItemView({ item, stepKey, initiativeId, onUpdateInitiativeItem, onDeleteInitiativeItem }: InitiativeItemViewProps) {
+function InitiativeItemView({ item, initiativeId, stepKey, onUpdateInitiativeItem, onDeleteInitiativeItem }: InitiativeItemViewProps) {
   const [isEditing, setIsEditing] = useState(item.text === "");
   const [editText, setEditText] = useState(item.text);
 
   const handleSave = () => {
     if (editText.trim() !== item.text) {
-      onUpdateInitiativeItem(initiativeId, stepKey, item.id, editText);
+      onUpdateInitiativeItem(initiativeId, item.id, editText);
     }
     setIsEditing(false);
   };
@@ -55,12 +55,12 @@ function InitiativeItemView({ item, stepKey, initiativeId, onUpdateInitiativeIte
     setEditText(item.text);
     setIsEditing(false);
     if(item.text === "") {
-        onDeleteInitiativeItem(initiativeId, stepKey, item.id);
+        onDeleteInitiativeItem(initiativeId, item.id);
     }
   };
   
   const handleDelete = () => {
-    onDeleteInitiativeItem(initiativeId, stepKey, item.id);
+    onDeleteInitiativeItem(initiativeId, item.id);
   }
 
   if (isEditing) {
@@ -109,17 +109,17 @@ interface InitiativeViewProps {
   initiative: Initiative;
   radarItems: RadarItem[];
   onUpdateInitiative: (initiativeId: string, updatedValues: Partial<Initiative>) => void;
-  onUpdateInitiativeItem: (initiativeId: string, stepKey: InitiativeStepKey, itemId: string, newText: string) => void;
   onAddInitiativeItem: (initiativeId: string, stepKey: InitiativeStepKey) => void;
-  onDeleteInitiativeItem: (initiativeId: string, stepKey: InitiativeStepKey, itemId: string) => void;
+  onUpdateInitiativeItem: (initiativeId: string, itemId: string, newText: string) => void;
+  onDeleteInitiativeItem: (initiativeId: string, itemId: string) => void;
 }
 
 export function InitiativeView({ 
     initiative,
     radarItems,
     onUpdateInitiative,
-    onUpdateInitiativeItem,
     onAddInitiativeItem,
+    onUpdateInitiativeItem,
     onDeleteInitiativeItem
 }: InitiativeViewProps) {
 
