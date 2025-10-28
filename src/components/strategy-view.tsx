@@ -45,6 +45,7 @@ export function StrategyView({
 }: StrategyViewProps) {
   const [strategy, setStrategy] = useState(initialStrategy);
   const [newInitiativeName, setNewInitiativeName] = useState("");
+  const [isCreatingInitiative, setCreatingInitiative] = useState(false);
   const [isEditStrategyOpen, setEditStrategyOpen] = useState(false);
   const { toast } = useToast();
 
@@ -98,50 +99,48 @@ export function StrategyView({
     }
   }, [strategy, orgId, onStrategyChange, toast]);
 
-  const handleEditStrategy = async (description: string, timeframe: string) => {
+  const handleEditStrategy = (description: string, timeframe: string) => {
     const originalStrategy = strategy;
-    setStrategy(prev => ({...prev, description, timeframe}));
+    const updatedStrategy = { ...strategy, description, timeframe };
+    setStrategy(updatedStrategy); // Optimistic update
     setEditStrategyOpen(false);
 
     const command: UpdateStrategyCommand = {
         strategyId: strategy.id,
-        description,
-        timeframe,
+        description: description,
+        timeframe: timeframe,
     };
-
-    try {
-        const response = await fetch(`/api/teams/${orgId}/strategies/${strategy.id}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(command),
-        });
-
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.message || 'Failed to update strategy');
+    
+    fetch(`/api/teams/${orgId}/strategies/${strategy.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(command),
+    })
+    .then(async (res) => {
+        if (!res.ok) {
+            const errorData = await res.json().catch(() => ({}));
+            throw new Error(errorData.message || 'Failed to update strategy.');
         }
-
-        toast({
-            title: "Strategy Updated",
-            description: `The strategy has been successfully updated.`,
-        });
+        toast({ title: "Strategy Updated", description: "Your changes have been saved."});
         onStrategyChange();
-    } catch (error: any) {
-        console.error(error);
-        setStrategy(originalStrategy);
+    })
+    .catch((error) => {
+        console.error("Failed to update strategy:", error);
         toast({
-            title: "Error",
-            description: error.message || "Could not update the strategy.",
+            title: "Update Failed",
+            description: error.message,
             variant: "destructive",
         });
-    }
-};
+        setStrategy(originalStrategy); // Rollback on error
+    });
+  };
 
-  const handleCreateInitiative = useCallback(() => {
-    if (!newInitiativeName.trim()) {
+  const handleCreateInitiative = useCallback(async () => {
+    if (!newInitiativeName.trim() || isCreatingInitiative) {
       return;
     }
 
+    setCreatingInitiative(true);
     const command: CreateInitiativeCommand = { strategyId: strategy.id, name: newInitiativeName.trim() };
     const tempId = `init-temp-${uuidv4()}`;
     const newInitiative = newInitiativeTemplate(tempId, command.name);
@@ -154,29 +153,29 @@ export function StrategyView({
     
     setNewInitiativeName("");
     
-    fetch(`/api/teams/${orgId}/initiatives`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(command),
-    })
-    .then(async res => {
-        if (!res.ok) {
+    try {
+        const response = await fetch(`/api/teams/${orgId}/initiatives`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(command),
+        });
+        if (!response.ok) {
             const errorData = await res.json().catch(() => ({}));
             throw new Error(errorData.message || 'Failed to create initiative.');
         }
         toast({ title: "Success", description: `Initiative "${command.name}" created.` });
         onStrategyChange();
-    })
-    .catch(error => {
+    } catch (error: any) {
         console.error(error);
         toast({ title: "Error", description: error.message, variant: "destructive" });
         onStrategyChange();
-    });
-
-  }, [strategy.id, orgId, toast, newInitiativeName, onStrategyChange]);
+    } finally {
+        setCreatingInitiative(false);
+    }
+  }, [strategy.id, orgId, toast, newInitiativeName, onStrategyChange, isCreatingInitiative]);
 
   const handleDeleteInitiative = useCallback((initiativeId: string, strategyId: string) => {
-    const originalInitiatives = strategy.initiatives;
+    const originalInitiatives = [...strategy.initiatives];
     
     setStrategy(prev => ({
       ...prev,
@@ -203,7 +202,7 @@ export function StrategyView({
         toast({ title: "Error", description: error.message, variant: "destructive" });
         setStrategy(prev => ({ ...prev, initiatives: originalInitiatives }));
     });
-  }, [strategy, orgId, toast, onStrategyChange]);
+  }, [strategy.initiatives, orgId, toast, onStrategyChange]);
 
   const onInitiativeChanged = useCallback(() => {
     onStrategyChange();
@@ -218,42 +217,44 @@ export function StrategyView({
           strategy.state === 'Draft' && 'border-blue-500/80 border-2',
           strategy.state === 'Open' && 'border-green-500/80 border-2'
       )}>
-        <CardHeader className="flex flex-row items-start justify-between">
-          <div className="flex-1">
-            <CardTitle className="font-headline text-xl">{strategy.description}</CardTitle>
-            <CardDescription className="mt-1">Timeframe: {strategy.timeframe}</CardDescription>
-          </div>
-          <div className="flex items-center gap-2">
-              <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setEditStrategyOpen(true)}>
-                  <Edit className="h-4 w-4" />
-              </Button>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className={cn(
-                      "font-semibold rounded-full px-3",
-                      strategy.state === 'Draft' && 'bg-blue-100 text-blue-800 hover:bg-blue-200',
-                      strategy.state === 'Open' && 'bg-green-100 text-green-800 hover:bg-green-200',
-                      (strategy.state === 'Closed' || strategy.state === 'Obsolete') && 'bg-gray-100 text-gray-800 hover:bg-gray-200',
-                  )}
-                  >
-                    <CurrentStateIcon className="mr-2 h-4 w-4" />
-                    {strategy.state}
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  {strategyStates.map(state => {
-                    const Icon = iconMap[state.iconName];
-                    return (
-                    <DropdownMenuItem key={state.value} onClick={() => handleUpdateStrategy({ state: state.value })}>
-                      <Icon className={cn("mr-2 h-4 w-4", state.colorClass)} />
-                      <span>{state.label}</span>
-                    </DropdownMenuItem>
-                  )})}
-                </DropdownMenuContent>
-              </DropdownMenu>
-              <Button variant="ghost" size="icon" className="h-8 w-8 cursor-grab active:cursor-grabbing">
-                  <GripVertical className="h-4 w-4" />
-              </Button>
+        <CardHeader>
+          <div className="flex items-start justify-between">
+            <div className="flex-1 pr-4">
+              <CardTitle className="font-headline text-xl">{strategy.description}</CardTitle>
+              <CardDescription className="mt-1">Timeframe: {strategy.timeframe}</CardDescription>
+            </div>
+            <div className="flex items-center gap-1">
+                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setEditStrategyOpen(true)}>
+                    <Edit className="h-4 w-4" />
+                </Button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="sm" className={cn(
+                        "font-semibold rounded-full px-3",
+                        strategy.state === 'Draft' && 'bg-blue-100 text-blue-800 hover:bg-blue-200',
+                        strategy.state === 'Open' && 'bg-green-100 text-green-800 hover:bg-green-200',
+                        (strategy.state === 'Closed' || strategy.state === 'Obsolete') && 'bg-gray-100 text-gray-800 hover:bg-gray-200',
+                    )}
+                    >
+                      <CurrentStateIcon className="mr-2 h-4 w-4" />
+                      {strategy.state}
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    {strategyStates.map(state => {
+                      const Icon = iconMap[state.iconName];
+                      return (
+                      <DropdownMenuItem key={state.value} onClick={() => handleUpdateStrategy({ state: state.value })}>
+                        <Icon className={cn("mr-2 h-4 w-4", state.colorClass)} />
+                        <span>{state.label}</span>
+                      </DropdownMenuItem>
+                    )})}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+                <Button variant="ghost" size="icon" className="h-8 w-8 cursor-grab active:cursor-grabbing">
+                    <GripVertical className="h-4 w-4" />
+                </Button>
+            </div>
           </div>
         </CardHeader>
         <CardContent>
@@ -293,14 +294,14 @@ export function StrategyView({
         <CardFooter className="bg-slate-50/50 p-4 rounded-b-lg">
           <div className="flex w-full items-center gap-2">
             <Input 
-              placeholder={isSaving ? "Saving strategy..." : "Name your new initiative..."}
+              placeholder={isCreatingInitiative ? "Creating initiative..." : "Name your new initiative..."}
               value={newInitiativeName}
               onChange={(e) => setNewInitiativeName(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleCreateInitiative()}
               className="bg-background"
-              disabled={isSaving}
+              disabled={isCreatingInitiative}
             />
-            <Button onClick={handleCreateInitiative} disabled={!newInitiativeName.trim() || isSaving}>
+            <Button onClick={handleCreateInitiative} disabled={!newInitiativeName.trim() || isCreatingInitiative}>
               <Plus className="mr-2 h-4 w-4" /> Add Initiative
             </Button>
           </div>
@@ -316,7 +317,3 @@ export function StrategyView({
     </>
   );
 }
-
-    
-
-    
