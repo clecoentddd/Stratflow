@@ -101,7 +101,10 @@ export default function OrganizationStrategyPage() {
   const handleCreateInitiative = (strategyId: string, initiativeName: string) => {
     const command: CreateInitiativeCommand = { strategyId, name: initiativeName };
     const originalOrganization = organization;
-
+    
+    // Optimistic UI Update
+    // Note: A full optimistic update for creation is complex because we don't have the final ID.
+    // For now, we revert on failure which is a safe middle-ground. A full page refresh on success is acceptable here.
     fetch(`/api/organizations/${orgId}/initiatives`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -168,8 +171,9 @@ export default function OrganizationStrategyPage() {
       if (!response.ok) {
         throw new Error('Failed to save new item to server.');
       }
-
-      // Silently refresh data to get permanent ID
+      
+      // Silently refresh data in the background to get the permanent ID
+      // This will not cause a visible refresh to the user but ensures consistency
       await fetchOrganizationData();
 
     } catch (error: any) {
@@ -194,6 +198,11 @@ export default function OrganizationStrategyPage() {
       }).catch(err => {
         // Optional: handle background error, maybe with a less intrusive notification
         console.error("Failed to save item in background:", err);
+         toast({
+          title: "Save Error",
+          description: "Could not save item changes to the server.",
+          variant: "destructive",
+        });
       });
   };
   
