@@ -6,6 +6,7 @@ import { Plus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import type { Dashboard, Strategy, StrategyState, RadarItem } from "@/lib/types";
 import type { CreateStrategyCommand } from "@/lib/domain/strategy/commands";
+import { v4 as uuidv4 } from 'uuid';
 
 import { Button } from "@/components/ui/button";
 import { CreateStrategyDialog } from "@/components/create-strategy-dialog";
@@ -49,7 +50,23 @@ export function StrategyDashboard({
   const handleCreateStrategy = async (description: string, timeframe: string) => {
     console.log("StrategyDashboard: handleCreateStrategy called");
     setCreateStrategyOpen(false);
+    
     const command: CreateStrategyCommand = { description, timeframe };
+    const tempId = `strat-${uuidv4()}`;
+
+    // Optimistic UI Update
+    const newStrategy: Strategy = {
+      id: tempId,
+      description,
+      timeframe,
+      state: 'Draft',
+      initiatives: [],
+    };
+
+    setDashboard(prev => ({
+      ...prev,
+      strategies: [...prev.strategies, newStrategy],
+    }));
     
     try {
       const response = await fetch(`/api/organizations/${orgId}/strategies`, {
@@ -68,7 +85,8 @@ export function StrategyDashboard({
         description: "Strategy has been created.",
       });
       
-      onDataChange(); // Re-fetch data at the page level
+      // Re-fetch data in the background to sync server-generated ID
+      onDataChange(); 
 
     } catch (error: any) {
       console.error(error);
@@ -77,6 +95,8 @@ export function StrategyDashboard({
         description: error.message || "An unexpected error occurred.",
         variant: "destructive",
       });
+      // On failure, rollback the optimistic update by re-fetching
+      onDataChange();
     }
   };
   
