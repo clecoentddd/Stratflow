@@ -49,8 +49,8 @@ export async function POST(request: NextRequest, { params }: { params: { orgId: 
     // 3. Save Event
     await saveEvents([event]);
 
-    // 4. Respond
-    return NextResponse.json({ success: true, item: newItem }, { status: 201 });
+    // 4. Respond with the created item
+    return NextResponse.json(newItem, { status: 201 });
 
   } catch (error) {
     console.error('Failed to add initiative item:', error);

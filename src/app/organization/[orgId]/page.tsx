@@ -5,7 +5,7 @@ import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { notFound, useParams } from "next/navigation";
 import { ChevronLeft, ShieldAlert } from "lucide-react";
-import type { Organization, Strategy } from "@/lib/types";
+import type { Organization, Strategy, InitiativeItem } from "@/lib/types";
 import { AppHeader } from "@/components/header";
 import { Button } from "@/components/ui/button";
 import { StrategyDashboard } from "@/components/dashboard";
@@ -104,9 +104,54 @@ export default function OrganizationStrategyPage() {
     handleApiCall(`/api/organizations/${orgId}/initiatives/${initiativeId}`, 'PUT', command, "Initiative has been updated.");
   };
   
-  const handleAddInitiativeItem = (initiativeId: string, stepKey: string) => {
+  const handleAddInitiativeItem = async (initiativeId: string, stepKey: string) => {
     const command: AddInitiativeItemCommand = { initiativeId, stepKey };
-    handleApiCall(`/api/organizations/${orgId}/initiative-items`, 'POST', command, "New item added to initiative.");
+    try {
+      const response = await fetch(`/api/organizations/${orgId}/initiative-items`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(command),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to add item.');
+      }
+      
+      const newItem = await response.json();
+
+      // Update state locally instead of full refresh
+      setOrganization(prevOrg => {
+        if (!prevOrg) return null;
+        
+        const newOrg = JSON.parse(JSON.stringify(prevOrg)); // Deep copy
+        
+        for (const strategy of newOrg.dashboard.strategies) {
+            const initiative = strategy.initiatives.find((i: any) => i.id === initiativeId);
+            if (initiative) {
+                const step = initiative.steps.find((s: any) => s.key === stepKey);
+                if (step) {
+                    step.items.push(newItem);
+                }
+                break;
+            }
+        }
+        return newOrg;
+      });
+
+      toast({
+        title: "Success",
+        description: "New item added to initiative.",
+      });
+
+    } catch (error: any) {
+      console.error(error);
+      toast({
+        title: "Error",
+        description: error.message || "An unexpected error occurred.",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleUpdateInitiativeItem = (initiativeId: string, itemId: string, newText: string) => {
