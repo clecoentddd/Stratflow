@@ -10,7 +10,8 @@
     "build": "NODE_ENV=production next build",
     "start": "next start",
     "lint": "next lint",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "playwright test"
   },
   "dependencies": {
     "@genkit-ai/google-genai": "^1.20.0",
@@ -59,6 +60,7 @@
     "zod": "^3.24.2"
   },
   "devDependencies": {
+    "@playwright/test": "^1.45.1",
     "@types/d3": "^7.4.3",
     "@types/node": "^20",
     "@types/react": "^18",
@@ -70,5 +72,3 @@
     "typescript": "^5"
   }
 }
-
-    
