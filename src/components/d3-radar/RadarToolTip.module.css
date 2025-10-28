@@ -11,7 +11,7 @@
     gap: 16px;
     box-sizing: border-box;
     transition: all 0.3s ease;
-    color: white;
+    color: hsl(var(--foreground));
     width: 100%; /* Ensure it takes full width of parent */
 }
 
@@ -28,9 +28,9 @@
     align-items: center;
     justify-content: center;
     text-align: center;
-    background: #0a0f0f;
+    background: hsl(var(--muted));
     backdrop-filter: blur(4px);
-    color: #666;
+    color: hsl(var(--muted-foreground));
     border-radius: 6px;
     box-sizing: border-box;
     padding: 24px;
@@ -47,10 +47,10 @@
     box-sizing: border-box;
     border-radius: 6px;
     padding: 16px;
-    background: #141919;
+    background: hsl(var(--popover));
     backdrop-filter: blur(6px);
-    color: #e8e8e8;
-    border: 1px solid rgba(0, 204, 136, 0.2);
+    color: hsl(var(--popover-foreground));
+    border: 1px solid hsla(var(--chart-1), 0.2);
     transition: all 0.3s ease;
 }
 
@@ -68,7 +68,7 @@
 
 .label {
     font-weight: 600;
-    color: #00cc88;
+    color: hsl(var(--chart-2));
     margin-right: 10px;
     font-size: 11px;
     text-transform: uppercase;
@@ -77,7 +77,7 @@
 }
 
 .value {
-    color: #e8e8e8;
+    color: hsl(var(--foreground));
     font-size: 13px;
 }
 
@@ -85,25 +85,25 @@
    🔗 Links (Zoom-in / related)
    ================================ */
 .link {
-    color: #5fb3d9;
+    color: hsl(var(--accent-foreground));
     text-decoration: none;
     cursor: pointer;
-    border-bottom: 1px solid rgba(95, 179, 217, 0.3);
+    border-bottom: 1px solid hsla(var(--accent-foreground), 0.3);
     transition: all 0.2s ease;
 }
 
 .link:hover {
-    color: #7ec9e8;
-    border-bottom-color: rgba(126, 201, 232, 0.6);
+    color: hsl(var(--accent));
+    border-bottom-color: hsla(var(--accent), 0.6);
 }
 
 /* ================================
    🧰 Tooltip Buttons
    ================================ */
 .editButton {
-    background-color: rgba(0, 0, 0, 0.4);
-    border: 1px solid rgba(0, 204, 136, 0.3);
-    color: #00cc88;
+    background-color: rgba(10, 15, 15, 0.4);
+    border: 1px solid hsla(var(--chart-1), 0.3);
+    color: hsl(var(--chart-2));
     padding: 6px 10px;
     border-radius: 4px;
     cursor: pointer;
@@ -119,19 +119,19 @@
 }
 
 .editButton .editIcon {
-    color: #FFD580;
+    color: hsl(var(--chart-5));
     font-size: 13px;
 }
 
 .editButton:hover {
-    background-color: rgba(0, 204, 136, 0.1);
-    border-color: rgba(0, 204, 136, 0.5);
-    color: #00ff9f;
+    background-color: hsla(var(--chart-1), 0.1);
+    border-color: hsla(var(--chart-1), 0.5);
+    color: hsl(var(--chart-1));
     transform: translateY(-1px);
 }
 
 .editButton:hover .editIcon {
-    color: #FFB347;
+    color: hsl(var(--chart-4));
 }
 
 /* ================================

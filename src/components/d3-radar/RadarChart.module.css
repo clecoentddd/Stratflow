@@ -1,4 +1,5 @@
 
+
 .centeringWrapper {
     width: 100%;
     display: flex;
@@ -16,7 +17,7 @@
     font-family: 'Inter', sans-serif; 
     align-items: flex-start;
     box-sizing: border-box;
-    background-color: #0d1117;
+    background-color: hsl(var(--background));
 }
 
 /* 2. UNIVERSAL FONT OVERRIDE (CRITICAL FIX) 
@@ -56,7 +57,7 @@
     align-items: center;
     position: relative;
     box-sizing: border-box;
-    background-color: black;
+    background-color: hsl(var(--background));
 }
 
 .radarWrapper text {
@@ -68,7 +69,7 @@
     font-family: 'Inter', sans-serif !important; 
     font-size: 14px;
     font-weight: 600;
-    fill: #00cc88;
+    fill: hsl(var(--chart-2));
 }
 
 .itemGroup:hover text {
@@ -80,23 +81,23 @@
 
 /* Radar chart items */
 .radarItem {
-    fill: rgb(42, 243, 95);
+    fill: hsl(var(--chart-1));
     cursor: pointer;
-    filter: drop-shadow(0 0 6px rgba(0, 255, 128, 0.5));
+    filter: drop-shadow(0 0 6px hsla(var(--chart-1), 0.5));
     transition: transform 0.2s ease, filter 0.3s ease;
 }
 
 .radarItem:hover {
     transform: scale(1.15);
-    filter: drop-shadow(0 0 12px rgba(0, 255, 128, 0.9));
+    filter: drop-shadow(0 0 12px hsla(var(--chart-1), 0.9));
 }
 
 /* Text inside radar - Now relies solely on inheritance */
 .chartText {
     font-size: 12px;
-    fill: #c1fff4;
+    fill: hsl(var(--chart-3));
     font-weight: bold;
-    text-shadow: 0 0 4px rgba(0, 255, 191, 0.6);
+    text-shadow: 0 0 4px hsla(var(--chart-3), 0.6);
     letter-spacing: 0.5px;
     font-family: 'Inter', sans-serif !important;
 }
@@ -104,7 +105,7 @@
 /* Text inside radar - Now relies solely on inheritance */
 .chartTextNormal {
     font-size: 11px;
-    fill: white;
+    fill: hsl(var(--foreground));
     font-weight: 300;
     text-anchor: middle;
     letter-spacing: -0.2px;
@@ -114,14 +115,14 @@
 /* Radar grid styling */
 .radarGridCircle {
     fill: none;
-    stroke: #00ff9f;
+    stroke: hsl(var(--chart-1));
     stroke-opacity: 0.5;
 }
 
 .radarGridCircleOuter {
     stroke-width: 5;
-    stroke: #00ffcc;
-    filter: drop-shadow(0 0 5px rgba(0, 255, 204, 0.3));
+    stroke: hsl(var(--chart-1));
+    filter: drop-shadow(0 0 5px hsla(var(--chart-1), 0.3));
 }
 
 .radarGridCircleInner {
@@ -130,7 +131,7 @@
 
 /* Radial lines */
 .radialLine {
-    stroke: #00ffaa;
+    stroke: hsl(var(--chart-1));
     stroke-width: 0.6;
     stroke-dasharray: 2, 2;
     opacity: 0.5;
@@ -138,11 +139,11 @@
 
 /* Quadrants */
 .quadrantFillDark {
-    fill: #0a0f0f;
+    fill: hsl(var(--muted));
 }
 
 .quadrantFillLight {
-    fill: #131a1a;
+    fill: hsl(var(--accent));
 }
 
 /* Item circles based on impact */
@@ -155,6 +156,7 @@
 .itemGlowEffect { filter: url(#sofGlow); }
 
 /* Opportunity ring styles */
-.opportunityLow { fill: none; stroke: #77DD77; stroke-width: 3; }
-.opportunityMedium { fill: none; stroke: #FFD580; stroke-width: 3; }
-.opportunityHigh { fill: none; stroke: #FF6961; stroke-width: 3; }
+.opportunityLow { fill: none; stroke: hsl(var(--chart-1)); stroke-width: 3; }
+.opportunityMedium { fill: none; stroke: hsl(var(--chart-2)); stroke-width: 3; }
+.opportunityHigh { fill: none; stroke: hsl(var(--chart-3)); stroke-width: 3; }
+
