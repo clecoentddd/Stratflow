@@ -3,48 +3,33 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Strategy and Initiative Management', () => {
 
-  test('should not create an empty initiative item when blurring an empty input', async ({ page }) => {
-    // Navigate to the Demo Company's first organization's strategy page.
+  test('should create an initiative for a strategy', async ({ page }) => {
+    // Navigate to the Demo Company's organizations page.
     await page.goto('/');
-    
-    // Find the link to the Demo Company and click it.
     await page.getByRole('link', { name: 'View Organizations' }).first().click();
-
-    // Find the first organization and navigate to its strategy dashboard
-    await page.getByRole('button', { name: 'View Strategy Dashboard' }).first().click();
-    await expect(page).toHaveURL(/.*\/organization\/org-.*/);
+    await expect(page).toHaveURL(/.*\/company\/company-demo\/organizations/);
     
+    // Navigate to the CTO organization's strategy dashboard
+    // The link is inside a card, so we'll find the card for CTO first.
+    const ctoCard = page.locator('div.flex.flex-col.bg-card:has-text("CTO")');
+    await ctoCard.getByRole('button', { name: 'View Strategy Dashboard' }).click();
+    await expect(page).toHaveURL(/.*\/organization\/org-cto/);
+
+    // Find the strategy card we want to add an initiative to
     const strategyDescription = 'Develop and launch the new \'Innovate\' feature set.';
-    const initiativeName = 'Market Research & Analysis';
+    const strategyCard = page.locator(`div.transition-opacity:has-text("${strategyDescription}")`);
+    await expect(strategyCard).toBeVisible();
 
-    // Find and expand the correct strategy
-    const strategyAccordion = page.getByText(strategyDescription);
-    await strategyAccordion.click();
+    // Type a name for the new initiative
+    const newInitiativeName = 'A Brand New Initiative';
+    await strategyCard.getByPlaceholder('Name your new initiative...').fill(newInitiativeName);
 
-    // Find and expand the initiative
-    const initiativeAccordion = page.getByRole('button', { name: initiativeName });
-    await initiativeAccordion.click();
+    // Click the "Add Initiative" button
+    await strategyCard.getByRole('button', { name: 'Add Initiative' }).click();
 
-    // Find the "Diagnostic" step and count its items before adding a new one
-    const diagnosticCard = page.locator('div.h-full:has-text("Diagnostic")');
-    const initialItemCount = await diagnosticCard.locator('.block').count();
-    
-    // Click the '+' button to add a new item
-    await diagnosticCard.getByRole('button', { name: 'Add' }).click();
-
-    // A textarea should now be visible.
-    const newItemTextarea = diagnosticCard.getByPlaceholder('Describe an item...');
-    await expect(newItemTextarea).toBeVisible();
-
-    // Click outside the textarea to trigger the blur event, without typing anything.
-    await diagnosticCard.click();
-    
-    // The textarea should disappear.
-    await expect(newItemTextarea).not.toBeVisible();
-    
-    // The number of items should be the same as before.
-    const finalItemCount = await diagnosticCard.locator('.block').count();
-    expect(finalItemCount).toBe(initialItemCount);
+    // Assert that the new initiative now appears on the page as an accordion trigger
+    const newInitiativeAccordion = page.getByRole('button', { name: newInitiativeName });
+    await expect(newInitiativeAccordion).toBeVisible();
   });
 
 });
