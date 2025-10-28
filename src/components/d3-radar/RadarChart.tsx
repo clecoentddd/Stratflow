@@ -76,10 +76,10 @@ const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: a
         g.selectAll(".quadrant-fill").remove();
 
         const visualQuadrantColors = [
-            radarConfig.visual.quadrantColors[2], // Business (Top-Left)
-            radarConfig.visual.quadrantColors[3], // Capabilities (Top-Right)
             radarConfig.visual.quadrantColors[0], // People & Knowledge (Bottom-Right)
-            radarConfig.visual.quadrantColors[1]  // Operating Model (Bottom-Left)
+            radarConfig.visual.quadrantColors[1], // Operating Model (Bottom-Left)
+            radarConfig.visual.quadrantColors[2], // Business (Top-Left)
+            radarConfig.visual.quadrantColors[3]  // Capabilities (Top-Right)
         ];
     
         visualQuadrantColors.forEach((color, i) => {
@@ -103,7 +103,7 @@ const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: a
         Object.values(radarConfig.categories).forEach(cat => {
             const angle = (Math.PI / 2) * cat.quadrantIndex + (Math.PI / 4); 
             
-            const x = offset * Math.cos(angle);
+            let x = offset * Math.cos(angle);
             let y = offset * Math.sin(angle);
             
             // Further adjust y for top/bottom placement
@@ -248,16 +248,11 @@ const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: a
                 g.attr('transform', event.transform.toString());
             });
 
-        // Attach zoom behavior but disable user interaction with it initially
         svg.call(zoom);
-        
-        // Store zoom behavior on the node to be accessible by handlers
         (svg.node() as any).__zoom = zoom;
 
-        // Set initial transform to center the group
         const initialTransform = d3.zoomIdentity.translate(centerX, centerY);
-        g.attr('transform', initialTransform.toString());
-        zoom.transform(svg as any, initialTransform);
+        zoom.transform(svg.transition().duration(0) as any, initialTransform);
         
         drawQuadrants(g, radius);
         drawCategoryLabels(g, radius);
@@ -374,6 +369,7 @@ export default RadarChart;
 
 
     
+
 
 
 
