@@ -64,14 +64,21 @@ const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: a
     };
 
     const drawCategoryLabels = (g: d3.Selection<SVGGElement, unknown, null, undefined>, radius: number) => {
-        const offset = radius * 1.26; // Place labels just outside the main circle.
-    
+        const offset = radius * 1.05; // Base horizontal distance from center
+
         Object.values(radarConfig.categories).forEach(cat => {
-            const angle = (Math.PI / 2) * cat.quadrantIndex + (Math.PI / 4); // Center in quadrant
-    
-            const x = offset * Math.cos(angle);
-            const y = offset * Math.sin(angle);
+            const angle = (Math.PI / 2) * cat.quadrantIndex + (Math.PI / 4); // Center angle
             
+            const x = offset * Math.cos(angle);
+            let y = offset * Math.sin(angle);
+            
+            // Adjust y position vertically
+            if (cat.quadrantIndex === 2 || cat.quadrantIndex === 3) { // Top quadrants
+                y *= 1.2; // Move further up
+            } else { // Bottom quadrants
+                y *= 1.2; // Move further down
+            }
+
             g.append("text")
                 .attr("x", x) 
                 .attr("y", y)
