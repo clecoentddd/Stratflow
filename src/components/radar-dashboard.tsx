@@ -28,7 +28,7 @@ export function RadarDashboard({ radarItems, onDeleteItem, teams, currentTeamId,
 
   return (
     <div>
-      <div className="bg-black text-white p-4 rounded-lg">
+      <div className="bg-background text-foreground p-4 rounded-lg border">
           <RadarChart
               items={radarItems}
               radius={300}
