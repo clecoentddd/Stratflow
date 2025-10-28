@@ -11,44 +11,39 @@ import {
   CardTitle,
   CardFooter
 } from "@/components/ui/card";
-import {
-  Accordion,
-} from "@/components/ui/accordion";
+import { Accordion } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { strategyStates } from "@/lib/data";
 import { Input } from "@/components/ui/input";
-
-import type { Strategy, RadarItem } from "@/lib/types";
-import { InitiativeView } from "./initiative-view";
+import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 
-const iconMap = {
-    FilePenLine,
-    Rocket,
-    CheckCircle2,
-    Archive,
-};
+import type { Strategy, RadarItem } from "@/lib/types";
+import type { CreateInitiativeCommand, UpdateStrategyCommand } from "@/lib/domain/strategy/commands";
+import { InitiativeView } from "./initiative-view";
+
+const iconMap = { FilePenLine, Rocket, CheckCircle2, Archive };
 
 interface StrategyViewProps {
-  strategy: Strategy;
+  initialStrategy: Strategy;
   radarItems: RadarItem[];
   isFocused: boolean;
   orgId: string;
-  onCreateInitiative: (initiativeName: string) => void;
-  onUpdateStrategy: (updatedValues: Partial<Strategy>) => void;
+  onStrategyChange: () => void;
 }
 
 export function StrategyView({ 
-    strategy,
+    initialStrategy,
     radarItems,
     isFocused,
     orgId,
-    onCreateInitiative, 
-    onUpdateStrategy, 
+    onStrategyChange,
 }: StrategyViewProps) {
+  const [strategy, setStrategy] = useState(initialStrategy);
   const [newInitiativeName, setNewInitiativeName] = useState("");
+  const { toast } = useToast();
 
   const overallProgression = useMemo(() => {
     if (strategy.initiatives.length === 0) return 0;
@@ -61,10 +56,53 @@ export function StrategyView({
 
   const currentStateInfo = strategyStates.find(s => s.value === strategy.state) || strategyStates[0];
   const CurrentStateIcon = iconMap[currentStateInfo.iconName];
+  
+  const handleApiCall = async (url: string, method: string, body: any, successMessage: string) => {
+    try {
+      const response = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || `Failed to perform action.`);
+      }
+      
+      toast({
+        title: "Success",
+        description: successMessage,
+      });
+
+      // After a successful API call that changes data, trigger a refresh from parent
+      onStrategyChange();
+
+    } catch (error: any) {
+      console.error(error);
+      toast({
+        title: "Error",
+        description: error.message || "An unexpected error occurred.",
+        variant: "destructive",
+      });
+      // Optionally roll back optimistic updates here
+    }
+  };
+
+  const handleUpdateStrategy = (updatedValues: Partial<Strategy>) => {
+    const command: UpdateStrategyCommand = { strategyId: strategy.id, ...updatedValues };
+    setStrategy(prev => ({...prev, ...updatedValues})); // Optimistic update
+    handleApiCall(`/api/organizations/${orgId}/strategies/${strategy.id}`, 'PUT', command, "Strategy has been updated.");
+  };
+
+  const handleCreateInitiative = (initiativeName: string) => {
+    const command: CreateInitiativeCommand = { strategyId: strategy.id, name: initiativeName };
+    handleApiCall(`/api/organizations/${orgId}/initiatives`, 'POST', command, `Initiative "${initiativeName}" has been added.`);
+  };
 
   const handleAddInitiative = () => {
     if (newInitiativeName.trim()) {
-      onCreateInitiative(newInitiativeName.trim());
+      handleCreateInitiative(newInitiativeName.trim());
       setNewInitiativeName("");
     }
   };
@@ -97,7 +135,7 @@ export function StrategyView({
                 {strategyStates.map(state => {
                   const Icon = iconMap[state.iconName];
                   return (
-                  <DropdownMenuItem key={state.value} onClick={() => onUpdateStrategy({ state: state.value })}>
+                  <DropdownMenuItem key={state.value} onClick={() => handleUpdateStrategy({ state: state.value })}>
                     <Icon className={cn("mr-2 h-4 w-4", state.colorClass)} />
                     <span>{state.label}</span>
                   </DropdownMenuItem>

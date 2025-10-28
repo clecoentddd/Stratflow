@@ -19,7 +19,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { LinkRadarItemsDialog } from './link-radar-items-dialog';
 import { Badge } from "@/components/ui/badge";
-import type { Initiative, InitiativeStepKey, InitiativeItem, RadarItem, UpdateInitiativeCommand } from "@/lib/types";
+import type { Initiative, InitiativeStepKey, InitiativeItem, RadarItem } from "@/lib/types";
 import type { AddInitiativeItemCommand, UpdateInitiativeItemCommand, DeleteInitiativeItemCommand } from '@/lib/domain/strategy/commands';
 
 const iconMap = { Search, Milestone, ListChecks, Target };
@@ -27,15 +27,17 @@ const iconMap = { Search, Milestone, ListChecks, Target };
 interface InitiativeItemViewProps {
   item: InitiativeItem;
   initiativeId: string;
-  onUpdateInitiativeItem: (itemId: string, newText: string) => void;
-  onDeleteInitiativeItem: (itemId: string) => void;
+  orgId: string;
+  onUpdate: (itemId: string, newText: string) => void;
+  onDelete: (itemId: string) => void;
 }
 
-function InitiativeItemView({ item, initiativeId, onUpdateInitiativeItem, onDeleteInitiativeItem }: InitiativeItemViewProps) {
+function InitiativeItemView({ item, orgId, initiativeId, onUpdate, onDelete }: InitiativeItemViewProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editText, setEditText] = useState(item.text);
 
   useEffect(() => {
+    // If the item is new (text is empty), automatically enter editing mode.
     if (item.text === "") {
       setIsEditing(true);
     }
@@ -43,22 +45,20 @@ function InitiativeItemView({ item, initiativeId, onUpdateInitiativeItem, onDele
 
   const handleSave = () => {
     if (editText.trim() !== item.text) {
-      onUpdateInitiativeItem(item.id, editText);
+      // Call the parent's handler to update the state and fire the API call
+      onUpdate(item.id, editText);
     }
     setIsEditing(false);
   };
 
   const handleCancel = () => {
+    // If the item was new and is being cancelled, trigger deletion.
     if (item.text === "") {
-        onDeleteInitiativeItem(item.id);
+        onDelete(item.id);
     } else {
         setEditText(item.text);
         setIsEditing(false);
     }
-  };
-
-  const handleDelete = () => {
-    onDeleteInitiativeItem(item.id);
   };
 
   if (isEditing) {
@@ -71,10 +71,10 @@ function InitiativeItemView({ item, initiativeId, onUpdateInitiativeItem, onDele
           autoFocus
           rows={3}
           className="text-sm"
-          onBlur={handleSave}
+          onBlur={handleSave} // Save when the user clicks away
         />
         <div className="flex justify-between items-center">
-            <Button size="icon" variant="ghost" className="text-destructive hover:bg-destructive/10" onClick={handleDelete}>
+            <Button size="icon" variant="ghost" className="text-destructive hover:bg-destructive/10" onClick={() => onDelete(item.id)}>
                 <Trash2 className="h-4 w-4" />
             </Button>
             <div className="flex gap-2">
@@ -124,14 +124,15 @@ export function InitiativeView({ initialInitiative, radarItems, orgId }: Initiat
 
   const handleUpdateInitiative = (updatedValues: Partial<Initiative>) => {
     const command = { ...updatedValues };
+    setInitiative(prev => ({ ...prev, ...updatedValues })); // Optimistic update
     fireAndForget(`/api/organizations/${orgId}/initiatives/${initiative.id}`, 'PUT', command, "Could not update initiative progression.");
-    setInitiative(prev => ({ ...prev, ...updatedValues }));
   };
 
   const handleAddInitiativeItem = (stepKey: InitiativeStepKey) => {
     const tempId = `temp-${uuidv4()}`;
     const newItem: InitiativeItem = { id: tempId, text: "" };
     
+    // Optimistic UI Update
     setInitiative(prev => {
         const newInitiative = JSON.parse(JSON.stringify(prev));
         const step = newInitiative.steps.find((s: any) => s.key === stepKey);
@@ -143,6 +144,7 @@ export function InitiativeView({ initialInitiative, radarItems, orgId }: Initiat
 
     const command: AddInitiativeItemCommand = { initiativeId: initiative.id, stepKey };
     
+    // Fire and forget, but get the real ID back to patch the state
     fetch(`/api/organizations/${orgId}/initiative-items`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -150,7 +152,7 @@ export function InitiativeView({ initialInitiative, radarItems, orgId }: Initiat
     })
     .then(res => res.json())
     .then((savedItem: InitiativeItem) => {
-      // Replace temporary item with the one from the server (which has the real ID)
+      // Silently replace temporary item with the one from the server
       setInitiative(prev => {
           const newInitiative = JSON.parse(JSON.stringify(prev));
            for (const step of newInitiative.steps) {
@@ -178,8 +180,7 @@ export function InitiativeView({ initialInitiative, radarItems, orgId }: Initiat
   };
 
   const handleUpdateInitiativeItem = (itemId: string, newText: string) => {
-    const command: UpdateInitiativeItemCommand = { initiativeId: initiative.id, itemId, text: newText };
-    fireAndForget(`/api/organizations/${orgId}/initiative-items/${itemId}`, 'PUT', command, "Could not save item changes.");
+     // Optimistic update
     setInitiative(prev => {
         const newInitiative = JSON.parse(JSON.stringify(prev));
         for (const step of newInitiative.steps) {
@@ -191,11 +192,13 @@ export function InitiativeView({ initialInitiative, radarItems, orgId }: Initiat
         }
         return newInitiative;
     });
+
+    const command: UpdateInitiativeItemCommand = { initiativeId: initiative.id, itemId, text: newText };
+    fireAndForget(`/api/organizations/${orgId}/initiative-items/${itemId}`, 'PUT', command, "Could not save item changes.");
   };
 
   const handleDeleteInitiativeItem = (itemId: string) => {
-    const command: DeleteInitiativeItemCommand = { initiativeId: initiative.id, itemId };
-     fireAndForget(`/api/organizations/${orgId}/initiative-items/${itemId}`, 'DELETE', command, "Failed to delete item.");
+    // Optimistic update
      setInitiative(prev => {
         const newInitiative = JSON.parse(JSON.stringify(prev));
         for (const step of newInitiative.steps) {
@@ -203,6 +206,9 @@ export function InitiativeView({ initialInitiative, radarItems, orgId }: Initiat
         }
         return newInitiative;
     });
+    
+    const command: DeleteInitiativeItemCommand = { initiativeId: initiative.id, itemId };
+     fireAndForget(`/api/organizations/${orgId}/initiative-items/${itemId}`, 'DELETE', command, "Failed to delete item.");
   };
 
   const handleLinkRadarItems = (selectedIds: string[]) => {
@@ -276,9 +282,10 @@ export function InitiativeView({ initialInitiative, radarItems, orgId }: Initiat
                     <InitiativeItemView 
                       key={item.id}
                       item={item}
+                      orgId={orgId}
                       initiativeId={initiative.id}
-                      onUpdateInitiativeItem={handleUpdateInitiativeItem}
-                      onDeleteInitiativeItem={handleDeleteInitiativeItem}
+                      onUpdate={handleUpdateInitiativeItem}
+                      onDelete={handleDeleteInitiativeItem}
                     />
                 )) : (
                     <p className="text-sm text-muted-foreground text-center py-2">No items yet.</p>

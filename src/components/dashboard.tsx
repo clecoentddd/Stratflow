@@ -3,8 +3,9 @@
 
 import { useState, useMemo } from "react";
 import { Plus } from "lucide-react";
-
+import { useToast } from "@/hooks/use-toast";
 import type { Dashboard, Strategy, StrategyState, RadarItem } from "@/lib/types";
+import type { CreateStrategyCommand } from "@/lib/domain/strategy/commands";
 
 import { Button } from "@/components/ui/button";
 import { CreateStrategyDialog } from "@/components/create-strategy-dialog";
@@ -19,37 +20,61 @@ const strategyOrder: Record<StrategyState, number> = {
 };
 
 interface StrategyDashboardProps {
-    dashboard: Dashboard;
+    initialDashboard: Dashboard;
     radarItems: RadarItem[];
     dashboardName: string;
     orgId: string;
-    onCreateStrategy: (description: string, timeframe: string) => void;
-    onUpdateStrategy: (strategyId: string, updatedValues: Partial<Strategy>) => void;
-    onCreateInitiative: (strategyId: string, initiativeName: string) => void;
+    onDataChange: () => void;
 }
 
 export function StrategyDashboard({ 
-  dashboard, 
+  initialDashboard, 
   radarItems, 
   dashboardName,
   orgId,
-  onCreateStrategy,
-  onUpdateStrategy,
-  onCreateInitiative
+  onDataChange,
 }: StrategyDashboardProps) {
+  const [dashboard, setDashboard] = useState(initialDashboard);
   const [isCreateStrategyOpen, setCreateStrategyOpen] = useState(false);
+  const { toast } = useToast();
 
   const sortedStrategies = useMemo(() => {
-    if (!dashboard?.strategies) return [];
-    
     return [...dashboard.strategies].sort((a, b) => {
         return strategyOrder[a.state] - strategyOrder[b.state];
     });
-  }, [dashboard]);
-  
-  const handleCreateStrategy = (description: string, timeframe: string) => {
-    onCreateStrategy(description, timeframe);
+  }, [dashboard.strategies]);
+
+  const handleCreateStrategy = async (description: string, timeframe: string) => {
     setCreateStrategyOpen(false);
+    const command: CreateStrategyCommand = { description, timeframe };
+    
+    try {
+      const response = await fetch(`/api/organizations/${orgId}/strategies`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(command),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || `Failed to create strategy.`);
+      }
+      
+      toast({
+        title: "Success",
+        description: "Strategy has been created.",
+      });
+      
+      onDataChange(); // Re-fetch data at the page level
+
+    } catch (error: any) {
+      console.error(error);
+      toast({
+        title: "Error",
+        description: error.message || "An unexpected error occurred.",
+        variant: "destructive",
+      });
+    }
   };
   
   return (
@@ -65,18 +90,17 @@ export function StrategyDashboard({
         </div>
 
         <div className="space-y-6">
-          {sortedStrategies && sortedStrategies.length > 0 ? (
+          {sortedStrategies.length > 0 ? (
               sortedStrategies.map(strategy => {
                   const isFocused = strategy.state === 'Draft' || strategy.state === 'Open';
                   return (
                       <StrategyView 
                           key={strategy.id} 
-                          strategy={strategy} 
+                          initialStrategy={strategy} 
                           radarItems={radarItems}
                           isFocused={isFocused}
                           orgId={orgId}
-                          onUpdateStrategy={(updatedValues) => onUpdateStrategy(strategy.id, updatedValues)}
-                          onCreateInitiative={(initiativeName) => onCreateInitiative(strategy.id, initiativeName)}
+                          onStrategyChange={onDataChange}
                       />
                   )
               })
