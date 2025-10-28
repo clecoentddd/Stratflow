@@ -186,7 +186,7 @@ export default function OrganizationStrategyPage() {
                 if (initiative.id === initiativeId) {
                     for (const step of initiative.steps) {
                         const initialItemCount = step.items.length;
-                        step.items = step.items.filter(item => item.id !== itemId);
+                        step.items = step.items.filter((item: InitiativeItem) => item.id !== itemId);
                         if (step.items.length < initialItemCount) {
                             itemFoundAndRemoved = true;
                             break;
