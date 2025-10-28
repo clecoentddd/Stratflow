@@ -109,12 +109,13 @@ interface InitiativeViewProps {
   radarItems: RadarItem[];
   orgId: string;
   onInitiativeChange: () => void;
-  onDeleteInitiative: (initiativeId: string) => void;
+  onDeleteInitiative: (initiativeId: string, strategyId: string) => void;
+  strategyId: string;
 }
 
 const iconMap: Record<string, React.ComponentType<any>> = { Search, Milestone, ListChecks, Target };
 
-export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiativeChange, onDeleteInitiative }: InitiativeViewProps) {
+export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiativeChange, onDeleteInitiative, strategyId }: InitiativeViewProps) {
   const [initiative, setInitiative] = useState(initialInitiative);
   const [isLinkRadarOpen, setLinkRadarOpen] = useState(false);
   const [isEditInitiativeOpen, setEditInitiativeOpen] = useState(false);
@@ -170,7 +171,7 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
   };
 
   const handleDeleteConfirmed = () => {
-    onDeleteInitiative(initiative.id);
+    onDeleteInitiative(initiative.id, strategyId);
   };
 
   const handleAddInitiativeItem = (stepKey: InitiativeStepKey) => {
@@ -255,6 +256,7 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
   };
 
   const handleDeleteInitiativeItem = (itemId: string, stepKey: InitiativeStepKey) => {
+    const originalInitiative = JSON.parse(JSON.stringify(initiative));
     setInitiative(prev => {
         const newInitiative = JSON.parse(JSON.stringify(prev));
         const step = newInitiative.steps.find((s: any) => s.key === stepKey);
@@ -264,11 +266,24 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
         return newInitiative;
     });
     
-    // If it's a temporary item, don't make an API call
     if (itemId.startsWith('temp-')) return;
 
-    const promise = fetch(`/api/teams/${orgId}/initiative-items/${itemId}`, { method: 'DELETE' });
-    fireAndForget(promise, "Failed to delete item.");
+    fetch(`/api/teams/${orgId}/initiative-items/${itemId}`, { 
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ initiativeId: initiative.id }) // Pass initiativeId in body
+    })
+    .then(async res => {
+        if (!res.ok) {
+            const errorData = await res.json().catch(() => ({}));
+            throw new Error(errorData.message || "Failed to delete item.");
+        }
+    })
+    .catch(err => {
+        console.error(err);
+        toast({ title: "Error", description: err.message, variant: "destructive" });
+        setInitiative(originalInitiative);
+    });
   };
 
   const handleLinkRadarItems = (selectedIds: string[]) => {
@@ -409,3 +424,5 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
     </>
   );
 }
+
+    

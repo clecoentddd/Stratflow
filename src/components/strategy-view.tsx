@@ -67,35 +67,35 @@ export function StrategyView({
   const currentStateInfo = strategyStates.find(s => s.value === strategy.state) || strategyStates[0];
   const CurrentStateIcon = iconMap[currentStateInfo.iconName];
   
-  const handleUpdateStrategy = useCallback((updatedValues: Partial<Strategy>) => {
+  const handleUpdateStrategy = useCallback(async (updatedValues: Partial<Strategy>) => {
     const originalStrategy = strategy;
     const newStrategy = { ...originalStrategy, ...updatedValues };
     setStrategy(newStrategy);
 
     const command: UpdateStrategyCommand = { ...updatedValues, strategyId: strategy.id };
     
-    fetch(`/api/teams/${orgId}/strategies/${strategy.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(command)
-    })
-    .then(async res => {
-        if (!res.ok) {
-            const errorData = await res.json().catch(() => ({}));
-            throw new Error(errorData.message || `Failed to update strategy.`);
+    try {
+        const response = await fetch(`/api/teams/${orgId}/strategies/${strategy.id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(command)
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Failed to update strategy');
         }
+        
         onStrategyChange();
-    })
-    .catch(error => {
+    } catch (error: any) {
         console.error(error);
         toast({
             title: "Update Failed",
-            description: "Could not save changes to the strategy. Reverting.",
+            description: error.message,
             variant: "destructive"
         });
         setStrategy(originalStrategy);
-    });
-
+    }
   }, [strategy, orgId, onStrategyChange, toast]);
 
   const handleEditStrategy = async (description: string, timeframe: string) => {
@@ -175,16 +175,15 @@ export function StrategyView({
 
   }, [strategy.id, orgId, toast, newInitiativeName, onStrategyChange]);
 
-  const handleDeleteInitiative = useCallback((initiativeId: string) => {
+  const handleDeleteInitiative = useCallback((initiativeId: string, strategyId: string) => {
     const originalInitiatives = strategy.initiatives;
     
-    // Optimistic UI Update
     setStrategy(prev => ({
       ...prev,
       initiatives: prev.initiatives.filter(i => i.id !== initiativeId)
     }));
 
-    const command: DeleteInitiativeCommand = { strategyId: strategy.id, initiativeId };
+    const command: DeleteInitiativeCommand = { strategyId, initiativeId };
 
     fetch(`/api/teams/${orgId}/initiatives/${initiativeId}`, {
         method: 'DELETE',
@@ -197,12 +196,11 @@ export function StrategyView({
             throw new Error(errorData.message || 'Failed to delete initiative.');
         }
         toast({ title: "Initiative Deleted", variant: "destructive" });
-        // No need to call onStrategyChange on success, as optimistic update is done
+        onStrategyChange();
     })
     .catch(error => {
         console.error(error);
         toast({ title: "Error", description: error.message, variant: "destructive" });
-        // Rollback
         setStrategy(prev => ({ ...prev, initiatives: originalInitiatives }));
     });
   }, [strategy, orgId, toast, onStrategyChange]);
@@ -236,12 +234,14 @@ export function StrategyView({
                       strategy.state === 'Draft' && 'bg-blue-100 text-blue-800 hover:bg-blue-200',
                       strategy.state === 'Open' && 'bg-green-100 text-green-800 hover:bg-green-200',
                       (strategy.state === 'Closed' || strategy.state === 'Obsolete') && 'bg-gray-100 text-gray-800 hover:bg-gray-200',
-                  )}>
+                  )}
+                  onClick={(e) => e.stopPropagation()}
+                  >
                     <CurrentStateIcon className="mr-2 h-4 w-4" />
                     {strategy.state}
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
+                <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
                   {strategyStates.map(state => {
                     const Icon = iconMap[state.iconName];
                     return (
@@ -282,6 +282,7 @@ export function StrategyView({
                               orgId={orgId}
                               onInitiativeChange={onInitiativeChanged}
                               onDeleteInitiative={handleDeleteInitiative}
+                              strategyId={strategy.id}
                           />
                       ))}
                   </Accordion>
@@ -316,3 +317,5 @@ export function StrategyView({
     </>
   );
 }
+
+    
