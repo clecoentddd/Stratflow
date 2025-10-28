@@ -1,7 +1,6 @@
-
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { Plus, GripVertical, FilePenLine, Rocket, CheckCircle2, Archive, Search, Milestone, ListChecks, Target } from "lucide-react";
 import {
   Card,
