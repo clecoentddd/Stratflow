@@ -16,13 +16,12 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import type { Strategy } from "@/lib/types";
-import type { UpdateStrategyCommand } from "@/lib/domain/strategy/commands";
 
 interface EditStrategyDialogProps {
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
   strategy: Strategy;
-  onStrategyUpdated: () => void;
+  onStrategyUpdated: (description: string, timeframe: string) => void;
   teamId: string;
 }
 
@@ -31,11 +30,9 @@ export function EditStrategyDialog({
   onOpenChange,
   strategy,
   onStrategyUpdated,
-  teamId,
 }: EditStrategyDialogProps) {
   const [description, setDescription] = useState("");
   const [timeframe, setTimeframe] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -55,43 +52,8 @@ export function EditStrategyDialog({
       return;
     }
 
-    setIsSubmitting(true);
-
-    const command: UpdateStrategyCommand = {
-      strategyId: strategy.id,
-      description: description.trim(),
-      timeframe: timeframe.trim(),
-    };
-
-    try {
-      const response = await fetch(`/api/teams/${teamId}/strategies/${strategy.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(command),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to update strategy');
-      }
-
-      toast({
-        title: "Strategy Updated",
-        description: `The strategy has been successfully updated.`,
-      });
-
-      onOpenChange(false);
-      onStrategyUpdated();
-    } catch (error: any) {
-      console.error(error);
-      toast({
-        title: "Error",
-        description: error.message || "Could not update the strategy. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
+    onStrategyUpdated(description, timeframe);
+    onOpenChange(false);
   };
 
   return (
@@ -111,7 +73,6 @@ export function EditStrategyDialog({
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="e.g., Enhance user onboarding flow"
-              disabled={isSubmitting}
             />
           </div>
           <div className="grid w-full max-w-sm items-center gap-1.5">
@@ -121,7 +82,6 @@ export function EditStrategyDialog({
               value={timeframe}
               onChange={(e) => setTimeframe(e.target.value)}
               placeholder="e.g., Q3 2024"
-              disabled={isSubmitting}
             />
           </div>
         </div>
@@ -130,16 +90,15 @@ export function EditStrategyDialog({
             type="button"
             variant="outline"
             onClick={() => onOpenChange(false)}
-            disabled={isSubmitting}
           >
             Cancel
           </Button>
           <Button
             type="submit"
             onClick={handleSubmit}
-            disabled={!description.trim() || !timeframe.trim() || isSubmitting}
+            disabled={!description.trim() || !timeframe.trim()}
           >
-            {isSubmitting ? 'Saving...' : 'Save Changes'}
+            Save Changes
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -50,9 +50,10 @@ export function StrategyView({
 
   const isSaving = strategy.id.startsWith('strat-temp-');
 
+  // Sync state only when the initial prop ID changes, not on every re-render.
   useEffect(() => {
     setStrategy(initialStrategy);
-  }, [initialStrategy]);
+  }, [initialStrategy.id]); // Use a stable identifier
 
   const overallProgression = useMemo(() => {
     if (strategy.initiatives.length === 0) return 0;
@@ -66,47 +67,81 @@ export function StrategyView({
   const currentStateInfo = strategyStates.find(s => s.value === strategy.state) || strategyStates[0];
   const CurrentStateIcon = iconMap[currentStateInfo.iconName];
   
-  const handleApiCall = useCallback(async (url: string, method: string, body: any, successMessage: string) => {
-    try {
-      const response = await fetch(url, {
-        method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || `Failed to perform action.`);
-      }
-      
-      const data = await response.json();
-
-      toast({
-        title: "Success",
-        description: successMessage,
-      });
-      
-      onStrategyChange();
-      return data;
-    } catch (error: any) {
-      console.error(error);
-      toast({
-        title: "Error",
-        description: error.message || "An unexpected error occurred.",
-        variant: "destructive",
-      });
-       onStrategyChange();
-    }
-  }, [toast, onStrategyChange]);
-
-
   const handleUpdateStrategy = useCallback((updatedValues: Partial<Strategy>) => {
+    // --- Optimistic UI Update ---
+    const originalStrategy = strategy;
+    const newStrategy = { ...originalStrategy, ...updatedValues };
+    setStrategy(newStrategy);
+
+    // --- API Call ---
     const command: UpdateStrategyCommand = { ...updatedValues, strategyId: strategy.id };
     
-    setStrategy(prev => ({...prev, ...updatedValues}));
-    
-    handleApiCall(`/api/teams/${orgId}/strategies/${strategy.id}`, 'PUT', command, "Strategy has been updated.");
-  }, [strategy.id, orgId, handleApiCall]);
+    fetch(`/api/teams/${orgId}/strategies/${strategy.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(command)
+    })
+    .then(async res => {
+        if (!res.ok) {
+            const errorData = await res.json().catch(() => ({}));
+            throw new Error(errorData.message || `Failed to update strategy.`);
+        }
+        // Success: Data is already updated optimistically, just re-sync silently
+        onStrategyChange();
+    })
+    .catch(error => {
+        // --- Rollback on Failure ---
+        console.error(error);
+        toast({
+            title: "Update Failed",
+            description: "Could not save changes to the strategy. Reverting.",
+            variant: "destructive"
+        });
+        setStrategy(originalStrategy); // Revert to the original state
+    });
+
+  }, [strategy, orgId, onStrategyChange, toast]);
+
+  const handleEditStrategy = async (description: string, timeframe: string) => {
+    const originalStrategy = strategy;
+    // Optimistic update
+    setStrategy(prev => ({...prev, description, timeframe}));
+    setEditStrategyOpen(false);
+
+    const command: UpdateStrategyCommand = {
+        strategyId: strategy.id,
+        description,
+        timeframe,
+    };
+
+    try {
+        const response = await fetch(`/api/teams/${orgId}/strategies/${strategy.id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(command),
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Failed to update strategy');
+        }
+
+        toast({
+            title: "Strategy Updated",
+            description: `The strategy has been successfully updated.`,
+        });
+        onStrategyChange(); // Re-sync with server state
+    } catch (error: any) {
+        console.error(error);
+        // Rollback optimistic update
+        setStrategy(originalStrategy);
+        toast({
+            title: "Error",
+            description: error.message || "Could not update the strategy.",
+            variant: "destructive",
+        });
+    }
+};
 
   const handleCreateInitiative = useCallback(() => {
     if (!newInitiativeName.trim()) {
@@ -248,7 +283,7 @@ export function StrategyView({
         isOpen={isEditStrategyOpen}
         onOpenChange={setEditStrategyOpen}
         strategy={strategy}
-        onStrategyUpdated={onStrategyChange}
+        onStrategyUpdated={handleEditStrategy}
         teamId={orgId}
       />
     </>
