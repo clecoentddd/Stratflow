@@ -209,7 +209,7 @@ const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: a
                 <stop stop-color="rgba(0,0,255,0.5)" offset="0.8"/>
             </radialGradient>
             <filter id="sofGlow" width="300%" height="300%" x="-100%" y="-100%">
-                <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blurred" />
+                <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blurred" />
             </filter>
         `);
         const g = svg.append('g').attr('class', 'main-radar-group');
@@ -322,5 +322,7 @@ export default RadarChart;
     
 
 
+
+    
 
     
