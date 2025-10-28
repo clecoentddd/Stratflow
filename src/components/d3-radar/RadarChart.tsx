@@ -214,12 +214,21 @@ const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: a
         `);
         const g = svg.append('g').attr('class', 'main-radar-group');
         
-        let transformString = `translate(${totalWidth / 2}, ${svgSize / 2})`;
-
+        let tX = totalWidth / 2, tY = svgSize / 2;
+        let scale = 1;
+        
         if (activeQuadrant !== null) {
-            transformString = `translate(${totalWidth / 2}, ${svgSize / 2}) scale(${zoomFactor})`;
+            scale = zoomFactor;
+            switch (activeQuadrant) {
+                case 0: tX -= (radius / 2); tY -= (radius / 2); break; // Bottom-right
+                case 1: tX += (radius / 2); tY -= (radius / 2); break; // Bottom-left
+                case 2: tX += (radius / 2); tY += (radius / 2); break; // Top-left
+                case 3: tX -= (radius / 2); tY += (radius / 2); break; // Top-right
+            }
         }
         
+        const transformString = `translate(${tX}, ${tY}) scale(${scale})`;
+
         drawQuadrants(g, radius);
         drawCategoryLabels(g, radius);
         drawRadarGrid(g, radius);
@@ -228,6 +237,21 @@ const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: a
             const normalizedItems = parseRadarItems(items);
             const groupedItems = groupItemsForPositioning(normalizedItems);
             renderItems(g, groupedItems, radius);
+        }
+        
+        const allElements = g.selectAll('path, circle, line, text, g');
+        if (activeQuadrant !== null) {
+            allElements.each(function() {
+                const el = d3.select(this);
+                const quad = el.attr('data-quadrant');
+                if (quad && +quad !== activeQuadrant) {
+                    el.transition().duration(300).style('opacity', 0.1);
+                } else {
+                    el.transition().duration(300).style('opacity', 1);
+                }
+            });
+        } else {
+            allElements.transition().duration(300).style('opacity', 1);
         }
 
         g.transition()
@@ -317,3 +341,4 @@ export default RadarChart;
 
 
     
+
