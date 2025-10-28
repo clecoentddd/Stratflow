@@ -19,11 +19,11 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { LinkRadarItemsDialog } from './link-radar-items-dialog';
 import { Badge } from "@/components/ui/badge";
-import type { Initiative, InitiativeStepKey, InitiativeItem, RadarItem } from "@/lib/types";
+import type { Initiative, InitiativeStepKey, InitiativeItem as InitiativeItemType, RadarItem } from "@/lib/types";
 import type { AddInitiativeItemCommand, UpdateInitiativeItemCommand, DeleteInitiativeItemCommand } from '@/lib/domain/strategy/commands';
 
 interface InitiativeItemViewProps {
-  item: InitiativeItem;
+  item: InitiativeItemType;
   initiativeId: string;
   orgId: string;
   stepKey: InitiativeStepKey;
@@ -123,10 +123,11 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
       method,
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
-    }).then(res => {
+    }).then(async res => {
         if (!res.ok) {
-            console.error("Fire-and-forget failed server-side.", res);
-            throw new Error(errorMessage);
+            const errorData = await res.json().catch(() => ({ message: "No error details from server."}));
+            console.error("Fire-and-forget failed server-side.", errorData);
+            throw new Error(errorData.message || errorMessage);
         }
         // If it's a create operation, we might want to sync back the real ID.
         // For now, we rely on the parent's broader refresh mechanism.
@@ -135,7 +136,7 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
         }
     }).catch(err => {
       console.error(errorMessage, err);
-      toast({ title: "Save Error", description: errorMessage, variant: "destructive" });
+      toast({ title: "Save Error", description: err.message || errorMessage, variant: "destructive" });
       onInitiativeChange(); // On failure, trigger a hard refresh from parent
     });
   };
@@ -151,7 +152,7 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
 
   const handleAddInitiativeItem = (stepKey: InitiativeStepKey) => {
     const tempId = `temp-${uuidv4()}`;
-    const newItem: InitiativeItem = { id: tempId, text: "" };
+    const newItem: InitiativeItemType = { id: tempId, text: "" };
     
     console.log(`InitiativeView: handleAddInitiativeItem to step ${stepKey}`, newItem);
     // Optimistic UI Update - NO API CALL
@@ -173,8 +174,6 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
         const command: AddInitiativeItemCommand = {
             initiativeId: initiative.id,
             stepKey: stepKey,
-            // The item in the command should have empty text, as the real text will be in the update.
-            // Let's create a new item but with the final text. This simplifies the backend.
             item: { id: '', text: newText }, // Backend will generate ID.
         };
 
@@ -182,7 +181,7 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
         setInitiative(prev => {
             const newInitiative = JSON.parse(JSON.stringify(prev));
             for (const step of newInitiative.steps) {
-                const item = step.items.find((i: InitiativeItem) => i.id === itemId);
+                const item = step.items.find((i: InitiativeItemType) => i.id === itemId);
                 if (item) {
                     item.text = newText;
                     break;
@@ -201,13 +200,13 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
             if(!res.ok) throw new Error("Server failed to create item.");
             return res.json();
         })
-        .then((savedItem: InitiativeItem) => {
+        .then((savedItem: InitiativeItemType) => {
             console.log("Item created, replacing temp item", { tempId: itemId, savedItem });
             // Silently replace the temporary item with the final one from the server.
             setInitiative(prev => {
                 const newInitiative = JSON.parse(JSON.stringify(prev));
                 for (const step of newInitiative.steps) {
-                    const itemIndex = step.items.findIndex((i: InitiativeItem) => i.id === itemId);
+                    const itemIndex = step.items.findIndex((i: InitiativeItemType) => i.id === itemId);
                     if (itemIndex !== -1) {
                         step.items[itemIndex] = savedItem;
                         break;
@@ -227,7 +226,7 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
         setInitiative(prev => {
             const newInitiative = JSON.parse(JSON.stringify(prev));
             for (const step of newInitiative.steps) {
-                const item = step.items.find((i: InitiativeItem) => i.id === itemId);
+                const item = step.items.find((i: InitiativeItemType) => i.id === itemId);
                 if (item) {
                     item.text = newText;
                     break;
@@ -249,7 +248,7 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
         const newInitiative = JSON.parse(JSON.stringify(prev));
         const step = newInitiative.steps.find((s: any) => s.key === stepKey);
         if (step) {
-          step.items = step.items.filter((i: InitiativeItem) => i.id !== itemId);
+          step.items = step.items.filter((i: InitiativeItemType) => i.id !== itemId);
         }
         return newInitiative;
     });
@@ -360,3 +359,5 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
     </AccordionItem>
   );
 }
+
+    
