@@ -76,7 +76,7 @@ export default function WelcomePage() {
                     <CardTitle>{company.name}</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <Link href="/organizations">
+                    <Link href={`/company/${company.id}/organizations`}>
                       <Button>
                         View Organizations <ArrowRight className="ml-2 h-4 w-4" />
                       </Button>

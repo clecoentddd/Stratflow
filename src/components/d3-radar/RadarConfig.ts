@@ -1,3 +1,4 @@
+
 // radarConfig.js
 // Central configuration for the radar chart
 
@@ -6,8 +7,8 @@ export const radarConfig = {
   visual: {
     numberOfRadialLines: 16,
     distanceRings: [0.25, 0.5, 0.75, 1],
-    quadrantColors: ['#1a1a1a', '#232b2b', '#1a1a1a', '#232b2b'],
-    gridColor: '#228B22',
+    quadrantColors: ['#000000', '#0a0a0a', '#000000', '#0a0a0a'],
+    gridColor: '#00ff9f',
   },
 
  categories: {

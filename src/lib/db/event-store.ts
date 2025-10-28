@@ -40,16 +40,16 @@ const getDb = (): MockDb => {
   }
 
   console.log('Seeding event store...');
-  const DEFAULT_COMPANY_ID = 'company-1';
+  const DEMO_COMPANY_ID = 'company-demo';
 
   const companyCreatedEvent: CompanyEvent = {
     type: 'CompanyCreated',
     entity: 'company',
-    aggregateId: DEFAULT_COMPANY_ID,
+    aggregateId: DEMO_COMPANY_ID,
     timestamp: new Date().toISOString(),
     payload: {
-      id: DEFAULT_COMPANY_ID,
-      name: 'Default Company',
+      id: DEMO_COMPANY_ID,
+      name: 'Demo Company',
     },
   };
   
@@ -63,7 +63,7 @@ const getDb = (): MockDb => {
       timestamp: new Date().toISOString(),
       payload: {
         id: org.id,
-        companyId: DEFAULT_COMPANY_ID,
+        companyId: DEMO_COMPANY_ID,
         name: org.name,
         purpose: org.purpose,
         context: org.context,

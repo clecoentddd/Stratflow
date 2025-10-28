@@ -52,7 +52,7 @@ export function RadarDashboard({ radarItems, onDeleteItem, organizations, curren
                     ))}
                 </div>
             ) : (
-                <div className="text-center py-20 border-2 border-dashed rounded-lg">
+                <div className="text-center py-20 border-2 border-dashed rounded-lg bg-card">
                     <h3 className="text-xl font-medium text-muted-foreground">No radar items yet.</h3>
                     <p className="text-muted-foreground mt-2">Get started by creating a new radar item.</p>
                 </div>

@@ -161,9 +161,10 @@ export function StrategyView({
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="sm" className={cn(
-                    "font-semibold",
-                    strategy.state === 'Draft' && 'text-blue-600',
-                    strategy.state === 'Open' && 'text-green-600',
+                    "font-semibold rounded-full px-3",
+                    strategy.state === 'Draft' && 'bg-blue-100 text-blue-800 hover:bg-blue-200',
+                    strategy.state === 'Open' && 'bg-green-100 text-green-800 hover:bg-green-200',
+                    (strategy.state === 'Closed' || strategy.state === 'Obsolete') && 'bg-gray-100 text-gray-800 hover:bg-gray-200',
                 )}>
                   <CurrentStateIcon className="mr-2 h-4 w-4" />
                   {strategy.state}
@@ -217,7 +218,7 @@ export function StrategyView({
             )}
         </div>
       </CardContent>
-      <CardFooter className="bg-muted/50 p-4 rounded-b-lg">
+      <CardFooter className="bg-slate-50/50 p-4 rounded-b-lg">
         <div className="flex w-full items-center gap-2">
           <Input 
             placeholder={isSaving ? "Saving strategy..." : "Name your new initiative..."}
