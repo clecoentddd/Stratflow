@@ -227,10 +227,11 @@ const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: a
         drawCategoryLabels(g, radius);
         drawRadarGrid(g, radius);
         
-        const normalizedItems = parseRadarItems(items);
-        const groupedItems = groupItemsForPositioning(normalizedItems);
-        
-        renderItems(g, groupedItems, radius);
+        if (items && items.length > 0) {
+            const normalizedItems = parseRadarItems(items);
+            const groupedItems = groupItemsForPositioning(normalizedItems);
+            renderItems(g, groupedItems, radius);
+        }
 
         g.transition()
             .duration(750)
