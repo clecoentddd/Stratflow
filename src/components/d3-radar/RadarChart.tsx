@@ -23,7 +23,6 @@ const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: a
     const router = useRouter();
 
     const handleQuadrantZoom = (idx: number) => {
-        console.log("Zooming to quadrant index:", idx);
         setActiveQuadrant(activeQuadrant === idx ? null : idx);
     };
 
@@ -43,10 +42,10 @@ const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: a
     }));
 
     const drawQuadrants = (g: d3.Selection<SVGGElement, unknown, null, undefined>, radius: number) => {
-        g.selectAll(".quadrant-fill").remove(); // Clear previous quadrant fills
-    
+        g.selectAll(".quadrant-fill").remove();
+
         const visualQuadrantColors = [
-            radarConfig.visual.quadrantColors[0],
+            radarConfig.visual.quadrantColors[0], 
             radarConfig.visual.quadrantColors[1],
             radarConfig.visual.quadrantColors[2],
             radarConfig.visual.quadrantColors[3]
@@ -76,7 +75,6 @@ const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: a
             const x = offset * Math.cos(angle);
             let y = offset * Math.sin(angle);
             
-            // This is the adjustment we worked on
             if (cat.quadrantIndex === 2 || cat.quadrantIndex === 3) {
                 y *= 1.2;
             } else { 
@@ -199,10 +197,10 @@ const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: a
     useEffect(() => {
         if (!svgRef.current) return;
         const padding = 20;
-        const svgSize = radius * 2 + 120; // Added padding for labels
+        const svgSize = radius * 2 + 120;
         const totalWidth = svgSize + padding * 2;
         const zoomFactor = 2;
-        
+
         const svg = d3.select(svgRef.current)
             .attr('width', totalWidth)
             .attr('height', svgSize);
@@ -224,14 +222,14 @@ const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: a
         
         if (activeQuadrant !== null) {
             scale = zoomFactor;
-            // The faulty translation logic is now removed. We will just scale from the center.
-            console.log(`Active quadrant: ${activeQuadrant}. Scaling by ${scale} from center.`);
+            const quadrantCenterRadius = radius / 2;
+            const angle = (Math.PI / 2) * activeQuadrant + Math.PI / 4;
+            tX = totalWidth / 2 - quadrantCenterRadius * Math.cos(angle) * scale;
+            tY = svgSize / 2 - quadrantCenterRadius * Math.sin(angle) * scale;
         }
         
         const transformString = `translate(${tX}, ${tY}) scale(${scale})`;
-        console.log(`Applied transform: ${transformString}`);
-
-
+        
         drawQuadrants(g, radius);
         drawCategoryLabels(g, radius);
         drawRadarGrid(g, radius);
@@ -344,6 +342,7 @@ export default RadarChart;
 
 
     
+
 
 
 
