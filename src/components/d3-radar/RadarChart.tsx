@@ -30,23 +30,21 @@ const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: a
         const newActiveQuadrant = activeQuadrant === idx ? null : idx;
         setActiveQuadrant(newActiveQuadrant);
 
-        const transition = svg.transition().duration(750);
-
         if (newActiveQuadrant !== null) {
             const scale = 2;
             const quadrantCenterRadius = radius / 2;
             const angle = (Math.PI / 2) * newActiveQuadrant + Math.PI / 4;
-            const centerX = svg.attr('width') / 2;
-            const centerY = svg.attr('height') / 2;
+            const centerX = parseFloat(svg.attr('width')) / 2;
+            const centerY = parseFloat(svg.attr('height')) / 2;
             
             const newTransform = d3.zoomIdentity
                 .translate(centerX, centerY)
                 .scale(scale)
                 .translate(-quadrantCenterRadius * Math.cos(angle), -quadrantCenterRadius * Math.sin(angle));
 
-            transition.call(zoomBehavior.transform, newTransform);
+            svg.transition().duration(750).call(zoomBehavior.transform, newTransform);
         } else {
-            transition.call(zoomBehavior.transform, d3.zoomIdentity); // Reset zoom
+            svg.transition().duration(750).call(zoomBehavior.transform, d3.zoomIdentity); // Reset zoom
         }
     }, [activeQuadrant, radius]);
 
@@ -108,7 +106,7 @@ const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: a
             
             // Further adjust y for top/bottom placement
             if (cat.quadrantIndex === 2 || cat.quadrantIndex === 3) { // Top quadrants
-                y *= 0.8;
+                y *= 1.2;
             } else { // Bottom quadrants
                 y *= 1.2;
             }
@@ -369,6 +367,7 @@ export default RadarChart;
 
 
     
+
 
 
 
