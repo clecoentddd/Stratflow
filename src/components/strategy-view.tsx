@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useMemo, useCallback } from "react";
-import { Plus, GripVertical, FilePenLine, Rocket, CheckCircle2, Archive } from "lucide-react";
+import { Plus, GripVertical, FilePenLine, Rocket, CheckCircle2, Archive, Search, Milestone, ListChecks, Target } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -15,7 +15,7 @@ import { Accordion } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { strategyStates } from "@/lib/data";
+import { strategyStates, newInitiativeTemplate } from "@/lib/data";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
@@ -24,9 +24,9 @@ import type { Strategy, RadarItem, Initiative } from "@/lib/types";
 import type { CreateInitiativeCommand, UpdateStrategyCommand } from "@/lib/domain/strategy/commands";
 import { InitiativeView } from "./initiative-view";
 import { v4 as uuidv4 } from "uuid";
-import { newInitiativeTemplate } from "@/lib/data";
 
 const iconMap = { FilePenLine, Rocket, CheckCircle2, Archive };
+const initiativeIconMap: Record<string, React.ComponentType<any>> = { Search, Milestone, ListChecks, Target };
 
 interface StrategyViewProps {
   initialStrategy: Strategy;
@@ -108,14 +108,7 @@ export function StrategyView({
   }, [strategy.id, orgId, handleApiCall]);
 
   const handleCreateInitiative = useCallback(() => {
-    if (!newInitiativeName.trim() || isSaving) {
-      if (isSaving) {
-        toast({
-          title: "Please wait",
-          description: "The strategy is still being saved. Please try again in a moment.",
-          variant: "destructive",
-        });
-      }
+    if (!newInitiativeName.trim()) {
       return;
     }
 
@@ -131,9 +124,27 @@ export function StrategyView({
     
     setNewInitiativeName(""); // Clear input immediately
     
-    handleApiCall(`/api/organizations/${orgId}/initiatives`, 'POST', command, `Initiative "${command.name}" created.`);
+    // Fire and forget API call, but only trigger parent refresh on success
+    fetch(`/api/organizations/${orgId}/initiatives`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(command),
+    })
+    .then(async res => {
+        if (!res.ok) {
+            const errorData = await res.json().catch(() => ({}));
+            throw new Error(errorData.message || 'Failed to create initiative.');
+        }
+        toast({ title: "Success", description: `Initiative "${command.name}" created.` });
+        onStrategyChange(); // Sync with server state ONLY after success
+    })
+    .catch(error => {
+        console.error(error);
+        toast({ title: "Error", description: error.message, variant: "destructive" });
+        onStrategyChange(); // Rollback on error
+    });
 
-  }, [strategy.id, orgId, handleApiCall, toast, isSaving, newInitiativeName]);
+  }, [strategy.id, orgId, toast, newInitiativeName, onStrategyChange]);
 
   const onInitiativeChanged = useCallback(() => {
     console.log(`StrategyView (${strategy.id}): An initiative inside has changed. Triggering parent refresh.`);
