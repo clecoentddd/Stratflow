@@ -7,8 +7,8 @@ export const radarConfig = {
   visual: {
     numberOfRadialLines: 16,
     distanceRings: [0.25, 0.5, 0.75, 1],
-    quadrantColors: ['hsl(var(--background))', 'hsl(var(--muted))', 'hsl(var(--background))', 'hsl(var(--muted))'],
-    gridColor: 'hsl(var(--chart-1))',
+    quadrantColors: ['#000000', '#0a0a0a', '#000000', '#0a0a0a'],
+    gridColor: '#00ff9f',
   },
 
  categories: {
@@ -42,15 +42,15 @@ export const radarConfig = {
   // Impact styling
   impacts: {
     'Low': {
-      color: 'hsl(var(--chart-1))',
+      color: '#77DD77',
       opportunityClass: 'opportunityLow'
     },
     'Medium': {
-      color: 'hsl(var(--chart-2))',
+      color: '#FFD580',
       opportunityClass: 'opportunityMedium'
     },
     'High': {
-      color: 'hsl(var(--chart-3))',
+      color: '#FF6961',
       opportunityClass: 'opportunityHigh'
     }
   },
@@ -66,7 +66,7 @@ export const radarConfig = {
   defaults: {
     impact: 'Medium',
     tolerance: 'Medium',
-    color: 'hsl(var(--chart-4))',
+    color: '#00cc88',
     size: 10
   }
 };

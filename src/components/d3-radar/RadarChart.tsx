@@ -6,8 +6,8 @@ import { useRouter } from 'next/navigation';
 import * as d3 from 'd3';
 import { GetRadarName } from './GetRadarData';
 import styles from './RadarChart.module.css';
-import tooltipStyles from './RadarToolTip.module.css';
 import zoomStyles from './zoom.module.css';
+import tooltipStyles from './RadarToolTip.module.css';
 import { radarConfig } from './RadarConfig';
 import { 
     parseRadarItems, 
@@ -15,12 +15,18 @@ import {
     calculateItemPosition,
 } from './radarDataParser';
 
-const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: any) => void }> = ({ items, radius, onEditClick }) => {
+const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: any) => void, onCreateClick: () => void }> = ({ items, radius, onEditClick, onCreateClick }) => {
     const svgRef = useRef<SVGSVGElement>(null);
     const tooltipRef = useRef<HTMLDivElement>(null);
     const [tooltipData, setTooltipData] = useState({ visible: false, item: null as any | null });
     const [activeQuadrant, setActiveQuadrant] = useState<number | null>(null);
     const router = useRouter();
+
+    const handleQuadrantZoom = (idx: number) => {
+        setActiveQuadrant(activeQuadrant === idx ? null : idx);
+    };
+
+    const handleReset = () => setActiveQuadrant(null);
     
     const handleZoomInClick = (url: string) => {
         if (url) {
@@ -28,40 +34,12 @@ const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: a
         }
     };
 
-    const handleQuadrantZoom = (quadrantIndex: number) => {
-        setActiveQuadrant(quadrantIndex);
-
-        const svg = d3.select(svgRef.current);
-        const mainGroup = svg.select<SVGGElement>('.main-radar-group');
-        const zoomBehavior = (svg.node() as any).__zoom;
-        
-        if (!mainGroup.empty() && zoomBehavior) {
-            const angle = ((Math.PI / 2) * quadrantIndex) + (Math.PI / 4);
-            const zoomToX = radius * 0.5 * Math.cos(angle);
-            const zoomToY = radius * 0.5 * Math.sin(angle);
-            const centerX = svg.attr('width') / 2;
-            const centerY = svg.attr('height') / 2;
-            
-            const transform = d3.zoomIdentity
-                .translate(centerX - zoomToX * 2, centerY - zoomToY * 2)
-                .scale(2);
-
-            svg.transition().duration(750).call(zoomBehavior.transform, transform);
-        }
-    };
-    
-    const handleReset = () => {
-        setActiveQuadrant(null);
-
-        const svg = d3.select(svgRef.current);
-        const zoomBehavior = (svg.node() as any).__zoom;
-        if (zoomBehavior) {
-            const centerX = svg.attr('width') / 2;
-            const centerY = svg.attr('height') / 2;
-            svg.transition().duration(750).call(zoomBehavior.transform, d3.zoomIdentity.translate(centerX, centerY));
-        }
-    };
-
+    const quadrantLabels = Object.values(radarConfig.categories)
+    .sort((a, b) => a.label.localeCompare(b.label)) 
+    .map(category => ({
+        label: category.label,
+        configIndex: category.quadrantIndex
+    }));
 
     const drawQuadrants = (g: d3.Selection<SVGGElement, unknown, null, undefined>, radius: number) => {
         const visualQuadrantColors = [
@@ -209,16 +187,15 @@ const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: a
         const padding = 20;
         const svgSize = radius * 2 + 120; // Added padding for labels
         const totalWidth = svgSize + padding * 2;
-        const centerX = totalWidth / 2;
-        const centerY = svgSize / 2;
+        const zoomFactor = 2;
         
+        const shiftFactor = 0.5;
+
         const svg = d3.select(svgRef.current)
             .attr('width', totalWidth)
             .attr('height', svgSize);
 
-        svg.selectAll('*').remove(); // Clear SVG
-        
-        // Define filters and gradients
+        svg.selectAll('*').remove();
         svg.append('defs').html(`
             <radialGradient id="g">
                 <stop stop-color="#00f" offset="0.1"/>
@@ -228,35 +205,39 @@ const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: a
                 <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blurred" />
             </filter>
         `);
+        const g = svg.append('g').attr('class', 'main-radar-group');
         
-        const mainGroup = svg.append('g').attr('class', 'main-radar-group');
-        
-        // D3 Zoom behavior
-        const zoom = d3.zoom<SVGSVGElement, unknown>()
-            .scaleExtent([0.5, 5])
-            .on('zoom', (event) => {
-                mainGroup.attr('transform', event.transform);
-            });
+        let transformString = `translate(${totalWidth / 2}, ${svgSize / 2})`;
 
-        // Apply zoom behavior to the SVG
-        svg.call(zoom);
+        if (activeQuadrant !== null) {
+            let tX = 0, tY = 0;
+            const translationValue = radius * shiftFactor;
+            
+            switch (activeQuadrant) {
+                case 0: tX = -translationValue; tY = -translationValue; break; 
+                case 1: tX = translationValue;  tY = -translationValue; break; 
+                case 2: tX = translationValue;  tY = translationValue; break;  
+                case 3: tX = -translationValue; tY = translationValue; break;  
+            }
 
-        // Center the main group initially without triggering a zoom event
-        const initialTransform = d3.zoomIdentity.translate(centerX, centerY);
-        mainGroup.attr('transform', initialTransform.toString());
-        zoom.transform(svg as any, initialTransform);
+            transformString = `translate(${totalWidth / 2}, ${svgSize / 2}) scale(${zoomFactor}) translate(${tX}, ${tY})`;
+        }
         
-        // Draw chart elements into the main group
-        drawQuadrants(mainGroup, radius);
-        drawCategoryLabels(mainGroup, radius);
-        drawRadarGrid(mainGroup, radius);
+        drawQuadrants(g, radius);
+        drawCategoryLabels(g, radius);
+        drawRadarGrid(g, radius);
         
         if (items && items.length > 0) {
             const normalizedItems = parseRadarItems(items);
             const groupedItems = groupItemsForPositioning(normalizedItems);
-            renderItems(mainGroup, groupedItems, radius);
+            renderItems(g, groupedItems, radius);
         }
-    }, [items, radius]);
+
+        g.transition()
+            .duration(750)
+            .attr('transform', transformString);
+            
+    }, [items, radius, activeQuadrant]);
 
     useEffect(() => {
         if (tooltipData.visible && tooltipData.item && tooltipRef.current) {
@@ -272,6 +253,28 @@ const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: a
                 <svg ref={svgRef} className={styles.radarWrapper}></svg>
             </div>
             <div className={styles.leftPanel}>
+                <button className={styles.createButton} onClick={onCreateClick}>
+                    Create Radar Item
+                </button>
+                <div className={zoomStyles.zoomControls}>
+                    <span className={zoomStyles.zoomTitle}>Zoom into a quadrant:</span>
+                    
+                    {quadrantLabels.map((category, idx) => ( 
+                            <button 
+                                key={idx} 
+                                className={`${zoomStyles.zoomButton} ${activeQuadrant === category.configIndex ? zoomStyles.active : ''}`} 
+                                onClick={() => handleQuadrantZoom(category.configIndex)} 
+                            >
+                                {category.label}
+                            </button>
+                        ))}
+
+                    {activeQuadrant !== null && (
+                        <button className={`${zoomStyles.zoomButton} ${zoomStyles.resetButton}`} onClick={handleReset}>
+                            ↺ Show All
+                        </button>
+                    )}
+                </div>
                 <div className={tooltipStyles.tooltipPanel} 
                     onMouseEnter={() => {}}
                     onMouseLeave={() => setTooltipData({ visible: false, item: null })}
@@ -305,30 +308,11 @@ const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: a
                         <div className={tooltipStyles.tooltipPlaceholder}>Hover over items to see details</div>
                     )}
                 </div>
-                <div className={zoomStyles.zoomBar}>
-                    <div className={zoomStyles.zoomTitle}>Focus On</div>
-                    <div className={zoomStyles.zoomControls}>
-                        {Object.values(radarConfig.categories).map(cat => (
-                            <button
-                                key={cat.quadrantIndex}
-                                className={`${zoomStyles.zoomButton} ${activeQuadrant === cat.quadrantIndex ? zoomStyles.active : ''}`}
-                                onClick={() => handleQuadrantZoom(cat.quadrantIndex)}
-                            >
-                                {cat.label}
-                            </button>
-                        ))}
-                    </div>
-                    <button className={`${zoomStyles.zoomButton} ${zoomStyles.resetButton}`} onClick={handleReset}>
-                        Reset
-                    </button>
-                </div>
             </div>
         </div>
     );
 };
 
 export default RadarChart;
-
-    
 
     
