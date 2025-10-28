@@ -64,18 +64,17 @@ const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: a
     };
 
     const drawCategoryLabels = (g: d3.Selection<SVGGElement, unknown, null, undefined>, radius: number) => {
-        const offset = radius * 1.26; // Adjusted offset
+        const offset = radius * 1.26; 
 
         Object.values(radarConfig.categories).forEach(cat => {
-            const angle = (Math.PI / 2) * cat.quadrantIndex + (Math.PI / 4); // Center angle
+            const angle = (Math.PI / 2) * cat.quadrantIndex + (Math.PI / 4); 
             
             const x = offset * Math.cos(angle);
             let y = offset * Math.sin(angle);
             
-            // Adjust y position vertically
-            if (cat.quadrantIndex === 2 || cat.quadrantIndex === 3) { // Top quadrants
+            if (cat.quadrantIndex === 2 || cat.quadrantIndex === 3) {
                 y *= 1.2;
-            } else { // Bottom quadrants
+            } else { 
                 y *= 1.2;
             }
 
@@ -83,7 +82,7 @@ const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: a
                 .attr("x", x) 
                 .attr("y", y)
                 .attr("text-anchor", "middle")
-                .attr("dy", "0.35em") // Vertically center the text
+                .attr("dy", "0.35em") 
                 .text(cat.label)
                 .classed(styles.categoryLabel, true)
                 .attr("data-quadrant", cat.quadrantIndex);
@@ -199,8 +198,6 @@ const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: a
         const totalWidth = svgSize + padding * 2;
         const zoomFactor = 2;
         
-        const shiftFactor = 0.5;
-
         const svg = d3.select(svgRef.current)
             .attr('width', totalWidth)
             .attr('height', svgSize);
@@ -220,17 +217,7 @@ const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: a
         let transformString = `translate(${totalWidth / 2}, ${svgSize / 2})`;
 
         if (activeQuadrant !== null) {
-            let tX = 0, tY = 0;
-            const translationValue = radius * shiftFactor;
-            
-            switch (activeQuadrant) {
-                case 0: tX = -translationValue; tY = -translationValue; break; 
-                case 1: tX = translationValue;  tY = -translationValue; break; 
-                case 2: tX = translationValue;  tY = translationValue; break;  
-                case 3: tX = -translationValue; tY = translationValue; break;  
-            }
-
-            transformString = `translate(${totalWidth / 2}, ${svgSize / 2}) scale(${zoomFactor}) translate(${tX}, ${tY})`;
+            transformString = `translate(${totalWidth / 2}, ${svgSize / 2}) scale(${zoomFactor})`;
         }
         
         drawQuadrants(g, radius);
