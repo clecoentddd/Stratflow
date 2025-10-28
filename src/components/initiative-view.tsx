@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from 'next/link';
 import { Plus, Trash2, Search, Milestone, ListChecks, Target, Link2 } from "lucide-react";
 import {
@@ -40,11 +40,22 @@ interface InitiativeItemViewProps {
 }
 
 function InitiativeItemView({ item, initiativeId, onUpdateInitiativeItem, onDeleteInitiativeItem }: InitiativeItemViewProps) {
-  const [isEditing, setIsEditing] = useState(item.text === "");
+  const [isEditing, setIsEditing] = useState(false);
   const [editText, setEditText] = useState(item.text);
 
+  useEffect(() => {
+    // This effect ensures that if a new, empty item is passed in,
+    // the component enters editing mode.
+    if (item.text === "") {
+        setIsEditing(true);
+    }
+    // We also want to sync the editText if the external prop changes
+    // This handles cases where state might be re-synced from the server.
+    setEditText(item.text);
+  }, [item.text]);
+
+
   const handleSave = () => {
-    // Only call the update handler if the text has actually changed.
     if (editText.trim() !== item.text) {
       onUpdateInitiativeItem(initiativeId, item.id, editText);
     }
@@ -53,7 +64,6 @@ function InitiativeItemView({ item, initiativeId, onUpdateInitiativeItem, onDele
 
   const handleCancel = () => {
     if (item.text === "") {
-        // If the item was newly created and is being cancelled without saving, delete it.
         onDeleteInitiativeItem(initiativeId, item.id);
     } else {
         setEditText(item.text);
@@ -65,7 +75,6 @@ function InitiativeItemView({ item, initiativeId, onUpdateInitiativeItem, onDele
     onDeleteInitiativeItem(initiativeId, item.id);
   }
 
-  // Use onBlur to save changes when the user clicks away from the textarea
   if (isEditing) {
     return (
       <div className="space-y-2 p-2 border rounded-md bg-background shadow-md">
@@ -76,7 +85,7 @@ function InitiativeItemView({ item, initiativeId, onUpdateInitiativeItem, onDele
           autoFocus
           rows={3}
           className="text-sm"
-          onBlur={handleSave} // Save when focus is lost
+          onBlur={handleSave}
         />
         <div className="flex justify-between items-center">
             <Button size="icon" variant="ghost" className="text-destructive hover:bg-destructive/10" onClick={handleDelete}>
