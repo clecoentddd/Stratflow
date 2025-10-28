@@ -3,17 +3,16 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Strategy and Initiative Management', () => {
 
-  // Use a beforeEach hook to navigate to the correct page before each test.
   test.beforeEach(async ({ page }) => {
-    // Navigate to the Demo Company's organizations page.
+    // Navigate to the Demo Company's teams page.
     await page.goto('/');
-    await page.getByRole('link', { name: 'View Organizations' }).first().click();
-    await expect(page).toHaveURL(/.*\/company\/company-demo\/organizations/);
+    await page.getByRole('link', { name: 'View Teams' }).first().click();
+    await expect(page).toHaveURL(/.*\/company\/company-demo\/teams/);
     
-    // Navigate to the CTO organization's strategy dashboard
+    // Navigate to the CTO team's strategy dashboard
     const ctoCard = page.locator('div.flex.flex-col.bg-card:has-text("CTO")');
     await ctoCard.getByRole('button', { name: 'View Strategy Dashboard' }).click();
-    await expect(page).toHaveURL(/.*\/organization\/org-cto/);
+    await expect(page).toHaveURL(/.*\/team\/team-cto/);
   });
 
   test('should create an initiative for a strategy', async ({ page }) => {

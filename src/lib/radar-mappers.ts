@@ -1,4 +1,3 @@
-
 import type { RadarItem, RadarCategory, RadarDistance, RadarItemType, RadarImpact, RadarTolerance } from './types';
 
 // --- Translation Layer ---

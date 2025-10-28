@@ -11,12 +11,12 @@ interface RadarDashboardProps {
   radarItems: RadarItem[];
   onDeleteItem: (itemId: string) => void;
   teams: Team[];
-  currentOrgId: string;
+  currentTeamId: string;
   onEditItem: (item: RadarItem) => void;
   onCreateItem: () => void;
 }
 
-export function RadarDashboard({ radarItems, onDeleteItem, teams, currentOrgId, onEditItem, onCreateItem }: RadarDashboardProps) {
+export function RadarDashboard({ radarItems, onDeleteItem, teams, currentTeamId, onEditItem, onCreateItem }: RadarDashboardProps) {
 
   const handleEditClick = (item: any) => {
       const fullItem = radarItems.find(i => i.id === item.id);

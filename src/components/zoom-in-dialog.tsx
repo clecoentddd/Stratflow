@@ -16,16 +16,16 @@ interface ZoomInDialogProps {
   onOpenChange: (isOpen: boolean) => void;
   teams: Team[];
   onSelect: (link: string) => void;
-  currentOrgId: string;
+  currentTeamId: string;
 }
 
-export function ZoomInDialog({ isOpen, onOpenChange, teams, onSelect, currentOrgId }: ZoomInDialogProps) {
-  const handleSelect = (orgId: string) => {
-    onSelect(`/team/${orgId}/radar`);
+export function ZoomInDialog({ isOpen, onOpenChange, teams, onSelect, currentTeamId }: ZoomInDialogProps) {
+  const handleSelect = (teamId: string) => {
+    onSelect(`/team/${teamId}/radar`);
     onOpenChange(false);
   };
   
-  const availableTeams = teams.filter(team => team.id !== currentOrgId);
+  const availableTeams = teams.filter(team => team.id !== currentTeamId);
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>

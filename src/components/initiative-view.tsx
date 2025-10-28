@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from "react";
 import Link from 'next/link';
-import { Plus, Trash2, Search, Milestone, ListChecks, Target, GripVertical, FilePenLine, Rocket, CheckCircle2, Archive } from "lucide-react";
+import { Plus, Trash2, Search, Milestone, ListChecks, Target } from "lucide-react";
 import { v4 as uuidv4 } from 'uuid';
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -33,6 +33,7 @@ function InitiativeItemView({ item, onSave, onDelete }: InitiativeItemViewProps)
   const [editText, setEditText] = useState(item.text);
 
   useEffect(() => {
+    // Automatically enter edit mode for new, empty items.
     if (item.text === "" && item.id.startsWith('temp-')) {
       setIsEditing(true);
     }
@@ -44,6 +45,7 @@ function InitiativeItemView({ item, onSave, onDelete }: InitiativeItemViewProps)
   };
 
   const handleCancel = () => {
+    // If it was a new temporary item, just delete it on cancel.
     if (item.text === "" && item.id.startsWith('temp-')) {
         onDelete(item.id);
     } else {
@@ -119,7 +121,6 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
   
   const fireAndForget = (
     promise: Promise<Response>,
-    successMessage: string,
     errorMessage: string
   ) => {
     promise
@@ -129,10 +130,8 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
                 console.error("Fire-and-forget failed server-side.", errorData);
                 throw new Error(errorData.message || errorMessage);
             }
-            // If it's a create operation, we might want to sync back the real ID.
-            // For now, we rely on the parent's refresh.
         })
-        .then(() => onInitiativeChange()) // Refresh parent on success
+        .then(() => onInitiativeChange()) 
         .catch(err => {
             console.error(err.message);
             toast({ title: "Save Error", description: err.message, variant: "destructive" });
@@ -145,12 +144,12 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
     const command = { ...updatedValues };
     setInitiative(prev => ({ ...prev, ...updatedValues })); 
     
-    const promise = fetch(`/api/organizations/${orgId}/initiatives/${initiative.id}`, {
+    const promise = fetch(`/api/teams/${orgId}/initiatives/${initiative.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(command)
     });
-    fireAndForget(promise, "Initiative updated.", "Could not update initiative.");
+    fireAndForget(promise, "Could not update initiative.");
   };
 
   const handleAddInitiativeItem = (stepKey: InitiativeStepKey) => {
@@ -168,14 +167,13 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
   };
   
   const handleSaveInitiativeItem = (itemId: string, newText: string, stepKey: InitiativeStepKey) => {
-      // If the text is empty for a new temporary item, just delete it locally.
     if (itemId.startsWith('temp-') && newText.trim() === '') {
         handleDeleteInitiativeItem(itemId, stepKey);
         return;
     }
 
     if (itemId.startsWith('temp-')) {
-        // CREATE (POST) if the item is new
+        // CREATE (POST)
         const command: AddInitiativeItemCommand = {
             initiativeId: initiative.id,
             stepKey,
@@ -190,14 +188,16 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
         }
         setInitiative(optimisticInitiative);
 
-
-        fetch(`/api/organizations/${orgId}/initiative-items`, {
+        fetch(`/api/teams/${orgId}/initiative-items`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(command)
         })
-        .then(res => {
-            if(!res.ok) throw new Error("Server failed to create item.");
+        .then(async res => {
+            if(!res.ok) {
+              const errorData = await res.json().catch(() => ({}));
+              throw new Error(errorData.message || "Server failed to create item.");
+            }
             return res.json();
         })
         .then((savedItem: InitiativeItemType) => {
@@ -209,7 +209,7 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
             onInitiativeChange(); // Hard refresh on failure
         });
     } else {
-        // UPDATE (PUT) if the item already exists
+        // UPDATE (PUT)
         const command: UpdateInitiativeItemCommand = { initiativeId: initiative.id, itemId, text: newText };
         
         setInitiative(prev => {
@@ -224,12 +224,12 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
             return newInitiative;
         });
 
-        const promise = fetch(`/api/organizations/${orgId}/initiative-items/${itemId}`, {
+        const promise = fetch(`/api/teams/${orgId}/initiative-items/${itemId}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(command)
         });
-        fireAndForget(promise, "Item saved.", "Could not save item changes.");
+        fireAndForget(promise, "Could not save item changes.");
     }
   };
 
@@ -243,10 +243,11 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
         return newInitiative;
     });
     
+    // If it's a temporary item, don't make an API call
     if (itemId.startsWith('temp-')) return;
 
-    const promise = fetch(`/api/organizations/${orgId}/initiative-items/${itemId}`, { method: 'DELETE' });
-    fireAndForget(promise, "Item deleted.", "Failed to delete item.");
+    const promise = fetch(`/api/teams/${orgId}/initiative-items/${itemId}`, { method: 'DELETE' });
+    fireAndForget(promise, "Failed to delete item.");
   };
 
   const handleLinkRadarItems = (selectedIds: string[]) => {
@@ -287,7 +288,7 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
                 {linkedItems.length > 0 ? (
                     <div className="flex flex-wrap gap-2">
                         {linkedItems.map(item => (
-                            <Link href={`/organization/${item.radarId}/radar#${item.id}`} key={item.id}>
+                            <Link href={`/team/${item.radarId}/radar#${item.id}`} key={item.id}>
                                 <Badge variant={item.type === 'Threat' ? 'destructive' : 'default'}>
                                     {item.name}
                                 </Badge>

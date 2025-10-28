@@ -1,13 +1,14 @@
 import React from 'react';
 import styles from './RadarToolTip.module.css'; // Adjust the path as necessary
 import { Pencil } from 'lucide-react';
+import Link from 'next/link';
 
 const RadarTooltip = ({ tooltipData, onEditClick }: { tooltipData: any, onEditClick: (item: any) => void}) => {
   if (!tooltipData?.item) return null;
 
   const { item } = tooltipData;
   const { name, raw, type, zoom_in } = item;
-  const { category, detect, impact, tolerance, distance } = raw;
+  const { category, impact, tolerance, distance } = raw;
 
   return (
     <div 
@@ -40,11 +41,11 @@ const RadarTooltip = ({ tooltipData, onEditClick }: { tooltipData: any, onEditCl
 
       {zoom_in ? (
         <div className={styles.row}>
-          <span className={styles.label}>Zoom into radar:</span>
-          <a href={`/organization/${zoom_in.id}/radar`} 
+          <span className={styles.label}>Zoom to radar:</span>
+          <Link href={zoom_in.id} 
              className={styles.link}>
             {zoom_in.name}
-          </a>
+          </Link>
         </div>
       ) : (
         <div className={`${styles.row} ${styles.mutedText}`}>Zoom In Not Selected</div>

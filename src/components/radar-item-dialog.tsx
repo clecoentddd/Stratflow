@@ -26,7 +26,7 @@ interface RadarItemDialogProps {
   onSave: (item: RadarItem) => void;
   item: RadarItem | null;
   teams: Team[];
-  currentOrgId: string;
+  currentTeamId: string;
 }
 
 // Represents the fields a user can edit or create
@@ -46,7 +46,7 @@ const defaultFormData: FormData = {
 };
 
 
-export function RadarItemDialog({ isOpen, onOpenChange, onSave, item, teams, currentOrgId }: RadarItemDialogProps) {
+export function RadarItemDialog({ isOpen, onOpenChange, onSave, item, teams, currentTeamId }: RadarItemDialogProps) {
   const [formData, setFormData] = useState<FormData>(defaultFormData);
   const [isZoomInOpen, setZoomInOpen] = useState(false);
 
@@ -78,7 +78,7 @@ export function RadarItemDialog({ isOpen, onOpenChange, onSave, item, teams, cur
     const finalItem: RadarItem = {
       ...formData,
       id: item?.id || '', // API will generate ID for new items
-      radarId: item?.radarId || currentOrgId,
+      radarId: item?.radarId || currentTeamId,
       created_at: item?.created_at || '', // API will set this for new items
       updated_at: item?.updated_at || null,
     };
@@ -89,7 +89,7 @@ export function RadarItemDialog({ isOpen, onOpenChange, onSave, item, teams, cur
   
   const isFormValid = formData.name?.trim() !== "";
   
-  const getZoomLinkOrgName = () => {
+  const getZoomLinkTeamName = () => {
     if (!formData.zoom_in) return "Select a radar...";
     const team = teams.find(o => formData.zoom_in?.includes(o.id));
     return team ? `${team.name} Radar` : "Select a radar...";
@@ -185,7 +185,7 @@ export function RadarItemDialog({ isOpen, onOpenChange, onSave, item, teams, cur
             <div className="space-y-2">
                 <Label htmlFor="zoom_in">Zoom In Link (Optional)</Label>
                 <Button variant="outline" className="w-full justify-start font-normal" onClick={() => setZoomInOpen(true)}>
-                    {getZoomLinkOrgName()}
+                    {getZoomLinkTeamName()}
                 </Button>
             </div>
           </div>
@@ -202,7 +202,7 @@ export function RadarItemDialog({ isOpen, onOpenChange, onSave, item, teams, cur
         onOpenChange={setZoomInOpen}
         teams={teams}
         onSelect={(link) => handleChange('zoom_in', link)}
-        currentOrgId={currentOrgId}
+        currentTeamId={currentTeamId}
       />
     </>
   );

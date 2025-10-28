@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Plus, GripVertical, FilePenLine, Rocket, CheckCircle2, Archive, Search, Milestone, ListChecks, Target } from "lucide-react";
 import {
   Card,
@@ -26,7 +26,6 @@ import { InitiativeView } from "./initiative-view";
 import { v4 as uuidv4 } from "uuid";
 
 const iconMap = { FilePenLine, Rocket, CheckCircle2, Archive };
-const initiativeIconMap: Record<string, React.ComponentType<any>> = { Search, Milestone, ListChecks, Target };
 
 interface StrategyViewProps {
   initialStrategy: Strategy;
@@ -49,7 +48,9 @@ export function StrategyView({
 
   const isSaving = strategy.id.startsWith('strat-temp-');
 
-  console.log(`--- StrategyView (${strategy.description}): Render (isSaving: ${isSaving}) ---`);
+  useEffect(() => {
+    setStrategy(initialStrategy);
+  }, [initialStrategy]);
 
   const overallProgression = useMemo(() => {
     if (strategy.initiatives.length === 0) return 0;
@@ -64,7 +65,6 @@ export function StrategyView({
   const CurrentStateIcon = iconMap[currentStateInfo.iconName];
   
   const handleApiCall = useCallback(async (url: string, method: string, body: any, successMessage: string) => {
-    console.log(`StrategyView: handleApiCall (${method} ${url})`, body);
     try {
       const response = await fetch(url, {
         method,
@@ -100,7 +100,6 @@ export function StrategyView({
 
   const handleUpdateStrategy = useCallback((updatedValues: Partial<Strategy>) => {
     const command: UpdateStrategyCommand = { strategyId: strategy.id, ...updatedValues };
-    console.log(`StrategyView: handleUpdateStrategy for ${strategy.id}`, command);
     
     setStrategy(prev => ({...prev, ...updatedValues}));
     
@@ -122,9 +121,8 @@ export function StrategyView({
       initiatives: [...prev.initiatives, newInitiative]
     }));
     
-    setNewInitiativeName(""); // Clear input immediately
+    setNewInitiativeName("");
     
-    // Fire and forget API call, but only trigger parent refresh on success
     fetch(`/api/teams/${orgId}/initiatives`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -136,20 +134,19 @@ export function StrategyView({
             throw new Error(errorData.message || 'Failed to create initiative.');
         }
         toast({ title: "Success", description: `Initiative "${command.name}" created.` });
-        onStrategyChange(); // Sync with server state ONLY after success
+        onStrategyChange();
     })
     .catch(error => {
         console.error(error);
         toast({ title: "Error", description: error.message, variant: "destructive" });
-        onStrategyChange(); // Rollback on error
+        onStrategyChange();
     });
 
   }, [strategy.id, orgId, toast, newInitiativeName, onStrategyChange]);
 
   const onInitiativeChanged = useCallback(() => {
-    console.log(`StrategyView (${strategy.id}): An initiative inside has changed. Triggering parent refresh.`);
     onStrategyChange();
-  }, [strategy.id, onStrategyChange]);
+  }, [onStrategyChange]);
 
 
   return (
