@@ -3,19 +3,13 @@
 
 import { useState, useEffect, useMemo, useCallback } from "react";
 import Link from "next/link";
-import { Plus, MoreHorizontal, Pencil, Eye, ShieldAlert } from "lucide-react";
+import { Plus, Pencil, KanbanSquare, ShieldAlert } from "lucide-react";
 import type { Organization } from "@/lib/types";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { AppHeader } from "@/components/header";
 import { Button } from "@/components/ui/button";
 import { CreateOrganizationDialog } from "@/components/create-organization-dialog";
 import { EditOrganizationDialog } from "@/components/edit-organization-dialog";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 
 export default function OrganizationsPage() {
   const [organizations, setOrganizations] = useState<Organization[]>([]);
@@ -104,27 +98,16 @@ export default function OrganizationsPage() {
                                             <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleEditClick(org)}>
                                                 <Pencil className="h-4 w-4" />
                                             </Button>
-                                            <DropdownMenu>
-                                                <DropdownMenuTrigger asChild>
-                                                    <Button variant="ghost" size="icon" className="h-8 w-8">
-                                                        <MoreHorizontal className="h-4 w-4" />
-                                                    </Button>
-                                                </DropdownMenuTrigger>
-                                                <DropdownMenuContent align="end">
-                                                    <DropdownMenuItem asChild>
-                                                        <Link href={`/organization/${org.id}`}>
-                                                            <Eye className="mr-2 h-4 w-4" />
-                                                            View Strategy
-                                                        </Link>
-                                                    </DropdownMenuItem>
-                                                    <DropdownMenuItem asChild>
-                                                        <Link href={`/organization/${org.id}/radar`}>
-                                                            <ShieldAlert className="mr-2 h-4 w-4" />
-                                                            View Radar
-                                                        </Link>
-                                                    </DropdownMenuItem>
-                                                </DropdownMenuContent>
-                                            </DropdownMenu>
+                                            <Link href={`/organization/${org.id}`}>
+                                                <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-500 hover:text-blue-600">
+                                                    <KanbanSquare className="h-5 w-5" />
+                                                </Button>
+                                            </Link>
+                                            <Link href={`/organization/${org.id}/radar`}>
+                                                <Button variant="ghost" size="icon" className="h-8 w-8 text-red-500 hover:text-red-600">
+                                                    <ShieldAlert className="h-5 w-5" />
+                                                </Button>
+                                            </Link>
                                         </div>
                                     </CardHeader>
                                     <CardContent className="flex-grow">
