@@ -167,10 +167,7 @@ const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: a
         const color = item.color || '#00cc88';
         const impactClass = getImpactClass(item.raw?.impact);
         
-        // Glow layer (behind)
-        group.append('circle').attr('cx', x).attr('cy', y).attr('r', size).attr('fill', 'none').attr('stroke', color).attr('stroke-width', 2).attr('class', impactClass || styles.defaultImpact).classed(styles.itemGlowEffect, true);
-        
-        // Visible ring (on top)
+        // Visible ring
         group.append('circle').attr('cx', x).attr('cy', y).attr('r', size).attr('fill', 'none').attr('stroke', color).attr('stroke-width', 2).attr('class', impactClass || styles.defaultImpact);
         
         // Center dot
@@ -203,15 +200,7 @@ const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: a
             .attr('height', svgSize);
 
         svg.selectAll('*').remove();
-        svg.append('defs').html(`
-            <radialGradient id="g">
-                <stop stop-color="#00f" offset="0.1"/>
-                <stop stop-color="rgba(0,0,255,0.5)" offset="0.8"/>
-            </radialGradient>
-            <filter id="sofGlow" width="300%" height="300%" x="-100%" y="-100%">
-                <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blurred" />
-            </filter>
-        `);
+        
         const g = svg.append('g').attr('class', 'main-radar-group');
         
         let transformString = `translate(${totalWidth / 2}, ${svgSize / 2})`;

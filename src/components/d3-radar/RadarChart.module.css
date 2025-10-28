@@ -171,10 +171,8 @@
 .itemCircleHighImpact { fill: #FF6961; }
 .itemCircleDefault { fill: steelblue; }
 
-/* Glow effect */
-.itemGlowEffect { filter: url(#sofGlow); }
-
 /* Opportunity ring styles */
 .opportunityLow { fill: none; stroke: #77DD77; stroke-width: 3; }
 .opportunityMedium { fill: none; stroke: #FFD580; stroke-width: 3; }
 .opportunityHigh { fill: none; stroke: #FF6961; stroke-width: 3; }
+
