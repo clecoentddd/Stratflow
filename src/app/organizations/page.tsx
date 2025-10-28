@@ -3,7 +3,7 @@
 
 import { useState, useEffect, useMemo, useCallback } from "react";
 import Link from "next/link";
-import { Plus, Pencil, KanbanSquare, ShieldAlert } from "lucide-react";
+import { Plus, Pencil, Radar, TrendingUp } from "lucide-react";
 import type { Organization } from "@/lib/types";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { AppHeader } from "@/components/header";
@@ -100,12 +100,12 @@ export default function OrganizationsPage() {
                                             </Button>
                                             <Link href={`/organization/${org.id}`}>
                                                 <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-500 hover:text-blue-600">
-                                                    <KanbanSquare className="h-5 w-5" />
+                                                    <TrendingUp className="h-5 w-5" />
                                                 </Button>
                                             </Link>
                                             <Link href={`/organization/${org.id}/radar`}>
                                                 <Button variant="ghost" size="icon" className="h-8 w-8 text-red-500 hover:text-red-600">
-                                                    <ShieldAlert className="h-5 w-5" />
+                                                    <Radar className="h-5 w-5" />
                                                 </Button>
                                             </Link>
                                         </div>
