@@ -103,8 +103,6 @@ export default function OrganizationStrategyPage() {
     const originalOrganization = organization;
     
     // Optimistic UI Update
-    // Note: A full optimistic update for creation is complex because we don't have the final ID.
-    // For now, we revert on failure which is a safe middle-ground. A full page refresh on success is acceptable here.
     fetch(`/api/organizations/${orgId}/initiatives`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -173,7 +171,6 @@ export default function OrganizationStrategyPage() {
       }
       
       // Silently refresh data in the background to get the permanent ID
-      // This will not cause a visible refresh to the user but ensures consistency
       await fetchOrganizationData();
 
     } catch (error: any) {

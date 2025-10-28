@@ -44,6 +44,7 @@ function InitiativeItemView({ item, initiativeId, onUpdateInitiativeItem, onDele
   const [editText, setEditText] = useState(item.text);
 
   const handleSave = () => {
+    // Only call the update handler if the text has actually changed.
     if (editText.trim() !== item.text) {
       onUpdateInitiativeItem(initiativeId, item.id, editText);
     }
@@ -64,6 +65,7 @@ function InitiativeItemView({ item, initiativeId, onUpdateInitiativeItem, onDele
     onDeleteInitiativeItem(initiativeId, item.id);
   }
 
+  // Use onBlur to save changes when the user clicks away from the textarea
   if (isEditing) {
     return (
       <div className="space-y-2 p-2 border rounded-md bg-background shadow-md">
@@ -74,7 +76,7 @@ function InitiativeItemView({ item, initiativeId, onUpdateInitiativeItem, onDele
           autoFocus
           rows={3}
           className="text-sm"
-          onBlur={handleSave}
+          onBlur={handleSave} // Save when focus is lost
         />
         <div className="flex justify-between items-center">
             <Button size="icon" variant="ghost" className="text-destructive hover:bg-destructive/10" onClick={handleDelete}>
