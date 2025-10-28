@@ -102,10 +102,7 @@ export function StrategyDashboard({
   
   return (
     <div>
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold font-headline">
-            {dashboardName || "Strategy Board"}
-          </h2>
+        <div className="flex items-center justify-end mb-6">
           <Button onClick={() => setCreateStrategyOpen(true)}>
             <Plus className="mr-2 h-4 w-4" />
             New Strategy
