@@ -15,22 +15,22 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "./ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import type { Organization } from "@/lib/types";
-import type { UpdateOrganizationCommand } from "@/lib/domain/organizations/commands";
+import type { Team } from "@/lib/types";
+import type { UpdateTeamCommand } from "@/lib/domain/teams/commands";
 
-interface EditOrganizationDialogProps {
+interface EditTeamDialogProps {
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
-  organization: Organization;
-  onOrganizationUpdated: () => void;
+  team: Team;
+  onTeamUpdated: () => void;
 }
 
-export function EditOrganizationDialog({
+export function EditTeamDialog({
   isOpen,
   onOpenChange,
-  organization,
-  onOrganizationUpdated,
-}: EditOrganizationDialogProps) {
+  team,
+  onTeamUpdated,
+}: EditTeamDialogProps) {
   const [name, setName] = useState("");
   const [purpose, setPurpose] = useState("");
   const [context, setContext] = useState("");
@@ -38,12 +38,12 @@ export function EditOrganizationDialog({
   const { toast } = useToast();
 
   useEffect(() => {
-    if (organization) {
-      setName(organization.name);
-      setPurpose(organization.purpose);
-      setContext(organization.context || "");
+    if (team) {
+      setName(team.name);
+      setPurpose(team.purpose);
+      setContext(team.context || "");
     }
-  }, [organization]);
+  }, [team]);
 
   const handleSubmit = async () => {
     if (!name.trim() || !purpose.trim()) {
@@ -57,15 +57,15 @@ export function EditOrganizationDialog({
 
     setIsSubmitting(true);
 
-    const command: UpdateOrganizationCommand = {
-      id: organization.id,
+    const command: UpdateTeamCommand = {
+      id: team.id,
       name: name.trim(),
       purpose: purpose.trim(),
       context: context.trim(),
     };
 
     try {
-      const response = await fetch('/api/organizations', {
+      const response = await fetch('/api/teams', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(command),
@@ -73,21 +73,21 @@ export function EditOrganizationDialog({
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to update organization');
+        throw new Error(errorData.message || 'Failed to update team');
       }
 
       toast({
-        title: "Organization Updated",
+        title: "Team Updated",
         description: `"${command.name}" has been successfully updated.`,
       });
 
       onOpenChange(false);
-      onOrganizationUpdated();
+      onTeamUpdated();
     } catch (error: any) {
       console.error(error);
       toast({
         title: "Error",
-        description: error.message || "Could not update the organization. Please try again.",
+        description: error.message || "Could not update the team. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -101,14 +101,14 @@ export function EditOrganizationDialog({
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Edit Organization</DialogTitle>
+          <DialogTitle>Edit Team</DialogTitle>
           <DialogDescription>
-            Update the details for your organization.
+            Update the details for your team.
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="grid w-full max-w-sm items-center gap-1.5">
-            <Label htmlFor="name">Organization Name</Label>
+            <Label htmlFor="name">Team Name</Label>
             <Input
               id="name"
               value={name}

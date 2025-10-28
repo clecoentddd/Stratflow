@@ -1,10 +1,10 @@
 
 import { NextResponse, NextRequest } from 'next/server';
 import { saveEvents } from '@/lib/db/event-store';
-import { getOrganizationByIdProjection } from '@/lib/db/projections';
+import { getTeamByIdProjection } from '@/lib/db/projections';
 import type { UpdateInitiativeCommand } from '@/lib/domain/strategy/commands';
 import type { InitiativeProgressUpdatedEvent, InitiativeRadarItemsLinkedEvent } from '@/lib/domain/strategy/events';
-import type { OrganizationEvent } from '@/lib/domain/organizations/events';
+import type { TeamEvent } from '@/lib/domain/teams/events';
 
 // --- Vertical Slice: Update Initiative ---
 export async function PUT(request: NextRequest, { params }: { params: { orgId: string, initiativeId: string } }) {
@@ -13,12 +13,12 @@ export async function PUT(request: NextRequest, { params }: { params: { orgId: s
     const command: UpdateInitiativeCommand = await request.json();
 
     // 1. Validation
-    const organization = await getOrganizationByIdProjection(orgId);
-    if (!organization) {
-      return NextResponse.json({ message: 'Organization not found' }, { status: 404 });
+    const team = await getTeamByIdProjection(orgId);
+    if (!team) {
+      return NextResponse.json({ message: 'Team not found' }, { status: 404 });
     }
     
-    const initiative = organization.dashboard.strategies
+    const initiative = team.dashboard.strategies
         .flatMap(s => s.initiatives)
         .find(i => i.id === initiativeId);
 
@@ -26,13 +26,13 @@ export async function PUT(request: NextRequest, { params }: { params: { orgId: s
       return NextResponse.json({ message: 'Initiative not found' }, { status: 404 });
     }
 
-    const eventsToSave: OrganizationEvent[] = [];
+    const eventsToSave: TeamEvent[] = [];
 
     // 2. Check for progression update
     if (command.progression !== undefined && command.progression !== initiative.progression) {
       const progressEvent: InitiativeProgressUpdatedEvent = {
         type: 'InitiativeProgressUpdated',
-        entity: 'organization',
+        entity: 'team',
         aggregateId: orgId,
         timestamp: new Date().toISOString(),
         payload: {
@@ -47,7 +47,7 @@ export async function PUT(request: NextRequest, { params }: { params: { orgId: s
     if (command.linkedRadarItemIds) {
        const linkEvent: InitiativeRadarItemsLinkedEvent = {
         type: 'InitiativeRadarItemsLinked',
-        entity: 'organization',
+        entity: 'team',
         aggregateId: orgId,
         timestamp: new Date().toISOString(),
         payload: {

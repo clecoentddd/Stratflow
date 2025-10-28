@@ -3,20 +3,20 @@
 "use client";
 
 import { RadarItemCard } from "@/components/radar-item-card";
-import type { RadarItem, Organization } from "@/lib/types";
+import type { RadarItem, Team } from "@/lib/types";
 import RadarChart from "@/components/d3-radar/RadarChart";
 
 
 interface RadarDashboardProps {
   radarItems: RadarItem[];
   onDeleteItem: (itemId: string) => void;
-  organizations: Organization[];
+  teams: Team[];
   currentOrgId: string;
   onEditItem: (item: RadarItem) => void;
   onCreateItem: () => void;
 }
 
-export function RadarDashboard({ radarItems, onDeleteItem, organizations, currentOrgId, onEditItem, onCreateItem }: RadarDashboardProps) {
+export function RadarDashboard({ radarItems, onDeleteItem, teams, currentOrgId, onEditItem, onCreateItem }: RadarDashboardProps) {
 
   const handleEditClick = (item: any) => {
       const fullItem = radarItems.find(i => i.id === item.id);

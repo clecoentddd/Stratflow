@@ -1,6 +1,6 @@
 
 // --- Commands ---
-export type CreateOrganizationCommand = {
+export type CreateTeamCommand = {
   companyId: string;
   name: string;
   purpose: string;
@@ -8,7 +8,7 @@ export type CreateOrganizationCommand = {
   level: number;
 };
 
-export type UpdateOrganizationCommand = {
+export type UpdateTeamCommand = {
     id: string;
     name: string;
     purpose: string;

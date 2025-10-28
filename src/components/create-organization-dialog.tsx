@@ -15,21 +15,21 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "./ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import type { CreateOrganizationCommand } from "@/lib/domain/organizations/commands";
+import type { CreateTeamCommand } from "@/lib/domain/teams/commands";
 
-interface CreateOrganizationDialogProps {
+interface CreateTeamDialogProps {
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
-  onOrganizationCreated: () => void;
+  onTeamCreated: () => void;
   companyId: string;
 }
 
-export function CreateOrganizationDialog({
+export function CreateTeamDialog({
   isOpen,
   onOpenChange,
-  onOrganizationCreated,
+  onTeamCreated,
   companyId
-}: CreateOrganizationDialogProps) {
+}: CreateTeamDialogProps) {
   const [name, setName] = useState("");
   const [purpose, setPurpose] = useState("");
   const [context, setContext] = useState("");
@@ -53,7 +53,7 @@ export function CreateOrganizationDialog({
 
     setIsSubmitting(true);
 
-    const command: CreateOrganizationCommand = {
+    const command: CreateTeamCommand = {
       companyId,
       name: name.trim(),
       purpose: purpose.trim(),
@@ -62,29 +62,29 @@ export function CreateOrganizationDialog({
     };
 
     try {
-      const response = await fetch('/api/organizations', {
+      const response = await fetch('/api/teams', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(command),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to create organization');
+        throw new Error('Failed to create team');
       }
 
       toast({
-        title: "Organization Created",
+        title: "Team Created",
         description: `"${command.name}" has been successfully created.`,
       });
 
       resetForm();
       onOpenChange(false);
-      onOrganizationCreated(); // Callback to trigger re-fetch
+      onTeamCreated(); // Callback to trigger re-fetch
     } catch (error) {
       console.error(error);
       toast({
         title: "Error",
-        description: "Could not create the organization. Please try again.",
+        description: "Could not create the team. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -98,14 +98,14 @@ export function CreateOrganizationDialog({
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Create New Organization</DialogTitle>
+          <DialogTitle>Create New Team</DialogTitle>
           <DialogDescription>
-            Define a new organization within your company.
+            Define a new team within your company.
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="grid w-full max-w-sm items-center gap-1.5">
-            <Label htmlFor="name">Organization Name</Label>
+            <Label htmlFor="name">Team Name</Label>
             <Input
               id="name"
               value={name}
@@ -162,7 +162,7 @@ export function CreateOrganizationDialog({
             onClick={handleSubmit}
             disabled={!isFormValid || isSubmitting}
           >
-            {isSubmitting ? 'Creating...' : 'Create Organization'}
+            {isSubmitting ? 'Creating...' : 'Create Team'}
           </Button>
         </DialogFooter>
       </DialogContent>

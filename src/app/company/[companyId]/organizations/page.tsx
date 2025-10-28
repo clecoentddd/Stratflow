@@ -4,25 +4,25 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import Link from "next/link";
 import { Plus, Pencil, Radar, TrendingUp, Building } from "lucide-react";
-import type { Organization, Company } from "@/lib/types";
+import type { Team, Company } from "@/lib/types";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { AppHeader } from "@/components/header";
 import { Button } from "@/components/ui/button";
-import { CreateOrganizationDialog } from "@/components/create-organization-dialog";
-import { EditOrganizationDialog } from "@/components/edit-organization-dialog";
+import { CreateTeamDialog } from "@/components/create-team-dialog";
+import { EditTeamDialog } from "@/components/edit-team-dialog";
 import { notFound, useParams } from "next/navigation";
 
-export default function OrganizationsPage() {
+export default function TeamsPage() {
   const params = useParams();
   const companyId = params.companyId as string;
-  const [organizations, setOrganizations] = useState<Organization[]>([]);
+  const [teams, setTeams] = useState<Team[]>([]);
   const [company, setCompany] = useState<Company | null>(null);
-  const [isCreateOrgOpen, setCreateOrgOpen] = useState(false);
-  const [isEditOrgOpen, setEditOrgOpen] = useState(false);
-  const [editingOrg, setEditingOrg] = useState<Organization | null>(null);
+  const [isCreateTeamOpen, setCreateTeamOpen] = useState(false);
+  const [isEditTeamOpen, setEditTeamOpen] = useState(false);
+  const [editingTeam, setEditingTeam] = useState<Team | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const fetchCompanyAndOrgs = useCallback(async () => {
+  const fetchCompanyAndTeams = useCallback(async () => {
     if (!companyId) return;
     setIsLoading(true);
     try {
@@ -38,49 +38,49 @@ export default function OrganizationsPage() {
       }
       setCompany(currentCompany);
 
-      // Fetch all organizations and filter by companyId
-      const orgsRes = await fetch('/api/organizations');
-      if (!orgsRes.ok) {
-        throw new Error('Failed to fetch organizations');
+      // Fetch all teams and filter by companyId
+      const teamsRes = await fetch('/api/teams');
+      if (!teamsRes.ok) {
+        throw new Error('Failed to fetch teams');
       }
-      const allOrgs: Organization[] = await orgsRes.json();
-      const companyOrgs = allOrgs.filter(org => org.companyId === companyId);
-      setOrganizations(companyOrgs);
+      const allTeams: Team[] = await teamsRes.json();
+      const companyTeams = allTeams.filter(org => org.companyId === companyId);
+      setTeams(companyTeams);
 
     } catch (error) {
       console.error("Failed to fetch data from API", error);
-      setOrganizations([]);
+      setTeams([]);
     } finally {
       setIsLoading(false);
     }
   }, [companyId]);
 
   useEffect(() => {
-    fetchCompanyAndOrgs();
-  }, [fetchCompanyAndOrgs]);
+    fetchCompanyAndTeams();
+  }, [fetchCompanyAndTeams]);
 
-  const handleEditClick = (org: Organization) => {
-    setEditingOrg(org);
-    setEditOrgOpen(true);
+  const handleEditClick = (team: Team) => {
+    setEditingTeam(team);
+    setEditTeamOpen(true);
   };
 
-  const groupedOrganizations = useMemo(() => {
-    const groups: { [key: number]: Organization[] } = {};
-    organizations.forEach(org => {
-      if (!groups[org.level]) {
-        groups[org.level] = [];
+  const groupedTeams = useMemo(() => {
+    const groups: { [key: number]: Team[] } = {};
+    teams.forEach(team => {
+      if (!groups[team.level]) {
+        groups[team.level] = [];
       }
-      groups[org.level].push(org);
+      groups[team.level].push(team);
     });
     return Object.entries(groups).sort(([a], [b]) => parseInt(a) - parseInt(b));
-  }, [organizations]);
+  }, [teams]);
 
   if (isLoading) {
     return (
         <div className="flex flex-col min-h-screen">
             <AppHeader companyName={company?.name || 'Loading...'} />
             <main className="p-4 md:p-6 flex-1 flex items-center justify-center">
-                <p>Loading Organizations...</p>
+                <p>Loading Teams...</p>
             </main>
         </div>
     );
@@ -91,7 +91,7 @@ export default function OrganizationsPage() {
       <AppHeader companyName={company?.name} />
       <main className="p-4 md:p-6 flex-1">
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-3xl font-bold font-headline">Organizations</h1>
+          <h1 className="text-3xl font-bold font-headline">Teams</h1>
           <div className="flex items-center gap-2">
             <Link href="/">
                 <Button variant="outline">
@@ -99,37 +99,37 @@ export default function OrganizationsPage() {
                     All Companies
                 </Button>
             </Link>
-            <Button onClick={() => setCreateOrgOpen(true)}>
+            <Button onClick={() => setCreateTeamOpen(true)}>
               <Plus className="mr-2 h-4 w-4" />
-              New Organization
+              New Team
             </Button>
           </div>
         </div>
         <div className="space-y-8">
-            {groupedOrganizations.length > 0 ? (
-                groupedOrganizations.map(([level, orgs]) => (
+            {groupedTeams.length > 0 ? (
+                groupedTeams.map(([level, orgs]) => (
                     <div key={level}>
                         <h2 className="text-2xl font-semibold font-headline mb-4 pb-2 border-b">
                             Level {level}
                         </h2>
                         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                            {orgs.map((org) => (
-                                <Card key={org.id} className="hover:shadow-lg transition-shadow flex flex-col bg-card">
+                            {orgs.map((team) => (
+                                <Card key={team.id} className="hover:shadow-lg transition-shadow flex flex-col bg-card">
                                     <CardHeader className="flex flex-row justify-between items-start">
                                         <div>
-                                            <CardTitle>{org.name}</CardTitle>
-                                            <CardDescription>{org.purpose}</CardDescription>
+                                            <CardTitle>{team.name}</CardTitle>
+                                            <CardDescription>{team.purpose}</CardDescription>
                                         </div>
                                         <div className="flex items-center">
-                                            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleEditClick(org)}>
+                                            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleEditClick(team)}>
                                                 <Pencil className="h-4 w-4" />
                                             </Button>
-                                            <Link href={`/organization/${org.id}`}>
+                                            <Link href={`/team/${team.id}`}>
                                                 <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-500 hover:text-blue-600">
                                                     <TrendingUp className="h-5 w-5" />
                                                 </Button>
                                             </Link>
-                                            <Link href={`/organization/${org.id}/radar`}>
+                                            <Link href={`/team/${team.id}/radar`}>
                                                 <Button variant="ghost" size="icon" className="h-8 w-8 text-red-500 hover:text-red-600">
                                                     <Radar className="h-5 w-5" />
                                                 </Button>
@@ -137,7 +137,7 @@ export default function OrganizationsPage() {
                                         </div>
                                     </CardHeader>
                                     <CardContent className="flex-grow">
-                                        <p className="text-sm text-muted-foreground">{org.context}</p>
+                                        <p className="text-sm text-muted-foreground">{team.context}</p>
                                     </CardContent>
                                 </Card>
                             ))}
@@ -146,26 +146,26 @@ export default function OrganizationsPage() {
                 ))
             ) : (
                  <div className="text-center py-20 border-2 border-dashed rounded-lg bg-card">
-                    <h3 className="text-xl font-medium text-muted-foreground">No organizations yet for {company?.name}.</h3>
-                    <p className="text-muted-foreground mt-2">Get started by creating a new organization.</p>
+                    <h3 className="text-xl font-medium text-muted-foreground">No teams yet for {company?.name}.</h3>
+                    <p className="text-muted-foreground mt-2">Get started by creating a new team.</p>
                 </div>
             )}
         </div>
       </main>
-      <CreateOrganizationDialog 
-        isOpen={isCreateOrgOpen}
-        onOpenChange={setCreateOrgOpen}
-        onOrganizationCreated={fetchCompanyAndOrgs}
+      <CreateTeamDialog 
+        isOpen={isCreateTeamOpen}
+        onOpenChange={setCreateTeamOpen}
+        onTeamCreated={fetchCompanyAndTeams}
         companyId={companyId}
       />
-      {editingOrg && (
-        <EditOrganizationDialog
-            isOpen={isEditOrgOpen}
-            onOpenChange={setEditOrgOpen}
-            organization={editingOrg}
-            onOrganizationUpdated={() => {
-                setEditingOrg(null);
-                fetchCompanyAndOrgs();
+      {editingTeam && (
+        <EditTeamDialog
+            isOpen={isEditTeamOpen}
+            onOpenChange={setEditTeamOpen}
+            team={editingTeam}
+            onTeamUpdated={() => {
+                setEditingTeam(null);
+                fetchCompanyAndTeams();
             }}
         />
       )}

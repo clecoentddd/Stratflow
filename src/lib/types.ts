@@ -66,7 +66,7 @@ export type Company = {
   name: string;
 };
 
-export type Organization = {
+export type Team = {
   id: string;
   companyId: string;
   name: string;

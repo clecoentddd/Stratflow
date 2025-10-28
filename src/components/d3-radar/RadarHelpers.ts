@@ -1,3 +1,4 @@
+
 import styles from './RadarChart.module.css';
 
 export const getImpactClass = (impact: string) => {

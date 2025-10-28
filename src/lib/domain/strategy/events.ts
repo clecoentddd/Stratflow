@@ -1,5 +1,5 @@
 
-import type { Event } from '../organizations/events';
+import type { Event } from '../teams/events';
 import type { StrategyState, InitiativeItem, InitiativeStep } from '@/lib/types';
 import { newInitiativeTemplate } from '@/lib/data';
 

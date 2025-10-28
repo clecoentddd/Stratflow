@@ -2,22 +2,22 @@
 import { NextResponse, NextRequest } from 'next/server';
 import { v4 as uuidv4 } from 'uuid';
 import {
-  getOrganizationByIdProjection,
-  applyEventsToOrganization,
+  getTeamByIdProjection,
+  applyEventsToTeam,
 } from '@/lib/db/projections';
 import { saveEvents, getEventsFor } from '@/lib/db/event-store';
 import type { UpsertRadarItemCommand } from '@/lib/domain/radar/commands';
 import type { RadarItemCreatedEvent, RadarItemUpdatedEvent, RadarItemDeletedEvent } from '@/lib/domain/radar/events';
 
-// --- Vertical Slice: GET Radar Items for an Organization ---
+// --- Vertical Slice: GET Radar Items for a Team ---
 export async function GET(request: NextRequest, { params }: { params: { orgId: string } }) {
   try {
-    const organization = await getOrganizationByIdProjection(params.orgId);
-    if (!organization) {
-      return NextResponse.json({ message: 'Organization not found' }, { status: 404 });
+    const team = await getTeamByIdProjection(params.orgId);
+    if (!team) {
+      return NextResponse.json({ message: 'Team not found' }, { status: 404 });
     }
-    // Return the full organization object, which includes the radar array.
-    return NextResponse.json(organization);
+    // Return the full team object, which includes the radar array.
+    return NextResponse.json(team);
   } catch (error) {
     console.error('Failed to get radar items:', error);
     return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
@@ -32,9 +32,9 @@ export async function POST(request: NextRequest, { params }: { params: { orgId: 
     const command: UpsertRadarItemCommand = await request.json();
     
     // 1. Command Handler Logic (Validation)
-    const organization = await getOrganizationByIdProjection(orgId);
-    if (!organization) {
-      return NextResponse.json({ message: 'Organization not found' }, { status: 404 });
+    const team = await getTeamByIdProjection(orgId);
+    if (!team) {
+      return NextResponse.json({ message: 'Team not found' }, { status: 404 });
     }
     if (!command.name) {
         return NextResponse.json({ message: 'Radar item name is required' }, { status: 400 });
@@ -43,7 +43,7 @@ export async function POST(request: NextRequest, { params }: { params: { orgId: 
     // 2. Create Event
     const event: RadarItemCreatedEvent = {
       type: 'RadarItemCreated',
-      entity: 'organization',
+      entity: 'team',
       aggregateId: orgId,
       timestamp: new Date().toISOString(),
       payload: {
@@ -59,7 +59,7 @@ export async function POST(request: NextRequest, { params }: { params: { orgId: 
 
     // 4. Re-project to get the latest state for the response
     const allEventsForOrg = await getEventsFor(orgId);
-    const updatedOrgState = applyEventsToOrganization(null, allEventsForOrg);
+    const updatedOrgState = applyEventsToTeam(null, allEventsForOrg);
 
     if (!updatedOrgState) {
       throw new Error('Failed to apply event to create radar item.');
@@ -79,11 +79,11 @@ export async function PUT(request: NextRequest, { params }: { params: { orgId: s
         const command: UpsertRadarItemCommand = await request.json();
         
         // 1. Command Handler Logic (Validation)
-        const organization = await getOrganizationByIdProjection(orgId);
-        if (!organization) {
-          return NextResponse.json({ message: 'Organization not found' }, { status: 404 });
+        const team = await getTeamByIdProjection(orgId);
+        if (!team) {
+          return NextResponse.json({ message: 'Team not found' }, { status: 404 });
         }
-        const existingItem = organization.radar.find(item => item.id === command.id);
+        const existingItem = team.radar.find(item => item.id === command.id);
         if(!existingItem) {
             return NextResponse.json({ message: 'Radar item not found' }, { status: 404 });
         }
@@ -91,7 +91,7 @@ export async function PUT(request: NextRequest, { params }: { params: { orgId: s
         // 2. Create Event
         const event: RadarItemUpdatedEvent = {
             type: 'RadarItemUpdated',
-            entity: 'organization',
+            entity: 'team',
             aggregateId: orgId,
             timestamp: new Date().toISOString(),
             payload: {
@@ -105,7 +105,7 @@ export async function PUT(request: NextRequest, { params }: { params: { orgId: s
         
         // 4. Re-project to get the latest state for the response
         const allEventsForOrg = await getEventsFor(orgId);
-        const updatedOrgState = applyEventsToOrganization(null, allEventsForOrg);
+        const updatedOrgState = applyEventsToTeam(null, allEventsForOrg);
 
         if (!updatedOrgState) {
             throw new Error('Failed to apply event to update radar item.');
@@ -131,18 +131,18 @@ export async function DELETE(request: NextRequest, { params }: { params: { orgId
         }
 
         // 1. Command Handler Logic (Validation)
-        const organization = await getOrganizationByIdProjection(orgId);
-        if (!organization) {
-            return NextResponse.json({ message: 'Organization not found' }, { status: 404 });
+        const team = await getTeamByIdProjection(orgId);
+        if (!team) {
+            return NextResponse.json({ message: 'Team not found' }, { status: 404 });
         }
-        if(!organization.radar.find(item => item.id === itemId)) {
+        if(!team.radar.find(item => item.id === itemId)) {
             return NextResponse.json({ message: 'Radar item not found' }, { status: 404 });
         }
 
         // 2. Create Event
         const event: RadarItemDeletedEvent = {
             type: 'RadarItemDeleted',
-            entity: 'organization',
+            entity: 'team',
             aggregateId: orgId,
             timestamp: new Date().toISOString(),
             payload: {
@@ -155,7 +155,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { orgId
         
         // 4. Re-project to get the latest state for the response
         const allEventsForOrg = await getEventsFor(orgId);
-        const updatedOrgState = applyEventsToOrganization(null, allEventsForOrg);
+        const updatedOrgState = applyEventsToTeam(null, allEventsForOrg);
 
         if(!updatedOrgState) {
              throw new Error('Failed to apply delete event to radar item.');

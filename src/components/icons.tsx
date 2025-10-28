@@ -1,3 +1,4 @@
+
 import * as React from "react";
 
 export const StratFlowLogo = (props: React.SVGProps<SVGSVGElement>) => (

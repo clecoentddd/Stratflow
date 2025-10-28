@@ -57,16 +57,16 @@ export const radarConfig = {
 
   // Tolerance sizing
   tolerances: {
-    'Low': { radius: 14 },
+    'High': { radius: 14 },
     'Medium': { radius: 10 },
-    'High': { radius: 7 }
+    'Low': { radius: 7 }
   },
 
   // Default values
   defaults: {
     impact: 'Medium',
     tolerance: 'Medium',
-    color: 'steelblue',
+    color: '#00cc88',
     size: 10
   }
 };

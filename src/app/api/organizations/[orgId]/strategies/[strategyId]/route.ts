@@ -1,7 +1,7 @@
 
 import { NextResponse, NextRequest } from 'next/server';
 import { saveEvents } from '@/lib/db/event-store';
-import { getOrganizationByIdProjection } from '@/lib/db/projections';
+import { getTeamByIdProjection } from '@/lib/db/projections';
 import type { UpdateStrategyCommand } from '@/lib/domain/strategy/commands';
 import type { StrategyStateUpdatedEvent } from '@/lib/domain/strategy/events';
 
@@ -12,11 +12,11 @@ export async function PUT(request: NextRequest, { params }: { params: { orgId: s
     const command: UpdateStrategyCommand = await request.json();
 
     // 1. Validation
-    const organization = await getOrganizationByIdProjection(orgId);
-    if (!organization) {
-      return NextResponse.json({ message: 'Organization not found' }, { status: 404 });
+    const team = await getTeamByIdProjection(orgId);
+    if (!team) {
+      return NextResponse.json({ message: 'Team not found' }, { status: 404 });
     }
-    const strategy = organization.dashboard.strategies.find(s => s.id === strategyId);
+    const strategy = team.dashboard.strategies.find(s => s.id === strategyId);
     if (!strategy) {
       return NextResponse.json({ message: 'Strategy not found' }, { status: 404 });
     }
@@ -29,7 +29,7 @@ export async function PUT(request: NextRequest, { params }: { params: { orgId: s
     if (command.state && command.state !== strategy.state) {
         const event: StrategyStateUpdatedEvent = {
             type: 'StrategyStateUpdated',
-            entity: 'organization',
+            entity: 'team',
             aggregateId: orgId,
             timestamp: new Date().toISOString(),
             payload: {

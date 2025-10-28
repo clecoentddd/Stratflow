@@ -1,18 +1,18 @@
 
 import type { CompanyEvent } from '@/lib/domain/companies/events';
-import { initialOrganizations } from '@/lib/data';
+import { initialTeams } from '@/lib/data';
 import type {
-  OrganizationEvent,
-  OrganizationCreatedEvent,
-} from '@/lib/domain/organizations/events';
-import type { Organization, Company } from '@/lib/types';
-import { applyEventsToOrganization, applyEventsToCompany } from './projections';
+  TeamEvent,
+  TeamCreatedEvent,
+} from '@/lib/domain/teams/events';
+import type { Team, Company } from '@/lib/types';
+import { applyEventsToTeam, applyEventsToCompany } from './projections';
 import type { RadarItemCreatedEvent } from '../domain/radar/events';
 
 // In a real app, this would be a proper database. We're using a file-based mock store
 // for simplicity and to ensure state persists across serverless function invocations.
 
-type AllEvents = OrganizationEvent | CompanyEvent;
+type AllEvents = TeamEvent | CompanyEvent;
 
 // We no longer keep state in memory. We'll use functions to read/write from a mock DB file.
 // Let's define the structure of our mock database.
@@ -55,29 +55,29 @@ const getDb = (): MockDb => {
   
   let seedEventsList: AllEvents[] = [companyCreatedEvent];
 
-  initialOrganizations.forEach((org) => {
-    const orgCreatedEvent: OrganizationCreatedEvent = {
-      type: 'OrganizationCreated',
-      entity: 'organization',
-      aggregateId: org.id,
+  initialTeams.forEach((team) => {
+    const orgCreatedEvent: TeamCreatedEvent = {
+      type: 'TeamCreated',
+      entity: 'team',
+      aggregateId: team.id,
       timestamp: new Date().toISOString(),
       payload: {
-        id: org.id,
+        id: team.id,
         companyId: DEMO_COMPANY_ID,
-        name: org.name,
-        purpose: org.purpose,
-        context: org.context,
-        level: org.level,
+        name: team.name,
+        purpose: team.purpose,
+        context: team.context,
+        level: team.level,
       },
     };
     seedEventsList.push(orgCreatedEvent);
 
-    if (org.radar && org.radar.length > 0) {
-        org.radar.forEach(radarItem => {
+    if (team.radar && team.radar.length > 0) {
+        team.radar.forEach(radarItem => {
             const radarCreatedEvent: RadarItemCreatedEvent = {
                 type: 'RadarItemCreated',
-                entity: 'organization',
-                aggregateId: org.id,
+                entity: 'team',
+                aggregateId: team.id,
                 timestamp: radarItem.created_at || new Date().toISOString(),
                 payload: radarItem
             };
@@ -102,14 +102,22 @@ const saveDb = (db: MockDb) => {
 export const saveEvents = async (newEvents: AllEvents[]): Promise<void> => {
   return new Promise((resolve) => {
     const db = getDb();
-    db.events.push(...newEvents);
+    const isNewCompany = newEvents.some(e => e.type === 'CompanyCreated' && e.aggregateId !== 'company-demo');
+
+    if (isNewCompany) {
+        // If a new company is created, only add its creation event.
+        db.events.push(...newEvents.filter(e => e.entity === 'company'));
+    } else {
+        db.events.push(...newEvents);
+    }
+    
     saveDb(db);
     resolve();
   });
 };
 
 /**
- * Retrieves all events for a specific aggregate ID (e.g., an organization ID).
+ * Retrieves all events for a specific aggregate ID (e.g., a team ID).
  * @param aggregateId - The ID of the aggregate.
  * @returns An array of events.
  */

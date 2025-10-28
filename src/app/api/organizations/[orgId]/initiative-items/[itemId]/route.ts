@@ -1,7 +1,7 @@
 
 import { NextResponse, NextRequest } from 'next/server';
 import { saveEvents } from '@/lib/db/event-store';
-import { getOrganizationByIdProjection } from '@/lib/db/projections';
+import { getTeamByIdProjection } from '@/lib/db/projections';
 import type { UpdateInitiativeItemCommand, DeleteInitiativeItemCommand } from '@/lib/domain/strategy/commands';
 import type { InitiativeItemUpdatedEvent, InitiativeItemDeletedEvent } from '@/lib/domain/strategy/events';
 
@@ -12,11 +12,11 @@ export async function PUT(request: NextRequest, { params }: { params: { orgId: s
     const command: UpdateInitiativeItemCommand = await request.json();
 
     // 1. Validation
-    const organization = await getOrganizationByIdProjection(orgId);
-    if (!organization) return NextResponse.json({ message: 'Organization not found' }, { status: 404 });
+    const team = await getTeamByIdProjection(orgId);
+    if (!team) return NextResponse.json({ message: 'Team not found' }, { status: 404 });
     
     // Find which initiative this item belongs to
-    const initiative = organization.dashboard.strategies
+    const initiative = team.dashboard.strategies
         .flatMap(s => s.initiatives)
         .find(i => i.steps.some(step => step.items.some(item => item.id === itemId)));
 
@@ -32,7 +32,7 @@ export async function PUT(request: NextRequest, { params }: { params: { orgId: s
     // 2. Create Event
     const event: InitiativeItemUpdatedEvent = {
       type: 'InitiativeItemUpdated',
-      entity: 'organization',
+      entity: 'team',
       aggregateId: orgId,
       timestamp: new Date().toISOString(),
       payload: {
@@ -61,13 +61,13 @@ export async function DELETE(request: NextRequest, { params }: { params: { orgId
     const { orgId, itemId } = params;
     // The body might be empty for a DELETE request, so we can't rely on it.
     // We get the initiative ID from the query parameter if needed, but it is not for this operation
-    // as the item ID should be unique across the organization.
+    // as the item ID should be unique across the team.
 
     // 1. Validation
-     const organization = await getOrganizationByIdProjection(orgId);
-    if (!organization) return NextResponse.json({ message: 'Organization not found' }, { status: 404 });
+     const team = await getTeamByIdProjection(orgId);
+    if (!team) return NextResponse.json({ message: 'Team not found' }, { status: 404 });
 
-    const initiative = organization.dashboard.strategies
+    const initiative = team.dashboard.strategies
         .flatMap(s => s.initiatives)
         .find(i => i.steps.some(step => step.items.some(item => item.id === itemId)));
 
@@ -78,7 +78,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { orgId
     // 2. Create Event
     const event: InitiativeItemDeletedEvent = {
       type: 'InitiativeItemDeleted',
-      entity: 'organization',
+      entity: 'team',
       aggregateId: orgId,
       timestamp: new Date().toISOString(),
       payload: {

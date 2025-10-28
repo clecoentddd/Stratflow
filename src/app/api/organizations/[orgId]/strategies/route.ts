@@ -2,7 +2,7 @@
 import { NextResponse, NextRequest } from 'next/server';
 import { v4 as uuidv4 } from 'uuid';
 import { saveEvents } from '@/lib/db/event-store';
-import { getOrganizationByIdProjection } from '@/lib/db/projections';
+import { getTeamByIdProjection } from '@/lib/db/projections';
 import type { CreateStrategyCommand } from '@/lib/domain/strategy/commands';
 import type { StrategyCreatedEvent } from '@/lib/domain/strategy/events';
 
@@ -13,9 +13,9 @@ export async function POST(request: NextRequest, { params }: { params: { orgId: 
     const command: CreateStrategyCommand = await request.json();
 
     // 1. Validation
-    const organization = await getOrganizationByIdProjection(orgId);
-    if (!organization) {
-      return NextResponse.json({ message: 'Organization not found' }, { status: 404 });
+    const team = await getTeamByIdProjection(orgId);
+    if (!team) {
+      return NextResponse.json({ message: 'Team not found' }, { status: 404 });
     }
     if (!command.description || !command.timeframe) {
       return NextResponse.json({ message: 'Description and timeframe are required' }, { status: 400 });
@@ -24,7 +24,7 @@ export async function POST(request: NextRequest, { params }: { params: { orgId: 
     // 2. Create Event
     const event: StrategyCreatedEvent = {
       type: 'StrategyCreated',
-      entity: 'organization',
+      entity: 'team',
       aggregateId: orgId,
       timestamp: new Date().toISOString(),
       payload: {

@@ -1,29 +1,29 @@
 
 import type { Company } from '@/lib/types';
-import type { Organization, RadarItem, Strategy, Initiative, InitiativeItem } from '@/lib/types';
+import type { Team, RadarItem, Strategy, Initiative, InitiativeItem } from '@/lib/types';
 import type { CompanyEvent } from '../domain/companies/events';
-import type { OrganizationEvent } from '@/lib/domain/organizations/events';
+import type { TeamEvent } from '@/lib/domain/teams/events';
 import { _getAllEvents } from './event-store';
 
 // This file is now responsible for BUILDING projections from the event store on demand.
 // It no longer holds state itself.
 
-// --- Projection Logic for Organizations ---
+// --- Projection Logic for Teams ---
 
 /**
- * Applies a series of events to an organization's state to build the current projection.
- * @param org - The current state of the organization (or null if new).
+ * Applies a series of events to a team's state to build the current projection.
+ * @param team - The current state of the team (or null if new).
  * @param events - An array of events to apply.
- * @returns The new state of the organization.
+ * @returns The new state of the team.
  */
-export const applyEventsToOrganization = (
-  initialState: Organization | null,
-  events: OrganizationEvent[]
-): Organization | null => {
+export const applyEventsToTeam = (
+  initialState: Team | null,
+  events: TeamEvent[]
+): Team | null => {
   // This is the reducer function
-  const finalState = events.reduce((org, event) => {
-    if (!org) {
-        if (event.type === 'OrganizationCreated') {
+  const finalState = events.reduce((team, event) => {
+    if (!team) {
+        if (event.type === 'TeamCreated') {
              return {
                 id: event.payload.id,
                 companyId: event.payload.companyId,
@@ -39,17 +39,17 @@ export const applyEventsToOrganization = (
                 radar: [],
             };
         }
-        return null; // Cannot process other events if org doesn't exist
+        return null; // Cannot process other events if team doesn't exist
     }
 
     switch (event.type) {
-      case 'OrganizationCreated':
+      case 'TeamCreated':
         // This should ideally only happen on the first event.
-        return org;
+        return team;
 
-      case 'OrganizationUpdated':
+      case 'TeamUpdated':
         return {
-          ...org,
+          ...team,
           name: event.payload.name,
           purpose: event.payload.purpose,
           context: event.payload.context,
@@ -57,20 +57,20 @@ export const applyEventsToOrganization = (
 
       // --- Radar Events ---
       case 'RadarItemCreated':
-        return { ...org, radar: [...(org.radar || []), event.payload] };
+        return { ...team, radar: [...(team.radar || []), event.payload] };
 
       case 'RadarItemUpdated':
         return {
-          ...org,
-          radar: (org.radar || []).map(item =>
+          ...team,
+          radar: (team.radar || []).map(item =>
             item.id === event.payload.id ? { ...item, ...event.payload } : item
           ),
         };
 
       case 'RadarItemDeleted':
         return {
-          ...org,
-          radar: (org.radar || []).filter(item => item.id !== event.payload.id),
+          ...team,
+          radar: (team.radar || []).filter(item => item.id !== event.payload.id),
         };
 
       // --- Strategy Events ---
@@ -83,19 +83,19 @@ export const applyEventsToOrganization = (
             initiatives: [],
         };
         return {
-            ...org,
+            ...team,
             dashboard: {
-                ...org.dashboard,
-                strategies: [...org.dashboard.strategies, newStrategy]
+                ...team.dashboard,
+                strategies: [...team.dashboard.strategies, newStrategy]
             }
         };
 
       case 'StrategyStateUpdated':
         return {
-            ...org,
+            ...team,
             dashboard: {
-                ...org.dashboard,
-                strategies: org.dashboard.strategies.map(s => 
+                ...team.dashboard,
+                strategies: team.dashboard.strategies.map(s => 
                     s.id === event.payload.strategyId ? { ...s, state: event.payload.state } : s
                 )
             }
@@ -104,10 +104,10 @@ export const applyEventsToOrganization = (
       // --- Initiative Events ---
       case 'InitiativeCreated':
         return {
-            ...org,
+            ...team,
             dashboard: {
-                ...org.dashboard,
-                strategies: org.dashboard.strategies.map(s => {
+                ...team.dashboard,
+                strategies: team.dashboard.strategies.map(s => {
                     if (s.id !== event.payload.strategyId) return s;
                     const newInitiative: Initiative = event.payload.template;
                     return { ...s, initiatives: [...s.initiatives, newInitiative] };
@@ -117,10 +117,10 @@ export const applyEventsToOrganization = (
       
       case 'InitiativeProgressUpdated':
         return {
-            ...org,
+            ...team,
             dashboard: {
-                ...org.dashboard,
-                strategies: org.dashboard.strategies.map(s => ({
+                ...team.dashboard,
+                strategies: team.dashboard.strategies.map(s => ({
                     ...s,
                     initiatives: s.initiatives.map(i => 
                         i.id === event.payload.initiativeId ? { ...i, progression: event.payload.progression } : i
@@ -131,10 +131,10 @@ export const applyEventsToOrganization = (
 
       case 'InitiativeRadarItemsLinked':
           return {
-              ...org,
+              ...team,
               dashboard: {
-                  ...org.dashboard,
-                  strategies: org.dashboard.strategies.map(s => ({
+                  ...team.dashboard,
+                  strategies: team.dashboard.strategies.map(s => ({
                       ...s,
                       initiatives: s.initiatives.map(i => 
                           i.id === event.payload.initiativeId ? { ...i, linkedRadarItemIds: event.payload.linkedRadarItemIds } : i
@@ -146,10 +146,10 @@ export const applyEventsToOrganization = (
       // --- Initiative Item Events ---
       case 'InitiativeItemAdded':
         return {
-            ...org,
+            ...team,
             dashboard: {
-                ...org.dashboard,
-                strategies: org.dashboard.strategies.map(s => ({
+                ...team.dashboard,
+                strategies: team.dashboard.strategies.map(s => ({
                     ...s,
                     initiatives: s.initiatives.map(i => {
                         if (i.id !== event.payload.initiativeId) return i;
@@ -168,10 +168,10 @@ export const applyEventsToOrganization = (
 
       case 'InitiativeItemUpdated':
          return {
-            ...org,
+            ...team,
             dashboard: {
-                ...org.dashboard,
-                strategies: org.dashboard.strategies.map(s => ({
+                ...team.dashboard,
+                strategies: team.dashboard.strategies.map(s => ({
                     ...s,
                     initiatives: s.initiatives.map(i => ({
                         ...i,
@@ -188,10 +188,10 @@ export const applyEventsToOrganization = (
 
       case 'InitiativeItemDeleted':
           return {
-            ...org,
+            ...team,
             dashboard: {
-                ...org.dashboard,
-                strategies: org.dashboard.strategies.map(s => ({
+                ...team.dashboard,
+                strategies: team.dashboard.strategies.map(s => ({
                     ...s,
                     initiatives: s.initiatives.map(i => {
                          if (i.id !== event.payload.initiativeId) return i;
@@ -209,7 +209,7 @@ export const applyEventsToOrganization = (
 
 
       default:
-        return org;
+        return team;
     }
   }, initialState);
 
@@ -240,29 +240,29 @@ export const applyEventsToCompany = (
 // This is inefficient but guarantees consistency in our mock setup.
 
 /**
- * Retrieves the current projection for all organizations.
- * @returns An array of all organizations.
+ * Retrieves the current projection for all teams.
+ * @returns An array of all teams.
  */
-export const getOrganizationsProjection = async (): Promise<Organization[]> => {
+export const getTeamsProjection = async (): Promise<Team[]> => {
   const allEvents = await _getAllEvents();
-  const orgEvents = allEvents.filter(e => e.entity === 'organization') as OrganizationEvent[];
+  const teamEvents = allEvents.filter(e => e.entity === 'team') as TeamEvent[];
   
-  const eventsByAggId: Record<string, OrganizationEvent[]> = {};
-  orgEvents.forEach(event => {
+  const eventsByAggId: Record<string, TeamEvent[]> = {};
+  teamEvents.forEach(event => {
     if (!eventsByAggId[event.aggregateId]) {
       eventsByAggId[event.aggregateId] = [];
     }
     eventsByAggId[event.aggregateId].push(event);
   });
   
-  const projection: Record<string, Organization> = {};
+  const projection: Record<string, Team> = {};
   for (const aggregateId in eventsByAggId) {
     const aggregateEvents = eventsByAggId[aggregateId];
     // Important: sort events by timestamp to ensure correct order of application
     aggregateEvents.sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
-    const org = applyEventsToOrganization(null, aggregateEvents);
-    if (org) {
-      projection[aggregateId] = org;
+    const team = applyEventsToTeam(null, aggregateEvents);
+    if (team) {
+      projection[aggregateId] = team;
     }
   }
   
@@ -270,15 +270,15 @@ export const getOrganizationsProjection = async (): Promise<Organization[]> => {
 };
 
 /**
- * Retrieves the current projection for a single organization by its ID.
- * @param id - The ID of the organization.
- * @returns The organization object or null if not found.
+ * Retrieves the current projection for a single team by its ID.
+ * @param id - The ID of the team.
+ * @returns The team object or null if not found.
  */
-export const getOrganizationByIdProjection = async (
+export const getTeamByIdProjection = async (
   id: string
-): Promise<Organization | null> => {
-    const allOrgs = await getOrganizationsProjection();
-    return allOrgs.find(org => org.id === id) || null;
+): Promise<Team | null> => {
+    const allTeams = await getTeamsProjection();
+    return allTeams.find(team => team.id === id) || null;
 };
 
 /**

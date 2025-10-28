@@ -16,7 +16,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { ZoomInDialog } from "@/components/zoom-in-dialog";
-import type { RadarItem, RadarItemType, RadarCategory, RadarDistance, RadarImpact, RadarTolerance, Organization } from "@/lib/types";
+import type { RadarItem, RadarItemType, RadarCategory, RadarDistance, RadarImpact, RadarTolerance, Team } from "@/lib/types";
 import { radarAttributes } from "@/lib/data";
 import { cn } from "@/lib/utils";
 
@@ -25,7 +25,7 @@ interface RadarItemDialogProps {
   onOpenChange: (isOpen: boolean) => void;
   onSave: (item: RadarItem) => void;
   item: RadarItem | null;
-  organizations: Organization[];
+  teams: Team[];
   currentOrgId: string;
 }
 
@@ -46,7 +46,7 @@ const defaultFormData: FormData = {
 };
 
 
-export function RadarItemDialog({ isOpen, onOpenChange, onSave, item, organizations, currentOrgId }: RadarItemDialogProps) {
+export function RadarItemDialog({ isOpen, onOpenChange, onSave, item, teams, currentOrgId }: RadarItemDialogProps) {
   const [formData, setFormData] = useState<FormData>(defaultFormData);
   const [isZoomInOpen, setZoomInOpen] = useState(false);
 
@@ -91,8 +91,8 @@ export function RadarItemDialog({ isOpen, onOpenChange, onSave, item, organizati
   
   const getZoomLinkOrgName = () => {
     if (!formData.zoom_in) return "Select a radar...";
-    const org = organizations.find(o => formData.zoom_in?.includes(o.id));
-    return org ? `${org.name} Radar` : "Select a radar...";
+    const team = teams.find(o => formData.zoom_in?.includes(o.id));
+    return team ? `${team.name} Radar` : "Select a radar...";
   }
 
   return (
@@ -200,7 +200,7 @@ export function RadarItemDialog({ isOpen, onOpenChange, onSave, item, organizati
       <ZoomInDialog 
         isOpen={isZoomInOpen}
         onOpenChange={setZoomInOpen}
-        organizations={organizations}
+        teams={teams}
         onSelect={(link) => handleChange('zoom_in', link)}
         currentOrgId={currentOrgId}
       />

@@ -73,7 +73,7 @@ export function StrategyView({
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
+        const errorData = await response.json().catch(() => ({}));
         throw new Error(errorData.message || `Failed to perform action.`);
       }
       
@@ -104,7 +104,7 @@ export function StrategyView({
     
     setStrategy(prev => ({...prev, ...updatedValues}));
     
-    handleApiCall(`/api/organizations/${orgId}/strategies/${strategy.id}`, 'PUT', command, "Strategy has been updated.");
+    handleApiCall(`/api/teams/${orgId}/strategies/${strategy.id}`, 'PUT', command, "Strategy has been updated.");
   }, [strategy.id, orgId, handleApiCall]);
 
   const handleCreateInitiative = useCallback(() => {
@@ -125,7 +125,7 @@ export function StrategyView({
     setNewInitiativeName(""); // Clear input immediately
     
     // Fire and forget API call, but only trigger parent refresh on success
-    fetch(`/api/organizations/${orgId}/initiatives`, {
+    fetch(`/api/teams/${orgId}/initiatives`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(command),

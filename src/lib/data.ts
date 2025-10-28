@@ -1,6 +1,6 @@
 
 import type {
-  Organization,
+  Team,
   StrategyState,
   RadarItemType,
   RadarCategory,
@@ -35,9 +35,9 @@ const initiativeStepsTemplate: {
   { key: 'proximateObjectives', title: 'Proximate Objectives', iconName: 'Target' },
 ];
 
-export const initialOrganizations: Omit<Organization, 'companyId'>[] = [
+export const initialTeams: Omit<Team, 'companyId'>[] = [
   {
-    id: 'org-bod',
+    id: 'team-bod',
     name: 'Board of Directors',
     purpose: 'Oversees the company\'s direction.',
     context: 'Highest governing body.',
@@ -58,7 +58,7 @@ export const initialOrganizations: Omit<Organization, 'companyId'>[] = [
     radar: [],
   },
   {
-    id: 'org-ceo',
+    id: 'team-ceo',
     name: 'CEO',
     purpose: 'Leads the company and executes the board\'s vision.',
     context: 'Chief Executive Officer.',
@@ -86,7 +86,7 @@ export const initialOrganizations: Omit<Organization, 'companyId'>[] = [
     radar: [],
   },
   {
-    id: 'org-cfo',
+    id: 'team-cfo',
     name: 'CFO',
     purpose: 'Manages the company\'s finances.',
     context: 'Chief Financial Officer',
@@ -95,7 +95,7 @@ export const initialOrganizations: Omit<Organization, 'companyId'>[] = [
     radar: [],
   },
   {
-    id: 'org-cto',
+    id: 'team-cto',
     name: 'CTO',
     purpose: 'Leads technology and engineering.',
     context: 'Chief Technology Officer',
@@ -154,7 +154,7 @@ export const initialOrganizations: Omit<Organization, 'companyId'>[] = [
     radar: [
       {
         id: 'radar-item-1',
-        radarId: 'org-cto',
+        radarId: 'team-cto',
         name: 'AI-driven Automation',
         detect: 'Competitors are leveraging AI to automate customer support.',
         assess: 'This poses a medium-term threat to our market position if we don\'t adapt. It could reduce our operational costs significantly.',
@@ -172,7 +172,7 @@ export const initialOrganizations: Omit<Organization, 'companyId'>[] = [
     ],
   },
   {
-    id: 'org-cmo',
+    id: 'team-cmo',
     name: 'CMO',
     purpose: 'Leads marketing and growth initiatives.',
     context: 'Chief Marketing Officer',

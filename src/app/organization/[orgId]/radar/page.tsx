@@ -5,7 +5,7 @@ import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { notFound, useParams } from "next/navigation";
 import { ChevronLeft, Plus, TrendingUp } from "lucide-react";
-import type { Organization, RadarItem } from "@/lib/types";
+import type { Team, RadarItem } from "@/lib/types";
 import { AppHeader } from "@/components/header";
 import { Button } from "@/components/ui/button";
 import { RadarDashboard } from "@/components/radar-dashboard";
@@ -16,25 +16,25 @@ import type { UpsertRadarItemCommand } from "@/lib/domain/radar/commands";
 export default function RadarPage() {
   const params = useParams();
   const orgId = params.orgId as string;
-  const [organization, setOrganization] = useState<Organization | null>(null);
-  const [organizations, setOrganizations] = useState<Organization[]>([]);
+  const [team, setTeam] = useState<Team | null>(null);
+  const [teams, setTeams] = useState<Team[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isDialogOpen, setDialogOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<RadarItem | null>(null);
   const { toast } = useToast();
 
-  const fetchOrganizationData = useCallback(async () => {
+  const fetchTeamData = useCallback(async () => {
     if (!orgId) return;
     setIsLoading(true);
     try {
-      // Fetch the specific organization for the radar
-      const orgResponse = await fetch(`/api/organizations/${orgId}/radar`);
+      // Fetch the specific team for the radar
+      const orgResponse = await fetch(`/api/teams/${orgId}/radar`);
        if (orgResponse.status === 404) {
         notFound();
         return;
       }
       if (!orgResponse.ok) {
-        throw new Error("Failed to fetch organization data");
+        throw new Error("Failed to fetch team data");
       }
       const orgData = await orgResponse.json();
       
@@ -43,26 +43,26 @@ export default function RadarPage() {
         notFound();
         return;
       }
-      setOrganization(orgData);
+      setTeam(orgData);
 
-      // Fetch all organizations for linking purposes
-      const allOrgsResponse = await fetch('/api/organizations');
-      if (!allOrgsResponse.ok) throw new Error("Failed to fetch organizations list");
+      // Fetch all teams for linking purposes
+      const allOrgsResponse = await fetch('/api/teams');
+      if (!allOrgsResponse.ok) throw new Error("Failed to fetch teams list");
       const allOrgsData = await allOrgsResponse.json();
-      setOrganizations(allOrgsData);
+      setTeams(allOrgsData);
 
     } catch (error) {
       console.error("Failed to fetch data:", error);
       toast({ title: "Error", description: "Could not load radar data.", variant: "destructive" });
-      setOrganization(null); // Ensure we don't show stale data on error
+      setTeam(null); // Ensure we don't show stale data on error
     } finally {
       setIsLoading(false);
     }
   }, [orgId, toast]);
 
   useEffect(() => {
-    fetchOrganizationData();
-  }, [fetchOrganizationData]);
+    fetchTeamData();
+  }, [fetchTeamData]);
 
   const handleUpsertRadarItem = async (itemToUpsert: RadarItem) => {
     const isUpdating = !!itemToUpsert.created_at;
@@ -71,7 +71,7 @@ export default function RadarPage() {
     const command: UpsertRadarItemCommand = itemToUpsert;
 
     try {
-      const response = await fetch(`/api/organizations/${orgId}/radar`, {
+      const response = await fetch(`/api/teams/${orgId}/radar`, {
         method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(command),
@@ -82,7 +82,7 @@ export default function RadarPage() {
       }
 
       const updatedOrg = await response.json();
-      setOrganization(updatedOrg);
+      setTeam(updatedOrg);
       
       toast({
         title: isUpdating ? "Radar Item Updated" : "Radar Item Created",
@@ -100,11 +100,11 @@ export default function RadarPage() {
   };
 
   const handleDeleteRadarItem = async (itemId: string) => {
-    const itemToDelete = organization?.radar.find(item => item.id === itemId);
+    const itemToDelete = team?.radar.find(item => item.id === itemId);
     if (!itemToDelete) return;
 
     try {
-        const response = await fetch(`/api/organizations/${orgId}/radar`, {
+        const response = await fetch(`/api/teams/${orgId}/radar`, {
             method: 'DELETE',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ id: itemId }),
@@ -115,7 +115,7 @@ export default function RadarPage() {
         }
 
         const updatedOrg = await response.json();
-        setOrganization(updatedOrg);
+        setTeam(updatedOrg);
 
         toast({ 
             title: "Radar Item Deleted", 
@@ -149,16 +149,16 @@ export default function RadarPage() {
     );
   }
 
-  if (!organization) {
+  if (!team) {
      return (
        <div className="flex flex-col min-h-screen">
         <AppHeader />
         <main className="p-4 md:p-6 flex-1 flex items-center justify-center">
             <div className="text-center">
-                <h1 className="text-2xl font-bold">Organization Not Found</h1>
-                <p className="text-muted-foreground">The organization you are looking for does not exist.</p>
-                <Link href="/organizations" className="mt-4 inline-block">
-                    <Button>Back to Organizations</Button>
+                <h1 className="text-2xl font-bold">Team Not Found</h1>
+                <p className="text-muted-foreground">The team you are looking for does not exist.</p>
+                <Link href="/teams" className="mt-4 inline-block">
+                    <Button>Back to Teams</Button>
                 </Link>
             </div>
         </main>
@@ -172,26 +172,26 @@ export default function RadarPage() {
       <main className="p-4 md:p-6 flex-1">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-4">
-            <Link href="/organizations">
+            <Link href={`/company/${team.companyId}/teams`}>
               <Button variant="outline">
                 <ChevronLeft className="mr-2 h-4 w-4" />
-                Back to Organizations
+                Back to Teams
               </Button>
             </Link>
-            <Link href={`/organization/${orgId}`}>
+            <Link href={`/team/${orgId}`}>
               <Button variant="outline">
                 <TrendingUp className="mr-2 h-4 w-4" />
                 View Strategy Dashboard
               </Button>
             </Link>
           </div>
-          <h1 className="text-3xl font-bold font-headline">{organization.name} - Radar</h1>
+          <h1 className="text-3xl font-bold font-headline">{team.name} - Radar</h1>
         </div>
         <RadarDashboard
-          radarItems={organization.radar || []}
+          radarItems={team.radar || []}
           onDeleteItem={handleDeleteRadarItem}
-          organizations={organizations}
-          currentOrgId={organization.id}
+          teams={teams}
+          currentOrgId={team.id}
           onEditItem={handleOpenDialog}
           onCreateItem={() => handleOpenDialog()}
         />
@@ -201,8 +201,8 @@ export default function RadarPage() {
         onOpenChange={setDialogOpen}
         onSave={handleUpsertRadarItem}
         item={editingItem}
-        organizations={organizations}
-        currentOrgId={organization.id}
+        teams={teams}
+        currentOrgId={team.id}
       />
     </div>
   );

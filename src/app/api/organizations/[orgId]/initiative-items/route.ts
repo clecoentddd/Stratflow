@@ -2,7 +2,7 @@
 import { NextResponse, NextRequest } from 'next/server';
 import { v4 as uuidv4 } from 'uuid';
 import { saveEvents } from '@/lib/db/event-store';
-import { getOrganizationByIdProjection } from '@/lib/db/projections';
+import { getTeamByIdProjection } from '@/lib/db/projections';
 import type { AddInitiativeItemCommand } from '@/lib/domain/strategy/commands';
 import type { InitiativeItemAddedEvent } from '@/lib/domain/strategy/events';
 import type { InitiativeItem } from '@/lib/types';
@@ -14,11 +14,11 @@ export async function POST(request: NextRequest, { params }: { params: { orgId: 
     const command: AddInitiativeItemCommand = await request.json();
 
     // 1. Validation
-    const organization = await getOrganizationByIdProjection(orgId);
-    if (!organization) {
-      return NextResponse.json({ message: 'Organization not found' }, { status: 404 });
+    const team = await getTeamByIdProjection(orgId);
+    if (!team) {
+      return NextResponse.json({ message: 'Team not found' }, { status: 404 });
     }
-    const initiative = organization.dashboard.strategies
+    const initiative = team.dashboard.strategies
         .flatMap(s => s.initiatives)
         .find(i => i.id === command.initiativeId);
     if (!initiative) {
@@ -40,7 +40,7 @@ export async function POST(request: NextRequest, { params }: { params: { orgId: 
 
     const event: InitiativeItemAddedEvent = {
       type: 'InitiativeItemAdded',
-      entity: 'organization',
+      entity: 'team',
       aggregateId: orgId,
       timestamp: new Date().toISOString(),
       payload: {

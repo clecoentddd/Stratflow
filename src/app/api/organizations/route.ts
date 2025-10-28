@@ -2,21 +2,21 @@
 import { NextResponse, NextRequest } from 'next/server';
 import { v4 as uuidv4 } from 'uuid';
 import {
-  getOrganizationsProjection,
-  applyEventsToOrganization,
-  getOrganizationByIdProjection,
+  getTeamsProjection,
+  applyEventsToTeam,
+  getTeamByIdProjection,
 } from '@/lib/db/projections';
 import { saveEvents, getEventsFor } from '@/lib/db/event-store';
-import type { CreateOrganizationCommand, UpdateOrganizationCommand } from '@/lib/domain/organizations/commands';
-import type { OrganizationCreatedEvent, OrganizationUpdatedEvent, OrganizationEvent } from '@/lib/domain/organizations/events';
+import type { CreateTeamCommand, UpdateTeamCommand } from '@/lib/domain/teams/commands';
+import type { TeamCreatedEvent, TeamUpdatedEvent, TeamEvent } from '@/lib/domain/teams/events';
 
-// --- Vertical Slice: GET Organizations ---
+// --- Vertical Slice: GET Teams ---
 export async function GET(request: NextRequest) {
   try {
-    const organizations = await getOrganizationsProjection();
-    return NextResponse.json(organizations);
+    const teams = await getTeamsProjection();
+    return NextResponse.json(teams);
   } catch (error) {
-    console.error('Failed to get organizations projection:', error);
+    console.error('Failed to get teams projection:', error);
     return NextResponse.json(
       { message: 'Internal Server Error' },
       { status: 500 }
@@ -24,11 +24,11 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// --- Vertical Slice: Create Organization ---
+// --- Vertical Slice: Create Team ---
 export async function POST(request: NextRequest) {
   try {
     // 1. Parse and Validate the Command
-    const command: CreateOrganizationCommand = await request.json();
+    const command: CreateTeamCommand = await request.json();
     if (!command.name || !command.purpose || !command.companyId) {
       return NextResponse.json(
         { message: 'Company ID, name, and purpose are required' },
@@ -37,16 +37,16 @@ export async function POST(request: NextRequest) {
     }
 
     // 2. Command Handler Logic
-    const newOrgId = `org-${uuidv4()}`;
+    const newTeamId = `team-${uuidv4()}`;
 
     // 3. Create Event(s)
-    const event: OrganizationCreatedEvent = {
-      type: 'OrganizationCreated',
-      entity: 'organization',
-      aggregateId: newOrgId,
+    const event: TeamCreatedEvent = {
+      type: 'TeamCreated',
+      entity: 'team',
+      aggregateId: newTeamId,
       timestamp: new Date().toISOString(),
       payload: {
-        id: newOrgId,
+        id: newTeamId,
         companyId: command.companyId,
         name: command.name,
         purpose: command.purpose,
@@ -59,15 +59,15 @@ export async function POST(request: NextRequest) {
     await saveEvents([event]);
 
     // 5. Re-project from events to get the created state for the response
-    const newOrgState = applyEventsToOrganization(null, [event]);
+    const newTeamState = applyEventsToTeam(null, [event]);
 
-    if (!newOrgState) {
-      throw new Error('Failed to apply event to create organization state.');
+    if (!newTeamState) {
+      throw new Error('Failed to apply event to create team state.');
     }
 
-    return NextResponse.json(newOrgState, { status: 201 });
+    return NextResponse.json(newTeamState, { status: 201 });
   } catch (error) {
-    console.error('Failed to create organization:', error);
+    console.error('Failed to create team:', error);
     return NextResponse.json(
       { message: 'Internal Server Error' },
       { status: 500 }
@@ -75,11 +75,11 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// --- Vertical Slice: Update Organization ---
+// --- Vertical Slice: Update Team ---
 export async function PUT(request: NextRequest) {
     try {
         // 1. Parse and Validate Command
-        const command: UpdateOrganizationCommand = await request.json();
+        const command: UpdateTeamCommand = await request.json();
         if (!command.id || !command.name || !command.purpose) {
             return NextResponse.json({ message: 'ID, name, and purpose are required' }, { status: 400 });
         }
@@ -87,15 +87,15 @@ export async function PUT(request: NextRequest) {
         // 2. Command Handler Logic
         const { id, name, purpose, context } = command;
 
-        const existingOrg = await getOrganizationByIdProjection(id);
-        if (!existingOrg) {
-            return NextResponse.json({ message: 'Organization not found' }, { status: 404 });
+        const existingTeam = await getTeamByIdProjection(id);
+        if (!existingTeam) {
+            return NextResponse.json({ message: 'Team not found' }, { status: 404 });
         }
 
         // 3. Create Event
-        const event: OrganizationUpdatedEvent = {
-            type: 'OrganizationUpdated',
-            entity: 'organization',
+        const event: TeamUpdatedEvent = {
+            type: 'TeamUpdated',
+            entity: 'team',
             aggregateId: id,
             timestamp: new Date().toISOString(),
             payload: {
@@ -109,17 +109,17 @@ export async function PUT(request: NextRequest) {
         await saveEvents([event]);
 
         // 5. Re-project all events for the aggregate to rebuild its state accurately for the response
-        const allEventsForOrg = await getEventsFor(id);
-        const updatedOrgState = applyEventsToOrganization(null, allEventsForOrg);
+        const allEventsForTeam = await getEventsFor(id);
+        const updatedTeamState = applyEventsToTeam(null, allEventsForTeam);
         
-        if (!updatedOrgState) {
-            throw new Error('Failed to apply events to update organization state.');
+        if (!updatedTeamState) {
+            throw new Error('Failed to apply events to update team state.');
         }
 
-        return NextResponse.json(updatedOrgState, { status: 200 });
+        return NextResponse.json(updatedTeamState, { status: 200 });
 
     } catch (error) {
-        console.error('Failed to update organization:', error);
+        console.error('Failed to update team:', error);
         return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
     }
 }

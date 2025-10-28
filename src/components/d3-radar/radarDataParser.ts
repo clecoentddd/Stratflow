@@ -1,3 +1,4 @@
+
 // radarDataParser.js
 // Transforms raw data into normalized format for the radar chart
 
@@ -46,7 +47,7 @@ const normalizeItem = (rawItem: RadarItem) => {
     quadrantIndex,            
     radiusMultiplier: distance?.radiusMultiplier ?? 1.0,
 
-    color: impact.color,
+    color: impact.color || radarConfig.defaults.color,
     size: tolerance.radius,
     opportunityClass,
 
