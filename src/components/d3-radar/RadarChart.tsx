@@ -15,7 +15,7 @@ import {
     calculateItemPosition,
 } from './radarDataParser';
 
-const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: any) => void, onCreateClick: () => void }> = ({ items, radius, onEditClick, onCreateClick }) => {
+const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: any) => void }> = ({ items, radius, onEditClick }) => {
     const svgRef = useRef<SVGSVGElement>(null);
     const tooltipRef = useRef<HTMLDivElement>(null);
     const [tooltipData, setTooltipData] = useState({ visible: false, item: null as any | null });
@@ -263,9 +263,6 @@ const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: a
                 <svg ref={svgRef} className={styles.radarWrapper}></svg>
             </div>
             <div className={styles.leftPanel}>
-                <button className={styles.createButton} onClick={onCreateClick}>
-                    Create Radar Item
-                </button>
                 <div className={zoomStyles.zoomControls}>
                     <span className={zoomStyles.zoomTitle}>Zoom into a quadrant:</span>
                     
@@ -328,4 +325,5 @@ export default RadarChart;
     
 
     
+
 

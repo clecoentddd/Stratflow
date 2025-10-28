@@ -33,7 +33,6 @@ export function RadarDashboard({ radarItems, onDeleteItem, teams, currentTeamId,
               items={radarItems}
               radius={300}
               onEditClick={handleEditClick}
-              onCreateClick={onCreateItem}
           />
       </div>
 
