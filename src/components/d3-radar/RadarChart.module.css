@@ -2,9 +2,9 @@
 .centeringWrapper {
     width: 100%;
     display: flex;
-    justify-content: flex-start; /* Aligns content to the left */
-    flex-wrap: wrap;
-    gap: 20px; /* Adds space between panels */
+    justify-content: center; /* Center the content horizontally */
+    flex-wrap: wrap; /* Allow items to wrap to the next line on smaller screens */
+    gap: 20px;
 }
 
 .radarContainer {
@@ -30,21 +30,20 @@
 .leftPanel {
     display: flex;
     flex-direction: column;
-    flex: 0 0 auto;
-    min-width: 150px;
-    max-width: 300px;
+    flex: 1; /* Allow panel to grow and shrink */
+    min-width: 280px; /* Minimum width before wrapping */
+    max-width: 320px;
     gap: 12px;
-    margin-bottom: 20px;
     align-items: center;
     box-sizing: border-box;
     padding: 24px;
-    margin-right: 40px; /* Pushes the radar chart to the right */
 }
 
 .middlePanel {
     display: flex;
     justify-content: center;
-    flex: 1; /* Allows the radar chart to take up available space */
+    flex: 2; /* Allows the radar chart to take up more space */
+    min-width: 400px; /* Ensure chart has enough space */
 }
 
 /* Radar wrapper - flexible, fills remaining space */
@@ -80,7 +79,7 @@
 /* Button inside left panel - Now relies solely on inheritance */
 .createButton {
     padding: 10px 15px;
-    margin-top: 20px;
+    width: 100%;
     background-color: hsl(var(--primary));
     color: hsl(var(--primary-foreground));
     border: none;

@@ -248,7 +248,9 @@ const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: a
 
     return (
         <div className={styles.centeringWrapper}>
-            
+            <div className={styles.middlePanel}>
+                <svg ref={svgRef} className={styles.radarWrapper}></svg>
+            </div>
             <div className={styles.leftPanel}>
                 <button className={styles.createButton} onClick={onCreateClick}>
                     Create Radar Item
@@ -305,10 +307,6 @@ const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: a
                         <div className={tooltipStyles.tooltipPlaceholder}>Hover over items to see details</div>
                     )}
                 </div>
-            </div>
-
-            <div className={styles.middlePanel}>
-                <svg ref={svgRef} className={styles.radarWrapper}></svg>
             </div>
         </div>
     );
