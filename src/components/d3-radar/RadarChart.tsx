@@ -45,10 +45,10 @@ const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: a
         g.selectAll(".quadrant-fill").remove(); // Clear previous quadrant fills
     
         const visualQuadrantColors = [
-            radarConfig.visual.quadrantColors[2], // Business - top-left
-            radarConfig.visual.quadrantColors[3], // Capabilities - top-right
-            radarConfig.visual.quadrantColors[1], // Operating Model - bottom-left
-            radarConfig.visual.quadrantColors[0]  // People & Knowledge - bottom-right
+            radarConfig.visual.quadrantColors[0],
+            radarConfig.visual.quadrantColors[1],
+            radarConfig.visual.quadrantColors[2],
+            radarConfig.visual.quadrantColors[3]
         ];
     
         visualQuadrantColors.forEach((color, i) => {
@@ -75,10 +75,9 @@ const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: a
             const x = offset * Math.cos(angle);
             let y = offset * Math.sin(angle);
             
-            // For top quadrants (2 and 3), make y more negative to move up
             if (cat.quadrantIndex === 2 || cat.quadrantIndex === 3) {
                 y *= 1.2;
-            } else { // For bottom quadrants (0 and 1), make y more positive to move down
+            } else { 
                 y *= 1.2;
             }
 
@@ -266,9 +265,9 @@ const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: a
 
     useEffect(() => {
         if (tooltipData.visible && tooltipData.item && tooltipRef.current) {
-            tooltipRef.current.classList.remove(styles.blink);
+            tooltipRef.current.classList.remove(tooltipStyles.blink);
             void tooltipRef.current.offsetWidth;
-            tooltipRef.current.classList.add(styles.blink);
+            tooltipRef.current.classList.add(tooltipStyles.blink);
         }
     }, [tooltipData.item?.id]);
 
@@ -345,5 +344,6 @@ export default RadarChart;
 
 
     
+
 
 
