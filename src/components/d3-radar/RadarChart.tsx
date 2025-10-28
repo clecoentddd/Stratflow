@@ -30,21 +30,23 @@ const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: a
         const newActiveQuadrant = activeQuadrant === idx ? null : idx;
         setActiveQuadrant(newActiveQuadrant);
 
+        const transition = svg.transition().duration(750);
+        const centerX = parseFloat(svg.attr('width')) / 2;
+        const centerY = parseFloat(svg.attr('height')) / 2;
+
         if (newActiveQuadrant !== null) {
             const scale = 2;
             const quadrantCenterRadius = radius / 2;
             const angle = (Math.PI / 2) * newActiveQuadrant + Math.PI / 4;
-            const centerX = parseFloat(svg.attr('width')) / 2;
-            const centerY = parseFloat(svg.attr('height')) / 2;
             
             const newTransform = d3.zoomIdentity
                 .translate(centerX, centerY)
                 .scale(scale)
                 .translate(-quadrantCenterRadius * Math.cos(angle), -quadrantCenterRadius * Math.sin(angle));
 
-            svg.transition().duration(750).call(zoomBehavior.transform, newTransform);
+            transition.call(zoomBehavior.transform, newTransform);
         } else {
-            svg.transition().duration(750).call(zoomBehavior.transform, d3.zoomIdentity); // Reset zoom
+            transition.call(zoomBehavior.transform, d3.zoomIdentity.translate(centerX, centerY)); // Reset zoom to centered
         }
     }, [activeQuadrant, radius]);
 
@@ -52,7 +54,10 @@ const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: a
         const svg = d3.select(svgRef.current);
         const zoomBehavior = (svg.node() as any).__zoom;
         if (zoomBehavior) {
-            svg.transition().duration(750).call(zoomBehavior.transform, d3.zoomIdentity);
+             const centerX = parseFloat(svg.attr('width')) / 2;
+             const centerY = parseFloat(svg.attr('height')) / 2;
+             const initialTransform = d3.zoomIdentity.translate(centerX, centerY);
+             svg.transition().duration(750).call(zoomBehavior.transform, initialTransform);
         }
         setActiveQuadrant(null);
     }, []);
@@ -240,17 +245,18 @@ const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: a
         const centerX = totalWidth / 2;
         const centerY = svgSize / 2;
         
-        const zoom = d3.zoom<SVGSVGElement, unknown>()
+        const zoomBehavior = d3.zoom<SVGSVGElement, unknown>()
             .scaleExtent([1, 8])
             .on("zoom", (event) => {
                 g.attr('transform', event.transform.toString());
             });
 
-        svg.call(zoom);
-        (svg.node() as any).__zoom = zoom;
+        svg.call(zoomBehavior);
+        (svg.node() as any).__zoom = zoomBehavior;
 
+        // Apply initial transform to center the group without triggering a zoom event
         const initialTransform = d3.zoomIdentity.translate(centerX, centerY);
-        zoom.transform(svg.transition().duration(0) as any, initialTransform);
+        zoomBehavior.transform(svg as any, initialTransform);
         
         drawQuadrants(g, radius);
         drawCategoryLabels(g, radius);
@@ -367,6 +373,7 @@ export default RadarChart;
 
 
     
+
 
 
 
