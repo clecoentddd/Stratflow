@@ -1,19 +1,11 @@
 
 .centeringWrapper {
     width: 100%;
-    display: grid;
-    grid-template-columns: 1fr minmax(280px, 320px);
+    display: flex;
+    justify-content: center; /* Center the content horizontally */
+    flex-wrap: wrap; /* Allow items to wrap to the next line on smaller screens */
     gap: 20px;
-    align-items: start;
 }
-
-@media (max-width: 1024px) {
-    .centeringWrapper {
-        grid-template-columns: 1fr;
-        justify-items: center;
-    }
-}
-
 
 .radarContainer {
     display: flex;
@@ -24,6 +16,7 @@
     font-family: 'Inter', sans-serif; 
     align-items: flex-start;
     box-sizing: border-box;
+    background-color: black;
 }
 
 /* 2. UNIVERSAL FONT OVERRIDE (CRITICAL FIX) 
@@ -38,17 +31,20 @@
 .leftPanel {
     display: flex;
     flex-direction: column;
+    flex: 1; /* Allow panel to grow and shrink */
+    min-width: 280px; /* Minimum width before wrapping */
+    max-width: 320px;
     gap: 12px;
     align-items: center;
     box-sizing: border-box;
     padding: 24px;
-    width: 100%;
-    max-width: 320px;
 }
 
 .middlePanel {
     display: flex;
     justify-content: center;
+    flex: 2; /* Allows the radar chart to take up more space */
+    min-width: 400px; /* Ensure chart has enough space */
 }
 
 /* Radar wrapper - flexible, fills remaining space */
