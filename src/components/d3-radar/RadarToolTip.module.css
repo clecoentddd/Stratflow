@@ -28,7 +28,7 @@
     align-items: center;
     justify-content: center;
     text-align: center;
-    background: rgba(10, 15, 15, 0.4);
+    background: #0a0f0f;
     backdrop-filter: blur(4px);
     color: #666;
     border-radius: 6px;
@@ -47,7 +47,7 @@
     box-sizing: border-box;
     border-radius: 6px;
     padding: 16px;
-    background: rgba(20, 25, 25, 0.7);
+    background: #141919;
     backdrop-filter: blur(6px);
     color: #e8e8e8;
     border: 1px solid rgba(0, 204, 136, 0.2);

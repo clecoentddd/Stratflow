@@ -72,5 +72,3 @@ export const radarConfig = {
 };
 
 export default radarConfig;
-
-    

@@ -62,9 +62,9 @@ const impactToSize: Record<RadarImpact, number> = {
 
 // Color (from Tolerance)
 const toleranceToColor: Record<RadarTolerance, string> = {
-    'High': 'hsl(var(--chart-2))',   // Green
-    'Medium': 'hsl(var(--chart-4))', // Amber
-    'Low': 'hsl(var(--chart-1))',    // Red
+    'High': '#16a34a',   // Green
+    'Medium': '#f59e0b', // Amber
+    'Low': '#ef4444',    // Red
 };
 
 
