@@ -25,7 +25,7 @@ export async function PUT(request: NextRequest, { params }: { params: { orgId: s
     // Command initiativeId must match found initiative
     if (command.initiativeId !== initiative.id) return NextResponse.json({ message: 'Item does not belong to specified initiative' }, { status: 400 });
 
-    if (command.text === undefined) {
+    if (command.text === undefined || command.text.trim() === '') {
       return NextResponse.json({ message: 'Text is required for update' }, { status: 400 });
     }
 
@@ -59,7 +59,9 @@ export async function PUT(request: NextRequest, { params }: { params: { orgId: s
 export async function DELETE(request: NextRequest, { params }: { params: { orgId: string, itemId: string } }) {
   try {
     const { orgId, itemId } = params;
-    const command: DeleteInitiativeItemCommand = await request.json();
+    // The body might be empty for a DELETE request, so we can't rely on it.
+    // We get the initiative ID from the query parameter if needed, but it is not for this operation
+    // as the item ID should be unique across the organization.
 
     // 1. Validation
      const organization = await getOrganizationByIdProjection(orgId);
@@ -67,10 +69,10 @@ export async function DELETE(request: NextRequest, { params }: { params: { orgId
 
     const initiative = organization.dashboard.strategies
         .flatMap(s => s.initiatives)
-        .find(i => i.id === command.initiativeId);
+        .find(i => i.steps.some(step => step.items.some(item => item.id === itemId)));
 
-    if (!initiative || !initiative.steps.some(step => step.items.some(item => item.id === itemId))) {
-        return NextResponse.json({ message: 'Item not found in the specified initiative' }, { status: 404 });
+    if (!initiative) {
+        return NextResponse.json({ message: 'Item not found in any initiative' }, { status: 404 });
     }
 
     // 2. Create Event
@@ -80,7 +82,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { orgId
       aggregateId: orgId,
       timestamp: new Date().toISOString(),
       payload: {
-        initiativeId: command.initiativeId,
+        initiativeId: initiative.id,
         itemId: itemId,
       },
     };
@@ -96,3 +98,5 @@ export async function DELETE(request: NextRequest, { params }: { params: { orgId
     return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
   }
 }
+
+    

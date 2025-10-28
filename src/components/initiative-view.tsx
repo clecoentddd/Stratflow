@@ -45,9 +45,7 @@ function InitiativeItemView({ item, orgId, initiativeId, stepKey, onUpdate, onDe
 
   const handleSave = () => {
     console.log(`InitiativeItemView (${item.id}): handleSave called.`);
-    if (editText.trim() || item.id.startsWith('temp-')) {
-      onUpdate(item.id, editText, stepKey);
-    }
+    onUpdate(item.id, editText, stepKey);
     setIsEditing(false);
   };
 
@@ -108,7 +106,7 @@ interface InitiativeViewProps {
   onInitiativeChange: () => void;
 }
 
-const iconMap = { Search, Milestone, ListChecks, Target };
+const iconMap: Record<string, React.ComponentType<any>> = { Search, Milestone, ListChecks, Target };
 
 export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiativeChange }: InitiativeViewProps) {
   const [initiative, setInitiative] = useState(initialInitiative);
@@ -171,6 +169,13 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
 
      // If the ID is temporary, it's a CREATE operation.
      if (itemId.startsWith('temp-')) {
+        // If the text is empty, just remove the temporary item without calling the API.
+        if (newText.trim() === '') {
+            console.log("New item text is empty, removing temporary item.");
+            handleDeleteInitiativeItem(itemId, stepKey);
+            return;
+        }
+
         const command: AddInitiativeItemCommand = {
             initiativeId: initiative.id,
             stepKey: stepKey,
@@ -259,7 +264,7 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
     }
 
     const command: DeleteInitiativeItemCommand = { initiativeId: initiative.id, itemId };
-     fireAndForget(`/api/organizations/${orgId}/initiative-items/${itemId}`, 'DELETE', command, "Failed to delete item.");
+     fireAndForget(`/api/organizations/${orgId}/initiative-items/${itemId}`, 'DELETE', {body: JSON.stringify(command)}, "Failed to delete item.");
   };
 
   const handleLinkRadarItems = (selectedIds: string[]) => {
