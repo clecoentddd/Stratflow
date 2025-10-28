@@ -64,9 +64,29 @@ const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: a
     };
 
     const drawCategoryLabels = (g: d3.Selection<SVGGElement, unknown, null, undefined>, radius: number) => {
-        const offset = radius * 1.15; // Place labels just outside the main circle
+        const offset = radius * 1.05; // Place labels just outside the main circle.
+        const angleOffset = Math.PI / 8; // Smaller offset to push labels towards corners.
+    
         Object.values(radarConfig.categories).forEach(cat => {
-            const angle = ((Math.PI / 2) * cat.quadrantIndex) + (Math.PI / 4); // Center angle of the quadrant
+            let angle;
+            // Adjust angle based on quadrant to push to corners
+            switch (cat.quadrantIndex) {
+                case 0: // bottom-right
+                    angle = (Math.PI / 2) * cat.quadrantIndex + angleOffset;
+                    break;
+                case 1: // bottom-left
+                     angle = (Math.PI / 2) * (cat.quadrantIndex + 1) - angleOffset;
+                    break;
+                case 2: // top-left
+                     angle = (Math.PI / 2) * cat.quadrantIndex + angleOffset;
+                    break;
+                case 3: // top-right
+                     angle = (Math.PI / 2) * (cat.quadrantIndex + 1) - angleOffset;
+                    break;
+                default:
+                    angle = ((Math.PI / 2) * cat.quadrantIndex) + (Math.PI / 4); // Fallback to center
+            }
+    
             const x = offset * Math.cos(angle);
             const y = offset * Math.sin(angle);
             
@@ -74,6 +94,7 @@ const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: a
                 .attr("x", x) 
                 .attr("y", y)
                 .attr("text-anchor", "middle")
+                .attr("dy", "0.35em") // Vertically center the text
                 .text(cat.label)
                 .classed(styles.categoryLabel, true)
                 .attr("data-quadrant", cat.quadrantIndex);
@@ -314,5 +335,7 @@ const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: a
 };
 
 export default RadarChart;
+
+    
 
     
