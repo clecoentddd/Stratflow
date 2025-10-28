@@ -23,6 +23,7 @@ const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: a
     const router = useRouter();
 
     const handleQuadrantZoom = (idx: number) => {
+        console.log("Zooming to quadrant index:", idx);
         setActiveQuadrant(activeQuadrant === idx ? null : idx);
     };
 
@@ -75,6 +76,7 @@ const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: a
             const x = offset * Math.cos(angle);
             let y = offset * Math.sin(angle);
             
+            // This is the adjustment we worked on
             if (cat.quadrantIndex === 2 || cat.quadrantIndex === 3) {
                 y *= 1.2;
             } else { 
@@ -222,15 +224,13 @@ const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: a
         
         if (activeQuadrant !== null) {
             scale = zoomFactor;
-            switch (activeQuadrant) {
-                case 0: tX -= (radius / 2); tY -= (radius / 2); break; // Bottom-right
-                case 1: tX += (radius / 2); tY -= (radius / 2); break; // Bottom-left
-                case 2: tX += (radius / 2); tY += (radius / 2); break; // Top-left
-                case 3: tX -= (radius / 2); tY += (radius / 2); break; // Top-right
-            }
+            // The faulty translation logic is now removed. We will just scale from the center.
+            console.log(`Active quadrant: ${activeQuadrant}. Scaling by ${scale} from center.`);
         }
         
         const transformString = `translate(${tX}, ${tY}) scale(${scale})`;
+        console.log(`Applied transform: ${transformString}`);
+
 
         drawQuadrants(g, radius);
         drawCategoryLabels(g, radius);
@@ -344,6 +344,7 @@ export default RadarChart;
 
 
     
+
 
 
 
