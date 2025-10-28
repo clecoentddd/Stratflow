@@ -191,14 +191,9 @@ export default function OrganizationStrategyPage() {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(command),
-      }).then(response => {
-        if (response.ok) {
-          toast({ title: "Success", description: "Initiative item saved." });
-        } else {
-           toast({ title: "Error", description: "Failed to save item.", variant: "destructive" });
-        }
       }).catch(err => {
-        toast({ title: "Error", description: "Failed to save item.", variant: "destructive" });
+        // Optional: handle background error, maybe with a less intrusive notification
+        console.error("Failed to save item in background:", err);
       });
   };
   
@@ -226,11 +221,6 @@ export default function OrganizationStrategyPage() {
         return newOrg;
     });
 
-    toast({
-        title: "Success",
-        description: "Initiative item deleted.",
-    });
-
     // Send command to backend
     fetch(`/api/organizations/${orgId}/initiative-items/${itemId}`, {
       method: 'DELETE',
@@ -241,6 +231,10 @@ export default function OrganizationStrategyPage() {
       if (!response.ok) {
         throw new Error('Failed to delete on server');
       }
+       toast({
+        title: "Success",
+        description: "Initiative item deleted.",
+      });
     })
     .catch((error) => {
       console.error(error);
