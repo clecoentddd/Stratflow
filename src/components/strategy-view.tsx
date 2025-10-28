@@ -21,7 +21,7 @@ import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 
 import type { Strategy, RadarItem, Initiative } from "@/lib/types";
-import type { CreateInitiativeCommand, UpdateStrategyCommand } from "@/lib/domain/strategy/commands";
+import type { CreateInitiativeCommand, UpdateStrategyCommand, DeleteInitiativeCommand } from "@/lib/domain/strategy/commands";
 import { InitiativeView } from "./initiative-view";
 import { v4 as uuidv4 } from "uuid";
 import { EditStrategyDialog } from "./edit-strategy-dialog";
@@ -53,7 +53,7 @@ export function StrategyView({
   // Sync state only when the initial prop ID changes, not on every re-render.
   useEffect(() => {
     setStrategy(initialStrategy);
-  }, [initialStrategy.id]); // Use a stable identifier
+  }, [initialStrategy]);
 
   const overallProgression = useMemo(() => {
     if (strategy.initiatives.length === 0) return 0;
@@ -68,12 +68,10 @@ export function StrategyView({
   const CurrentStateIcon = iconMap[currentStateInfo.iconName];
   
   const handleUpdateStrategy = useCallback((updatedValues: Partial<Strategy>) => {
-    // --- Optimistic UI Update ---
     const originalStrategy = strategy;
     const newStrategy = { ...originalStrategy, ...updatedValues };
     setStrategy(newStrategy);
 
-    // --- API Call ---
     const command: UpdateStrategyCommand = { ...updatedValues, strategyId: strategy.id };
     
     fetch(`/api/teams/${orgId}/strategies/${strategy.id}`, {
@@ -86,25 +84,22 @@ export function StrategyView({
             const errorData = await res.json().catch(() => ({}));
             throw new Error(errorData.message || `Failed to update strategy.`);
         }
-        // Success: Data is already updated optimistically, just re-sync silently
         onStrategyChange();
     })
     .catch(error => {
-        // --- Rollback on Failure ---
         console.error(error);
         toast({
             title: "Update Failed",
             description: "Could not save changes to the strategy. Reverting.",
             variant: "destructive"
         });
-        setStrategy(originalStrategy); // Revert to the original state
+        setStrategy(originalStrategy);
     });
 
   }, [strategy, orgId, onStrategyChange, toast]);
 
   const handleEditStrategy = async (description: string, timeframe: string) => {
     const originalStrategy = strategy;
-    // Optimistic update
     setStrategy(prev => ({...prev, description, timeframe}));
     setEditStrategyOpen(false);
 
@@ -130,10 +125,9 @@ export function StrategyView({
             title: "Strategy Updated",
             description: `The strategy has been successfully updated.`,
         });
-        onStrategyChange(); // Re-sync with server state
+        onStrategyChange();
     } catch (error: any) {
         console.error(error);
-        // Rollback optimistic update
         setStrategy(originalStrategy);
         toast({
             title: "Error",
@@ -180,6 +174,38 @@ export function StrategyView({
     });
 
   }, [strategy.id, orgId, toast, newInitiativeName, onStrategyChange]);
+
+  const handleDeleteInitiative = useCallback((initiativeId: string) => {
+    const originalInitiatives = strategy.initiatives;
+    
+    // Optimistic UI Update
+    setStrategy(prev => ({
+      ...prev,
+      initiatives: prev.initiatives.filter(i => i.id !== initiativeId)
+    }));
+
+    const command: DeleteInitiativeCommand = { strategyId: strategy.id, initiativeId };
+
+    fetch(`/api/teams/${orgId}/initiatives/${initiativeId}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(command),
+    })
+    .then(async res => {
+        if (!res.ok) {
+            const errorData = await res.json().catch(() => ({}));
+            throw new Error(errorData.message || 'Failed to delete initiative.');
+        }
+        toast({ title: "Initiative Deleted", variant: "destructive" });
+        // No need to call onStrategyChange on success, as optimistic update is done
+    })
+    .catch(error => {
+        console.error(error);
+        toast({ title: "Error", description: error.message, variant: "destructive" });
+        // Rollback
+        setStrategy(prev => ({ ...prev, initiatives: originalInitiatives }));
+    });
+  }, [strategy, orgId, toast, onStrategyChange]);
 
   const onInitiativeChanged = useCallback(() => {
     onStrategyChange();
@@ -255,6 +281,7 @@ export function StrategyView({
                               radarItems={radarItems}
                               orgId={orgId}
                               onInitiativeChange={onInitiativeChanged}
+                              onDeleteInitiative={handleDeleteInitiative}
                           />
                       ))}
                   </Accordion>

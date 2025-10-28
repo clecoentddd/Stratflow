@@ -1,6 +1,6 @@
 
 import type { Event } from '../teams/events';
-import type { StrategyState, InitiativeItem, InitiativeStep } from '@/lib/types';
+import type { StrategyState, InitiativeItem, InitiativeStep, Initiative } from '@/lib/types';
 import { newInitiativeTemplate } from '@/lib/data';
 
 // --- Strategy Events ---
@@ -39,6 +39,23 @@ export type InitiativeCreatedEvent = Event<
     }
   }
 >;
+
+export type InitiativeUpdatedEvent = Event<
+  'InitiativeUpdated',
+  {
+    initiativeId: string;
+    name: string;
+  }
+>;
+
+export type InitiativeDeletedEvent = Event<
+    'InitiativeDeleted',
+    {
+        initiativeId: string;
+        strategyId: string;
+    }
+>;
+
 
 export type InitiativeProgressUpdatedEvent = Event<
   'InitiativeProgressUpdated',
@@ -88,6 +105,8 @@ export type StrategyEvent =
   | StrategyCreatedEvent
   | StrategyUpdatedEvent
   | InitiativeCreatedEvent
+  | InitiativeUpdatedEvent
+  | InitiativeDeletedEvent
   | InitiativeProgressUpdatedEvent
   | InitiativeRadarItemsLinkedEvent
   | InitiativeItemAddedEvent

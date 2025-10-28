@@ -114,6 +114,35 @@ export const applyEventsToTeam = (
                 })
             }
         };
+
+      case 'InitiativeUpdated':
+        return {
+            ...team,
+            dashboard: {
+                ...team.dashboard,
+                strategies: team.dashboard.strategies.map(s => ({
+                    ...s,
+                    initiatives: s.initiatives.map(i =>
+                        i.id === event.payload.initiativeId ? { ...i, name: event.payload.name } : i
+                    )
+                }))
+            }
+        };
+      
+      case 'InitiativeDeleted':
+        return {
+            ...team,
+            dashboard: {
+                ...team.dashboard,
+                strategies: team.dashboard.strategies.map(s => {
+                    if (s.id !== event.payload.strategyId) return s;
+                    return {
+                        ...s,
+                        initiatives: s.initiatives.filter(i => i.id !== event.payload.initiativeId)
+                    };
+                })
+            }
+        };
       
       case 'InitiativeProgressUpdated':
         return {

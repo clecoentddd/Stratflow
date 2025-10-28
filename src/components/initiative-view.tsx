@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from "react";
 import Link from 'next/link';
-import { Plus, Trash2, Search, Milestone, ListChecks, Target } from "lucide-react";
+import { Plus, Trash2, Search, Milestone, ListChecks, Target, Edit, MoreVertical } from "lucide-react";
 import { v4 as uuidv4 } from 'uuid';
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -18,9 +18,12 @@ import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { LinkRadarItemsDialog } from './link-radar-items-dialog';
+import { EditInitiativeDialog } from './edit-initiative-dialog';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import type { Initiative, InitiativeStepKey, InitiativeItem as InitiativeItemType, RadarItem } from "@/lib/types";
-import type { AddInitiativeItemCommand, UpdateInitiativeItemCommand, DeleteInitiativeItemCommand } from '@/lib/domain/strategy/commands';
+import type { AddInitiativeItemCommand, UpdateInitiativeItemCommand, UpdateInitiativeCommand } from '@/lib/domain/strategy/commands';
 
 interface InitiativeItemViewProps {
   item: InitiativeItemType;
@@ -106,13 +109,16 @@ interface InitiativeViewProps {
   radarItems: RadarItem[];
   orgId: string;
   onInitiativeChange: () => void;
+  onDeleteInitiative: (initiativeId: string) => void;
 }
 
 const iconMap: Record<string, React.ComponentType<any>> = { Search, Milestone, ListChecks, Target };
 
-export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiativeChange }: InitiativeViewProps) {
+export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiativeChange, onDeleteInitiative }: InitiativeViewProps) {
   const [initiative, setInitiative] = useState(initialInitiative);
   const [isLinkRadarOpen, setLinkRadarOpen] = useState(false);
+  const [isEditInitiativeOpen, setEditInitiativeOpen] = useState(false);
+  const [isDeleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -141,7 +147,7 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
 
 
   const handleUpdateInitiative = (updatedValues: Partial<Initiative>) => {
-    const command = { ...updatedValues };
+    const command: UpdateInitiativeCommand = { ...updatedValues, initiativeId: initiative.id };
     setInitiative(prev => ({ ...prev, ...updatedValues })); 
     
     const promise = fetch(`/api/teams/${orgId}/initiatives/${initiative.id}`, {
@@ -150,6 +156,21 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
         body: JSON.stringify(command)
     });
     fireAndForget(promise, "Could not update initiative.");
+  };
+
+  const handleEditName = (newName: string) => {
+    const command: UpdateInitiativeCommand = { name: newName, initiativeId: initiative.id };
+    setInitiative(prev => ({ ...prev, name: newName }));
+    const promise = fetch(`/api/teams/${orgId}/initiatives/${initiative.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(command)
+    });
+    fireAndForget(promise, "Could not update initiative name.");
+  };
+
+  const handleDeleteConfirmed = () => {
+    onDeleteInitiative(initiative.id);
   };
 
   const handleAddInitiativeItem = (stepKey: InitiativeStepKey) => {
@@ -259,6 +280,7 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
     .filter((item): item is RadarItem => !!item);
 
   return (
+    <>
     <AccordionItem value={initiative.id}>
       <AccordionTrigger className="hover:bg-accent/50 px-4 rounded-md">
         <div className="flex-1 text-left">
@@ -267,6 +289,25 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
             <Progress value={initiative.progression} className="h-1 w-32" />
             <span className="text-xs text-muted-foreground">{initiative.progression}%</span>
           </div>
+        </div>
+        <div className="flex items-center gap-1 pr-2">
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon" className="h-8 w-8" onClick={(e) => e.stopPropagation()}>
+                        <MoreVertical className="h-4 w-4" />
+                    </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
+                    <DropdownMenuItem onClick={() => setEditInitiativeOpen(true)}>
+                        <Edit className="mr-2 h-4 w-4" />
+                        <span>Edit Name</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setDeleteConfirmOpen(true)} className="text-destructive">
+                        <Trash2 className="mr-2 h-4 w-4" />
+                        <span>Delete Initiative</span>
+                    </DropdownMenuItem>
+                </DropdownMenuContent>
+            </DropdownMenu>
         </div>
       </AccordionTrigger>
       <AccordionContent className="p-4 bg-muted/20">
@@ -342,5 +383,29 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
         />
       </AccordionContent>
     </AccordionItem>
+    <EditInitiativeDialog
+        isOpen={isEditInitiativeOpen}
+        onOpenChange={setEditInitiativeOpen}
+        initiativeName={initiative.name}
+        onSave={handleEditName}
+    />
+     <AlertDialog open={isDeleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
+        <AlertDialogContent>
+            <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+                This action cannot be undone. This will permanently delete the initiative
+                and all of its associated items.
+            </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteConfirmed} className="bg-destructive hover:bg-destructive/90">
+                Delete
+            </AlertDialogAction>
+            </AlertDialogFooter>
+        </AlertDialogContent>
+     </AlertDialog>
+    </>
   );
 }
