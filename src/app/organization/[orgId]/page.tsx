@@ -18,9 +18,12 @@ export default function OrganizationStrategyPage() {
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
 
+  console.log("--- OrganizationStrategyPage: Render ---");
+
   const fetchOrganizationData = useCallback(async (showLoading = true) => {
     if (!orgId) return;
     
+    console.log("OrganizationStrategyPage: fetchOrganizationData called");
     if (showLoading) {
       setIsLoading(true);
     }
@@ -39,6 +42,7 @@ export default function OrganizationStrategyPage() {
         notFound();
         return;
       }
+      console.log("OrganizationStrategyPage: Data fetched successfully", data);
       setOrganization(data);
     } catch (error) {
       console.error("Failed to fetch organization from API", error);
@@ -51,6 +55,7 @@ export default function OrganizationStrategyPage() {
   }, [orgId, toast]);
 
   useEffect(() => {
+    console.log("OrganizationStrategyPage: useEffect[orgId] triggered");
     fetchOrganizationData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [orgId]);

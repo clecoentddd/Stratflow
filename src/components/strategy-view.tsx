@@ -20,9 +20,11 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 
-import type { Strategy, RadarItem } from "@/lib/types";
+import type { Strategy, RadarItem, Initiative } from "@/lib/types";
 import type { CreateInitiativeCommand, UpdateStrategyCommand } from "@/lib/domain/strategy/commands";
 import { InitiativeView } from "./initiative-view";
+import { v4 as uuidv4 } from "uuid";
+import { newInitiativeTemplate } from "@/lib/data";
 
 const iconMap = { FilePenLine, Rocket, CheckCircle2, Archive };
 
@@ -44,6 +46,8 @@ export function StrategyView({
   const [strategy, setStrategy] = useState(initialStrategy);
   const [newInitiativeName, setNewInitiativeName] = useState("");
   const { toast } = useToast();
+
+  console.log(`--- StrategyView (${strategy.description}): Render ---`);
 
   const overallProgression = useMemo(() => {
     if (strategy.initiatives.length === 0) return 0;
@@ -75,9 +79,6 @@ export function StrategyView({
         description: successMessage,
       });
 
-      // After a successful API call that changes data, trigger a refresh from parent
-      onStrategyChange();
-
     } catch (error: any) {
       console.error(error);
       toast({
@@ -85,25 +86,74 @@ export function StrategyView({
         description: error.message || "An unexpected error occurred.",
         variant: "destructive",
       });
-      // Optionally roll back optimistic updates here
+      // For critical failures, a rollback might be needed by re-fetching
+      onStrategyChange();
     }
   };
 
   const handleUpdateStrategy = (updatedValues: Partial<Strategy>) => {
     const command: UpdateStrategyCommand = { strategyId: strategy.id, ...updatedValues };
+    console.log(`StrategyView: handleUpdateStrategy for ${strategy.id}`, command);
     setStrategy(prev => ({...prev, ...updatedValues})); // Optimistic update
     handleApiCall(`/api/organizations/${orgId}/strategies/${strategy.id}`, 'PUT', command, "Strategy has been updated.");
   };
 
   const handleCreateInitiative = (initiativeName: string) => {
     const command: CreateInitiativeCommand = { strategyId: strategy.id, name: initiativeName };
-    handleApiCall(`/api/organizations/${orgId}/initiatives`, 'POST', command, `Initiative "${initiativeName}" has been added.`);
+    console.log(`StrategyView: handleCreateInitiative for ${strategy.id}`, command);
+    
+    // --- Optimistic UI Update ---
+    const tempId = `init-${uuidv4()}`;
+    const newInitiative = newInitiativeTemplate(tempId, initiativeName);
+    setStrategy(prev => ({
+        ...prev,
+        initiatives: [...prev.initiatives, newInitiative]
+    }));
+    setNewInitiativeName("");
+    // -------------------------
+
+    // Fire and forget API call
+    fetch(`/api/organizations/${orgId}/initiatives`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(command),
+    })
+    .then(async res => {
+        if (!res.ok) {
+            const errorData = await res.json();
+            throw new Error(errorData.message || 'Failed to create initiative');
+        }
+        return res.json();
+    })
+    .then(data => {
+        // If the API call is successful, we might get the real ID back
+        // We can silently update our temporary item with the real one
+        console.log("Initiative created successfully, server data:", data);
+        setStrategy(prev => {
+            const newInitiatives = prev.initiatives.map(init => 
+                init.id === tempId ? { ...init, id: data.initiativeId } : init
+            );
+            return { ...prev, initiatives: newInitiatives };
+        });
+    })
+    .catch(error => {
+        console.error("Failed to create initiative:", error);
+        toast({
+            title: "Error",
+            description: `Could not create initiative: ${error.message}`,
+            variant: "destructive",
+        });
+        // Rollback the optimistic update
+        setStrategy(prev => ({
+            ...prev,
+            initiatives: prev.initiatives.filter(init => init.id !== tempId)
+        }));
+    });
   };
 
   const handleAddInitiative = () => {
     if (newInitiativeName.trim()) {
       handleCreateInitiative(newInitiativeName.trim());
-      setNewInitiativeName("");
     }
   };
 

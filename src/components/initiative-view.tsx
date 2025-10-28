@@ -38,20 +38,23 @@ function InitiativeItemView({ item, orgId, initiativeId, onUpdate, onDelete }: I
 
   useEffect(() => {
     // If the item is new (text is empty), automatically enter editing mode.
+    // This effect will run whenever the item prop changes.
     if (item.text === "") {
       setIsEditing(true);
     }
   }, [item.text]);
 
+
   const handleSave = () => {
+    console.log(`InitiativeItemView (${item.id}): handleSave called.`);
     if (editText.trim() !== item.text) {
-      // Call the parent's handler to update the state and fire the API call
       onUpdate(item.id, editText);
     }
     setIsEditing(false);
   };
 
   const handleCancel = () => {
+    console.log(`InitiativeItemView (${item.id}): handleCancel called.`);
     // If the item was new and is being cancelled, trigger deletion.
     if (item.text === "") {
         onDelete(item.id);
@@ -111,6 +114,8 @@ export function InitiativeView({ initialInitiative, radarItems, orgId }: Initiat
   const [isLinkRadarOpen, setLinkRadarOpen] = useState(false);
   const { toast } = useToast();
 
+  console.log(`--- InitiativeView (${initiative.name}): Render ---`);
+
   const fireAndForget = (url: string, method: string, body: any, errorMessage: string) => {
     fetch(url, {
       method,
@@ -124,6 +129,7 @@ export function InitiativeView({ initialInitiative, radarItems, orgId }: Initiat
 
   const handleUpdateInitiative = (updatedValues: Partial<Initiative>) => {
     const command = { ...updatedValues };
+    console.log(`InitiativeView: handleUpdateInitiative for ${initiative.id}`, command);
     setInitiative(prev => ({ ...prev, ...updatedValues })); // Optimistic update
     fireAndForget(`/api/organizations/${orgId}/initiatives/${initiative.id}`, 'PUT', command, "Could not update initiative progression.");
   };
@@ -132,6 +138,7 @@ export function InitiativeView({ initialInitiative, radarItems, orgId }: Initiat
     const tempId = `temp-${uuidv4()}`;
     const newItem: InitiativeItem = { id: tempId, text: "" };
     
+    console.log(`InitiativeView: handleAddInitiativeItem to step ${stepKey}`, newItem);
     // Optimistic UI Update
     setInitiative(prev => {
         const newInitiative = JSON.parse(JSON.stringify(prev));
@@ -152,6 +159,7 @@ export function InitiativeView({ initialInitiative, radarItems, orgId }: Initiat
     })
     .then(res => res.json())
     .then((savedItem: InitiativeItem) => {
+      console.log("Initiative Item created successfully, server data:", savedItem);
       // Silently replace temporary item with the one from the server
       setInitiative(prev => {
           const newInitiative = JSON.parse(JSON.stringify(prev));
@@ -180,6 +188,7 @@ export function InitiativeView({ initialInitiative, radarItems, orgId }: Initiat
   };
 
   const handleUpdateInitiativeItem = (itemId: string, newText: string) => {
+     console.log(`InitiativeView: handleUpdateInitiativeItem for ${itemId}`, { text: newText });
      // Optimistic update
     setInitiative(prev => {
         const newInitiative = JSON.parse(JSON.stringify(prev));
@@ -198,6 +207,7 @@ export function InitiativeView({ initialInitiative, radarItems, orgId }: Initiat
   };
 
   const handleDeleteInitiativeItem = (itemId: string) => {
+    console.log(`InitiativeView: handleDeleteInitiativeItem for ${itemId}`);
     // Optimistic update
      setInitiative(prev => {
         const newInitiative = JSON.parse(JSON.stringify(prev));

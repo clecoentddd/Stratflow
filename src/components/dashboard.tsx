@@ -38,6 +38,8 @@ export function StrategyDashboard({
   const [isCreateStrategyOpen, setCreateStrategyOpen] = useState(false);
   const { toast } = useToast();
 
+  console.log("--- StrategyDashboard: Render ---");
+
   const sortedStrategies = useMemo(() => {
     return [...dashboard.strategies].sort((a, b) => {
         return strategyOrder[a.state] - strategyOrder[b.state];
@@ -45,6 +47,7 @@ export function StrategyDashboard({
   }, [dashboard.strategies]);
 
   const handleCreateStrategy = async (description: string, timeframe: string) => {
+    console.log("StrategyDashboard: handleCreateStrategy called");
     setCreateStrategyOpen(false);
     const command: CreateStrategyCommand = { description, timeframe };
     
