@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from "react";
 import Link from 'next/link';
-import { Plus, Trash2, Search, Milestone, ListChecks, Target, Link2 } from "lucide-react";
+import { Plus, Trash2, Search, Milestone, ListChecks, Target, GripVertical, FilePenLine, Rocket, CheckCircle2, Archive } from "lucide-react";
 import { v4 as uuidv4 } from 'uuid';
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -24,41 +24,41 @@ import type { AddInitiativeItemCommand, UpdateInitiativeItemCommand, DeleteIniti
 
 interface InitiativeItemViewProps {
   item: InitiativeItemType;
-  initiativeId: string;
-  orgId: string;
-  stepKey: InitiativeStepKey;
-  onUpdate: (itemId: string, newText: string, stepKey: InitiativeStepKey) => void;
-  onDelete: (itemId: string, stepKey: InitiativeStepKey) => void;
+  onSave: (itemId: string, newText: string) => void;
+  onDelete: (itemId: string) => void;
 }
 
-function InitiativeItemView({ item, orgId, initiativeId, stepKey, onUpdate, onDelete }: InitiativeItemViewProps) {
+function InitiativeItemView({ item, onSave, onDelete }: InitiativeItemViewProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editText, setEditText] = useState(item.text);
 
   useEffect(() => {
-    // If the item is new (text is empty), automatically enter editing mode.
     if (item.text === "" && item.id.startsWith('temp-')) {
       setIsEditing(true);
     }
   }, [item]);
 
-
   const handleSave = () => {
-    console.log(`InitiativeItemView (${item.id}): handleSave called.`);
-    onUpdate(item.id, editText, stepKey);
+    onSave(item.id, editText);
     setIsEditing(false);
   };
 
   const handleCancel = () => {
-    console.log(`InitiativeItemView (${item.id}): handleCancel called.`);
     // If the item was new and is being cancelled, trigger deletion.
     if (item.text === "" && item.id.startsWith('temp-')) {
-        onDelete(item.id, stepKey);
+        onDelete(item.id);
     } else {
         setEditText(item.text);
         setIsEditing(false);
     }
   };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        handleSave();
+    }
+  }
 
   if (isEditing) {
     return (
@@ -70,10 +70,11 @@ function InitiativeItemView({ item, orgId, initiativeId, stepKey, onUpdate, onDe
           autoFocus
           rows={3}
           className="text-sm"
-          onBlur={handleSave} // Save when the user clicks away
+          onBlur={handleSave}
+          onKeyDown={handleKeyDown}
         />
         <div className="flex justify-between items-center">
-            <Button size="icon" variant="ghost" className="text-destructive hover:bg-destructive/10" onClick={() => onDelete(item.id, stepKey)}>
+            <Button size="icon" variant="ghost" className="text-destructive hover:bg-destructive/10" onClick={() => onDelete(item.id)}>
                 <Trash2 className="h-4 w-4" />
             </Button>
             <div className="flex gap-2">
@@ -113,39 +114,32 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
   const [isLinkRadarOpen, setLinkRadarOpen] = useState(false);
   const { toast } = useToast();
 
+  useEffect(() => {
+    setInitiative(initialInitiative);
+  }, [initialInitiative]);
+
   console.log(`--- InitiativeView (${initiative.name}): Render ---`);
-
-  const fireAndForget = (url: string, method: string, body: any, errorMessage: string) => {
-    console.log(`InitiativeView: fireAndForget (${method} ${url})`, body);
-    fetch(url, {
-      method,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-    }).then(async res => {
-        if (!res.ok) {
-            const errorData = await res.json().catch(() => ({ message: "No error details from server."}));
-            console.error("Fire-and-forget failed server-side.", errorData);
-            throw new Error(errorData.message || errorMessage);
-        }
-        // If it's a create operation, we might want to sync back the real ID.
-        // For now, we rely on the parent's broader refresh mechanism.
-        if (method === 'POST') {
-          onInitiativeChange(); // Trigger a sync to get the real ID
-        }
-    }).catch(err => {
-      console.error(errorMessage, err);
-      toast({ title: "Save Error", description: err.message || errorMessage, variant: "destructive" });
-      onInitiativeChange(); // On failure, trigger a hard refresh from parent
-    });
-  };
-
+  
   const handleUpdateInitiative = (updatedValues: Partial<Initiative>) => {
     const command = { ...updatedValues };
     console.log(`InitiativeView: handleUpdateInitiative for ${initiative.id}`, command);
-    // Optimistic update
     setInitiative(prev => ({ ...prev, ...updatedValues })); 
-    // Fire and forget, parent will refresh on error
-    fireAndForget(`/api/organizations/${orgId}/initiatives/${initiative.id}`, 'PUT', command, "Could not update initiative progression.");
+    fetch(`/api/organizations/${orgId}/initiatives/${initiative.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(command)
+    })
+    .then(async res => {
+        if (!res.ok) {
+            const errorData = await res.json().catch(() => ({}));
+            throw new Error(errorData.message || "Could not update initiative progression.");
+        }
+    })
+    .catch(err => {
+      console.error(err);
+      toast({ title: "Save Error", description: err.message, variant: "destructive" });
+      onInitiativeChange();
+    });
   };
 
   const handleAddInitiativeItem = (stepKey: InitiativeStepKey) => {
@@ -153,7 +147,6 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
     const newItem: InitiativeItemType = { id: tempId, text: "" };
     
     console.log(`InitiativeView: handleAddInitiativeItem to step ${stepKey}`, newItem);
-    // Optimistic UI Update - NO API CALL
     setInitiative(prev => {
         const newInitiative = JSON.parse(JSON.stringify(prev));
         const step = newInitiative.steps.find((s: any) => s.key === stepKey);
@@ -163,71 +156,47 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
         return newInitiative;
     });
   };
+  
+  const handleSaveInitiativeItem = (itemId: string, newText: string, stepKey: InitiativeStepKey) => {
+    console.log(`InitiativeView: handleSaveInitiativeItem for ${itemId}`, { text: newText });
 
-  const handleUpdateInitiativeItem = (itemId: string, newText: string, stepKey: InitiativeStepKey) => {
-     console.log(`InitiativeView: handleUpdateInitiativeItem for ${itemId}`, { text: newText });
+    // If the text is empty for a new temporary item, just delete it locally.
+    if (itemId.startsWith('temp-') && newText.trim() === '') {
+        handleDeleteInitiativeItem(itemId, stepKey);
+        return;
+    }
 
-     // If the ID is temporary, it's a CREATE operation.
-     if (itemId.startsWith('temp-')) {
-        // If the text is empty, just remove the temporary item without calling the API.
-        if (newText.trim() === '') {
-            console.log("New item text is empty, removing temporary item.");
-            handleDeleteInitiativeItem(itemId, stepKey);
-            return;
-        }
-
+    // CREATE (POST) if the item is new
+    if (itemId.startsWith('temp-')) {
         const command: AddInitiativeItemCommand = {
             initiativeId: initiative.id,
-            stepKey: stepKey,
-            item: { id: '', text: newText }, // Backend will generate ID.
+            stepKey,
+            item: { id: '', text: newText }, 
         };
-
-        // Optimistically update the text of the temporary item
-        setInitiative(prev => {
-            const newInitiative = JSON.parse(JSON.stringify(prev));
-            for (const step of newInitiative.steps) {
-                const item = step.items.find((i: InitiativeItemType) => i.id === itemId);
-                if (item) {
-                    item.text = newText;
-                    break;
-                }
-            }
-            return newInitiative;
-        });
-
-        // Fire a CREATE request, and on success, replace the temp item with the real one.
         fetch(`/api/organizations/${orgId}/initiative-items`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(command)
         })
         .then(res => {
-            if(!res.ok) throw new Error("Server failed to create item.");
+            if (!res.ok) throw new Error("Server failed to create item.");
             return res.json();
         })
         .then((savedItem: InitiativeItemType) => {
             console.log("Item created, replacing temp item", { tempId: itemId, savedItem });
-            // Silently replace the temporary item with the final one from the server.
-            setInitiative(prev => {
-                const newInitiative = JSON.parse(JSON.stringify(prev));
-                for (const step of newInitiative.steps) {
-                    const itemIndex = step.items.findIndex((i: InitiativeItemType) => i.id === itemId);
-                    if (itemIndex !== -1) {
-                        step.items[itemIndex] = savedItem;
-                        break;
-                    }
-                }
-                return newInitiative;
-            })
+            // Full refresh to sync state correctly after creation
+            onInitiativeChange(); 
         })
         .catch(err => {
             console.error(err);
-            toast({ title: "Error", description: "Could not create item.", variant: "destructive" });
+            toast({ title: "Error", description: err.message, variant: "destructive" });
             onInitiativeChange(); // Hard refresh on failure
         });
-
-     } else {
-        // This is a standard UPDATE operation for an existing item.
+    } else {
+        // UPDATE (PUT) if the item already exists
+        const command: UpdateInitiativeItemCommand = { initiativeId: initiative.id, itemId, text: newText };
+        
+        // Optimistic update for existing items
         setInitiative(prev => {
             const newInitiative = JSON.parse(JSON.stringify(prev));
             for (const step of newInitiative.steps) {
@@ -240,16 +209,22 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
             return newInitiative;
         });
 
-        const command: UpdateInitiativeItemCommand = { initiativeId: initiative.id, itemId, text: newText };
-        fireAndForget(`/api/organizations/${orgId}/initiative-items/${itemId}`, 'PUT', command, "Could not save item changes.");
-     }
+        fetch(`/api/organizations/${orgId}/initiative-items/${itemId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(command)
+        }).catch(err => {
+            console.error("Could not save item changes.", err);
+            toast({ title: "Save Error", description: "Could not save item changes.", variant: "destructive" });
+            onInitiativeChange(); // Rollback on error
+        });
+    }
   };
 
   const handleDeleteInitiativeItem = (itemId: string, stepKey: InitiativeStepKey) => {
     console.log(`InitiativeView: handleDeleteInitiativeItem for ${itemId}`);
     
-    // Optimistic update
-     setInitiative(prev => {
+    setInitiative(prev => {
         const newInitiative = JSON.parse(JSON.stringify(prev));
         const step = newInitiative.steps.find((s: any) => s.key === stepKey);
         if (step) {
@@ -258,13 +233,14 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
         return newInitiative;
     });
     
-    // If the item was temporary, no need to call the API.
-    if (itemId.startsWith('temp-')) {
-        return;
-    }
+    if (itemId.startsWith('temp-')) return;
 
-    const command: DeleteInitiativeItemCommand = { initiativeId: initiative.id, itemId };
-     fireAndForget(`/api/organizations/${orgId}/initiative-items/${itemId}`, 'DELETE', {body: JSON.stringify(command)}, "Failed to delete item.");
+    fetch(`/api/organizations/${orgId}/initiative-items/${itemId}`, { method: 'DELETE' })
+    .catch(err => {
+        console.error("Failed to delete item.", err);
+        toast({ title: "Delete Error", description: "Failed to delete item.", variant: "destructive" });
+        onInitiativeChange();
+    });
   };
 
   const handleLinkRadarItems = (selectedIds: string[]) => {
@@ -338,11 +314,8 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
                     <InitiativeItemView 
                       key={item.id}
                       item={item}
-                      orgId={orgId}
-                      initiativeId={initiative.id}
-                      stepKey={step.key}
-                      onUpdate={handleUpdateInitiativeItem}
-                      onDelete={handleDeleteInitiativeItem}
+                      onSave={(itemId, newText) => handleSaveInitiativeItem(itemId, newText, step.key)}
+                      onDelete={(itemId) => handleDeleteInitiativeItem(itemId, step.key)}
                     />
                 )) : (
                     <p className="text-sm text-muted-foreground text-center py-2">No items yet.</p>
@@ -364,5 +337,3 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
     </AccordionItem>
   );
 }
-
-    
