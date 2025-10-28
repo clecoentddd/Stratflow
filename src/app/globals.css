@@ -41,6 +41,7 @@ body {
     --sidebar-accent-foreground: 222.2 84% 4.9%;
     --sidebar-border: 214.3 31.8% 91.4%;
     --sidebar-ring: 346.8 77.2% 49.8%;
+    --black: 0 0% 0%;
   }
   .dark {
     --background: 220 15% 10%; /* Dark Blue-Grey */
@@ -75,6 +76,7 @@ body {
     --sidebar-accent-foreground: 210 40% 98%;
     --sidebar-border: 217.2 32.6% 17.5%;
     --sidebar-ring: 346.8 77.2% 49.8%;
+    --black: 0 0% 0%;
   }
 }
 
