@@ -62,6 +62,7 @@ export function StrategyView({
   const CurrentStateIcon = iconMap[currentStateInfo.iconName];
   
   const handleApiCall = async (url: string, method: string, body: any, successMessage: string) => {
+    console.log(`StrategyView: handleApiCall (${method} ${url})`, body);
     try {
       const response = await fetch(url, {
         method,
@@ -78,6 +79,8 @@ export function StrategyView({
         title: "Success",
         description: successMessage,
       });
+      // After a successful API call that changes data, we should re-fetch from the parent.
+      onStrategyChange();
 
     } catch (error: any) {
       console.error(error);
@@ -94,7 +97,9 @@ export function StrategyView({
   const handleUpdateStrategy = (updatedValues: Partial<Strategy>) => {
     const command: UpdateStrategyCommand = { strategyId: strategy.id, ...updatedValues };
     console.log(`StrategyView: handleUpdateStrategy for ${strategy.id}`, command);
-    setStrategy(prev => ({...prev, ...updatedValues})); // Optimistic update
+    // Optimistic update of local state
+    setStrategy(prev => ({...prev, ...updatedValues}));
+    // Fire API call, which will trigger parent refresh on success/failure
     handleApiCall(`/api/organizations/${orgId}/strategies/${strategy.id}`, 'PUT', command, "Strategy has been updated.");
   };
 
@@ -102,18 +107,8 @@ export function StrategyView({
     const command: CreateInitiativeCommand = { strategyId: strategy.id, name: initiativeName };
     console.log(`StrategyView: handleCreateInitiative for ${strategy.id}`, command);
     
-    // --- Optimistic UI Update ---
-    const tempId = `init-${uuidv4()}`;
-    const newInitiative = newInitiativeTemplate(tempId, initiativeName);
-    setStrategy(prev => ({
-        ...prev,
-        initiatives: [...prev.initiatives, newInitiative]
-    }));
-    setNewInitiativeName("");
-    // -------------------------
-
     // Fire and forget API call
-    fetch(`/api/organizations/${orgId}/initiatives`, {
+     fetch(`/api/organizations/${orgId}/initiatives`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(command),
@@ -126,15 +121,9 @@ export function StrategyView({
         return res.json();
     })
     .then(data => {
-        // If the API call is successful, we might get the real ID back
-        // We can silently update our temporary item with the real one
         console.log("Initiative created successfully, server data:", data);
-        setStrategy(prev => {
-            const newInitiatives = prev.initiatives.map(init => 
-                init.id === tempId ? { ...init, id: data.initiativeId } : init
-            );
-            return { ...prev, initiatives: newInitiatives };
-        });
+        toast({ title: "Success", description: `Initiative "${initiativeName}" created.` });
+        onStrategyChange(); // Tell parent to re-fetch data
     })
     .catch(error => {
         console.error("Failed to create initiative:", error);
@@ -143,12 +132,10 @@ export function StrategyView({
             description: `Could not create initiative: ${error.message}`,
             variant: "destructive",
         });
-        // Rollback the optimistic update
-        setStrategy(prev => ({
-            ...prev,
-            initiatives: prev.initiatives.filter(init => init.id !== tempId)
-        }));
+        onStrategyChange(); // Re-fetch to rollback any inconsistencies
     });
+
+    setNewInitiativeName("");
   };
 
   const handleAddInitiative = () => {
@@ -220,6 +207,7 @@ export function StrategyView({
                             initialInitiative={initiative} 
                             radarItems={radarItems}
                             orgId={orgId}
+                            onInitiativeChange={onStrategyChange}
                         />
                     ))}
                 </Accordion>

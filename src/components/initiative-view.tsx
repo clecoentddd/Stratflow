@@ -42,7 +42,7 @@ function InitiativeItemView({ item, orgId, initiativeId, onUpdate, onDelete }: I
     if (item.text === "") {
       setIsEditing(true);
     }
-  }, [item.text]);
+  }, [item]);
 
 
   const handleSave = () => {
@@ -107,9 +107,10 @@ interface InitiativeViewProps {
   initialInitiative: Initiative;
   radarItems: RadarItem[];
   orgId: string;
+  onInitiativeChange: () => void;
 }
 
-export function InitiativeView({ initialInitiative, radarItems, orgId }: InitiativeViewProps) {
+export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiativeChange }: InitiativeViewProps) {
   const [initiative, setInitiative] = useState(initialInitiative);
   const [isLinkRadarOpen, setLinkRadarOpen] = useState(false);
   const { toast } = useToast();
@@ -117,6 +118,7 @@ export function InitiativeView({ initialInitiative, radarItems, orgId }: Initiat
   console.log(`--- InitiativeView (${initiative.name}): Render ---`);
 
   const fireAndForget = (url: string, method: string, body: any, errorMessage: string) => {
+    console.log(`InitiativeView: fireAndForget (${method} ${url})`, body);
     fetch(url, {
       method,
       headers: { 'Content-Type': 'application/json' },
@@ -124,13 +126,16 @@ export function InitiativeView({ initialInitiative, radarItems, orgId }: Initiat
     }).catch(err => {
       console.error(errorMessage, err);
       toast({ title: "Save Error", description: errorMessage, variant: "destructive" });
+      onInitiativeChange(); // On failure, trigger a hard refresh from parent
     });
   };
 
   const handleUpdateInitiative = (updatedValues: Partial<Initiative>) => {
     const command = { ...updatedValues };
     console.log(`InitiativeView: handleUpdateInitiative for ${initiative.id}`, command);
-    setInitiative(prev => ({ ...prev, ...updatedValues })); // Optimistic update
+    // Optimistic update
+    setInitiative(prev => ({ ...prev, ...updatedValues })); 
+    // Fire and forget, parent will refresh on error
     fireAndForget(`/api/organizations/${orgId}/initiatives/${initiative.id}`, 'PUT', command, "Could not update initiative progression.");
   };
 
@@ -157,7 +162,10 @@ export function InitiativeView({ initialInitiative, radarItems, orgId }: Initiat
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(command),
     })
-    .then(res => res.json())
+    .then(res => {
+      if (!res.ok) throw new Error("Server failed to create item.");
+      return res.json();
+    })
     .then((savedItem: InitiativeItem) => {
       console.log("Initiative Item created successfully, server data:", savedItem);
       // Silently replace temporary item with the one from the server
@@ -176,14 +184,8 @@ export function InitiativeView({ initialInitiative, radarItems, orgId }: Initiat
     .catch(err => {
         console.error("Failed to add item:", err);
         toast({ title: "Error", description: "Failed to add item. It may not be saved.", variant: "destructive" });
-        // Rollback optimistic update
-        setInitiative(prev => {
-            const newInitiative = JSON.parse(JSON.stringify(prev));
-            for (const step of newInitiative.steps) {
-                step.items = step.items.filter((i: InitiativeItem) => i.id !== tempId);
-            }
-            return newInitiative;
-        })
+        // Rollback optimistic update by telling parent to refetch
+        onInitiativeChange();
     });
   };
 
