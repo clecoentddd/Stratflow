@@ -137,7 +137,7 @@ export function StrategyView({
   };
 
   const handleCreateInitiative = useCallback(async () => {
-    if (!newInitiativeName.trim() || isCreatingInitiative) {
+    if (!newInitiativeName.trim() || isCreatingInitiative || isSaving) {
       return;
     }
 
@@ -177,7 +177,7 @@ export function StrategyView({
     } finally {
         setCreatingInitiative(false);
     }
-  }, [strategy.id, orgId, toast, newInitiativeName, onStrategyChange, isCreatingInitiative]);
+  }, [strategy.id, orgId, toast, newInitiativeName, onStrategyChange, isCreatingInitiative, isSaving]);
 
   const handleDeleteInitiative = useCallback((initiativeId: string, strategyId: string) => {
     const originalInitiatives = [...strategy.initiatives];
@@ -218,7 +218,8 @@ export function StrategyView({
     <>
       <Card className={cn(
           "transition-opacity",
-          !isFocused && "opacity-50 hover:opacity-100",
+          isSaving && "opacity-50",
+          !isFocused && !isSaving && "opacity-50 hover:opacity-100",
           strategy.state === 'Draft' && 'border-blue-500/80 border-2',
           strategy.state === 'Open' && 'border-green-500/80 border-2'
       )}>
@@ -300,14 +301,14 @@ export function StrategyView({
                 <CardFooter className="bg-slate-50/50 p-4 rounded-b-lg">
                   <div className="flex w-full items-center gap-2">
                     <Input 
-                      placeholder={isCreatingInitiative ? "Creating initiative..." : "Name your new initiative..."}
+                      placeholder={isCreatingInitiative ? "Creating initiative..." : isSaving ? "Saving strategy..." : "Name your new initiative..."}
                       value={newInitiativeName}
                       onChange={(e) => setNewInitiativeName(e.target.value)}
                       onKeyDown={(e) => e.key === 'Enter' && handleCreateInitiative()}
                       className="bg-background"
-                      disabled={isCreatingInitiative}
+                      disabled={isCreatingInitiative || isSaving}
                     />
-                    <Button onClick={handleCreateInitiative} disabled={!newInitiativeName.trim() || isCreatingInitiative}>
+                    <Button onClick={handleCreateInitiative} disabled={!newInitiativeName.trim() || isCreatingInitiative || isSaving}>
                       <Plus className="mr-2 h-4 w-4" /> Add Initiative
                     </Button>
                   </div>
