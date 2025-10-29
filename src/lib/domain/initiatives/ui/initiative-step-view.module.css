@@ -176,7 +176,8 @@
 
   display: -webkit-box;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3; /* limit to 3 lines in read-only */
+  -webkit-line-clamp: 3;
+   line-clamp: 3; /* limit to 3 lines in read-only */
   overflow: hidden;
   text-overflow: ellipsis;
 
