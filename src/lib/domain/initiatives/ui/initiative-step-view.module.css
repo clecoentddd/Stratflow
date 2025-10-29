@@ -1,0 +1,99 @@
+.stepCard {
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+/* Different background colors for each step */
+.stepCard[data-step='diagnostic'] {
+  background-color: #fff8f1;
+}
+
+.stepCard[data-step='overallApproach'] {
+  background-color: #f0f7ff;
+}
+
+.stepCard[data-step='actions'] {
+  background-color: #f0fff4;
+}
+
+.stepCard[data-step='proximateObjectives'] {
+  background-color: #fdf2f8;
+}
+
+.stepHeader {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  padding-bottom: 0.5rem;
+}
+
+.stepTitle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.stepIcon {
+  width: 1rem;
+  height: 1rem;
+  color: rgb(100 116 139);
+}
+
+.stepContent {
+  padding: 1rem;
+  padding-top: 0.5rem;
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.stepsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.itemsList {
+  display: flex;
+  flex-direction: row;
+  gap: 0.75rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+  -webkit-overflow-scrolling: touch;
+}
+
+.itemsList::-webkit-scrollbar {
+  height: 6px;
+}
+
+.itemsList::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.itemsList::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 3px;
+}
+
+.item {
+  flex: 0 0 300px;
+  padding: 0.75rem;
+  border-radius: 0.375rem;
+  background-color: white;
+  border: 1px solid rgb(226 232 240);
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.item:hover {
+  background-color: rgb(248 250 252);
+}

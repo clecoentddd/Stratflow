@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect } from "react";
@@ -15,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { ZoomInDialog } from "@/components/zoom-in-dialog";
+import { ZoomInDialog } from "./zoom-in-dialog";
 import type { RadarItem, RadarItemType, RadarCategory, RadarDistance, RadarImpact, RadarTolerance, Team } from "@/lib/types";
 import { radarAttributes } from "@/lib/data";
 import { cn } from "@/lib/utils";

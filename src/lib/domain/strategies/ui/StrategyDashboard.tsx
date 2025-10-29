@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
@@ -7,10 +6,9 @@ import { useToast } from "@/hooks/use-toast";
 import type { Dashboard, Strategy, StrategyState, RadarItem } from "@/lib/types";
 import type { CreateStrategyCommand } from "@/lib/domain/strategies/commands";
 import { v4 as uuidv4 } from "uuid";
-
 import { Button } from "@/components/ui/button";
-import { CreateStrategyDialog } from "@/components/create-strategy-dialog";
-import { StrategyView } from "@/components/strategy-view";
+import { CreateStrategyDialog } from "./CreateStrategyDialog";
+import { StrategyView } from "./StrategyView";
 
 const strategyOrder: Record<StrategyState, number> = {
   Draft: 1,

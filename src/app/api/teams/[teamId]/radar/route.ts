@@ -11,9 +11,10 @@ import type { RadarItemCreatedEvent, RadarItemUpdatedEvent, RadarItemDeletedEven
 
 // This endpoint is now redundant with GET /api/teams/[teamId], but we keep it for logical separation if needed.
 // It simply fetches the team and the client can extract the radar data.
-export async function GET(request: NextRequest, { params }: { params: { teamId: string } }) {
+export async function GET(request: NextRequest, { params }: { params: { teamId: string } | Promise<{ teamId: string }> }) {
   try {
-    const team = await getTeamByIdProjection(params.teamId);
+    const { teamId } = (await params) as { teamId: string };
+    const team = await getTeamByIdProjection(teamId);
     if (!team) {
       return NextResponse.json({ message: 'Team not found' }, { status: 404 });
     }
@@ -26,9 +27,9 @@ export async function GET(request: NextRequest, { params }: { params: { teamId: 
 
 
 // --- Vertical Slice: Create Radar Item ---
-export async function POST(request: NextRequest, { params }: { params: { teamId: string } }) {
+export async function POST(request: NextRequest, { params }: { params: { teamId: string } | Promise<{ teamId: string }> }) {
   try {
-    const { teamId } = params;
+    const { teamId } = (await params) as { teamId: string };
     const command: UpsertRadarItemCommand = await request.json();
     
     // 1. Command Handler Logic (Validation)
@@ -73,9 +74,9 @@ export async function POST(request: NextRequest, { params }: { params: { teamId:
 }
 
 // --- Vertical Slice: Update Radar Item ---
-export async function PUT(request: NextRequest, { params }: { params: { teamId: string } }) {
+export async function PUT(request: NextRequest, { params }: { params: { teamId: string } | Promise<{ teamId: string }> }) {
     try {
-        const { teamId } = params;
+        const { teamId } = (await params) as { teamId: string };
         const command: UpsertRadarItemCommand = await request.json();
         
         // 1. Command Handler Logic (Validation)
@@ -121,9 +122,9 @@ export async function PUT(request: NextRequest, { params }: { params: { teamId: 
 
 
 // --- Vertical Slice: Delete Radar Item ---
-export async function DELETE(request: NextRequest, { params }: { params: { teamId: string } }) {
+export async function DELETE(request: NextRequest, { params }: { params: { teamId: string } | Promise<{ teamId: string }> }) {
     try {
-        const { teamId } = params;
+        const { teamId } = (await params) as { teamId: string };
         const { id: itemId } = await request.json();
 
         if (!itemId) {

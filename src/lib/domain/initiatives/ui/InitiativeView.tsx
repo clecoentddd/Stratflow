@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
@@ -6,25 +5,21 @@ import Link from 'next/link';
 import { Plus, Trash2, Search, Milestone, ListChecks, Target, Edit, MoreVertical } from "lucide-react";
 import { v4 as uuidv4 } from 'uuid';
 import { useToast } from "@/hooks/use-toast";
-import {
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
-import { LinkRadarItemsDialog } from './link-radar-items-dialog';
-import { EditInitiativeDialog } from './edit-initiative-dialog';
+import { LinkRadarItemsDialog } from './LinkRadarItemsDialog';
+import { EditInitiativeDialog } from './EditInitiativeDialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
+import { Textarea } from "@/components/ui/textarea";
 import type { Initiative, InitiativeStepKey, InitiativeItem as InitiativeItemType, RadarItem } from "@/lib/types";
 import type { UpdateInitiativeCommand } from '@/lib/domain/initiatives/commands';
 import type { AddInitiativeItemCommand, UpdateInitiativeItemCommand } from '@/lib/domain/initiative-items/commands';
 import styles from './initiative-view.module.css';
-import { InitiativeStepView } from "./initiative-step-view";
+import { InitiativeStepView } from "./InitiativeStepView";
 
 interface InitiativeItemViewProps {
   item: InitiativeItemType;
@@ -106,7 +101,7 @@ function InitiativeItemView({ item, onSave, onDelete }: InitiativeItemViewProps)
 }
 
 interface InitiativeViewProps {
-  initialInitiative: Initiative;
+  initialInitiative: Initiative & { isExpanded?: boolean };
   radarItems: RadarItem[];
   orgId: string;
   onInitiativeChange: () => void;
@@ -117,14 +112,14 @@ interface InitiativeViewProps {
 const iconMap: Record<string, React.ComponentType<any>> = { Search, Milestone, ListChecks, Target };
 
 export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiativeChange, onDeleteInitiative, strategyId }: InitiativeViewProps) {
-  const [initiative, setInitiative] = useState(initialInitiative);
+  const [initiative, setInitiative] = useState({ ...initialInitiative, isExpanded: false });
   const [isLinkRadarOpen, setLinkRadarOpen] = useState(false);
   const [isEditInitiativeOpen, setEditInitiativeOpen] = useState(false);
   const [isDeleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
-    setInitiative(initialInitiative);
+    setInitiative(prev => ({ ...initialInitiative, isExpanded: prev.isExpanded }));
   }, [initialInitiative]);
   
   const fireAndForget = (
@@ -200,7 +195,7 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
         const command: AddInitiativeItemCommand = {
             initiativeId: initiative.id,
             stepKey,
-            item: { id: '', text: newText }, 
+            item: { text: newText }, 
         };
         
         const optimisticInitiative = { ...initiative };
@@ -297,9 +292,9 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
 
   return (
     <>
-    <AccordionItem value={initiative.id}>
+    <div className="border rounded-md mb-2">
       <div className="flex items-center justify-between hover:bg-accent/50 rounded-md">
-        <AccordionTrigger className="flex-1 text-left px-4 py-2">
+        <div className="flex-1 text-left px-4 py-2" onClick={() => setInitiative(prev => ({ ...prev, isExpanded: !prev.isExpanded }))}>
             <div className="flex-1 text-left">
             <p className="font-medium">{initiative.name}</p>
             <div className="flex items-center gap-2 mt-1">
@@ -307,15 +302,15 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
                 <span className="text-xs text-muted-foreground">{initiative.progression}%</span>
             </div>
             </div>
-        </AccordionTrigger>
+        </div>
         <div className="flex items-center gap-1 pr-2">
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" className="h-8 w-8" onClick={(e) => e.stopPropagation()}>
+                    <Button variant="ghost" size="icon" className="h-8 w-8">
                         <MoreVertical className="h-4 w-4" />
                     </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
+                <DropdownMenuContent align="end">
                     <DropdownMenuItem onClick={() => setEditInitiativeOpen(true)}>
                         <Edit className="mr-2 h-4 w-4" />
                         <span>Edit Name</span>
@@ -328,9 +323,10 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
             </DropdownMenu>
         </div>
       </div>
-      <AccordionContent className="p-4 bg-muted/20">
-        <div className="mb-6">
-          <Label>Overall Progression: {initiative.progression}%</Label>
+      {initiative.isExpanded && (
+        <div className="p-4 bg-muted/20">
+          <div className="mb-6">
+            <Label>Overall Progression: {initiative.progression}%</Label>
           <Slider
             value={[initiative.progression]}
             onValueChange={(value) => handleUpdateInitiative({ progression: value[0] })}
@@ -360,7 +356,7 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
             </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-4 items-start gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           {initiative.steps.map((step) => (
             <InitiativeStepView
                 key={step.key}
@@ -380,8 +376,8 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
             linkedItemIds={initiative.linkedRadarItemIds || []}
             onLinkItems={handleLinkRadarItems}
         />
-      </AccordionContent>
-    </AccordionItem>
+      </div>)}
+    </div>
     <EditInitiativeDialog
         isOpen={isEditInitiativeOpen}
         onOpenChange={setEditInitiativeOpen}

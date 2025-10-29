@@ -7,9 +7,9 @@ import type { CreateStrategyCommand } from '@/lib/domain/strategies/commands';
 import type { StrategyCreatedEvent } from '@/lib/domain/strategy/events';
 
 // --- Vertical Slice: Create Strategy ---
-export async function POST(request: NextRequest, { params }: { params: { teamId: string } }) {
+export async function POST(request: NextRequest, { params }: { params: { teamId: string } | Promise<{ teamId: string }> }) {
   try {
-    const { teamId } = params;
+    const { teamId } = (await params) as { teamId: string };
     const command: CreateStrategyCommand = await request.json();
 
     // 1. Validation

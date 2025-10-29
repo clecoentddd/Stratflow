@@ -1,11 +1,8 @@
-
-
 "use client";
 
-import { RadarItemCard } from "@/components/radar-item-card";
+import { RadarItemCard } from "./radar-item-card";
 import type { RadarItem, Team } from "@/lib/types";
 import RadarChart from "@/components/d3-radar/RadarChart";
-
 
 interface RadarDashboardProps {
   radarItems: RadarItem[];
@@ -24,7 +21,6 @@ export function RadarDashboard({ radarItems, onDeleteItem, teams, currentTeamId,
           onEditItem(fullItem);
       }
   }
-
 
   return (
     <div>
@@ -46,7 +42,7 @@ export function RadarDashboard({ radarItems, onDeleteItem, teams, currentTeamId,
                             key={item.id} 
                             item={item} 
                             onEdit={() => onEditItem(item)}
-                            onDeleteItem={() => onDeleteItem(item.id)}
+                            onDelete={() => onDeleteItem(item.id)}
                         />
                     ))}
                 </div>

@@ -8,7 +8,7 @@ import { ChevronLeft, Plus, Radar } from "lucide-react";
 import type { Team } from "@/lib/types";
 import { AppHeader } from "@/components/header";
 import { Button } from "@/components/ui/button";
-import { StrategyDashboard } from "@/components/dashboard";
+import { StrategyDashboard } from "@/lib/domain/strategies/ui";
 import { useToast } from "@/hooks/use-toast";
 
 export default function TeamStrategyPage() {

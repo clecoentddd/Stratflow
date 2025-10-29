@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect, useCallback, useMemo } from "react";
@@ -20,13 +19,13 @@ import { strategyStates } from "@/lib/data";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { Card, CardHeader, CardContent, CardFooter, CardTitle, CardDescription } from "@/components/ui/card";
+import styles from "./strategy-view.module.css";
 
-
-import type { Strategy, RadarItem, Initiative } from "@/lib/types";
+import type { Strategy, RadarItem, Initiative, InitiativeStep } from "@/lib/types";
 import type { UpdateStrategyCommand } from "@/lib/domain/strategies/commands";
 import type { CreateInitiativeCommand, DeleteInitiativeCommand } from "@/lib/domain/initiatives/commands";
-import { InitiativeView } from "./initiative-view";
-import { EditStrategyDialog } from "./edit-strategy-dialog";
+import { InitiativeView } from "../../initiatives/ui";
+import { EditStrategyDialog } from "./EditStrategyDialog";
 
 const iconMap = { FilePenLine: Edit, Rocket: Plus, CheckCircle2: Plus, Archive: Plus };
 
@@ -156,7 +155,7 @@ export function StrategyView({
     };
     
     setStrategy(prev => {
-        const newInitiative = {
+        const newInitiative: Initiative = {
             id: tempId,
             name: command.name,
             progression: 0,
@@ -165,7 +164,7 @@ export function StrategyView({
               { key: 'overallApproach', title: 'Overall Approach', iconName: 'Milestone', items: [] },
               { key: 'actions', title: 'Actions', iconName: 'ListChecks', items: [] },
               { key: 'proximateObjectives', title: 'Proximate Objectives', iconName: 'Target', items: [] },
-            ],
+            ] as InitiativeStep[],
             linkedRadarItemIds: [],
         };
         return {
@@ -257,15 +256,10 @@ export function StrategyView({
                         </Button>
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="sm" className={cn(
-                                    "font-semibold rounded-full px-3",
-                                    strategy.state === 'Draft' && 'bg-blue-100 text-blue-800 hover:bg-blue-200',
-                                    strategy.state === 'Open' && 'bg-green-100 text-green-800 hover:bg-green-200',
-                                    (strategy.state === 'Closed' || strategy.state === 'Obsolete') && 'bg-gray-100 text-gray-800 hover:bg-gray-200',
-                                )} onClick={(e) => e.stopPropagation()}>
-                                <CurrentStateIcon className="mr-2 h-4 w-4" />
-                                {strategy.state}
-                                </Button>
+                                <button className={styles.statusTag} data-state={strategy.state} onClick={(e) => e.stopPropagation()}>
+                                    <CurrentStateIcon />
+                                    {strategy.state}
+                                </button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
                                 {strategyStates.map(state => {
@@ -298,7 +292,7 @@ export function StrategyView({
                   <div className="mt-6">
                       <h4 className="text-lg font-semibold mb-2 font-headline">Initiatives</h4>
                       {strategy.initiatives.length > 0 ? (
-                          <Accordion type="multiple" className="w-full">
+                          <div className="space-y-4">
                               {strategy.initiatives.map(initiative => (
                                   <InitiativeView 
                                       key={initiative.id} 
@@ -310,7 +304,7 @@ export function StrategyView({
                                       strategyId={strategy.id}
                                   />
                               ))}
-                          </Accordion>
+                          </div>
                       ) : (
                           <p className="text-sm text-muted-foreground text-center py-4 border-2 border-dashed rounded-md">No initiatives for this strategy yet.</p>
                       )}

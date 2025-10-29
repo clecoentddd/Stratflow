@@ -6,7 +6,7 @@ import { useState, useEffect, useCallback } from "react";
 import { AppHeader } from "@/components/header";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Plus } from "lucide-react";
-import { CreateCompanyDialog } from "@/components/create-company-dialog";
+import { CreateCompanyDialog } from "@/lib/domain/companies/ui/CreateCompanyDialog";
 import type { Company } from "@/lib/types";
 import {
   Card,

@@ -8,9 +8,9 @@ import { ChevronLeft, Plus, TrendingUp } from "lucide-react";
 import type { Team, RadarItem } from "@/lib/types";
 import { AppHeader } from "@/components/header";
 import { Button } from "@/components/ui/button";
-import { RadarDashboard } from "@/components/radar-dashboard";
+import { RadarDashboard } from "@/lib/domain/radar/ui";
 import { useToast } from "@/hooks/use-toast";
-import { RadarItemDialog } from "@/components/radar-item-dialog";
+import { RadarItemDialog } from "@/lib/domain/radar/ui";
 import type { UpsertRadarItemCommand } from "@/lib/domain/radar/commands";
 
 export default function RadarPage() {
@@ -68,6 +68,23 @@ export default function RadarPage() {
     
     const command: UpsertRadarItemCommand = itemToUpsert;
 
+    // Keep a copy of the current team state for rollback
+    const previousTeam = team;
+
+    // Apply optimistic update
+    setTeam(prev => {
+      if (!prev) return prev;
+
+      const newRadar = isUpdating
+        ? prev.radar.map(item => item.id === itemToUpsert.id ? itemToUpsert : item)
+        : [...prev.radar, { ...itemToUpsert, id: `temp-${Date.now()}` }];
+
+      return {
+        ...prev,
+        radar: newRadar
+      };
+    });
+
     try {
       const response = await fetch(`/api/teams/${teamId}/radar`, {
         method,
@@ -88,6 +105,9 @@ export default function RadarPage() {
       });
 
     } catch (error) {
+      // Revert to previous state on error
+      setTeam(previousTeam);
+      
       console.error(error);
       toast({
         title: "Error",
@@ -101,6 +121,18 @@ export default function RadarPage() {
     const itemToDelete = team?.radar.find(item => item.id === itemId);
     if (!itemToDelete) return;
 
+    // Keep a copy of the current team state for rollback
+    const previousTeam = team;
+
+    // Apply optimistic delete
+    setTeam(prev => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        radar: prev.radar.filter(item => item.id !== itemId)
+      };
+    });
+
     try {
         const response = await fetch(`/api/teams/${teamId}/radar`, {
             method: 'DELETE',
@@ -113,7 +145,7 @@ export default function RadarPage() {
         }
 
         const updatedOrg = await response.json();
-        setTeam(updatedOrg);
+        setTeam(updatedOrg); // Replace optimistic state with server state
 
         toast({ 
             title: "Radar Item Deleted", 
@@ -122,6 +154,9 @@ export default function RadarPage() {
         });
 
     } catch (error) {
+        // Revert to previous state on error
+        setTeam(previousTeam);
+        
         console.error(error);
         toast({
             title: "Error",

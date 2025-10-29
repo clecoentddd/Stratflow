@@ -4,13 +4,13 @@ import { v4 as uuidv4 } from 'uuid';
 import { saveEvents } from '@/lib/db/event-store';
 import { getTeamByIdProjection } from '@/lib/db/projections';
 import type { CreateInitiativeCommand } from '@/lib/domain/initiatives/commands';
-import type { InitiativeCreatedEvent } from '@/lib/domain/strategy/events';
+import type { InitiativeCreatedEvent } from '@/lib/domain/initiatives/events';
 import { newInitiativeTemplate } from '@/lib/data';
 
 // --- Vertical Slice: Create Initiative ---
-export async function POST(request: NextRequest, { params }: { params: { teamId: string } }) {
+export async function POST(request: NextRequest, { params }: { params: { teamId: string } | Promise<{ teamId: string }> }) {
   try {
-    const { teamId } = params;
+    const { teamId } = (await params) as { teamId: string };
     const command: CreateInitiativeCommand = await request.json();
 
     // 1. Validation
@@ -41,15 +41,28 @@ export async function POST(request: NextRequest, { params }: { params: { teamId:
         initiativeId: initiativeId,
         tempId: command.tempId,
         name: command.name,
-        template: newInitiativeTemplate(initiativeId, command.name),
+        template: {
+          ...newInitiativeTemplate(initiativeId, command.name),
+          linkedRadarItemIds: [] // Ensure this is never undefined
+        },
       },
     };
 
     // 3. Save Event
     await saveEvents([event]);
 
-    // 4. Respond
-    return NextResponse.json({ success: true, initiativeId }, { status: 201 });
+    // 4. Create the complete initiative data
+    const newInitiative = {
+      ...event.payload.template,  // Base template
+      created_at: event.timestamp,
+      updated_at: event.timestamp,
+    };
+
+    // 5. Respond with complete data
+    return NextResponse.json({ 
+      success: true, 
+      initiative: newInitiative
+    }, { status: 201 });
 
   } catch (error) {
     console.error('Failed to create initiative:', error);

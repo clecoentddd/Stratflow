@@ -6,9 +6,9 @@ import type { UpdateStrategyCommand } from '@/lib/domain/strategies/commands';
 import type { StrategyUpdatedEvent } from '@/lib/domain/strategy/events';
 
 // --- Vertical Slice: Update Strategy ---
-export async function PUT(request: NextRequest, { params }: { params: { teamId: string, strategyId: string } }) {
+export async function PUT(request: NextRequest, { params }: { params: { teamId: string, strategyId: string } | Promise<{ teamId: string, strategyId: string }> }) {
   try {
-    const { teamId, strategyId } = params;
+    const { teamId, strategyId } = (await params) as { teamId: string, strategyId: string };
     const command: UpdateStrategyCommand = await request.json();
 
     // 1. Validation

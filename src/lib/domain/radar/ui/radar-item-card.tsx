@@ -1,4 +1,3 @@
-
 "use client";
 
 import { Pencil, Trash2, ExternalLink } from "lucide-react";
@@ -68,7 +67,7 @@ export function RadarItemCard({ item, onEdit, onDelete }: RadarItemCardProps) {
             </div>
              {item.zoom_in && (
               <div className="pt-4 border-t">
-                <Link href={item.zoom_in} asChild>
+                <Link href={item.zoom_in}>
                     <Button>
                         <ExternalLink className="mr-2 h-4 w-4" />
                         Open Linked Radar
@@ -84,7 +83,7 @@ export function RadarItemCard({ item, onEdit, onDelete }: RadarItemCardProps) {
                     <TooltipProvider>
                         <Tooltip>
                             <TooltipTrigger asChild>
-                                <Link href={item.zoom_in} asChild>
+                                <Link href={item.zoom_in}>
                                     <Button variant="link" className="p-0 h-auto text-xs">
                                         Zoom In
                                         <ExternalLink className="ml-2 h-3 w-3" />

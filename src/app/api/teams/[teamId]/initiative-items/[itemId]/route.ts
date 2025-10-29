@@ -3,12 +3,12 @@ import { NextResponse, NextRequest } from 'next/server';
 import { saveEvents } from '@/lib/db/event-store';
 import { getTeamByIdProjection } from '@/lib/db/projections';
 import type { UpdateInitiativeItemCommand, DeleteInitiativeItemCommand } from '@/lib/domain/initiative-items/commands';
-import type { InitiativeItemUpdatedEvent, InitiativeItemDeletedEvent } from '@/lib/domain/strategy/events';
+import type { InitiativeItemUpdatedEvent, InitiativeItemDeletedEvent } from '@/lib/domain/initiatives/events';
 
 // --- Vertical Slice: Update Initiative Item ---
-export async function PUT(request: NextRequest, { params }: { params: { teamId: string, itemId: string } }) {
+export async function PUT(request: NextRequest, { params }: { params: { teamId: string, itemId: string } | Promise<{ teamId: string, itemId: string }> }) {
   try {
-    const { teamId, itemId } = params;
+    const { teamId, itemId } = (await params) as { teamId: string, itemId: string };
     const command: UpdateInitiativeItemCommand = await request.json();
 
     // 1. Validation
@@ -56,9 +56,9 @@ export async function PUT(request: NextRequest, { params }: { params: { teamId: 
 
 
 // --- Vertical Slice: Delete Initiative Item ---
-export async function DELETE(request: NextRequest, { params }: { params: { teamId: string, itemId: string } }) {
+export async function DELETE(request: NextRequest, { params }: { params: { teamId: string, itemId: string } | Promise<{ teamId: string, itemId: string }> }) {
   try {
-    const { teamId, itemId } = params;
+    const { teamId, itemId } = (await params) as { teamId: string, itemId: string };
 
     // 1. Validation
      const team = await getTeamByIdProjection(teamId);

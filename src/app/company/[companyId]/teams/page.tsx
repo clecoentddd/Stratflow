@@ -8,8 +8,8 @@ import type { Team, Company } from "@/lib/types";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { AppHeader } from "@/components/header";
 import { Button } from "@/components/ui/button";
-import { CreateTeamDialog } from "@/components/create-team-dialog";
-import { EditTeamDialog } from "@/components/edit-team-dialog";
+import { CreateTeamDialog } from "@/lib/domain/teams/ui/CreateTeamDialog";
+import { EditTeamDialog } from "@/lib/domain/teams/ui/EditTeamDialog";
 import { notFound, useParams } from "next/navigation";
 
 export default function TeamsPage() {

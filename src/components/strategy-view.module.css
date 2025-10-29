@@ -1,0 +1,16 @@
+.statusTag {
+  @apply px-3 py-1.5 rounded-full text-sm font-medium cursor-pointer transition-colors;
+}
+
+.statusTag[data-state='Draft'] {
+  @apply bg-blue-100 text-blue-800 hover:bg-blue-200;
+}
+
+.statusTag[data-state='Open'] {
+  @apply bg-green-100 text-green-800 hover:bg-green-200;
+}
+
+.statusTag[data-state='Closed'],
+.statusTag[data-state='Obsolete'] {
+  @apply bg-gray-100 text-gray-800 hover:bg-gray-200;
+}
