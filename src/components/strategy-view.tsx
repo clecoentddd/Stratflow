@@ -3,7 +3,7 @@
 
 import { useState, useEffect, useCallback, useMemo } from "react";
 import Link from 'next/link';
-import { Plus, Edit, MoreVertical, Search, Milestone, ListChecks, Target } from "lucide-react";
+import { Plus, Edit, MoreVertical, Search, Milestone, ListChecks, Target, Trash2 } from "lucide-react";
 import { v4 as uuidv4 } from 'uuid';
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -15,6 +15,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { strategyStates } from "@/lib/data";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
@@ -54,7 +55,6 @@ export function StrategyView({
     // This effect ensures the component's internal state is updated
     // when the parent passes down a new version of the strategy,
     // specifically after the temporary ID is replaced with the real one.
-    // We compare IDs to ensure this runs even if the object reference is the same.
     if (initialStrategy.id !== strategy.id) {
         setStrategy(initialStrategy);
     }

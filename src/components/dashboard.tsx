@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Plus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import type { Dashboard, Strategy, StrategyState, RadarItem } from "@/lib/types";
@@ -40,16 +40,18 @@ export function StrategyDashboard({
   const [dashboard, setDashboard] = useState(initialDashboard);
   const { toast } = useToast();
 
-  console.log("--- StrategyDashboard: Render ---");
+  useEffect(() => {
+    setDashboard(initialDashboard);
+  }, [initialDashboard]);
 
   const sortedStrategies = useMemo(() => {
+    if (!dashboard || !dashboard.strategies) return [];
     return [...dashboard.strategies].sort((a, b) => {
         return strategyOrder[a.state] - strategyOrder[b.state];
     });
-  }, [dashboard.strategies]);
+  }, [dashboard]);
 
   const handleCreateStrategy = async (description: string, timeframe: string) => {
-    console.log("StrategyDashboard: handleCreateStrategy called");
     setCreateStrategyOpen(false);
     
     const command: CreateStrategyCommand = { description, timeframe };
