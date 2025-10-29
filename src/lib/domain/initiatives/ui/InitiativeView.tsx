@@ -297,7 +297,7 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
       <div className="flex items-center justify-between hover:bg-accent/50 rounded-md">
         <div className="flex-1 px-4 py-2" onClick={() => setInitiative(prev => ({ ...prev, isExpanded: !prev.isExpanded }))}>
             <div className={styles.initiativeNameContainer}>
-              <p className={styles.initiativeName}>test {initiative.name}</p>
+              <p className={styles.initiativeName}>{initiative.name}</p>
             </div>
         </div>
         <div className="flex items-center gap-1 pr-2">
