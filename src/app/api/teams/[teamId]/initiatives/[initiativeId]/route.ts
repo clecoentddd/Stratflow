@@ -2,7 +2,7 @@
 import { NextResponse, NextRequest } from 'next/server';
 import { saveEvents } from '@/lib/db/event-store';
 import { getTeamByIdProjection } from '@/lib/db/projections';
-import type { UpdateInitiativeCommand, DeleteInitiativeCommand } from '@/lib/domain/strategy/commands';
+import type { UpdateInitiativeCommand, DeleteInitiativeCommand } from '@/lib/domain/initiatives/commands';
 import type { InitiativeProgressUpdatedEvent, InitiativeRadarItemsLinkedEvent, InitiativeUpdatedEvent, InitiativeDeletedEvent } from '@/lib/domain/strategy/events';
 import type { TeamEvent } from '@/lib/domain/teams/events';
 

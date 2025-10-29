@@ -2,7 +2,7 @@
 import { NextResponse, NextRequest } from 'next/server';
 import { saveEvents } from '@/lib/db/event-store';
 import { getTeamByIdProjection } from '@/lib/db/projections';
-import type { UpdateStrategyCommand } from '@/lib/domain/strategy/commands';
+import type { UpdateStrategyCommand } from '@/lib/domain/strategies/commands';
 import type { StrategyUpdatedEvent } from '@/lib/domain/strategy/events';
 
 // --- Vertical Slice: Update Strategy ---

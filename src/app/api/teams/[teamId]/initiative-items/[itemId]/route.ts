@@ -2,7 +2,7 @@
 import { NextResponse, NextRequest } from 'next/server';
 import { saveEvents } from '@/lib/db/event-store';
 import { getTeamByIdProjection } from '@/lib/db/projections';
-import type { UpdateInitiativeItemCommand, DeleteInitiativeItemCommand } from '@/lib/domain/strategy/commands';
+import type { UpdateInitiativeItemCommand, DeleteInitiativeItemCommand } from '@/lib/domain/initiative-items/commands';
 import type { InitiativeItemUpdatedEvent, InitiativeItemDeletedEvent } from '@/lib/domain/strategy/events';
 
 // --- Vertical Slice: Update Initiative Item ---

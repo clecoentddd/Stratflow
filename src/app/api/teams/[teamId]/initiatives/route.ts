@@ -3,7 +3,7 @@ import { NextResponse, NextRequest } from 'next/server';
 import { v4 as uuidv4 } from 'uuid';
 import { saveEvents } from '@/lib/db/event-store';
 import { getTeamByIdProjection } from '@/lib/db/projections';
-import type { CreateInitiativeCommand } from '@/lib/domain/strategy/commands';
+import type { CreateInitiativeCommand } from '@/lib/domain/initiatives/commands';
 import type { InitiativeCreatedEvent } from '@/lib/domain/strategy/events';
 import { newInitiativeTemplate } from '@/lib/data';
 

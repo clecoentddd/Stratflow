@@ -5,8 +5,8 @@ import { useState, useMemo } from "react";
 import { Plus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import type { Dashboard, Strategy, StrategyState, RadarItem } from "@/lib/types";
-import type { CreateStrategyCommand } from "@/lib/domain/strategy/commands";
-import { v4 as uuidv4 } from 'uuid';
+import type { CreateStrategyCommand } from "@/lib/domain/strategies/commands";
+import { v4 as uuidv4 } from "uuid";
 
 import { Button } from "@/components/ui/button";
 import { CreateStrategyDialog } from "@/components/create-strategy-dialog";
