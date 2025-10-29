@@ -15,7 +15,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { strategyStates, newInitiativeTemplate } from "@/lib/data";
+import { strategyStates } from "@/lib/data";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { Card, CardHeader, CardContent, CardFooter, CardTitle, CardDescription } from "@/components/ui/card";
@@ -51,8 +51,14 @@ export function StrategyView({
   const { toast } = useToast();
 
   useEffect(() => {
-    setStrategy(initialStrategy);
-  }, [initialStrategy]);
+    // This effect ensures the component's internal state is updated
+    // when the parent passes down a new version of the strategy,
+    // specifically after the temporary ID is replaced with the real one.
+    // We compare IDs to ensure this runs even if the object reference is the same.
+    if (initialStrategy.id !== strategy.id) {
+        setStrategy(initialStrategy);
+    }
+  }, [initialStrategy, strategy.id]);
 
   const isSaving = strategy.id.startsWith('strat-temp-');
 
@@ -69,14 +75,15 @@ export function StrategyView({
   const CurrentStateIcon = iconMap[currentStateInfo.iconName as keyof typeof iconMap] || Edit;
   
   const handleUpdateStrategy = useCallback(async (updatedValues: Partial<Strategy>) => {
-    // This function is for simple state updates like changing the 'state' dropdown.
     const originalStrategy = strategy;
+    
+    // Use functional update to ensure we're working with the latest state
     setStrategy(prev => ({...prev, ...updatedValues}));
     
-    const command: UpdateStrategyCommand = { ...updatedValues, strategyId: strategy.id };
+    const command: UpdateStrategyCommand = { ...updatedValues, strategyId: originalStrategy.id };
     
     try {
-        const response = await fetch(`/api/teams/${orgId}/strategies/${strategy.id}`, {
+        const response = await fetch(`/api/teams/${orgId}/strategies/${originalStrategy.id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(command)
@@ -100,10 +107,8 @@ export function StrategyView({
   }, [strategy, orgId, onStrategyChange, toast]);
 
   const handleEditStrategy = (description: string, timeframe: string) => {
-    // This handles the update from the dialog
     const originalStrategy = { ...strategy };
     
-    // Optimistically update UI
     setStrategy(prev => ({ ...prev, description, timeframe })); 
     setEditStrategyOpen(false);
 
@@ -124,7 +129,7 @@ export function StrategyView({
             throw new Error(errorData.message || 'Failed to update strategy.');
         }
         toast({ title: "Strategy Updated", description: "Your changes have been saved."});
-        onStrategyChange(); // Re-fetch to confirm state
+        onStrategyChange();
     })
     .catch((error) => {
         console.error("Failed to update strategy:", error);
@@ -133,7 +138,7 @@ export function StrategyView({
             description: error.message,
             variant: "destructive",
         });
-        setStrategy(originalStrategy); // Rollback on error
+        setStrategy(originalStrategy); 
     });
   };
 
@@ -145,17 +150,29 @@ export function StrategyView({
     setCreatingInitiative(true);
     const tempId = `init-temp-${uuidv4()}`;
     const command: CreateInitiativeCommand = { 
-        strategyId: strategy.id, // Use the current ID from state
+        strategyId: strategy.id, 
         name: newInitiativeName.trim(),
         tempId: tempId,
     };
-    const newInitiative = newInitiativeTemplate(tempId, command.name);
     
-    // Use functional update to ensure we're modifying the latest state
-    setStrategy(prev => ({
-      ...prev,
-      initiatives: [...prev.initiatives, newInitiative]
-    }));
+    setStrategy(prev => {
+        const newInitiative = {
+            id: tempId,
+            name: command.name,
+            progression: 0,
+            steps: [
+              { key: 'diagnostic', title: 'Diagnostic', iconName: 'Search', items: [] },
+              { key: 'overallApproach', title: 'Overall Approach', iconName: 'Milestone', items: [] },
+              { key: 'actions', title: 'Actions', iconName: 'ListChecks', items: [] },
+              { key: 'proximateObjectives', title: 'Proximate Objectives', iconName: 'Target', items: [] },
+            ],
+            linkedRadarItemIds: [],
+        };
+        return {
+          ...prev,
+          initiatives: [...prev.initiatives, newInitiative]
+        };
+    });
     
     setNewInitiativeName("");
     
@@ -174,7 +191,7 @@ export function StrategyView({
     } catch (error: any) {
         console.error(error);
         toast({ title: "Error", description: error.message, variant: "destructive" });
-        onStrategyChange(); // Rollback on error
+        onStrategyChange(); 
     } finally {
         setCreatingInitiative(false);
     }
@@ -183,7 +200,6 @@ export function StrategyView({
   const handleDeleteInitiative = useCallback((initiativeId: string, strategyId: string) => {
     const originalInitiatives = [...strategy.initiatives];
     
-    // Use functional update
     setStrategy(prev => ({
       ...prev,
       initiatives: prev.initiatives.filter(i => i.id !== initiativeId)
