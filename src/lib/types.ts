@@ -77,10 +77,3 @@ export type Team = {
   dashboard: Dashboard;
   radar: RadarItem[];
 };
-
-// This is a partial type used for commands, not a domain entity
-export type UpdateInitiativeCommand = {
-    initiativeId: string;
-    progression?: number;
-    linkedRadarItemIds?: string[];
-};

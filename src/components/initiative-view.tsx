@@ -427,7 +427,3 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
     </>
   );
 }
-
-    
-
-    

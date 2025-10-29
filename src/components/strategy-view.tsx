@@ -21,7 +21,7 @@ import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 
 import type { Strategy, RadarItem, Initiative } from "@/lib/types";
-import type { CreateStrategyCommand, UpdateStrategyCommand } from "@/lib/domain/strategies/commands";
+import type { UpdateStrategyCommand } from "@/lib/domain/strategies/commands";
 import type { CreateInitiativeCommand, DeleteInitiativeCommand } from "@/lib/domain/initiatives/commands";
 import { InitiativeView } from "./initiative-view";
 import { v4 as uuidv4 } from "uuid";

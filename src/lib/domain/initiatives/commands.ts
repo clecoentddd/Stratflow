@@ -1,6 +1,4 @@
-
 // --- Commands ---
-import type { Initiative } from '@/lib/types';
 
 export type CreateInitiativeCommand = {
   strategyId: string;
