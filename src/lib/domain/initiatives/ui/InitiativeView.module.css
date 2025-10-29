@@ -35,3 +35,22 @@
 .chevron[data-state='expanded'] {
   transform: rotate(-180deg);
 }
+
+.initiativeNameContainer {
+  text-align: center;        /* Center content horizontally */
+  width: 100%;
+}
+
+.initiativeName {
+  font-size: 1.25rem;        /* Slightly larger text (≈ Tailwind text-lg) */
+  font-weight: 600;          /* Medium-bold */
+  color: #111827;            /* Near-black for readability */
+  margin: 0.5rem 0;          /* Some breathing space */
+}
+
+/* Optional: dark mode support */
+@media (prefers-color-scheme: dark) {
+  .initiative-name {
+    color: #f3f4f6;          /* Light gray text for dark mode */
+  }
+}

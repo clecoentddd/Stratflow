@@ -14,12 +14,12 @@ import { EditInitiativeDialog } from './EditInitiativeDialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
-import { Textarea } from "@/components/ui/textarea";
 import type { Initiative, InitiativeStepKey, InitiativeItem as InitiativeItemType, RadarItem } from "@/lib/types";
 import type { UpdateInitiativeCommand } from '@/lib/domain/initiatives/commands';
 import type { AddInitiativeItemCommand, UpdateInitiativeItemCommand } from '@/lib/domain/initiative-items/commands';
-import styles from './initiative-view.module.css';
+import stepStyles from "./initiative-step-view.module.css";
 import { InitiativeStepView } from "./InitiativeStepView";
+import styles from "./InitiativeView.module.css"
 
 interface InitiativeItemViewProps {
   item: InitiativeItemType;
@@ -62,29 +62,30 @@ function InitiativeItemView({ item, onSave, onDelete }: InitiativeItemViewProps)
 
   if (isEditing) {
     return (
-      <div className={styles.editContainer}>
-        <Textarea
+      <div className={stepStyles.editContainer}>
+        <textarea
           value={editText}
           onChange={(e) => setEditText(e.target.value)}
           placeholder="Describe an item..."
           autoFocus
           rows={3}
-          className={styles.editTextarea}
+          className={`${stepStyles.editTextarea} ${styles.plainEditTextarea}`}
           onBlur={handleSave}
           onKeyDown={handleKeyDown}
         />
-        <div className={styles.editActions}>
-            <Button size="icon" variant="ghost" className="text-destructive hover:bg-destructive/10" onClick={() => onDelete(item.id)}>
-                <Trash2 className="h-4 w-4" />
-            </Button>
-            <div className="flex gap-2">
-                <Button size="sm" variant="outline" onClick={handleCancel}>
-                    Cancel
-                </Button>
-                <Button size="sm" onClick={handleSave}>
-                    Save
-                </Button>
-            </div>
+        <div className={stepStyles.editActions}>
+          <button className="destructiveButton" onClick={() => onDelete(item.id)}>
+            <Trash2 className="h-4 w-4" />
+          </button>
+
+          <div className="buttonGroup">
+            <button className="editButton" onClick={handleCancel}>
+              Cancel
+            </button>
+            <button className="editButton" onClick={handleSave}>
+              Save
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -93,9 +94,9 @@ function InitiativeItemView({ item, onSave, onDelete }: InitiativeItemViewProps)
   return (
     <div 
         onClick={() => setIsEditing(true)} 
-        className={styles.itemView}
+        className={stepStyles.itemView}
     >
-      <p className={styles.itemText}>{item.text}</p>
+      <p className={stepStyles.itemText}>{item.text}</p>
     </div>
   );
 }
@@ -294,13 +295,9 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
     <>
     <div className="border rounded-md mb-2">
       <div className="flex items-center justify-between hover:bg-accent/50 rounded-md">
-        <div className="flex-1 text-left px-4 py-2" onClick={() => setInitiative(prev => ({ ...prev, isExpanded: !prev.isExpanded }))}>
-            <div className="flex-1 text-left">
-            <p className="font-medium">{initiative.name}</p>
-            <div className="flex items-center gap-2 mt-1">
-                <Progress value={initiative.progression} className="h-1 w-32" />
-                <span className="text-xs text-muted-foreground">{initiative.progression}%</span>
-            </div>
+        <div className="flex-1 px-4 py-2" onClick={() => setInitiative(prev => ({ ...prev, isExpanded: !prev.isExpanded }))}>
+            <div className={styles.initiativeNameContainer}>
+              <p className={styles.initiativeName}>test {initiative.name}</p>
             </div>
         </div>
         <div className="flex items-center gap-1 pr-2">
@@ -356,7 +353,7 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
             </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className={stepStyles.stepsGrid}>
           {initiative.steps.map((step) => (
             <InitiativeStepView
                 key={step.key}
