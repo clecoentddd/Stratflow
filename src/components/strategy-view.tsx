@@ -18,7 +18,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { strategyStates, newInitiativeTemplate } from "@/lib/data";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardHeader, CardContent, CardFooter, CardTitle, CardDescription } from "@/components/ui/card";
 
 
 import type { Strategy, RadarItem, Initiative } from "@/lib/types";
@@ -52,7 +52,8 @@ export function StrategyView({
 
   const isSaving = strategy.id.startsWith('strat-temp-');
 
-  // Sync state only when the initial prop ID changes, not on every re-render.
+  // Sync state when the initial prop changes. This is crucial for refreshing
+  // the component with the server-generated ID after creation.
   useEffect(() => {
     setStrategy(initialStrategy);
   }, [initialStrategy]);
