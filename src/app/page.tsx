@@ -3,7 +3,6 @@
 
 import Link from "next/link";
 import { useState, useEffect, useCallback } from "react";
-import { AppHeader } from "@/components/header";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Plus } from "lucide-react";
 import { CreateCompanyDialog } from "@/lib/domain/companies/ui/CreateCompanyDialog";
@@ -48,7 +47,6 @@ export default function WelcomePage() {
   if (isLoading) {
     return (
         <div className="flex flex-col min-h-screen">
-            <AppHeader />
             <main className="flex-1 flex flex-col items-center justify-center text-center p-4">
                 <p>Loading...</p>
             </main>
@@ -58,7 +56,6 @@ export default function WelcomePage() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <AppHeader />
       <main className="flex-1 p-4 md:p-6">
         {companies.length > 0 ? (
           <div className="max-w-4xl mx-auto">

@@ -18,6 +18,7 @@ import { ZoomInDialog } from "./zoom-in-dialog";
 import type { RadarItem, RadarItemType, RadarCategory, RadarDistance, RadarImpact, RadarTolerance, Team } from "@/lib/types";
 import { radarAttributes } from "@/lib/data";
 import { cn } from "@/lib/utils";
+import styles from './radar-item-dialog.module.css';
 
 interface RadarItemDialogProps {
   isOpen: boolean;
@@ -97,93 +98,93 @@ export function RadarItemDialog({ isOpen, onOpenChange, onSave, item, teams, cur
   return (
     <>
       <Dialog open={isOpen} onOpenChange={onOpenChange}>
-        <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className={styles.dialogContent}>
           <DialogHeader>
             <DialogTitle>{item ? "Edit Radar Item" : "Create New Radar Item"}</DialogTitle>
             <DialogDescription>
               Fill in the details for the radar item below.
             </DialogDescription>
           </DialogHeader>
-          <div className="grid gap-6 py-4">
-            <div className="space-y-2">
+          <div className={styles.gridContainer}>
+            <div className={styles.spaceY2}>
               <Label htmlFor="name">Title</Label>
               <Input id="name" value={formData.name} onChange={(e) => handleChange('name', e.target.value)} placeholder="A concise title for the item" />
             </div>
 
-            <div className="space-y-2">
+            <div className={styles.spaceY2}>
               <Label htmlFor="detect">What have you detected?</Label>
               <Textarea id="detect" value={formData.detect} onChange={(e) => handleChange('detect', e.target.value)} placeholder="Describe the signal or event." rows={3}/>
             </div>
-            <div className="space-y-2">
+            <div className={styles.spaceY2}>
               <Label htmlFor="assess">What is your assessment?</Label>
               <Textarea id="assess" value={formData.assess} onChange={(e) => handleChange('assess', e.target.value)} placeholder="Analyze the potential impact and implications." rows={3}/>
             </div>
-            <div className="space-y-2">
+            <div className={styles.spaceY2}>
               <Label htmlFor="respond">What decisions could you take?</Label>
               <Textarea id="respond" value={formData.respond} onChange={(e) => handleChange('respond', e.target.value)} placeholder="Outline potential actions or strategies." rows={3}/>
             </div>
 
-            <div className="space-y-4">
-                <div className="space-y-2">
+            <div className={styles.spaceY4}>
+                <div className={styles.spaceY2}>
                   <Label>Type</Label>
-                  <RadioGroup value={formData.type} onValueChange={(v) => handleRadioChange('type', v as RadarItemType)} className="flex flex-wrap gap-2">
+                  <RadioGroup value={formData.type} onValueChange={(v) => handleRadioChange('type', v as RadarItemType)} className={styles.flexWrapGap2}>
                       {radarAttributes.types.map(t => (
-                          <RadioGroupItem key={t} value={t} id={`type-${t}`} className="sr-only" />
+                          <RadioGroupItem key={t} value={t} id={`type-${t}`} className={styles.srOnly} />
                       ))}
                       {radarAttributes.types.map(t => (
-                          <Label key={t} htmlFor={`type-${t}`} className={cn("px-3 py-1.5 border rounded-md text-sm cursor-pointer", formData.type === t ? 'bg-primary text-primary-foreground border-primary' : 'bg-background hover:bg-accent' )}>{t}</Label>
+                          <Label key={t} htmlFor={`type-${t}`} className={cn(styles.radioLabelBase, formData.type === t ? styles.radioLabelSelected : undefined)}>{t}</Label>
                       ))}
                   </RadioGroup>
                 </div>
-                 <div className="space-y-2">
+                 <div className={styles.spaceY2}>
                   <Label>Category</Label>
-                  <RadioGroup value={formData.category} onValueChange={(v) => handleRadioChange('category', v as RadarCategory)} className="flex flex-wrap gap-2">
+                  <RadioGroup value={formData.category} onValueChange={(v) => handleRadioChange('category', v as RadarCategory)} className={styles.flexWrapGap2}>
                       {radarAttributes.categories.map(c => (
-                          <RadioGroupItem key={c} value={c} id={`cat-${c}`} className="sr-only" />
+                          <RadioGroupItem key={c} value={c} id={`cat-${c}`} className={styles.srOnly} />
                       ))}
                       {radarAttributes.categories.map(c => (
-                           <Label key={c} htmlFor={`cat-${c}`} className={cn("px-3 py-1.5 border rounded-md text-sm cursor-pointer", formData.category === c ? 'bg-primary text-primary-foreground border-primary' : 'bg-background hover:bg-accent' )}>{c}</Label>
+                           <Label key={c} htmlFor={`cat-${c}`} className={cn(styles.radioLabelBase, formData.category === c ? styles.radioLabelSelected : undefined)}>{c}</Label>
                       ))}
                   </RadioGroup>
                 </div>
-                 <div className="space-y-2">
+                 <div className={styles.spaceY2}>
                   <Label>Distance</Label>
-                  <RadioGroup value={formData.distance} onValueChange={(v) => handleRadioChange('distance', v as RadarDistance)} className="flex flex-wrap gap-2">
+                  <RadioGroup value={formData.distance} onValueChange={(v) => handleRadioChange('distance', v as RadarDistance)} className={styles.flexWrapGap2}>
                       {radarAttributes.distances.map(d => (
-                          <RadioGroupItem key={d} value={d} id={`dist-${d}`} className="sr-only" />
+                          <RadioGroupItem key={d} value={d} id={`dist-${d}`} className={styles.srOnly} />
                       ))}
                       {radarAttributes.distances.map(d => (
-                           <Label key={d} htmlFor={`dist-${d}`} className={cn("px-3 py-1.5 border rounded-md text-sm cursor-pointer", formData.distance === d ? 'bg-primary text-primary-foreground border-primary' : 'bg-background hover:bg-accent' )}>{d}</Label>
+                           <Label key={d} htmlFor={`dist-${d}`} className={cn(styles.radioLabelBase, formData.distance === d ? styles.radioLabelSelected : undefined)}>{d}</Label>
                       ))}
                   </RadioGroup>
                 </div>
-                 <div className="space-y-2">
+                 <div className={styles.spaceY2}>
                   <Label>Impact</Label>
-                  <RadioGroup value={formData.impact} onValueChange={(v) => handleRadioChange('impact', v as RadarImpact)} className="flex flex-wrap gap-2">
+                  <RadioGroup value={formData.impact} onValueChange={(v) => handleRadioChange('impact', v as RadarImpact)} className={styles.flexWrapGap2}>
                       {radarAttributes.impacts.map(i => (
-                          <RadioGroupItem key={i} value={i} id={`impact-${i}`} className="sr-only" />
+                          <RadioGroupItem key={i} value={i} id={`impact-${i}`} className={styles.srOnly} />
                       ))}
                       {radarAttributes.impacts.map(i => (
-                           <Label key={i} htmlFor={`impact-${i}`} className={cn("px-3 py-1.5 border rounded-md text-sm cursor-pointer", formData.impact === i ? 'bg-primary text-primary-foreground border-primary' : 'bg-background hover:bg-accent' )}>{i}</Label>
+                           <Label key={i} htmlFor={`impact-${i}`} className={cn(styles.radioLabelBase, formData.impact === i ? styles.radioLabelSelected : undefined)}>{i}</Label>
                       ))}
                   </RadioGroup>
                 </div>
-                 <div className="space-y-2">
+                 <div className={styles.spaceY2}>
                   <Label>Tolerance</Label>
-                  <RadioGroup value={formData.tolerance} onValueChange={(v) => handleRadioChange('tolerance', v as RadarTolerance)} className="flex flex-wrap gap-2">
+                  <RadioGroup value={formData.tolerance} onValueChange={(v) => handleRadioChange('tolerance', v as RadarTolerance)} className={styles.flexWrapGap2}>
                       {radarAttributes.tolerances.map(t => (
-                          <RadioGroupItem key={t} value={t} id={`tol-${t}`} className="sr-only" />
+                          <RadioGroupItem key={t} value={t} id={`tol-${t}`} className={styles.srOnly} />
                       ))}
                       {radarAttributes.tolerances.map(t => (
-                           <Label key={t} htmlFor={`tol-${t}`} className={cn("px-3 py-1.5 border rounded-md text-sm cursor-pointer", formData.tolerance === t ? 'bg-primary text-primary-foreground border-primary' : 'bg-background hover:bg-accent' )}>{t}</Label>
+                           <Label key={t} htmlFor={`tol-${t}`} className={cn(styles.radioLabelBase, formData.tolerance === t ? styles.radioLabelSelected : undefined)}>{t}</Label>
                       ))}
                   </RadioGroup>
                 </div>
             </div>
             
-            <div className="space-y-2">
+            <div className={styles.spaceY2}>
                 <Label htmlFor="zoom_in">Zoom In Link (Optional)</Label>
-                <Button variant="outline" className="w-full justify-start font-normal" onClick={() => setZoomInOpen(true)}>
+                <Button variant="outline" className={styles.zoomButton} onClick={() => setZoomInOpen(true)}>
                     {getZoomLinkTeamName()}
                 </Button>
             </div>

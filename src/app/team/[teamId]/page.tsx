@@ -6,7 +6,6 @@ import Link from "next/link";
 import { notFound, useParams } from "next/navigation";
 import { ChevronLeft, Plus, Radar } from "lucide-react";
 import type { Team } from "@/lib/types";
-import { AppHeader } from "@/components/header";
 import { Button } from "@/components/ui/button";
 import { StrategyDashboard } from "@/lib/domain/strategies/ui";
 import { useToast } from "@/hooks/use-toast";
@@ -58,7 +57,6 @@ export default function TeamStrategyPage() {
   if (isLoading) {
     return (
       <div className="flex flex-col min-h-screen">
-        <AppHeader />
         <main className="p-4 md:p-6 flex-1 flex items-center justify-center">
             <p>Loading Strategy Dashboard...</p>
         </main>
@@ -69,7 +67,6 @@ export default function TeamStrategyPage() {
   if (!team) {
     return (
        <div className="flex flex-col min-h-screen">
-        <AppHeader />
         <main className="p-4 md:p-6 flex-1 flex items-center justify-center">
             <div className="text-center">
                 <h1 className="text-2xl font-bold">Team Not Found</h1>
@@ -85,7 +82,6 @@ export default function TeamStrategyPage() {
   
   return (
     <div className="flex flex-col min-h-screen">
-      <AppHeader />
       <main className="p-4 md:p-6 flex-1">
         <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-4">

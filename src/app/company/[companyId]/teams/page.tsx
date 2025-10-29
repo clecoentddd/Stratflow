@@ -6,7 +6,6 @@ import Link from "next/link";
 import { Plus, Pencil, Radar, TrendingUp, Building } from "lucide-react";
 import type { Team, Company } from "@/lib/types";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { AppHeader } from "@/components/header";
 import { Button } from "@/components/ui/button";
 import { CreateTeamDialog } from "@/lib/domain/teams/ui/CreateTeamDialog";
 import { EditTeamDialog } from "@/lib/domain/teams/ui/EditTeamDialog";
@@ -78,7 +77,6 @@ export default function TeamsPage() {
   if (isLoading) {
     return (
         <div className="flex flex-col min-h-screen">
-            <AppHeader companyName={company?.name || 'Loading...'} />
             <main className="p-4 md:p-6 flex-1 flex items-center justify-center">
                 <p>Loading Teams...</p>
             </main>
@@ -88,10 +86,9 @@ export default function TeamsPage() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <AppHeader companyName={company?.name} />
       <main className="p-4 md:p-6 flex-1">
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-3xl font-bold font-headline">Teams</h1>
+          <h1 className="text-3xl font-bold font-headline">{company?.name} · Teams</h1>
           <div className="flex items-center gap-2">
             <Link href="/">
                 <Button variant="outline">

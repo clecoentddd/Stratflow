@@ -35,13 +35,18 @@ export function AppHeader({ companyName }: AppHeaderProps) {
             </div>
         )}
       </div>
+      <div className="flex items-center gap-2">
+        <nav className="hidden sm:flex items-center gap-2 mr-2">
+          <Link href="/company/company-demo/teams" className="text-sm px-2 py-1 rounded-md hover:bg-accent hover:text-accent-foreground">Teams</Link>
+          <Link href="/horizon" className="text-sm px-2 py-1 rounded-md hover:bg-accent hover:text-accent-foreground">Horizon</Link>
+          <Link href="/monitoring" className="text-sm px-2 py-1 rounded-md hover:bg-accent hover:text-accent-foreground">Monitoring</Link>
+        </nav>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="relative h-8 w-8 rounded-full">
             <Avatar className="h-9 w-9">
-              <AvatarImage src="https://picsum.photos/seed/user-avatar/40/40" alt="User avatar" />
               <AvatarFallback>
-                <User />
+                <User className="h-4 w-4" />
               </AvatarFallback>
             </Avatar>
           </Button>
@@ -67,6 +72,7 @@ export function AppHeader({ companyName }: AppHeaderProps) {
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+      </div>
     </header>
   );
 }

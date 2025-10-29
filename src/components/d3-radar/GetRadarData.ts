@@ -9,13 +9,10 @@
  */
 export async function GetRadarData(radarId: string) {
   try {
-    const storedOrgsString = localStorage.getItem("organizations");
-    if (!storedOrgsString) return [];
-    
-    const allOrgs = JSON.parse(storedOrgsString);
-    const org = allOrgs.find((o: any) => o.id === radarId);
-
-    return org?.radar || [];
+    const res = await fetch(`/api/teams/${encodeURIComponent(radarId)}/radar`, { cache: 'no-store' });
+    if (!res.ok) return [];
+    const team = await res.json();
+    return team?.radar || [];
   } catch (err) {
     console.error('Unexpected error in GetRadarData:', err);
     return [];
@@ -28,17 +25,12 @@ export async function GetRadarData(radarId: string) {
  */
 export async function GetRadarName(radarId: string) {
   try {
-    const storedOrgsString = localStorage.getItem("organizations");
-    if (!storedOrgsString) return 'Organization Not Found';
-    
-    const allOrgs = JSON.parse(storedOrgsString);
-    const org = allOrgs.find((o: any) => o.id === radarId);
-
-    return org?.name || 'Unknown Organization';
+    const res = await fetch(`/api/teams/${encodeURIComponent(radarId)}/radar`, { cache: 'no-store' });
+    if (!res.ok) return 'Organization Not Found';
+    const team = await res.json();
+    return team?.name || 'Unknown Organization';
   } catch (err) {
     console.error('Unexpected error in GetRadarName:', err);
     return 'Error fetching organisation';
   }
 }
-
-    

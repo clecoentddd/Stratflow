@@ -291,8 +291,12 @@ export const getTeamsProjection = async (): Promise<Team[]> => {
   const projection: Record<string, Team> = {};
   for (const aggregateId in eventsByAggId) {
     const aggregateEvents = eventsByAggId[aggregateId];
-    // Important: sort events by timestamp to ensure correct order of application
-    aggregateEvents.sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
+    // Important: ensure TeamCreated is applied first, then sort remaining by timestamp
+    aggregateEvents.sort((a, b) => {
+      if (a.type === 'TeamCreated' && b.type !== 'TeamCreated') return -1;
+      if (b.type === 'TeamCreated' && a.type !== 'TeamCreated') return 1;
+      return new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime();
+    });
     const team = applyEventsToTeam(null, aggregateEvents);
     if (team) {
       projection[aggregateId] = team;

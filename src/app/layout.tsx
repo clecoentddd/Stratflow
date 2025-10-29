@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Toaster } from "@/components/ui/toaster";
 import "./globals.css";
 import { cn } from "@/lib/utils";
+import { AppHeader } from "@/components/header";
 
 export const metadata: Metadata = {
   title: "StratFlow",
@@ -28,6 +29,7 @@ export default function RootLayout({
           "min-h-screen bg-background font-body antialiased"
         )}
       >
+        <AppHeader />
         {children}
         <Toaster />
       </body>
