@@ -2,31 +2,28 @@
 "use client";
 
 import { useState, useEffect, useCallback, useMemo } from "react";
+import Link from 'next/link';
 import { Plus, Edit, MoreVertical } from "lucide-react";
+import { v4 as uuidv4 } from 'uuid';
+import { useToast } from "@/hooks/use-toast";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  CardFooter
-} from "@/components/ui/card";
-import { Accordion } from "@/components/ui/accordion";
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { strategyStates, newInitiativeTemplate } from "@/lib/data";
 import { Input } from "@/components/ui/input";
-import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 
 import type { Strategy, RadarItem, Initiative } from "@/lib/types";
 import type { UpdateStrategyCommand } from "@/lib/domain/strategies/commands";
 import type { CreateInitiativeCommand, DeleteInitiativeCommand } from "@/lib/domain/initiatives/commands";
 import { InitiativeView } from "./initiative-view";
-import { v4 as uuidv4 } from "uuid";
 import { EditStrategyDialog } from "./edit-strategy-dialog";
-import { AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
+import { Accordion } from "@/components/ui/accordion";
 
 const iconMap = { FilePenLine: Edit, Rocket: Plus, CheckCircle2: Plus, Archive: Plus };
 
@@ -85,7 +82,7 @@ export function StrategyView({
         });
 
         if (!response.ok) {
-            const errorData = await response.json();
+            const errorData = await response.json().catch(() => ({}));
             throw new Error(errorData.message || 'Failed to update strategy');
         }
         
