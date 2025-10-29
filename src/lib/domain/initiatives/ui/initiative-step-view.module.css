@@ -1,7 +1,7 @@
 .stepsGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 0.2rem;
+  gap: 0.5rem;
 }
 
 /* ---------- Step Card (Read-only + Edit container shares layout) ---------- */
@@ -15,11 +15,11 @@
   min-height: 200px; /* ensures cards don’t collapse */
 }
 
-/* Step-specific background colors */
-.stepCard[data-step='diagnostic'] { background-color: #f8f8f8; }
-.stepCard[data-step='overallApproach'] { background-color: #f0f2f5; }
-.stepCard[data-step='actions'] { background-color: #f5f3f0; }
-.stepCard[data-step='proximateObjectives'] { background-color: #faf5f2; }
+/* Step-specific background colors - blue-grey progression (light to strong) */
+.stepCard[data-step='diagnostic'] { background-color: #f8f9fa; }        /* lightest blue-grey */
+.stepCard[data-step='overallApproach'] { background-color: #f0f2f5; }   /* light blue-grey */
+.stepCard[data-step='actions'] { background-color: #e8eaef; }           /* medium blue-grey */
+.stepCard[data-step='proximateObjectives'] { background-color: #e0e3e9; } /* stronger blue-grey */
 
 /* Header */
 .stepHeader {

@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { saveEvents } from '@/lib/db/event-store';
 import { getTeamByIdProjection } from '@/lib/db/projections';
 import type { CreateStrategyCommand } from '@/lib/domain/strategies/commands';
-import type { StrategyCreatedEvent } from '@/lib/domain/strategy/events';
+import type { StrategyCreatedEvent } from '@/lib/domain/strategies/events';
 
 // --- Vertical Slice: Create Strategy ---
 export async function POST(request: NextRequest, { params }: { params: { teamId: string } | Promise<{ teamId: string }> }) {

@@ -322,14 +322,18 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
       </div>
       {initiative.isExpanded && (
         <div className="p-4 bg-muted/20">
+           <div className="p-4 bg-muted/20">
           <div className="mb-6">
-            <Label>Overall Progression: {initiative.progression}%</Label>
+            <Label style={{ marginBottom: '12px', display: 'block' }}>
+              Overall Progression: {initiative.progression}%
+            </Label>
           <Slider
             value={[initiative.progression]}
             onValueChange={(value) => handleUpdateInitiative({ progression: value[0] })}
             max={100}
             step={1}
           />
+        </div>
         </div>
         
         <div className="mb-6">

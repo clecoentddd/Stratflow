@@ -1,4 +1,3 @@
-
 import type { Event } from '../teams/events';
 import type { StrategyState } from '@/lib/types';
 import type { InitiativeEvent } from '../initiatives/events';

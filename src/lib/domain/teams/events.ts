@@ -1,5 +1,5 @@
 import type { RadarEvent } from '../radar/events';
-import type { StrategyEvent } from '../strategy/events';
+import type { StrategyEvent } from '../strategies/events';
 import type { InitiativeEvent } from '../initiatives/events';
 
 // Event Sourcing and CQRS Types
