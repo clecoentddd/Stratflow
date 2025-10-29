@@ -3,7 +3,7 @@
 
 import { useState, useEffect, useCallback, useMemo } from "react";
 import Link from 'next/link';
-import { Plus, Edit, MoreVertical } from "lucide-react";
+import { Plus, Edit, MoreVertical, Search, Milestone, ListChecks, Target } from "lucide-react";
 import { v4 as uuidv4 } from 'uuid';
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -50,13 +50,11 @@ export function StrategyView({
   const [isEditStrategyOpen, setEditStrategyOpen] = useState(false);
   const { toast } = useToast();
 
-  const isSaving = strategy.id.startsWith('strat-temp-');
-
-  // Sync state when the initial prop changes. This is crucial for refreshing
-  // the component with the server-generated ID after creation.
   useEffect(() => {
     setStrategy(initialStrategy);
   }, [initialStrategy]);
+
+  const isSaving = strategy.id.startsWith('strat-temp-');
 
   const overallProgression = useMemo(() => {
     if (strategy.initiatives.length === 0) return 0;
@@ -71,10 +69,10 @@ export function StrategyView({
   const CurrentStateIcon = iconMap[currentStateInfo.iconName as keyof typeof iconMap] || Edit;
   
   const handleUpdateStrategy = useCallback(async (updatedValues: Partial<Strategy>) => {
+    // This function is for simple state updates like changing the 'state' dropdown.
     const originalStrategy = strategy;
-    const newStrategy = { ...originalStrategy, ...updatedValues };
-    setStrategy(newStrategy);
-
+    setStrategy(prev => ({...prev, ...updatedValues}));
+    
     const command: UpdateStrategyCommand = { ...updatedValues, strategyId: strategy.id };
     
     try {
@@ -102,9 +100,11 @@ export function StrategyView({
   }, [strategy, orgId, onStrategyChange, toast]);
 
   const handleEditStrategy = (description: string, timeframe: string) => {
-    const originalStrategy = strategy;
-    const updatedStrategy = { ...strategy, description, timeframe };
-    setStrategy(updatedStrategy); // Optimistic update
+    // This handles the update from the dialog
+    const originalStrategy = { ...strategy };
+    
+    // Optimistically update UI
+    setStrategy(prev => ({ ...prev, description, timeframe })); 
     setEditStrategyOpen(false);
 
     const command: UpdateStrategyCommand = {
@@ -124,7 +124,7 @@ export function StrategyView({
             throw new Error(errorData.message || 'Failed to update strategy.');
         }
         toast({ title: "Strategy Updated", description: "Your changes have been saved."});
-        onStrategyChange();
+        onStrategyChange(); // Re-fetch to confirm state
     })
     .catch((error) => {
         console.error("Failed to update strategy:", error);
@@ -145,13 +145,13 @@ export function StrategyView({
     setCreatingInitiative(true);
     const tempId = `init-temp-${uuidv4()}`;
     const command: CreateInitiativeCommand = { 
-        strategyId: strategy.id, 
+        strategyId: strategy.id, // Use the current ID from state
         name: newInitiativeName.trim(),
         tempId: tempId,
     };
     const newInitiative = newInitiativeTemplate(tempId, command.name);
-
-    // Optimistic UI Update
+    
+    // Use functional update to ensure we're modifying the latest state
     setStrategy(prev => ({
       ...prev,
       initiatives: [...prev.initiatives, newInitiative]
@@ -174,15 +174,16 @@ export function StrategyView({
     } catch (error: any) {
         console.error(error);
         toast({ title: "Error", description: error.message, variant: "destructive" });
-        onStrategyChange();
+        onStrategyChange(); // Rollback on error
     } finally {
         setCreatingInitiative(false);
     }
-  }, [strategy.id, orgId, toast, newInitiativeName, onStrategyChange, isCreatingInitiative, isSaving]);
+  }, [newInitiativeName, isCreatingInitiative, isSaving, strategy.id, orgId, toast, onStrategyChange]);
 
   const handleDeleteInitiative = useCallback((initiativeId: string, strategyId: string) => {
     const originalInitiatives = [...strategy.initiatives];
     
+    // Use functional update
     setStrategy(prev => ({
       ...prev,
       initiatives: prev.initiatives.filter(i => i.id !== initiativeId)
