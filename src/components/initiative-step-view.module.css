@@ -1,0 +1,31 @@
+.stepCard {
+  @apply bg-background h-full;
+}
+
+.stepHeader {
+  @apply flex flex-row items-center justify-between p-4 pb-2;
+}
+
+.stepTitle {
+  @apply text-base font-medium flex items-center gap-2;
+}
+
+.stepIcon {
+    @apply h-4 w-4 text-muted-foreground;
+}
+
+.addItemButton {
+    @apply h-7 w-7;
+}
+
+.stepContent {
+  @apply p-4 pt-2;
+}
+
+.stepItemsContainer {
+  @apply space-y-2;
+}
+
+.noItemsText {
+  @apply text-sm text-muted-foreground text-center py-2;
+}

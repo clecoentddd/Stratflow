@@ -11,22 +11,20 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { LinkRadarItemsDialog } from './link-radar-items-dialog';
 import { EditInitiativeDialog } from './edit-initiative-dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import type { Initiative, InitiativeStepKey, InitiativeItem as InitiativeItemType, RadarItem } from "@/lib/types";
-import type { UpdateInitiativeCommand, DeleteInitiativeCommand } from '@/lib/domain/initiatives/commands';
+import type { UpdateInitiativeCommand } from '@/lib/domain/initiatives/commands';
 import type { AddInitiativeItemCommand, UpdateInitiativeItemCommand } from '@/lib/domain/initiative-items/commands';
 import styles from './initiative-view.module.css';
-
+import { InitiativeStepView } from "./initiative-step-view";
 
 interface InitiativeItemViewProps {
   item: InitiativeItemType;
@@ -363,35 +361,16 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-4 items-start gap-4">
-          {initiative.steps.map((step) => {
-            const Icon = iconMap[step.iconName as keyof typeof iconMap];
-            return (
-            <Card key={step.key} className="bg-background h-full">
-            <CardHeader className="flex flex-row items-center justify-between p-4 pb-2">
-                <CardTitle className="text-base font-medium flex items-center gap-2">
-                {Icon && <Icon className="h-4 w-4 text-muted-foreground" />}
-                {step.title}
-                </CardTitle>
-                <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => handleAddInitiativeItem(step.key)}>
-                <Plus className="h-4 w-4" />
-                </Button>
-            </CardHeader>
-            <CardContent className="p-4 pt-2">
-                <div className="space-y-2">
-                {step.items.length > 0 ? step.items.map((item) => (
-                    <InitiativeItemView 
-                      key={item.id}
-                      item={item}
-                      onSave={(itemId, newText) => handleSaveInitiativeItem(itemId, newText, step.key)}
-                      onDelete={(itemId) => handleDeleteInitiativeItem(itemId, step.key)}
-                    />
-                )) : (
-                    <p className="text-sm text-muted-foreground text-center py-2">No items yet.</p>
-                )}
-                </div>
-            </CardContent>
-            </Card>
-          )})}
+          {initiative.steps.map((step) => (
+            <InitiativeStepView
+                key={step.key}
+                step={step}
+                iconMap={iconMap}
+                onAddItem={() => handleAddInitiativeItem(step.key)}
+                onSaveItem={(itemId, newText) => handleSaveInitiativeItem(itemId, newText, step.key)}
+                onDeleteItem={(itemId) => handleDeleteInitiativeItem(itemId, step.key)}
+            />
+          ))}
         </div>
 
         <LinkRadarItemsDialog
@@ -429,5 +408,3 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
     </>
   );
 }
-
-    
