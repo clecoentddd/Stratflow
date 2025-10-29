@@ -1,0 +1,19 @@
+.editContainer {
+  @apply space-y-2 p-2 border rounded-md bg-background shadow-md;
+}
+
+.editTextarea {
+  @apply text-sm;
+}
+
+.editActions {
+  @apply flex justify-between items-center;
+}
+
+.itemView {
+  @apply block p-2 border rounded-md hover:bg-accent/50 cursor-pointer min-h-[5.5rem];
+}
+
+.itemText {
+  @apply text-sm line-clamp-3 whitespace-pre-wrap;
+}

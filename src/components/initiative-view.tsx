@@ -19,12 +19,14 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { LinkRadarItemsDialog } from './link-radar-items-dialog';
 import { EditInitiativeDialog } from './edit-initiative-dialog';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import type { Initiative, InitiativeStepKey, InitiativeItem as InitiativeItemType, RadarItem } from "@/lib/types";
 import type { UpdateInitiativeCommand, DeleteInitiativeCommand } from '@/lib/domain/initiatives/commands';
 import type { AddInitiativeItemCommand, UpdateInitiativeItemCommand } from '@/lib/domain/initiative-items/commands';
+import styles from './initiative-view.module.css';
+
 
 interface InitiativeItemViewProps {
   item: InitiativeItemType;
@@ -67,18 +69,18 @@ function InitiativeItemView({ item, onSave, onDelete }: InitiativeItemViewProps)
 
   if (isEditing) {
     return (
-      <div className="space-y-2 p-2 border rounded-md bg-background shadow-md">
+      <div className={styles.editContainer}>
         <Textarea
           value={editText}
           onChange={(e) => setEditText(e.target.value)}
           placeholder="Describe an item..."
           autoFocus
           rows={3}
-          className="text-sm"
+          className={styles.editTextarea}
           onBlur={handleSave}
           onKeyDown={handleKeyDown}
         />
-        <div className="flex justify-between items-center">
+        <div className={styles.editActions}>
             <Button size="icon" variant="ghost" className="text-destructive hover:bg-destructive/10" onClick={() => onDelete(item.id)}>
                 <Trash2 className="h-4 w-4" />
             </Button>
@@ -98,9 +100,9 @@ function InitiativeItemView({ item, onSave, onDelete }: InitiativeItemViewProps)
   return (
     <div 
         onClick={() => setIsEditing(true)} 
-        className="block p-2 border rounded-md hover:bg-accent/50 cursor-pointer min-h-[5.5rem]"
+        className={styles.itemView}
     >
-      <p className="text-sm line-clamp-3 whitespace-pre-wrap">{item.text}</p>
+      <p className={styles.itemText}>{item.text}</p>
     </div>
   );
 }
@@ -277,7 +279,7 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
     .then(async res => {
         if (!res.ok) {
             const errorData = await res.json().catch(() => ({}));
-            throw new Error(errorData.message || "Failed to delete item.");
+            throw new Error(errorData.message || 'Failed to delete item.');
         }
     })
     .catch(err => {
