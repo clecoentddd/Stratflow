@@ -85,21 +85,12 @@ export const groupItemsForPositioning = (normalizedItems: any[]) => {
  */
 export const calculateItemPosition = (item: any, indexInGroup: number, totalInGroup: number, radius: number) => {
     const quadrantAngleStart = (Math.PI / 2) * item.quadrantIndex;
-    
-    // Add a small offset from the edge to avoid items on the lines
-    const anglePadding = Math.PI / 18; // 10 degrees in radians
-    
-    // Spread items within the quadrant, leaving padding
-    const availableAngle = (Math.PI / 2) - (2 * anglePadding);
-    const angleStep = totalInGroup > 1 ? availableAngle / (totalInGroup - 1) : availableAngle;
-
-    let angle;
-    if (totalInGroup === 1) {
-        // Center the single item
-        angle = quadrantAngleStart + Math.PI / 4;
-    } else {
-        angle = quadrantAngleStart + anglePadding + (angleStep * indexInGroup);
-    }
+    // Equal spacing strictly within the quadrant interior using (count+1) rule
+    // Example: count=3 -> positions at 22.5°, 45°, 67.5° inside the 0–90° quadrant
+    const step = (Math.PI / 2) / (totalInGroup + 1);
+    const angle = totalInGroup === 1
+      ? quadrantAngleStart + (Math.PI / 4)
+      : quadrantAngleStart + step * (indexInGroup + 1);
     
     const distRadius = radius * item.radiusMultiplier;
 
