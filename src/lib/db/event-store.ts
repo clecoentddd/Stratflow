@@ -1,5 +1,5 @@
 import type { CompanyEvent } from '@/lib/domain/companies/events';
-import { initialTeams } from '@/lib/data';
+import { initialTeams, initialLinks } from '@/lib/data';
 import type {
   TeamEvent,
   TeamCreatedEvent,
@@ -9,7 +9,7 @@ import { applyEventsToTeam, applyEventsToCompany } from './projections';
 import type { RadarItemCreatedEvent } from '../domain/radar/events';
 import type { StrategyCreatedEvent } from '@/lib/domain/strategies/events';
 import type { InitiativeCreatedEvent } from '@/lib/domain/initiatives/events';
-import type { LinkingEvents } from '@/lib/domain/initiatives/linking/events';
+import type { LinkingEvents, InitiativeLinkedEvent } from '@/lib/domain/initiatives/linking/events';
 
 // In a real app, this would be a proper database. We're using a file-based mock store
 // for simplicity and to ensure state persists across serverless function invocations.
@@ -131,6 +131,42 @@ const getDb = (): MockDb => {
       });
     }
   });
+
+  // Seed initiative links based on initialLinks
+  if (initialLinks && initialLinks.length) {
+    // Build a lookup from initiativeId -> { teamId, teamLevel, strategyId }
+    const initContext = new Map<string, { teamId: string; teamLevel: number; strategyId: string }>();
+    initialTeams.forEach(t => {
+      t.dashboard?.strategies?.forEach(s => {
+        s.initiatives?.forEach(i => {
+          initContext.set(i.id, { teamId: t.id, teamLevel: t.level, strategyId: s.id });
+        })
+      })
+    });
+
+    initialLinks.forEach(link => {
+      const from = initContext.get(link.from);
+      const to = initContext.get(link.to);
+      if (!from || !to) return;
+      const e: InitiativeLinkedEvent = {
+        type: 'InitiativeLinked',
+        entity: 'team',
+        aggregateId: from.teamId,
+        timestamp: new Date().toISOString(),
+        payload: {
+          fromInitiativeId: link.from,
+          toInitiativeId: link.to,
+          fromStrategyId: from.strategyId,
+          toStrategyId: to.strategyId,
+          fromTeamId: from.teamId,
+          toTeamId: to.teamId,
+          fromTeamLevel: from.teamLevel,
+          toTeamLevel: to.teamLevel,
+        }
+      };
+      seedEventsList.push(e);
+    });
+  }
 
   (global as any)._mockDbEvents = seedEventsList;
   return { events: seedEventsList };

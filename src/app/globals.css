@@ -88,3 +88,19 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+/* D3 level-based node styling */
+.level-node {
+  stroke: rgba(0,0,0,0.35);
+}
+.level-0 { fill: #1f77b4; stroke: #0b4b78; }
+.level-1 { fill: #2ca02c; stroke: #1a6b1a; }
+.level-2 { fill: #ff7f0e; stroke: #a85406; }
+.level-3 { fill: #d62728; stroke: #8f1a1c; }
+.level-4 { fill: #9467bd; stroke: #5f3f82; }
+.level-5 { fill: #8c564b; stroke: #593830; }
+.level-6 { fill: #e377c2; stroke: #a54f8a; }
+.level-7 { fill: #7f7f7f; stroke: #555555; }
+.level-8 { fill: #bcbd22; stroke: #808212; }
+.level-9 { fill: #17becf; stroke: #118693; }
+.level-10 { fill: #4db6ac; stroke: #2f7f77; }

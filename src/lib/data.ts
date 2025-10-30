@@ -51,7 +51,22 @@ export const initialTeams: Omit<Team, 'companyId'>[] = [
           description: 'Grow market share by 5% YoY',
           timeframe: '2025',
           state: 'Active',
-          initiatives: [],
+          initiatives: [
+            {
+              id: 'init-bod-1',
+              name: 'Board Priority: Market Expansion',
+              progression: 15,
+              steps: [],
+              linkedRadarItemIds: [],
+            },
+            {
+              id: 'init-bod-2',
+              name: 'Board Priority: ESG Disclosure',
+              progression: 10,
+              steps: [],
+              linkedRadarItemIds: [],
+            },
+          ],
         },
       ],
     },
@@ -185,7 +200,22 @@ export const initialTeams: Omit<Team, 'companyId'>[] = [
           description: 'Execute on Q4 2024 Product Launch',
           timeframe: 'Q4 2024',
           state: 'Active',
-          initiatives: [],
+          initiatives: [
+            {
+              id: 'init-ceo-1-1',
+              name: 'Define launch narrative',
+              progression: 20,
+              steps: [],
+              linkedRadarItemIds: [],
+            },
+            {
+              id: 'init-ceo-1-2',
+              name: 'Align leadership OKRs',
+              progression: 10,
+              steps: [],
+              linkedRadarItemIds: [],
+            },
+          ],
         },
         {
           id: 'ceo-strat-2',
@@ -381,6 +411,20 @@ export const initialTeams: Omit<Team, 'companyId'>[] = [
                 },
               ],
               linkedRadarItemIds: ['radar-item-1'],
+            },
+            {
+              id: 'init-1-2',
+              name: 'MVP Scope & Architecture',
+              progression: 40,
+              steps: [],
+              linkedRadarItemIds: [],
+            },
+            {
+              id: 'init-1-3',
+              name: 'Pilot Rollout',
+              progression: 5,
+              steps: [],
+              linkedRadarItemIds: [],
             },
           ],
         },
@@ -797,3 +841,19 @@ export const radarAttributes = {
 };
 
 export { newInitiativeTemplate };
+
+// Seed initiative links between existing initiatives (optional demo data)
+export const initialLinks: { from: string; to: string }[] = [
+  // CTO chain
+  { from: 'init-1-1', to: 'init-1-2' },
+  { from: 'init-1-2', to: 'init-1-3' },
+  // Cross org: CEO launch narrative depends on CTO MVP scope
+  { from: 'init-ceo-1-1', to: 'init-1-2' },
+  // Alignment: CEO OKRs influenced by CTO market research
+  { from: 'init-ceo-1-2', to: 'init-1-1' },
+  // Board (level 0) influencing CEO (level 1)
+  { from: 'init-bod-1', to: 'init-ceo-1-1' },
+  { from: 'init-bod-2', to: 'init-ceo-1-2' },
+  // Board (level 0) influencing CTO (level 2)
+  { from: 'init-bod-1', to: 'init-1-2' },
+];
