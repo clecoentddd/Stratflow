@@ -12,7 +12,7 @@ import { StrategyView } from "./StrategyView";
 
 const strategyOrder: Record<StrategyState, number> = {
   Draft: 1,
-  Open: 2,
+  Active: 2,
   Closed: 3,
   Obsolete: 4,
   Deleted: 5,
@@ -103,10 +103,10 @@ export function StrategyDashboard({
   
   return (
     <div>
-        <div className="space-y-6">
+        <div className="space-y-8">
           {sortedStrategies.length > 0 ? (
               sortedStrategies.map(strategy => {
-                  const isFocused = strategy.state === 'Draft' || strategy.state === 'Open';
+                  const isFocused = strategy.state === 'Draft' || strategy.state === 'Active';
                   return (
                       <StrategyView 
                           key={strategy.id} 

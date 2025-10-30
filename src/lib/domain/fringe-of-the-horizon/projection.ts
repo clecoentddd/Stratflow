@@ -33,11 +33,24 @@ export async function getFringeOfTheHorizonProjection(limit = 20): Promise<Fring
       switch (event.type) {
         case 'TeamCreated': {
           teamInfo.set(event.aggregateId, { name: event.payload.name, level: event.payload.level });
+          // Backfill existing items for this team with name and level
+          for (const [id, item] of items.entries()) {
+            if (item.teamId === event.aggregateId) {
+              items.set(id, { ...item, teamName: event.payload.name, teamLevel: event.payload.level });
+            }
+          }
           break;
         }
         case 'TeamUpdated': {
           const existing = teamInfo.get(event.aggregateId);
-          teamInfo.set(event.aggregateId, { name: event.payload.name, level: existing?.level ?? 0 });
+          const nextLevel = existing?.level ?? 0;
+          teamInfo.set(event.aggregateId, { name: event.payload.name, level: nextLevel });
+          // Backfill name for existing items; keep their computed level from map
+          for (const [id, item] of items.entries()) {
+            if (item.teamId === event.aggregateId) {
+              items.set(id, { ...item, teamName: event.payload.name, teamLevel: nextLevel });
+            }
+          }
           break;
         }
         case 'RadarItemCreated': {

@@ -1,5 +1,5 @@
 
-export type StrategyState = 'Draft' | 'Open' | 'Closed' | 'Obsolete' | 'Deleted';
+export type StrategyState = 'Draft' | 'Active' | 'Closed' | 'Obsolete' | 'Deleted';
 
 export type InitiativeItem = {
   id: string;

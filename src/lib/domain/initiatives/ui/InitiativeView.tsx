@@ -19,6 +19,8 @@ import type { UpdateInitiativeCommand } from '@/lib/domain/initiatives/commands'
 import type { AddInitiativeItemCommand, UpdateInitiativeItemCommand } from '@/lib/domain/initiative-items/commands';
 import stepStyles from "./initiative-step-view.module.css";
 import { InitiativeStepView } from "./InitiativeStepView";
+import { updateInitiative } from "@/lib/api/initiatives";
+import { addInitiativeItem, updateInitiativeItem, deleteInitiativeItem } from "@/lib/api/initiative-items";
 import styles from "./InitiativeView.module.css"
 
 interface InitiativeItemViewProps {
@@ -108,11 +110,12 @@ interface InitiativeViewProps {
   onInitiativeChange: () => void;
   onDeleteInitiative: (initiativeId: string, strategyId: string) => void;
   strategyId: string;
+  onLocalUpdate?: (initiativeId: string, updated: Partial<Initiative>) => void;
 }
 
 const iconMap: Record<string, React.ComponentType<any>> = { Search, Milestone, ListChecks, Target };
 
-export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiativeChange, onDeleteInitiative, strategyId }: InitiativeViewProps) {
+export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiativeChange, onDeleteInitiative, strategyId, onLocalUpdate }: InitiativeViewProps) {
   const [initiative, setInitiative] = useState({ ...initialInitiative, isExpanded: false });
   const [isLinkRadarOpen, setLinkRadarOpen] = useState(false);
   const [isEditInitiativeOpen, setEditInitiativeOpen] = useState(false);
@@ -145,25 +148,27 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
 
 
   const handleUpdateInitiative = (updatedValues: Partial<Initiative>) => {
+    if (onLocalUpdate) {
+      onLocalUpdate(initiative.id, updatedValues);
+    }
+    if (initiative.id.startsWith('init-temp-')) {
+      setInitiative(prev => ({ ...prev, ...updatedValues }));
+      return;
+    }
     const command: UpdateInitiativeCommand = { ...updatedValues, initiativeId: initiative.id };
-    setInitiative(prev => ({ ...prev, ...updatedValues })); 
-    
-    const promise = fetch(`/api/teams/${orgId}/initiatives/${initiative.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(command)
-    });
+    setInitiative(prev => ({ ...prev, ...updatedValues }));
+    const promise = updateInitiative(orgId, initiative.id, command);
     fireAndForget(promise, "Could not update initiative.");
   };
 
   const handleEditName = (newName: string) => {
+    if (initiative.id.startsWith('init-temp-')) {
+      setInitiative(prev => ({ ...prev, name: newName }));
+      return;
+    }
     const command: UpdateInitiativeCommand = { name: newName, initiativeId: initiative.id };
     setInitiative(prev => ({ ...prev, name: newName }));
-    const promise = fetch(`/api/teams/${orgId}/initiatives/${initiative.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(command)
-    });
+    const promise = updateInitiative(orgId, initiative.id, command);
     fireAndForget(promise, "Could not update initiative name.");
   };
 
@@ -207,11 +212,7 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
         }
         setInitiative(optimisticInitiative);
 
-        fetch(`/api/teams/${orgId}/initiative-items`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(command)
-        })
+        addInitiativeItem(orgId, command)
         .then(async res => {
             if(!res.ok) {
               const errorData = await res.json().catch(() => ({}));
@@ -243,11 +244,7 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
             return newInitiative;
         });
 
-        const promise = fetch(`/api/teams/${orgId}/initiative-items/${itemId}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(command)
-        });
+        const promise = updateInitiativeItem(orgId, itemId, command);
         fireAndForget(promise, "Could not save item changes.");
     }
   };
@@ -265,11 +262,7 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
     
     if (itemId.startsWith('temp-')) return;
 
-    fetch(`/api/teams/${orgId}/initiative-items/${itemId}`, { 
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ initiativeId: initiative.id }) // Pass initiativeId in body
-    })
+    deleteInitiativeItem(orgId, itemId, initiative.id)
     .then(async res => {
         if (!res.ok) {
             const errorData = await res.json().catch(() => ({}));
@@ -293,14 +286,17 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
 
   return (
     <>
-    <div className="border rounded-md mb-2">
-      <div className="flex items-center justify-between hover:bg-accent/50 rounded-md">
-        <div className="flex-1 px-4 py-2" onClick={() => setInitiative(prev => ({ ...prev, isExpanded: !prev.isExpanded }))}>
-            <div className={styles.initiativeNameContainer}>
-              <p className={styles.initiativeName}>{initiative.name}</p>
-            </div>
+    <div className="mb-3">
+      <div
+        className={styles.initiativeHeader}
+        data-state={initiative.isExpanded ? 'expanded' : 'collapsed'}
+      >
+        <div className="flex-1" onClick={() => setInitiative(prev => ({ ...prev, isExpanded: !prev.isExpanded }))}>
+          <div className={styles.initiativeNameContainer}>
+            <p className={styles.initiativeName}>{initiative.name}</p>
+          </div>
         </div>
-        <div className="flex items-center gap-1 pr-2">
+        <div className="flex items-center gap-1">
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                     <Button variant="ghost" size="icon" className="h-8 w-8">
@@ -320,22 +316,21 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
             </DropdownMenu>
         </div>
       </div>
-      {initiative.isExpanded && (
-        <div className="p-4 bg-muted/20">
-           <div className="p-4 bg-muted/20">
-          <div className="mb-6">
-            <Label style={{ marginBottom: '12px', display: 'block' }}>
-              Overall Progression: {initiative.progression}%
-            </Label>
-          <Slider
-            value={[initiative.progression]}
-            onValueChange={(value) => handleUpdateInitiative({ progression: value[0] })}
-            max={100}
-            step={1}
-          />
-        </div>
-        </div>
-        
+      <div
+        className={styles.initiativeContent}
+        data-state={initiative.isExpanded ? 'expanded' : 'collapsed'}
+      >
+           <div className="mb-6">
+             <Label style={{ marginBottom: '12px', display: 'block' }}>
+               Overall Progression: {initiative.progression}%
+             </Label>
+           <Slider
+             value={[initiative.progression]}
+             onValueChange={(value) => handleUpdateInitiative({ progression: value[0] })}
+             max={100}
+             step={1}
+           />
+         </div>
         <div className="mb-6">
             <div className="flex items-center gap-4">
                  <Button variant="outline" size="sm" onClick={() => setLinkRadarOpen(true)}>
@@ -377,7 +372,7 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
             linkedItemIds={initiative.linkedRadarItemIds || []}
             onLinkItems={handleLinkRadarItems}
         />
-      </div>)}
+      </div>
     </div>
     <EditInitiativeDialog
         isOpen={isEditInitiativeOpen}

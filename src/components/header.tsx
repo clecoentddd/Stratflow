@@ -3,6 +3,7 @@
 
 import { User, LogOut, Settings } from "lucide-react";
 import Link from 'next/link';
+import { usePathname, useSearchParams } from 'next/navigation';
 
 import {
   DropdownMenu,
@@ -21,6 +22,13 @@ interface AppHeaderProps {
 }
 
 export function AppHeader({ companyName }: AppHeaderProps) {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const companyMatch = pathname.match(/\/company\/([^\/]+)/);
+  const companyIdFromPath = companyMatch ? companyMatch[1] : null;
+  const companyIdFromQuery = searchParams?.get('companyId') || null;
+  const companyId = companyIdFromPath || companyIdFromQuery;
+  const hasCompany = !!companyId;
   return (
     <header className="sticky top-0 z-10 flex h-16 items-center justify-between border-b bg-card/80 px-4 backdrop-blur-sm sm:px-6">
       <div className="flex items-center gap-4">
@@ -37,8 +45,17 @@ export function AppHeader({ companyName }: AppHeaderProps) {
       </div>
       <div className="flex items-center gap-2">
         <nav className="hidden sm:flex items-center gap-2 mr-2">
-          <Link href="/company/company-demo/teams" className="text-sm px-2 py-1 rounded-md hover:bg-accent hover:text-accent-foreground">Teams</Link>
-          <Link href="/horizon" className="text-sm px-2 py-1 rounded-md hover:bg-accent hover:text-accent-foreground">Horizon</Link>
+          <Link href="/" className="text-sm px-2 py-1 rounded-md hover:bg-accent hover:text-accent-foreground">Companies</Link>
+          {!hasCompany ? (
+            <span className="text-sm px-2 py-1 rounded-md text-muted-foreground opacity-60 cursor-not-allowed select-none">Teams</span>
+          ) : (
+            <Link href={`/company/${companyId}/teams`} className="text-sm px-2 py-1 rounded-md hover:bg-accent hover:text-accent-foreground">Teams</Link>
+          )}
+          {!hasCompany ? (
+            <span className="text-sm px-2 py-1 rounded-md text-muted-foreground opacity-60 cursor-not-allowed select-none">Horizon</span>
+          ) : (
+            <Link href={`/horizon?companyId=${companyId}`} className="text-sm px-2 py-1 rounded-md hover:bg-accent hover:text-accent-foreground">Horizon</Link>
+          )}
           <Link href="/monitoring" className="text-sm px-2 py-1 rounded-md hover:bg-accent hover:text-accent-foreground">Monitoring</Link>
         </nav>
       <DropdownMenu>

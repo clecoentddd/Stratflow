@@ -91,7 +91,7 @@ export default function TeamStrategyPage() {
                         Back to Teams
                     </Button>
                 </Link>
-                 <Link href={`/team/${teamId}/radar`}>
+                 <Link href={`/team/${teamId}/radar?companyId=${team?.companyId || ''}`}>
                     <Button variant="outline">
                         <Radar className="mr-2 h-4 w-4" />
                         View Radar

@@ -1,10 +1,10 @@
 import { getFringeOfTheHorizonProjection } from '@/lib/domain/fringe-of-the-horizon/projection';
 import styles from './horizon.module.css';
 
-type SearchParams = { sort?: 'level-asc' | 'level-desc' };
+type SearchParams = { sort?: 'level-asc' | 'level-desc'; companyId?: string };
 
-export default async function HorizonPage({ searchParams }: { searchParams?: SearchParams }) {
-  const sort = searchParams?.sort;
+export default async function HorizonPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
+  const { sort, companyId } = await searchParams;
   let items = await getFringeOfTheHorizonProjection(20);
 
   if (sort === 'level-asc') {
@@ -20,9 +20,24 @@ export default async function HorizonPage({ searchParams }: { searchParams?: Sea
 
       <div className={styles.controls}>
         <span>Sort by level:</span>
-        <a className={styles.select} href="/horizon?sort=level-desc">High → Low</a>
-        <a className={styles.select} href="/horizon?sort=level-asc">Low → High</a>
-        <a className={styles.select} href="/horizon">Created (Newest)</a>
+        <a
+          className={styles.select}
+          href={companyId ? `/horizon?companyId=${encodeURIComponent(companyId)}&sort=level-desc` : `/horizon?sort=level-desc`}
+        >
+          High → Low
+        </a>
+        <a
+          className={styles.select}
+          href={companyId ? `/horizon?companyId=${encodeURIComponent(companyId)}&sort=level-asc` : `/horizon?sort=level-asc`}
+        >
+          Low → High
+        </a>
+        <a
+          className={styles.select}
+          href={companyId ? `/horizon?companyId=${encodeURIComponent(companyId)}` : `/horizon`}
+        >
+          Created (Newest)
+        </a>
       </div>
 
       <section className={styles.cards}>

@@ -3,13 +3,14 @@
 
 import { useState, useEffect, useMemo, useCallback } from "react";
 import Link from "next/link";
-import { Plus, Pencil, Radar, TrendingUp, Building } from "lucide-react";
+import { Plus, Building } from "lucide-react";
 import type { Team, Company } from "@/lib/types";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CreateTeamDialog } from "@/lib/domain/teams/ui/CreateTeamDialog";
 import { EditTeamDialog } from "@/lib/domain/teams/ui/EditTeamDialog";
 import { notFound, useParams } from "next/navigation";
+import { TeamCard } from "@/lib/domain/teams/ui/TeamCard";
 
 export default function TeamsPage() {
   const params = useParams();
@@ -111,32 +112,7 @@ export default function TeamsPage() {
                         </h2>
                         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                             {orgs.map((team) => (
-                                <Card key={team.id} className="hover:shadow-lg transition-shadow flex flex-col bg-card">
-                                    <CardHeader className="flex flex-row justify-between items-start">
-                                        <div>
-                                            <CardTitle>{team.name}</CardTitle>
-                                            <CardDescription>{team.purpose}</CardDescription>
-                                        </div>
-                                        <div className="flex items-center">
-                                            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleEditClick(team)}>
-                                                <Pencil className="h-4 w-4" />
-                                            </Button>
-                                            <Link href={`/team/${team.id}`}>
-                                                <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-500 hover:text-blue-600">
-                                                    <TrendingUp className="h-5 w-5" />
-                                                </Button>
-                                            </Link>
-                                            <Link href={`/team/${team.id}/radar`}>
-                                                <Button variant="ghost" size="icon" className="h-8 w-8 text-red-500 hover:text-red-600">
-                                                    <Radar className="h-5 w-5" />
-                                                </Button>
-                                            </Link>
-                                        </div>
-                                    </CardHeader>
-                                    <CardContent className="flex-grow">
-                                        <p className="text-sm text-muted-foreground">{team.context}</p>
-                                    </CardContent>
-                                </Card>
+                                <TeamCard key={team.id} team={team} onEdit={handleEditClick} />
                             ))}
                         </div>
                     </div>

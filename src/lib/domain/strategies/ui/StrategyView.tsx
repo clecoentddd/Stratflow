@@ -230,27 +230,37 @@ export function StrategyView({
     onStrategyChange();
   }, [onStrategyChange]);
 
+  const onInitiativeLocalUpdate = useCallback((initiativeId: string, updated: Partial<Initiative>) => {
+    setStrategy(prev => ({
+      ...prev,
+      initiatives: prev.initiatives.map(i => i.id === initiativeId ? { ...i, ...updated } : i)
+    }));
+  }, []);
+
 
   return (
     <>
       <Card className={cn(
-          "transition-opacity",
-          isSaving && "opacity-50",
-          !isFocused && !isSaving && "opacity-50 hover:opacity-100",
-          strategy.state === 'Draft' && 'border-blue-500/80 border-2',
-          strategy.state === 'Open' && 'border-green-500/80 border-2'
+          styles.baseCard,
+          styles.card,
+          isSaving && styles.saving,
+          !isFocused && !isSaving && styles.unfocused,
+          strategy.state === 'Draft' && styles.cardDraft,
+          strategy.state === 'Active' && styles.cardOpen,
+          strategy.state === 'Closed' && styles.cardClosed,
+          strategy.state === 'Obsolete' && styles.cardObsolete
       )}>
-        <Accordion type="single" collapsible defaultValue={isFocused ? strategy.id : undefined} className="w-full">
-         <AccordionItem value={strategy.id} className="border-b-0">
+        <Accordion type="single" collapsible defaultValue={isFocused ? strategy.id : undefined} className={styles.accordion}>
+         <AccordionItem value={strategy.id}>
             <CardHeader>
-                <div className="flex items-center justify-between">
-                    <AccordionTrigger className="flex-1 text-left p-0 hover:no-underline">
-                        <div className="flex-1 pr-4">
-                            <CardTitle className="font-headline text-xl">{strategy.description}</CardTitle>
-                            <CardDescription className="mt-1">Timeframe: {strategy.timeframe}</CardDescription>
+                <div className={styles.headerRow}>
+                    <AccordionTrigger className={styles.trigger}>
+                        <div className={styles.titleWrap}>
+                            <CardTitle className={styles.strategyTitle}>{strategy.description}</CardTitle>
+                            <CardDescription className={styles.timeframeTag}>Timeframe: {strategy.timeframe}</CardDescription>
                         </div>
                     </AccordionTrigger>
-                    <div className="flex items-center gap-1 pl-2">
+                    <div className={styles.actionBar}>
                          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={(e) => { e.stopPropagation(); setEditStrategyOpen(true); }}>
                             <Edit className="h-4 w-4" />
                         </Button>
@@ -276,23 +286,19 @@ export function StrategyView({
                 </div>
             </CardHeader>
             <AccordionContent>
-                <CardContent className="pt-0">
+                <CardContent>
                   <div>
-                    <div className="flex justify-between items-center mb-1">
-                      <span className="text-sm font-medium text-muted-foreground">Overall Progress</span>
-                      <span className="text-sm font-semibold">{overallProgression}%</span>
+                    <div className={styles.progressBlock}>
+                      <span className={styles.progressLabel}>Overall Progress</span>
+                      <span className={styles.progressValue}>{overallProgression}%</span>
                     </div>
-                    <Progress value={overallProgression} className={cn(
-                      'h-2',
-                      strategy.state === 'Open' && '[&>div]:bg-green-500',
-                      strategy.state === 'Draft' && '[&>div]:bg-blue-500'
-                    )} />
+                    <Progress value={overallProgression} />
                   </div>
                   
-                  <div className="mt-6">
-                      <h4 className="text-lg font-semibold mb-2 font-headline">Initiatives</h4>
+                  <div>
+                      <h4 className={styles.sectionTitle}>Initiatives</h4>
                       {strategy.initiatives.length > 0 ? (
-                          <div className="space-y-4">
+                          <div className={styles.initiativesList}>
                               {strategy.initiatives.map(initiative => (
                                   <InitiativeView 
                                       key={initiative.id} 
@@ -300,24 +306,24 @@ export function StrategyView({
                                       radarItems={radarItems}
                                       orgId={orgId}
                                       onInitiativeChange={onInitiativeChanged}
+                                      onLocalUpdate={onInitiativeLocalUpdate}
                                       onDeleteInitiative={handleDeleteInitiative}
                                       strategyId={strategy.id}
                                   />
                               ))}
                           </div>
                       ) : (
-                          <p className="text-sm text-muted-foreground text-center py-4 border-2 border-dashed rounded-md">No initiatives for this strategy yet.</p>
+                          <p className={styles.noInitiatives}>No initiatives for this strategy yet.</p>
                       )}
                   </div>
                 </CardContent>
-                <CardFooter className="bg-slate-50/50 p-4 rounded-b-lg">
-                  <div className="flex w-full items-center gap-2">
+                <CardFooter className={styles.footer}>
+                  <div className={styles.footerRow}>
                     <Input 
                       placeholder={isCreatingInitiative ? "Creating initiative..." : isSaving ? "Saving strategy..." : "Name your new initiative..."}
                       value={newInitiativeName}
                       onChange={(e) => setNewInitiativeName(e.target.value)}
                       onKeyDown={(e) => e.key === 'Enter' && handleCreateInitiative()}
-                      className="bg-background"
                       disabled={isCreatingInitiative || isSaving}
                     />
                     <Button onClick={handleCreateInitiative} disabled={!newInitiativeName.trim() || isCreatingInitiative || isSaving}>

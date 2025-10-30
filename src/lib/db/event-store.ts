@@ -1,4 +1,3 @@
-
 import type { CompanyEvent } from '@/lib/domain/companies/events';
 import { initialTeams } from '@/lib/data';
 import type {
@@ -8,6 +7,8 @@ import type {
 import type { Team, Company } from '@/lib/types';
 import { applyEventsToTeam, applyEventsToCompany } from './projections';
 import type { RadarItemCreatedEvent } from '../domain/radar/events';
+import type { StrategyCreatedEvent } from '@/lib/domain/strategies/events';
+import type { InitiativeCreatedEvent } from '@/lib/domain/initiatives/events';
 
 // In a real app, this would be a proper database. We're using a file-based mock store
 // for simplicity and to ensure state persists across serverless function invocations.
@@ -83,6 +84,50 @@ const getDb = (): MockDb => {
             };
             seedEventsList.push(radarCreatedEvent);
         })
+    }
+
+    // Seed strategies
+    if (team.dashboard?.strategies && team.dashboard.strategies.length > 0) {
+      team.dashboard.strategies.forEach((s) => {
+        const stratCreated: StrategyCreatedEvent = {
+          type: 'StrategyCreated',
+          entity: 'team',
+          aggregateId: team.id,
+          timestamp: new Date().toISOString(),
+          payload: {
+            strategyId: s.id,
+            description: s.description,
+            timeframe: s.timeframe,
+          },
+        };
+        seedEventsList.push(stratCreated);
+
+        // Seed initiatives under this strategy
+        if (s.initiatives && s.initiatives.length > 0) {
+          s.initiatives.forEach((init) => {
+            const initCreated: InitiativeCreatedEvent = {
+              type: 'InitiativeCreated',
+              entity: 'team',
+              aggregateId: team.id,
+              timestamp: new Date().toISOString(),
+              payload: {
+                strategyId: s.id,
+                initiativeId: init.id,
+                tempId: init.id, // seed linkage; not used post-creation
+                name: init.name,
+                template: {
+                  id: init.id,
+                  name: init.name,
+                  progression: init.progression ?? 0,
+                  steps: init.steps || [],
+                  linkedRadarItemIds: init.linkedRadarItemIds || [],
+                },
+              },
+            };
+            seedEventsList.push(initCreated);
+          });
+        }
+      });
     }
   });
 

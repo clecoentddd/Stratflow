@@ -57,7 +57,7 @@
 }
 
 /* Level-based background tints: lower level = darker */
-.levelShade0 { background: #cbd5e1; } /* slate-300 */
+.levelShade0 { background: #a5742a21; } /* slate-300 */
 .levelShade1 { background: #e2e8f0; } /* slate-200 */
 .levelShade2 { background: #eef2f7; } /* custom light slate */
 .levelShade3 { background: #f1f5f9; } /* slate-100 */
