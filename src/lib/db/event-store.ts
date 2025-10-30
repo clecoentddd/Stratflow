@@ -9,11 +9,12 @@ import { applyEventsToTeam, applyEventsToCompany } from './projections';
 import type { RadarItemCreatedEvent } from '../domain/radar/events';
 import type { StrategyCreatedEvent } from '@/lib/domain/strategies/events';
 import type { InitiativeCreatedEvent } from '@/lib/domain/initiatives/events';
+import type { LinkingEvents } from '@/lib/domain/initiatives/linking/events';
 
 // In a real app, this would be a proper database. We're using a file-based mock store
 // for simplicity and to ensure state persists across serverless function invocations.
 
-type AllEvents = TeamEvent | CompanyEvent;
+type AllEvents = TeamEvent | CompanyEvent | LinkingEvents;
 
 // We no longer keep state in memory. We'll use functions to read/write from a mock DB file.
 // Let's define the structure of our mock database.
@@ -157,7 +158,11 @@ export const saveEvents = async (newEvents: AllEvents[]): Promise<void> => {
     }
     
     saveDb(db);
-    resolve();
+    (async () => {
+      await ensureProjectionHandlersLoaded();
+      newEvents.forEach(e => dispatchProjectionHandlers(e));
+      resolve();
+    })();
   });
 };
 
@@ -186,3 +191,41 @@ export const _getAllEvents = async (): Promise<AllEvents[]> => {
 
 // Initialize the global mock DB
 getDb();
+
+type ProjectionHandler = (event: AllEvents) => void;
+const projectionHandlers: Record<string, ProjectionHandler[]> = {};
+
+export const registerProjectionHandler = (eventType: string, handler: ProjectionHandler) => {
+  if (!projectionHandlers[eventType]) projectionHandlers[eventType] = [];
+  projectionHandlers[eventType].push(handler);
+};
+
+const dispatchProjectionHandlers = (event: AllEvents) => {
+  const handlers = projectionHandlers[event.type] || [];
+  handlers.forEach(h => h(event));
+};
+
+export const runProjectionOn = (event: AllEvents) => dispatchProjectionHandlers(event);
+
+export const resetEventStore = () => {
+  (global as any)._mockDbEvents = undefined;
+};
+
+export const seedDemoCompany = () => {
+  // Force re-seed by resetting and calling getDb
+  resetEventStore();
+  const db = getDb();
+  // Re-run projections for all existing events
+  db.events.forEach(e => dispatchProjectionHandlers(e));
+  return { totalEvents: db.events.length };
+};
+
+let _projectionsLoaded = false;
+const ensureProjectionHandlersLoaded = async () => {
+  if (_projectionsLoaded) return;
+  await Promise.all([
+    import('@/lib/domain/initiatives/linking/projection'),
+    import('@/lib/domain/initiatives/catalog/projection'),
+  ]);
+  _projectionsLoaded = true;
+};

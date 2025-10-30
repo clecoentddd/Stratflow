@@ -16,10 +16,8 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(companies);
   } catch (error) {
     console.error('Failed to get companies projection:', error);
-    return NextResponse.json(
-      { message: 'Internal Server Error' },
-      { status: 500 }
-    );
+    // If no data exists or projection can't build yet, treat as empty dataset
+    return NextResponse.json([]);
   }
 }
 

@@ -44,6 +44,16 @@ export default function WelcomePage() {
     fetchCompanies();
   };
 
+  const handleCreateDemo = async () => {
+    try {
+      const res = await fetch('/api/dev/seed-demo', { method: 'POST' });
+      if (!res.ok) throw new Error('Seed failed');
+      await fetchCompanies();
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   if (isLoading) {
     return (
         <div className="flex flex-col min-h-screen">
@@ -97,6 +107,9 @@ export default function WelcomePage() {
                 <Button size="lg" onClick={() => setCreateCompanyOpen(true)}>
                   <Plus className="mr-2 h-5 w-5" />
                   Create Company
+                </Button>
+                <Button size="lg" variant="outline" onClick={handleCreateDemo}>
+                  Create Demo Company
                 </Button>
               </div>
             </div>

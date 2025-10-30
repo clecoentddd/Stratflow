@@ -14,6 +14,7 @@ import { EditInitiativeDialog } from './EditInitiativeDialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
+import { InitiativeLinkDialog } from "./InitiativeLinkDialog";
 import type { Initiative, InitiativeStepKey, InitiativeItem as InitiativeItemType, RadarItem } from "@/lib/types";
 import type { UpdateInitiativeCommand } from '@/lib/domain/initiatives/commands';
 import type { AddInitiativeItemCommand, UpdateInitiativeItemCommand } from '@/lib/domain/initiative-items/commands';
@@ -118,6 +119,8 @@ const iconMap: Record<string, React.ComponentType<any>> = { Search, Milestone, L
 export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiativeChange, onDeleteInitiative, strategyId, onLocalUpdate }: InitiativeViewProps) {
   const [initiative, setInitiative] = useState({ ...initialInitiative, isExpanded: false });
   const [isLinkRadarOpen, setLinkRadarOpen] = useState(false);
+  const [isLinkInitiativesOpen, setLinkInitiativesOpen] = useState(false);
+  const [linkedInits, setLinkedInits] = useState<Array<{ toInitiativeId: string; toInitiativeName?: string }>>([]);
   const [isEditInitiativeOpen, setEditInitiativeOpen] = useState(false);
   const [isDeleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const { toast } = useToast();
@@ -283,6 +286,38 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
   const linkedItems = (initiative.linkedRadarItemIds || [])
     .map(id => radarItems.find(item => item.id === id))
     .filter((item): item is RadarItem => !!item);
+  const isTempInitiative = typeof initiative.id === 'string' && initiative.id.startsWith('init-temp-');
+
+  useEffect(() => {
+    const loadLinks = async () => {
+      try {
+        const res = await fetch(`/api/initiatives/${initiative.id}/links`);
+        const data = await res.json();
+        if (Array.isArray(data)) setLinkedInits(data);
+      } catch {}
+    };
+    loadLinks();
+  }, [initiative.id]);
+
+  const handleLinked = (count: number) => {
+    // refresh links list after linking
+    fetch(`/api/initiatives/${initiative.id}/links`).then(r => r.json()).then(data => {
+      if (Array.isArray(data)) setLinkedInits(data);
+    });
+  };
+
+  const handleUnlink = async (toInitiativeId: string) => {
+    try {
+      const res = await fetch(`/api/initiatives/${initiative.id}/links`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ toInitiativeId })
+      });
+      if (res.ok) {
+        setLinkedInits(prev => prev.filter(x => x.toInitiativeId !== toInitiativeId));
+      }
+    } catch {}
+  };
 
   return (
     <>
@@ -336,6 +371,12 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
                  <Button variant="outline" size="sm" onClick={() => setLinkRadarOpen(true)}>
                     Tag radar item
                 </Button>
+                <Button variant="outline" size="sm" onClick={() => setLinkInitiativesOpen(true)} disabled={isTempInitiative}>
+                    Link initiatives
+                </Button>
+                {isTempInitiative && (
+                  <span className="text-xs text-muted-foreground">Save this initiative before linking</span>
+                )}
                 {linkedItems.length > 0 ? (
                     <div className="flex flex-wrap gap-2">
                         {linkedItems.map(item => (
@@ -350,6 +391,28 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
                     <p className="text-sm text-muted-foreground">No radar items tagged yet.</p>
                 )}
             </div>
+        </div>
+
+        <div className="mb-6">
+          <div className="mb-2 text-sm font-medium text-muted-foreground">Linked initiatives</div>
+          {linkedInits.length > 0 ? (
+            <div className="flex flex-wrap gap-2">
+              {linkedInits.map(li => (
+                <Badge key={li.toInitiativeId} variant="secondary">
+                  {li.toInitiativeName || li.toInitiativeId}
+                  <button
+                    aria-label="Unlink initiative"
+                    className="ml-2 text-xs"
+                    onClick={() => handleUnlink(li.toInitiativeId)}
+                  >
+                    ×
+                  </button>
+                </Badge>
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm text-muted-foreground">No initiative links yet.</p>
+          )}
         </div>
 
         <div className={stepStyles.stepsGrid}>
@@ -374,6 +437,13 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
         />
       </div>
     </div>
+    <InitiativeLinkDialog
+      open={isLinkInitiativesOpen}
+      onOpenChange={setLinkInitiativesOpen}
+      companyId={orgId}
+      sourceInitiativeId={initiative.id}
+      onLinked={handleLinked}
+    />
     <EditInitiativeDialog
         isOpen={isEditInitiativeOpen}
         onOpenChange={setEditInitiativeOpen}
