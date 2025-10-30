@@ -7,7 +7,7 @@ import type {
 import type { Team, Company } from '@/lib/types';
 import { applyEventsToTeam, applyEventsToCompany } from './projections';
 import type { RadarItemCreatedEvent } from '../domain/radar/events';
-import type { StrategyCreatedEvent } from '@/lib/domain/strategies/events';
+import type { StrategyCreatedEvent, StrategyUpdatedEvent } from '@/lib/domain/strategies/events';
 import type { InitiativeCreatedEvent } from '@/lib/domain/initiatives/events';
 import type { LinkingEvents, InitiativeLinkedEvent } from '@/lib/domain/initiatives/linking/events';
 
@@ -102,6 +102,21 @@ const getDb = (): MockDb => {
           },
         };
         seedEventsList.push(stratCreated);
+
+        // If the seed strategy has a non-default state, emit an update to set it explicitly.
+        if (s.state && s.state !== 'Draft') {
+          const stratStateSet: StrategyUpdatedEvent = {
+            type: 'StrategyUpdated',
+            entity: 'team',
+            aggregateId: team.id,
+            timestamp: new Date(new Date().getTime() + 1).toISOString(), // ensure it applies after creation
+            payload: {
+              strategyId: s.id,
+              state: s.state,
+            },
+          };
+          seedEventsList.push(stratStateSet);
+        }
 
         // Seed initiatives under this strategy
         if (s.initiatives && s.initiatives.length > 0) {

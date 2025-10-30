@@ -208,7 +208,7 @@ export default function RadarPage() {
               </Button>
             </Link>
             <Link href={`/team/${teamId}`}>
-              <Button variant="outline">
+              <Button className="bg-blue-600 text-white hover:bg-blue-700 border-blue-600">
                 <TrendingUp className="mr-2 h-4 w-4" />
                 View Strategy Dashboard
               </Button>

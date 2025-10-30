@@ -92,7 +92,12 @@ export default function TeamStrategyPage() {
                     </Button>
                 </Link>
                  <Link href={`/team/${teamId}/radar?companyId=${team?.companyId || ''}`}>
-                    <Button variant="outline">
+                    <Button
+                      className="text-white"
+                      style={{ backgroundColor: '#cc9966', borderColor: '#cc9966' }}
+                      onMouseOver={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#b38355'; }}
+                      onMouseOut={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#cc9966'; }}
+                    >
                         <Radar className="mr-2 h-4 w-4" />
                         View Radar
                     </Button>
