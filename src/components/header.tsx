@@ -52,6 +52,11 @@ export function AppHeader({ companyName }: AppHeaderProps) {
             <Link href={`/company/${companyId}/teams`} className="text-sm px-2 py-1 rounded-md hover:bg-accent hover:text-accent-foreground">Teams</Link>
           )}
           {!hasCompany ? (
+            <span className="text-sm px-2 py-1 rounded-md text-muted-foreground opacity-60 cursor-not-allowed select-none">Strategic View</span>
+          ) : (
+            <Link href={`/strategic-view?companyId=${companyId}`} className="text-sm px-2 py-1 rounded-md hover:bg-accent hover:text-accent-foreground">Strategic View</Link>
+          )}
+          {!hasCompany ? (
             <span className="text-sm px-2 py-1 rounded-md text-muted-foreground opacity-60 cursor-not-allowed select-none">Horizon</span>
           ) : (
             <Link href={`/horizon?companyId=${companyId}`} className="text-sm px-2 py-1 rounded-md hover:bg-accent hover:text-accent-foreground">Horizon</Link>
