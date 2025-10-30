@@ -20,17 +20,17 @@ export function TeamCard({ team, onEdit }: TeamCardProps) {
           <CardDescription>{team.purpose}</CardDescription>
         </div>
         <div className="flex items-center">
-          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => onEdit(team)}>
+          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => onEdit(team)} aria-label="Edit team">
             <Pencil className="h-4 w-4" />
           </Button>
-          <Link href={`/team/${team.id}?companyId=${team.companyId}`}>
-            <Button variant="ghost" size="icon" className="h-8 w-8 group">
-              <TrendingUp className="h-5 w-5 text-blue-600 group-hover:text-blue-600" />
-            </Button>
-          </Link>
           <Link href={`/team/${team.id}/radar?companyId=${team.companyId}`}>
             <Button variant="ghost" size="icon" className="h-8 w-8 group">
-              <Radar className="h-5 w-5 text-amber-600 group-hover:text-red-600" />
+              <Radar className="h-5 w-5" color="#cc9966" />
+            </Button>
+          </Link>
+          <Link href={`/team/${team.id}?companyId=${team.companyId}`}>
+            <Button variant="ghost" size="icon" className="h-8 w-8 group">
+              <TrendingUp className="h-5 w-5" color="#2563eb" />
             </Button>
           </Link>
         </div>
