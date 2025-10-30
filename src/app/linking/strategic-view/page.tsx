@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Suspense } from 'react';
+import FocusSelector from '@/components/FocusSelector';
 import BubbleGraph, { CatalogNode, LinkEdge } from '@/components/d3-nodes/BubbleGraph';
 import '@/lib/domain/initiatives/catalog/projection';
 import { queryEligibleInitiatives } from '@/lib/domain/initiatives/catalog/projection';
@@ -53,20 +54,14 @@ export default async function StrategicViewPage({ searchParams }: { searchParams
     <main style={{ padding: '1rem' }}>
       <h1 style={{ fontSize: '1.5rem', fontWeight: 600, marginBottom: '1rem' }}>Strategic View</h1>
 
-      <form method="get" style={{ marginBottom: '1rem', display: 'flex', gap: 8, alignItems: 'center' }}>
-        <label htmlFor="id" style={{ fontSize: 14 }}>Focus initiative</label>
-        <select id="id" name="id" defaultValue={selectedId} style={{ border: '1px solid #e5e7eb', padding: '4px 8px', borderRadius: 6, minWidth: 300 }}>
-          <option value="">All connected</option>
-          {all.map(r => (
-            <option key={r.id} value={r.id}>{r.name} · {r.teamName || r.teamId}</option>
-          ))}
-        </select>
-        <button type="submit" style={{ border: '1px solid #e5e7eb', padding: '4px 10px', borderRadius: 6 }}>View</button>
-        <Link href="/monitoring?view=links" style={{ marginLeft: 'auto', fontSize: 14, color: '#2563eb' }}>View Links Projection</Link>
-      </form>
+      <FocusSelector
+        options={all.map(r => ({ id: r.id, label: `${r.name} · ${r.teamName || r.teamId}` }))}
+        selectedId={selectedId}
+      />
+      <Link href="/monitoring?view=links" style={{ marginLeft: 'auto', fontSize: 14, color: '#2563eb' }}>View Links Projection</Link>
 
       <Suspense>
-        <BubbleGraph nodes={nodes} edges={edges} />
+        <BubbleGraph nodes={nodes} edges={edges} selectedId={selectedId} />
       </Suspense>
     </main>
   );

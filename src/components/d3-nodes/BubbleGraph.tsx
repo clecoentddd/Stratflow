@@ -13,9 +13,15 @@ export type CatalogNode = {
 
 export type LinkEdge = { fromInitiativeId: string; toInitiativeId: string };
 
-export default function BubbleGraph({ nodes, edges }: { nodes: CatalogNode[]; edges: LinkEdge[] }) {
+export default function BubbleGraph({ nodes, edges, selectedId: selectedIdProp }: { nodes: CatalogNode[]; edges: LinkEdge[]; selectedId?: string }) {
   const svgRef = useRef<SVGSVGElement | null>(null);
   const [size, setSize] = useState<{ w: number; h: number }>({ w: 0, h: 0 });
+  const [internalSelectedId, setInternalSelectedId] = useState<string | null>(null);
+
+  // mirror prop into internal state
+  useEffect(() => {
+    setInternalSelectedId(selectedIdProp ?? null);
+  }, [selectedIdProp]);
 
   // Compute levels present and a radius scale (smaller level number => bigger radius)
   const { levelOrder, radiusOf, yOf } = useMemo(() => {
@@ -54,6 +60,8 @@ export default function BubbleGraph({ nodes, edges }: { nodes: CatalogNode[]; ed
     return () => ro.disconnect();
   }, []);
 
+  // Note: URL syncing removed to avoid scheduling updates during insertion.
+
   useEffect(() => {
     if (!svgRef.current || size.w === 0 || size.h === 0) return;
 
@@ -69,9 +77,62 @@ export default function BubbleGraph({ nodes, edges }: { nodes: CatalogNode[]; ed
     // Build node/edge maps
     const nodeMap = new Map(nodes.map(n => [n.id, n] as const));
     const simNodes = nodes.map(n => ({ id: n.id, name: n.name, level: n.teamLevel ?? 0, x: Math.random()*w, y: yOf(h, n.teamLevel), fx: undefined as number | undefined, fy: undefined as number | undefined, targetX: undefined as number | undefined }));
-    const simLinks = edges
+    const rawLinks = edges
       .filter(e => nodeMap.has(e.fromInitiativeId) && nodeMap.has(e.toInitiativeId))
       .map(e => ({ source: e.fromInitiativeId, target: e.toInitiativeId }));
+
+    // Build adjacency to support selection logic
+    const levelOf = (id: string) => simNodes.find(n => n.id === id)?.level ?? 0;
+    const parentsByChild = new Map<string, string[]>();
+    const childrenByParent = new Map<string, string[]>();
+    for (const l of rawLinks) {
+      const s = l.source as string;
+      const t = l.target as string;
+      if (!childrenByParent.has(s)) childrenByParent.set(s, []);
+      childrenByParent.get(s)!.push(t);
+      if (!parentsByChild.has(t)) parentsByChild.set(t, []);
+      parentsByChild.get(t)!.push(s);
+    }
+
+    // When a node is selected, show:
+    // - direct downstream neighbors (selected -> child where child.level > selected.level)
+    // - all upstream paths to level 0 (ancestors via edges that decrease level)
+    let simLinks = rawLinks;
+    if (internalSelectedId) {
+      const visibleEdgeSet = new Set<string>();
+      const visibleNodeSet = new Set<string>([internalSelectedId]);
+      const selLevel = levelOf(internalSelectedId);
+
+      // Direct downstream
+      const children = childrenByParent.get(internalSelectedId) || [];
+      for (const c of children) {
+        if (levelOf(c) > selLevel) {
+          visibleEdgeSet.add(`${internalSelectedId}->${c}`);
+          visibleNodeSet.add(c);
+        }
+      }
+
+      // Upstream paths to level 0 by BFS over parents where level decreases
+      const queue: string[] = [internalSelectedId];
+      const seen = new Set<string>([internalSelectedId]);
+      while (queue.length) {
+        const cur = queue.shift()!;
+        const curLevel = levelOf(cur);
+        const parents = parentsByChild.get(cur) || [];
+        for (const p of parents) {
+          if (levelOf(p) < curLevel) {
+            visibleEdgeSet.add(`${p}->${cur}`);
+            if (!visibleNodeSet.has(p)) visibleNodeSet.add(p);
+            if (!seen.has(p)) {
+              seen.add(p);
+              queue.push(p);
+            }
+          }
+        }
+      }
+
+      simLinks = rawLinks.filter(l => visibleEdgeSet.has(`${l.source as string}->${l.target as string}`));
+    }
 
     // DEBUG: log levels, target rows, and colors
     try {
@@ -144,10 +205,10 @@ export default function BubbleGraph({ nodes, edges }: { nodes: CatalogNode[]; ed
     // Draw nodes
     const nodeGroup = g
       .append("g")
-      .selectAll("g")
+      .selectAll("g.node")
       .data(simNodes)
       .join("g")
-      .attr("cursor", "pointer")
+      .attr("class", "node")
       .call(d3.drag<any, any>()
         .on("start", (event, d) => {
           if (!event.active) sim.alphaTarget(0.3).restart();
@@ -164,6 +225,13 @@ export default function BubbleGraph({ nodes, edges }: { nodes: CatalogNode[]; ed
           d.fy = undefined;
         })
       );
+
+    // selection interactions
+    nodeGroup.on('click', (event: any, d: any) => {
+      event.stopPropagation();
+      setInternalSelectedId(prev => (prev === d.id ? null : d.id));
+    });
+    svg.on('click', () => setInternalSelectedId(null));
 
     nodeGroup
       .append("circle")
@@ -192,6 +260,32 @@ export default function BubbleGraph({ nodes, edges }: { nodes: CatalogNode[]; ed
         .attr("y2", (d: any) => (d.target.y));
 
       nodeGroup.attr("transform", (d: any) => `translate(${d.x},${d.y})`);
+
+      // dim unrelated nodes/links when a node is selected
+      if (internalSelectedId) {
+        const visibleNodeIds = new Set<string>([internalSelectedId]);
+        simLinks.forEach((l: any) => {
+          visibleNodeIds.add(typeof l.source === 'object' ? l.source.id : l.source);
+          visibleNodeIds.add(typeof l.target === 'object' ? l.target.id : l.target);
+        });
+        // Hide unrelated completely for clarity
+        nodeGroup
+          .attr('opacity', (d: any) => (visibleNodeIds.has(d.id) ? 1 : 0.05))
+          .style('display', (d: any) => (visibleNodeIds.has(d.id) ? null : 'none'));
+        linkSel
+          .attr('opacity', 1)
+          .style('display', (d: any) => {
+            const sid = typeof (d as any).source === 'object' ? (d as any).source.id : (d as any).source;
+            const tid = typeof (d as any).target === 'object' ? (d as any).target.id : (d as any).target;
+            return (visibleNodeIds.has(sid) && visibleNodeIds.has(tid)) ? null : 'none';
+          });
+        try {
+          console.log('[BubbleGraph] selected', internalSelectedId, 'visible nodes', visibleNodeIds.size, 'visible links', simLinks.length);
+        } catch {}
+      } else {
+        nodeGroup.attr('opacity', 1).style('display', null);
+        linkSel.attr('opacity', 1).style('display', null);
+      }
     });
 
     // DEBUG: final positions
@@ -203,7 +297,7 @@ export default function BubbleGraph({ nodes, edges }: { nodes: CatalogNode[]; ed
     });
 
     return () => void sim.stop();
-  }, [nodes, edges, radiusOf, yOf, size]);
+  }, [nodes, edges, radiusOf, yOf, size, internalSelectedId]);
 
   return (
     <div style={{ width: '100%', height: '70vh', border: '1px solid #e5e7eb', borderRadius: 8, touchAction: 'none' as any }}>

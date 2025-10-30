@@ -426,6 +426,20 @@ export const initialTeams: Omit<Team, 'companyId'>[] = [
               steps: [],
               linkedRadarItemIds: [],
             },
+            {
+              id: 'init-1-4',
+              name: 'Software Modeling',
+              progression: 0,
+              steps: [],
+              linkedRadarItemIds: ['radar-item-event-modeling', 'radar-item-lack-of-modelization'],
+            },
+            {
+              id: 'init-1-5',
+              name: 'Event Sourcing',
+              progression: 0,
+              steps: [],
+              linkedRadarItemIds: ['radar-item-event-sourcing', 'radar-item-data-mesh'],
+            },
           ],
         },
         {
@@ -817,6 +831,126 @@ export const initialTeams: Omit<Team, 'companyId'>[] = [
     dashboard: { id: 'dashboard-cmo', name: 'Marketing & Growth', strategies: [] },
     radar: [],
   },
+  {
+    id: 'team-ea',
+    name: 'Enterprise Architecture',
+    purpose: 'Aligns business goals with technology architecture.',
+    context: 'Architecture practice',
+    level: 3,
+    dashboard: {
+      id: 'dashboard-ea',
+      name: 'EA Roadmap',
+      strategies: [
+        {
+          id: 'ea-strat-1',
+          description: 'Standardize Platforms & Integration',
+          timeframe: '2025',
+          state: 'Active',
+          initiatives: [
+            { id: 'init-ea-1', name: 'API Platform Governance', progression: 0, steps: [], linkedRadarItemIds: [] },
+            { id: 'init-ea-2', name: 'Domain Modeling Handbook', progression: 0, steps: [], linkedRadarItemIds: [] },
+          ],
+        },
+      ],
+    },
+    radar: [],
+  },
+  {
+    id: 'team-rnd',
+    name: 'R&D',
+    purpose: 'Explores innovative technologies and prototypes.',
+    context: 'Research & Development',
+    level: 3,
+    dashboard: {
+      id: 'dashboard-rnd',
+      name: 'Exploration Pipeline',
+      strategies: [
+        {
+          id: 'rnd-strat-1',
+          description: 'Prototype Emerging Tech',
+          timeframe: '2025',
+          state: 'Active',
+          initiatives: [
+            { id: 'init-rnd-1', name: 'Generative AI Assistants', progression: 0, steps: [], linkedRadarItemIds: [] },
+            { id: 'init-rnd-2', name: 'LLM Safety & Guardrails', progression: 0, steps: [], linkedRadarItemIds: [] },
+          ],
+        },
+      ],
+    },
+    radar: [],
+  },
+  {
+    id: 'team-saas',
+    name: 'Software Online Services',
+    purpose: 'Operates and builds cloud-based products.',
+    context: 'SaaS product engineering',
+    level: 4,
+    dashboard: {
+      id: 'dashboard-saas',
+      name: 'SaaS Engineering',
+      strategies: [
+        {
+          id: 'saas-strat-1',
+          description: 'Reliability & Observability',
+          timeframe: '2025',
+          state: 'Active',
+          initiatives: [
+            { id: 'init-saas-1', name: 'SLI/SLO Program', progression: 0, steps: [], linkedRadarItemIds: [] },
+            { id: 'init-saas-2', name: 'Canary Deployments', progression: 0, steps: [], linkedRadarItemIds: [] },
+          ],
+        },
+      ],
+    },
+    radar: [],
+  },
+  {
+    id: 'team-custom',
+    name: 'Software Custom App',
+    purpose: 'Builds bespoke software for customers.',
+    context: 'Professional services engineering',
+    level: 4,
+    dashboard: {
+      id: 'dashboard-custom',
+      name: 'Custom Delivery',
+      strategies: [
+        {
+          id: 'custom-strat-1',
+          description: 'Vertical Slice Delivery',
+          timeframe: '2025',
+          state: 'Active',
+          initiatives: [
+            { id: 'init-custom-1', name: 'Event-Modeled Delivery', progression: 0, steps: [], linkedRadarItemIds: [] },
+            { id: 'init-custom-2', name: 'Automated QA', progression: 0, steps: [], linkedRadarItemIds: [] },
+          ],
+        },
+      ],
+    },
+    radar: [],
+  },
+  {
+    id: 'team-infra',
+    name: 'Infrastructure',
+    purpose: 'Provides core platform and networking services.',
+    context: 'Platform & Infra',
+    level: 4,
+    dashboard: {
+      id: 'dashboard-infra',
+      name: 'Platform Enablement',
+      strategies: [
+        {
+          id: 'infra-strat-1',
+          description: 'Platform as a Product',
+          timeframe: '2025',
+          state: 'Active',
+          initiatives: [
+            { id: 'init-infra-1', name: 'Self-Service Environments', progression: 0, steps: [], linkedRadarItemIds: [] },
+            { id: 'init-infra-2', name: 'Event Bus & Schema Registry', progression: 0, steps: [], linkedRadarItemIds: [] },
+          ],
+        },
+      ],
+    },
+    radar: [],
+  },
 ];
 
 
@@ -856,4 +990,43 @@ export const initialLinks: { from: string; to: string }[] = [
   { from: 'init-bod-2', to: 'init-ceo-1-2' },
   // Board (level 0) influencing CTO (level 2)
   { from: 'init-bod-1', to: 'init-1-2' },
+  // Board (level 0) influencing Level 3 (EA, R&D)
+  { from: 'init-bod-1', to: 'init-ea-2' },
+  { from: 'init-bod-2', to: 'init-ea-1' },
+  { from: 'init-bod-1', to: 'init-rnd-1' },
+  // CEO (level 1) guiding CTO (level 2)
+  { from: 'init-ceo-1-1', to: 'init-1-4' },
+  { from: 'init-ceo-1-2', to: 'init-1-5' },
+  // CTO (level 2) influencing Level 3 (EA) and Level 4 teams
+  { from: 'init-1-4', to: 'init-ea-2' },
+  { from: 'init-1-4', to: 'init-custom-1' },
+  { from: 'init-1-5', to: 'init-infra-2' },
+  { from: 'init-1-5', to: 'init-saas-2' },
+  { from: 'init-1-2', to: 'init-saas-1' },
+  { from: 'init-1-3', to: 'init-saas-2' },
+  // EA (level 3) enabling Level 4 teams
+  { from: 'init-ea-1', to: 'init-infra-1' },
+  { from: 'init-ea-1', to: 'init-saas-1' },
+  { from: 'init-ea-2', to: 'init-custom-1' },
+  // R&D (level 3) seeding experiments into Level 4
+  { from: 'init-rnd-1', to: 'init-saas-2' },
+  { from: 'init-rnd-2', to: 'init-infra-2' },
+  // Platform (infra) supporting SaaS
+  { from: 'init-infra-1', to: 'init-saas-1' },
+  // Upward chains: L4 -> L3 -> L2 -> L1 -> L0
+  // SaaS Canary -> EA Modeling -> CTO Event Sourcing -> CEO OKRs -> Board Priority
+  { from: 'init-saas-2', to: 'init-ea-2' },
+  { from: 'init-ea-2', to: 'init-1-5' },
+  { from: 'init-1-5', to: 'init-ceo-1-2' },
+  { from: 'init-ceo-1-2', to: 'init-bod-1' },
+  // Custom Delivery -> EA Modeling -> CTO Software Modeling -> CEO Narrative -> Board ESG
+  { from: 'init-custom-1', to: 'init-ea-2' },
+  { from: 'init-ea-2', to: 'init-1-4' },
+  { from: 'init-1-4', to: 'init-ceo-1-1' },
+  { from: 'init-ceo-1-1', to: 'init-bod-2' },
+  // Infra Event Bus -> EA API Governance -> CTO MVP Scope -> CEO OKRs -> Board Market Expansion
+  { from: 'init-infra-2', to: 'init-ea-1' },
+  { from: 'init-ea-1', to: 'init-1-2' },
+  { from: 'init-1-2', to: 'init-ceo-1-2' },
+  { from: 'init-ceo-1-2', to: 'init-bod-1' },
 ];
