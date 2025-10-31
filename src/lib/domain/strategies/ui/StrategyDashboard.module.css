@@ -20,9 +20,24 @@
   transition: all 0.2s ease;
 }
 
-.tab[data-active="true"] {
+.tab:hover:not([data-active]) {
   color: var(--foreground);
-  border-bottom-color: var(--primary);
+  border-bottom-color: var(--border);
+}
+
+.tab[data-active="draft"] {
+  color: #0C8;
+  border-bottom-color: #0C8;
+}
+
+.tab[data-active="active"] {
+  color: #388CFA;
+  border-bottom-color: #388CFA;
+}
+
+.tab[data-active="archive"] {
+  color: var(--foreground);
+  border-bottom-color: var(--muted-foreground);
 }
 
 .strategySection {

@@ -1,10 +1,9 @@
 
 import { NextResponse, NextRequest } from 'next/server';
-import { v4 as uuidv4 } from 'uuid';
-import { saveEvents } from '@/lib/db/event-store';
+import { saveEvents, getEventsByEntityAndId } from '@/lib/db/event-store';
 import { getTeamByIdProjection } from '@/lib/db/projections';
 import type { CreateStrategyCommand } from '@/lib/domain/strategies/commands';
-import type { StrategyCreatedEvent } from '@/lib/domain/strategies/events';
+import { StrategyCommandHandlers } from '@/lib/domain/strategies/command-handlers';
 
 // --- Vertical Slice: Create Strategy ---
 export async function POST(request: NextRequest, { params }: { params: { teamId: string } | Promise<{ teamId: string }> }) {
@@ -12,34 +11,27 @@ export async function POST(request: NextRequest, { params }: { params: { teamId:
     const { teamId } = (await params) as { teamId: string };
     const command: CreateStrategyCommand = await request.json();
 
-    // 1. Validation
-    const team = await getTeamByIdProjection(teamId);
-    if (!team) {
-      return NextResponse.json({ message: 'Team not found' }, { status: 404 });
-    }
+    // 1. Basic validation
     if (!command.description || !command.timeframe) {
       return NextResponse.json({ message: 'Description and timeframe are required' }, { status: 400 });
     }
 
-    // 2. Create Event
-    const event: StrategyCreatedEvent = {
-      type: 'StrategyCreated',
-      entity: 'team',
-      aggregateId: teamId,
-      timestamp: new Date().toISOString(),
-      payload: {
-        strategyId: `strat-${uuidv4()}`,
-        description: command.description,
-        timeframe: command.timeframe,
-      },
-    };
+    // 2. Get events and handle command
+    const events = await getEventsByEntityAndId('team', teamId);
+    const result = StrategyCommandHandlers.handleCreateStrategy(teamId, command, events);
+    
+    if (!result.success || !result.event) {
+      return NextResponse.json({ message: result.error }, { status: 409 });
+    }
 
     // 3. Save Event
-    await saveEvents([event]);
+    await saveEvents([result.event]);
 
     // 4. Respond
-    // The projection will be rebuilt on the next GET request, so we can just return success.
-    return NextResponse.json({ success: true, strategyId: event.payload.strategyId }, { status: 201 });
+    return NextResponse.json({ 
+      success: true, 
+      strategyId: result.event.payload.strategyId 
+    }, { status: 201 });
 
   } catch (error) {
     console.error('Failed to create strategy:', error);

@@ -239,6 +239,17 @@ export const getEventsFor = async (
   });
 };
 
+export const getEventsByEntityAndId = async (
+  entity: string,
+  aggregateId: string
+): Promise<AllEvents[]> => {
+  return new Promise((resolve) => {
+    const db = getDb();
+    const events = db.events.filter((e) => e.entity === entity && e.aggregateId === aggregateId);
+    resolve(events);
+  });
+};
+
 /**
  * Retrieves all events in the store.
  * NOTE: This is for projection rebuilding.

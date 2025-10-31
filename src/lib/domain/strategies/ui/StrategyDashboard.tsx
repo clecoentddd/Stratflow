@@ -9,6 +9,7 @@ import { v4 as uuidv4 } from "uuid";
 import { Button } from "@/components/ui/button";
 import { CreateStrategyDialog } from "./CreateStrategyDialog";
 import { StrategyView } from "./StrategyView";
+import styles from "./StrategyDashboard.module.css";
 
 const strategyOrder: Record<StrategyState, number> = {
   Draft: 1,
@@ -36,7 +37,7 @@ export function StrategyDashboard({
   setCreateStrategyOpen,
 }: StrategyDashboardProps) {
   const [dashboard, setDashboard] = useState(initialDashboard);
-  const [activeTab, setActiveTab] = useState<'current' | 'archive'>('current');
+  const [activeTab, setActiveTab] = useState<'draft' | 'active' | 'archive'>('draft');
   const { toast } = useToast();
 
   useEffect(() => {
@@ -108,29 +109,106 @@ export function StrategyDashboard({
   };
   
   return (
-    <div>
-        <div className="space-y-8">
-          {sortedStrategies.length > 0 ? (
-              sortedStrategies.map(strategy => {
-                  const isFocused = strategy.state === 'Draft' || strategy.state === 'Active';
-                  return (
-                      <StrategyView 
-                          key={strategy.id} 
-                          initialStrategy={strategy} 
-                          radarItems={radarItems}
-                          isFocused={isFocused}
-                          orgId={orgId}
-                          onStrategyChange={onDataChange}
-                      />
-                  )
-              })
+    <div className={styles.container}>
+      <div className={styles.tabs}>
+        <button 
+          className={styles.tab} 
+          data-active={activeTab === 'draft' ? 'draft' : undefined} 
+          onClick={() => setActiveTab('draft')}
+        >
+          Draft Strategy
+        </button>
+        <button 
+          className={styles.tab} 
+          data-active={activeTab === 'active' ? 'active' : undefined} 
+          onClick={() => setActiveTab('active')}
+        >
+          Active Strategy
+        </button>
+        <button 
+          className={styles.tab} 
+          data-active={activeTab === 'archive' ? 'archive' : undefined} 
+          onClick={() => setActiveTab('archive')}
+        >
+          Archived Strategies
+        </button>
+      </div>
+
+      {activeTab === 'draft' ? (
+        <div className={styles.strategySection}>
+          {dashboard.strategies.filter(s => s.state === 'Draft').length > 0 ? (
+            <div className="space-y-8">
+              {dashboard.strategies
+                .filter(s => s.state === 'Draft')
+                .map(strategy => (
+                  <StrategyView
+                    key={strategy.id}
+                    initialStrategy={strategy}
+                    radarItems={radarItems}
+                    isFocused={true}
+                    orgId={orgId}
+                    onStrategyChange={onDataChange}
+                  />
+                ))}
+            </div>
           ) : (
-              <div className="text-center py-20 border-2 border-dashed rounded-lg">
-                  <h3 className="text-xl font-medium text-muted-foreground">No strategies yet.</h3>
-                  <p className="text-muted-foreground mt-2">Get started by creating a new strategy.</p>
-              </div>
+            <div className={styles.emptyState}>
+              <h3 className={styles.emptyStateTitle}>No draft strategies</h3>
+              <p className={styles.emptyStateText}>Get started by creating a new strategy.</p>
+            </div>
           )}
         </div>
+      ) : activeTab === 'active' ? (
+        <div className={styles.strategySection}>
+          {dashboard.strategies.filter(s => s.state === 'Active').length > 0 ? (
+            <div className="space-y-8">
+              {dashboard.strategies
+                .filter(s => s.state === 'Active')
+                .map(strategy => (
+                  <StrategyView
+                    key={strategy.id}
+                    initialStrategy={strategy}
+                    radarItems={radarItems}
+                    isFocused={true}
+                    orgId={orgId}
+                    onStrategyChange={onDataChange}
+                  />
+                ))}
+            </div>
+          ) : (
+            <div className={styles.emptyState}>
+              <h3 className={styles.emptyStateTitle}>No active strategies</h3>
+              <p className={styles.emptyStateText}>Move a draft strategy to active when ready.</p>
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className={styles.strategySection}>
+          {dashboard.strategies.filter(s => s.state === 'Closed' || s.state === 'Obsolete').length > 0 ? (
+            <div className="space-y-8">
+              {dashboard.strategies
+                .filter(s => s.state === 'Closed' || s.state === 'Obsolete')
+                .sort((a, b) => strategyOrder[a.state] - strategyOrder[b.state])
+                .map(strategy => (
+                  <StrategyView
+                    key={strategy.id}
+                    initialStrategy={strategy}
+                    radarItems={radarItems}
+                    isFocused={false}
+                    orgId={orgId}
+                    onStrategyChange={onDataChange}
+                  />
+                ))}
+            </div>
+          ) : (
+            <div className={styles.emptyState}>
+              <h3 className={styles.emptyStateTitle}>No archived strategies</h3>
+              <p className={styles.emptyStateText}>Archived strategies will appear here.</p>
+            </div>
+          )}
+        </div>
+      )}
+
       <CreateStrategyDialog
         isOpen={isCreateStrategyOpen}
         onOpenChange={setCreateStrategyOpen}

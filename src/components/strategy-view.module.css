@@ -1,16 +1,38 @@
 .statusTag {
-  @apply px-3 py-1.5 rounded-full text-sm font-medium cursor-pointer transition-colors;
+  padding: 0.375rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 150ms ease-in-out;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid transparent;
 }
 
 .statusTag[data-state='Draft'] {
-  @apply bg-blue-100 text-blue-800 hover:bg-blue-200;
+  background-color: #1eda2d;
+  color: #065F46;
+}
+.statusTag[data-state='Draft']:hover {
+  background-color: #BFDBFE;
 }
 
 .statusTag[data-state='Open'] {
-  @apply bg-green-100 text-green-800 hover:bg-green-200;
+  background-color: #D1FAE5;
+  color: #1E40AF;
+}
+.statusTag[data-state='Open']:hover {
+  background-color: #A7F3D0;
 }
 
 .statusTag[data-state='Closed'],
 .statusTag[data-state='Obsolete'] {
-  @apply bg-gray-100 text-gray-800 hover:bg-gray-200;
+  background-color: #F3F4F6;
+  color: #1F2937;
+}
+.statusTag[data-state='Closed']:hover,
+.statusTag[data-state='Obsolete']:hover {
+  background-color: #E5E7EB;
 }

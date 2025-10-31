@@ -21,17 +21,21 @@
 
 .headerContent {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
+  flex-direction: column;
+  align-items: center;
   gap: 1rem;
+  position: relative;
 }
 
 .titleSection {
-  flex: 1;
-  min-width: 0;
+  width: 100%;
+  text-align: center;
 }
 
 .actions {
+  position: absolute;
+  right: 0;
+  top: 0;
   display: flex;
   gap: 0.5rem;
   align-items: center;
@@ -76,15 +80,15 @@
 }
 
 .statusTag[data-state='Draft'] {
-  background-color: rgb(219 234 254);
-  color: rgb(29 78 216);
-  border-color: rgb(191 219 254);
+  background-color: #0C8;
+  color: black;
+  border-color: transparent;
 }
 
 .statusTag[data-state='Active'] {
-  background-color: rgb(220 252 231);
-  color: rgb(21 128 61);
-  border-color: rgb(187 247 208);
+  background-color: #388CFA;
+  color: white;
+  border-color: transparent;
 }
 
 .statusTag[data-state='Closed'] {
@@ -131,26 +135,7 @@
   opacity: 1;
 }
 
-.accordion {
-  width: 100%;
-}
-
-.headerRow {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.trigger {
-  flex: 1;
-  text-align: left;
-  padding: 0;
-}
-
-.titleWrap {
-  flex: 1;
-  padding-right: 1rem; /* pr-4 */
-}
+/* (cardOpen styles are defined below; duplicate removed) */
 
 .actionBar {
   display: flex;
@@ -205,29 +190,30 @@
   align-items: center;
 }
 
-/* Strategy card backgrounds by status (black/blue-grey/brown palette) */
-.cardDraft {
-  background: #f0f9ff;
-  border-left: 4px solid #0ea5e9;
-}
-
+/* Strategy card backgrounds by status */
 .cardOpen {
-  background: #f0fdf4;
-  border-left: 4px solid #22c55e;
+  background: linear-gradient(to right, rgba(56, 140, 250, 0.1) 0%, white 50%);
+  border: 2px solid rgba(56, 140, 250, 0.3);
+  position: relative;
 }
 
 .cardClosed {
   background: #f8fafc;
-  border-left: 4px solid #94a3b8;
+  border: 1px solid #cbd5e1;
   opacity: 0.8;
 }
 
 .cardObsolete {
   background: #f8fafc;
-  border-left: 4px solid #94a3b8;
+  border: 1px solid #cbd5e1;
   opacity: 0.6;
 }
 
+.cardDraft {
+  background: linear-gradient(to right, rgba(0, 204, 136, 0.08) 0%, white 50%);
+  border: 2px dashed rgba(0, 204, 136, 0.3);
+  position: relative;
+}
 /* Spacing between initiatives inside a strategy */
 .initiativesList > * + * {
   margin-top: 1rem; /* similar to space-y-4 */
@@ -235,12 +221,14 @@
 
 /* Typography */
 .strategyTitle {
-  font-size: 1.25rem;
+  font-size: 1.5rem;
   font-weight: 600;
   line-height: 1.4;
   color: #1f2937;
-  margin: 0 0 0.5rem 0;
+  margin: 0 auto 0.75rem;
   word-break: break-word;
+  text-align: center;
+  max-width: 80%;
 }
 
 .timeframeTag {
@@ -395,77 +383,32 @@
   height: 1rem;
 }
 
-/* Dropdown styles */
-.dropdown {
-  position: relative;
-  display: inline-block;
-}
 
-.dropdownContent {
-  display: none;
-  position: absolute;
-  right: 0;
-  background-color: white;
-  min-width: 200px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  border-radius: 0.5rem;
-  z-index: 10;
-  overflow: hidden;
-  margin-top: 0.5rem;
-}
-
-.dropdown:hover .dropdownContent {
-  display: block;
-}
-
-.dropdownItem {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  width: 100%;
-  padding: 0.5rem 1rem;
-  text-align: left;
-  background: none;
-  border: none;
-  color: #1f2937;
-  font-size: 0.875rem;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.dropdownItem:hover {
-  background-color: #f3f4f6;
-}
-
-.dropdownIcon {
-  width: 1rem;
-  height: 1rem;
-  color: #6b7280;
-}
 
 /* Status tag variants */
 .statusTag[data-state='Draft'] {
-  background-color: #dbeafe;
-  color: #1e40af;
-  border-color: #bfdbfe;
+  background-color: #0C8;
+  color: white;
+  border: 2px dashed #0C8;
+  font-weight: 600;
 }
-
 .statusTag[data-state='Active'] {
-  background-color: #dcfce7;
-  color: #166534;
-  border-color: #bbf7d0;
+  background-color: #388CFA;
+  color: white;
+  border-color: transparent;
+  font-weight: 600;
 }
 
 .statusTag[data-state='Closed'] {
   background-color: #f1f5f9;
-  color: #1e293b;
-  border-color: #e2e8f0;
+  color: #64748b;
+  border: 1px solid #cbd5e1;
 }
 
 .statusTag[data-state='Obsolete'] {
   background-color: #f1f5f9;
-  color: #1e293b;
-  border-color: #e2e8f0;
+  color: #94a3b8;
+  border: 1px solid #cbd5e1;
   opacity: 0.7;
 }
 

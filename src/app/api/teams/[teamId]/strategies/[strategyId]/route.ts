@@ -1,9 +1,9 @@
 
 import { NextResponse, NextRequest } from 'next/server';
-import { saveEvents } from '@/lib/db/event-store';
+import { saveEvents, getEventsByEntityAndId } from '@/lib/db/event-store';
 import { getTeamByIdProjection } from '@/lib/db/projections';
 import type { UpdateStrategyCommand } from '@/lib/domain/strategies/commands';
-import type { StrategyUpdatedEvent } from '@/lib/domain/strategies/events';
+import { StrategyCommandHandlers } from '@/lib/domain/strategies/command-handlers';
 
 // --- Vertical Slice: Update Strategy ---
 export async function PUT(request: NextRequest, { params }: { params: { teamId: string, strategyId: string } | Promise<{ teamId: string, strategyId: string }> }) {
@@ -11,53 +11,26 @@ export async function PUT(request: NextRequest, { params }: { params: { teamId: 
     const { teamId, strategyId } = (await params) as { teamId: string, strategyId: string };
     const command: UpdateStrategyCommand = await request.json();
 
-    // 1. Validation
-    const team = await getTeamByIdProjection(teamId);
-    if (!team) {
-      return NextResponse.json({ message: 'Team not found' }, { status: 404 });
-    }
-    const strategy = team.dashboard.strategies.find(s => s.id === strategyId);
-    if (!strategy) {
-      return NextResponse.json({ message: 'Strategy not found' }, { status: 404 });
-    }
-    
-    // Command can come from state change (no description/timeframe) or dialog (all fields)
+    // 1. Basic validation
     const hasUpdateableField = command.state || command.description || command.timeframe;
     if (!hasUpdateableField) {
         return NextResponse.json({ message: 'No updateable fields provided' }, { status: 400 });
     }
 
-    // 2. Create Event
-    const payload: Partial<StrategyUpdatedEvent['payload']> = { strategyId };
-    let hasChanges = false;
+    // 2. Get events and handle command
+    const events = await getEventsByEntityAndId('team', teamId);
+    const result = StrategyCommandHandlers.handleUpdateStrategy(
+      teamId,
+      { ...command, strategyId },
+      events
+    );
     
-    if (command.state && command.state !== strategy.state) {
-        payload.state = command.state;
-        hasChanges = true;
-    }
-    if (command.description && command.description !== strategy.description) {
-        payload.description = command.description;
-        hasChanges = true;
-    }
-    if (command.timeframe && command.timeframe !== strategy.timeframe) {
-        payload.timeframe = command.timeframe;
-        hasChanges = true;
+    if (!result.success || !result.event) {
+      return NextResponse.json({ message: result.error }, { status: 409 });
     }
 
-    if (!hasChanges) {
-        return NextResponse.json({ message: 'No changes detected' }, { status: 200 });
-    }
-
-    const event: StrategyUpdatedEvent = {
-        type: 'StrategyUpdated',
-        entity: 'team',
-        aggregateId: teamId,
-        timestamp: new Date().toISOString(),
-        payload: payload as StrategyUpdatedEvent['payload'], // We ensure it's not empty
-    };
-    
     // 3. Save Event
-    await saveEvents([event]);
+    await saveEvents([result.event]);
 
     // 4. Respond
     return NextResponse.json({ success: true }, { status: 200 });

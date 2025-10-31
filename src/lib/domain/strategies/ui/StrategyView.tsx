@@ -7,6 +7,12 @@ import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { strategyStates } from "@/lib/data";
 import type { Strategy, RadarItem, Initiative, InitiativeStep } from "@/lib/types";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import type { UpdateStrategyCommand } from "@/lib/domain/strategies/commands";
 import type { CreateInitiativeCommand, DeleteInitiativeCommand } from "@/lib/domain/initiatives/commands";
 import { InitiativeView } from "../../initiatives/ui";
@@ -62,9 +68,6 @@ export function StrategyView({
   const handleUpdateStrategy = useCallback(async (updatedValues: Partial<Strategy>) => {
     const originalStrategy = strategy;
     
-    // Use functional update to ensure we're working with the latest state
-    setStrategy(prev => ({...prev, ...updatedValues}));
-    
     const command: UpdateStrategyCommand = { ...updatedValues, strategyId: originalStrategy.id };
     
     try {
@@ -74,12 +77,20 @@ export function StrategyView({
             body: JSON.stringify(command)
         });
 
+        const data = await response.json();
+        
         if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            throw new Error(errorData.message || 'Failed to update strategy');
+            throw new Error(data.message || 'Failed to update strategy');
         }
         
+        // Only update local state after successful server response
+        setStrategy(prev => ({...prev, ...updatedValues}));
         onStrategyChange();
+        
+        toast({
+            title: "Strategy Updated",
+            description: "Changes saved successfully"
+        });
     } catch (error: any) {
         console.error(error);
         toast({
@@ -87,7 +98,6 @@ export function StrategyView({
             description: error.message,
             variant: "destructive"
         });
-        setStrategy(originalStrategy);
     }
   }, [strategy, orgId, onStrategyChange, toast]);
 
@@ -225,30 +235,29 @@ export function StrategyView({
 
 
   const StatusDropdown = () => (
-    <div className={styles.dropdown}>
-      <button className={styles.statusTag} data-state={strategy.state}>
-        <CurrentStateIcon className={styles.statusIcon} />
-        {strategy.state}
-      </button>
-      <div className={styles.dropdownContent}>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button className={cn(styles.statusTag)} data-state={strategy.state}>
+          <CurrentStateIcon className={styles.statusIcon} />
+          {strategy.state}
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
         {strategyStates.map(state => {
           const Icon = iconMap[state.iconName as keyof typeof iconMap] || Edit;
           return (
-            <button 
-              key={state.value} 
-              className={styles.dropdownItem}
-              onClick={(e) => {
-                e.stopPropagation();
-                handleUpdateStrategy({ state: state.value });
-              }}
+            <DropdownMenuItem
+              key={state.value}
+              onClick={() => handleUpdateStrategy({ state: state.value })}
+              disabled={state.value === strategy.state}
             >
-              <Icon className={styles.dropdownIcon} />
+              <Icon className="mr-2 h-4 w-4" />
               <span>{state.label}</span>
-            </button>
+            </DropdownMenuItem>
           );
         })}
-      </div>
-    </div>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 
   return (
