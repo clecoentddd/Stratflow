@@ -36,17 +36,23 @@ export function StrategyDashboard({
   setCreateStrategyOpen,
 }: StrategyDashboardProps) {
   const [dashboard, setDashboard] = useState(initialDashboard);
+  const [activeTab, setActiveTab] = useState<'current' | 'archive'>('current');
   const { toast } = useToast();
 
   useEffect(() => {
     setDashboard(initialDashboard);
   }, [initialDashboard]);
 
-  const sortedStrategies = useMemo(() => {
-    if (!dashboard || !dashboard.strategies) return [];
-    return [...dashboard.strategies].sort((a, b) => {
-        return strategyOrder[a.state] - strategyOrder[b.state];
-    });
+  const { currentStrategies, archivedStrategies } = useMemo(() => {
+    if (!dashboard || !dashboard.strategies) return { currentStrategies: [], archivedStrategies: [] };
+    
+    const current = dashboard.strategies.filter(s => s.state === 'Draft' || s.state === 'Active')
+      .sort((a, b) => strategyOrder[a.state] - strategyOrder[b.state]);
+    
+    const archived = dashboard.strategies.filter(s => s.state === 'Closed' || s.state === 'Obsolete')
+      .sort((a, b) => strategyOrder[a.state] - strategyOrder[b.state]);
+    
+    return { currentStrategies: current, archivedStrategies: archived };
   }, [dashboard]);
 
   const handleCreateStrategy = async (description: string, timeframe: string) => {

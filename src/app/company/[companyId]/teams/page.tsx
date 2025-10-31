@@ -11,6 +11,7 @@ import { CreateTeamDialog } from "@/lib/domain/teams/ui/CreateTeamDialog";
 import { EditTeamDialog } from "@/lib/domain/teams/ui/EditTeamDialog";
 import { notFound, useParams } from "next/navigation";
 import { TeamCard } from "@/lib/domain/teams/ui/TeamCard";
+import styles from "./teams.module.css";
 
 export default function TeamsPage() {
   const params = useParams();
@@ -77,8 +78,8 @@ export default function TeamsPage() {
 
   if (isLoading) {
     return (
-        <div className="flex flex-col min-h-screen">
-            <main className="p-4 md:p-6 flex-1 flex items-center justify-center">
+        <div className={styles.loadingContainer}>
+            <main className={styles.loadingMain}>
                 <p>Loading Teams...</p>
             </main>
         </div>
@@ -86,31 +87,25 @@ export default function TeamsPage() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <main className="p-4 md:p-6 flex-1">
-        <div className="flex items-center justify-between mb-6">
-          <h1 className="text-3xl font-bold font-headline">{company?.name} · Teams</h1>
-          <div className="flex items-center gap-2">
-            <Link href="/">
-                <Button variant="outline">
-                    <Building className="mr-2 h-4 w-4" />
-                    All Companies
-                </Button>
-            </Link>
+    <div className={styles.container}>
+      <main className={styles.main}>
+        <div className={styles.header}>
+          <h1 className={styles.title}>{company?.name} · Teams</h1>
+          <div className={styles.headerActions}>
             <Button onClick={() => setCreateTeamOpen(true)}>
-              <Plus className="mr-2 h-4 w-4" />
+              <Plus className={styles.icon} />
               New Team
             </Button>
           </div>
         </div>
-        <div className="space-y-8">
+        <div className={styles.teamsContainer}>
             {groupedTeams.length > 0 ? (
                 groupedTeams.map(([level, orgs]) => (
-                    <div key={level}>
-                        <h2 className="text-2xl font-semibold font-headline mb-4 pb-2 border-b">
+                    <div key={level} className={styles.levelSection}>
+                        <h2 className={styles.levelTitle}>
                             Level {level}
                         </h2>
-                        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                        <div className={styles.teamsGrid}>
                             {orgs.map((team) => (
                                 <TeamCard key={team.id} team={team} onEdit={handleEditClick} />
                             ))}
@@ -118,9 +113,9 @@ export default function TeamsPage() {
                     </div>
                 ))
             ) : (
-                 <div className="text-center py-20 border-2 border-dashed rounded-lg bg-card">
-                    <h3 className="text-xl font-medium text-muted-foreground">No teams yet for {company?.name}.</h3>
-                    <p className="text-muted-foreground mt-2">Get started by creating a new team.</p>
+                 <div className={styles.emptyState}>
+                    <h3 className={styles.emptyStateTitle}>No teams yet for {company?.name}.</h3>
+                    <p className={styles.emptyStateText}>Get started by creating a new team.</p>
                 </div>
             )}
         </div>

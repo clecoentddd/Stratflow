@@ -1,6 +1,6 @@
-# Firebase Studio
+# Stradar
 
-This is a NextJS starter in Firebase Studio.
+Strategic Radar for visualizing and managing organizational strategy.
 
 To get started, take a look at src/app/page.tsx.
 
@@ -10,7 +10,7 @@ npm run dev
 Docker: 
 
 
-PS C:\Users\chris\apps\Stratflow> docker run --name stratflow-db -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=admin -e POSTGRES_DB=stratflow -p 5432:5432 -d postgres
+PS C:\Users\chris\apps\Stradar> docker run --name stradar-db -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=admin -e POSTGRES_DB=stradar -p 5432:5432 -d postgres
 >>
 Unable to find image 'postgres:latest' locally
 latest: Pulling from library/postgres
