@@ -14,12 +14,12 @@ import { EditInitiativeDialog } from './EditInitiativeDialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
-import { InitiativeLinkDialog } from "./InitiativeLinkDialog";
+import { InitiativeLinkDialog } from "@/lib/domain/initiatives-linking/ui/InitiativeLinkDialog";
 import type { Initiative, InitiativeStepKey, InitiativeItem as InitiativeItemType, RadarItem } from "@/lib/types";
 import type { UpdateInitiativeCommand } from '@/lib/domain/initiatives/commands';
 import type { AddInitiativeItemCommand, UpdateInitiativeItemCommand } from '@/lib/domain/initiative-items/commands';
 import stepStyles from "./initiative-step-view.module.css";
-import { InitiativeStepView } from "./InitiativeStepView";
+import { InitiativeStepView } from "@/lib/domain/initiative-items/ui/InitiativeStepView";
 import { updateInitiative } from "@/lib/api/initiatives";
 import { addInitiativeItem, updateInitiativeItem, deleteInitiativeItem } from "@/lib/api/initiative-items";
 import styles from "./InitiativeView.module.css"

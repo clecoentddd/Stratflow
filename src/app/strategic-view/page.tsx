@@ -2,10 +2,10 @@ import Link from 'next/link';
 import { Suspense } from 'react';
 import FocusSelector from '@/components/FocusSelector';
 import BubbleGraph, { CatalogNode, LinkEdge } from '@/components/d3-nodes/BubbleGraph';
-import '@/lib/domain/initiatives/catalog/projection';
-import { queryEligibleInitiatives } from '@/lib/domain/initiatives/catalog/projection';
-import '@/lib/domain/initiatives/linking/projection';
-import { queryAllActiveLinks } from '@/lib/domain/initiatives/linking/projection';
+import '@/lib/domain/initiatives-catalog/projection';
+import { queryEligibleInitiatives } from '@/lib/domain/initiatives-catalog/projection';
+import '@/lib/domain/initiatives-linking/projection';
+import { queryAllActiveLinks } from '@/lib/domain/initiatives-linking/projection';
 
 function buildSubgraph(selectedId: string | undefined) {
   const rows = queryEligibleInitiatives({ states: ['Draft','Active'] });

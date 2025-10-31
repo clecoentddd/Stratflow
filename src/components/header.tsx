@@ -46,21 +46,24 @@ export function AppHeader({ companyName }: AppHeaderProps) {
       <div className="flex items-center gap-2">
         <nav className="hidden sm:flex items-center gap-2 mr-2">
           <Link href="/" className="text-sm px-2 py-1 rounded-md hover:bg-accent hover:text-accent-foreground">Companies</Link>
-          {!hasCompany ? (
-            <span className="text-sm px-2 py-1 rounded-md text-muted-foreground opacity-60 cursor-not-allowed select-none">Teams</span>
-          ) : (
-            <Link href={`/company/${companyId}/teams`} className="text-sm px-2 py-1 rounded-md hover:bg-accent hover:text-accent-foreground">Teams</Link>
-          )}
-          {!hasCompany ? (
-            <span className="text-sm px-2 py-1 rounded-md text-muted-foreground opacity-60 cursor-not-allowed select-none">Strategic View</span>
-          ) : (
-            <Link href={`/strategic-view?companyId=${companyId}`} className="text-sm px-2 py-1 rounded-md hover:bg-accent hover:text-accent-foreground">Strategic View</Link>
-          )}
-          {!hasCompany ? (
-            <span className="text-sm px-2 py-1 rounded-md text-muted-foreground opacity-60 cursor-not-allowed select-none">Horizon</span>
-          ) : (
-            <Link href={`/horizon?companyId=${companyId}`} className="text-sm px-2 py-1 rounded-md hover:bg-accent hover:text-accent-foreground">Horizon</Link>
-          )}
+          <Link
+            href={hasCompany ? `/company/${companyId}/teams` : `/teams`}
+            className="text-sm px-2 py-1 rounded-md hover:bg-accent hover:text-accent-foreground"
+          >
+            Teams
+          </Link>
+          <Link
+            href={hasCompany ? `/strategic-view?companyId=${companyId}` : `/strategic-view`}
+            className="text-sm px-2 py-1 rounded-md hover:bg-accent hover:text-accent-foreground"
+          >
+            Strategic View
+          </Link>
+          <Link
+            href={hasCompany ? `/horizon?companyId=${companyId}` : `/horizon`}
+            className="text-sm px-2 py-1 rounded-md hover:bg-accent hover:text-accent-foreground"
+          >
+            Horizon
+          </Link>
           <Link href="/monitoring" className="text-sm px-2 py-1 rounded-md hover:bg-accent hover:text-accent-foreground">Monitoring</Link>
         </nav>
       <DropdownMenu>

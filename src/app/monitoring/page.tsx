@@ -11,11 +11,11 @@ export default async function MonitoringPage({ searchParams }: { searchParams: P
   const [events, links, catalog] = await Promise.all([
     current === 'events' ? getEventLogProjection() : Promise.resolve([] as any[]),
     current === 'links' ? (async () => {
-      const mod = await import('@/lib/domain/initiatives/linking/projection');
+      const mod = await import('@/lib/domain/initiatives-linking/projection');
       return mod.queryAllActiveLinks();
     })() : Promise.resolve([] as any[]),
     current === 'catalog' ? (async () => {
-      const mod = await import('@/lib/domain/initiatives/catalog/projection');
+      const mod = await import('@/lib/domain/initiatives-catalog/projection');
       return mod.queryEligibleInitiatives({});
     })() : Promise.resolve([] as any[])
   ]);

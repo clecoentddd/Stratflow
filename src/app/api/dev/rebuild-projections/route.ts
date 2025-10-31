@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
 import { _getAllEvents, runProjectionOn } from '@/lib/db/event-store';
-import '@/lib/domain/initiatives/linking/projection';
-import { resetInitiativeLinksProjection } from '@/lib/domain/initiatives/linking/projection';
-import '@/lib/domain/initiatives/catalog/projection';
-import { resetInitiativeCatalogProjection } from '@/lib/domain/initiatives/catalog/projection';
+import '@/lib/domain/initiatives-linking/projection';
+import { resetInitiativeLinksProjection } from '@/lib/domain/initiatives-linking/projection';
+import '@/lib/domain/initiatives-catalog/projection';
+import { resetInitiativeCatalogProjection } from '@/lib/domain/initiatives-catalog/projection';
 
 export async function POST() {
   try {

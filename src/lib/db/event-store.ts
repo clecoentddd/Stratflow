@@ -282,8 +282,8 @@ let _projectionsLoaded = false;
 const ensureProjectionHandlersLoaded = async () => {
   if (_projectionsLoaded) return;
   await Promise.all([
-    import('@/lib/domain/initiatives/linking/projection'),
-    import('@/lib/domain/initiatives/catalog/projection'),
+    import('@/lib/domain/initiatives-linking/projection'),
+    import('@/lib/domain/initiatives-catalog/projection'),
   ]);
   _projectionsLoaded = true;
 };

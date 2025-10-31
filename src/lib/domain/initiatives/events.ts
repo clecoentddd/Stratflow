@@ -1,5 +1,5 @@
 import type { Event } from '../teams/events';
-import type { InitiativeItem, InitiativeStep } from '@/lib/types';
+import type { InitiativeStep } from '@/lib/types';
 
 export type InitiativeCreatedEvent = Event<
   'InitiativeCreated',
@@ -50,38 +50,9 @@ export type InitiativeRadarItemsLinkedEvent = Event<
     }
 >;
 
-export type InitiativeItemAddedEvent = Event<
-    'InitiativeItemAdded',
-    {
-        initiativeId: string;
-        stepKey: string;
-        item: InitiativeItem;
-    }
->;
-
-export type InitiativeItemUpdatedEvent = Event<
-    'InitiativeItemUpdated',
-    {
-        initiativeId: string;
-        itemId: string;
-        text: string;
-    }
->;
-
-export type InitiativeItemDeletedEvent = Event<
-    'InitiativeItemDeleted',
-    {
-        initiativeId: string;
-        itemId: string;
-    }
->;
-
 export type InitiativeEvent =
   | InitiativeCreatedEvent
   | InitiativeUpdatedEvent
   | InitiativeDeletedEvent
   | InitiativeProgressUpdatedEvent
-  | InitiativeRadarItemsLinkedEvent
-  | InitiativeItemAddedEvent
-  | InitiativeItemUpdatedEvent
-  | InitiativeItemDeletedEvent;
+  | InitiativeRadarItemsLinkedEvent;

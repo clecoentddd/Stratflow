@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { saveEvents } from '@/lib/db/event-store';
 import { getTeamByIdProjection } from '@/lib/db/projections';
 import type { AddInitiativeItemCommand } from '@/lib/domain/initiative-items/commands';
-import type { InitiativeItemAddedEvent } from '@/lib/domain/initiatives/events';
+import type { InitiativeItemAddedEvent } from '@/lib/domain/initiative-items/events';
 import type { InitiativeItem } from '@/lib/types';
 
 // --- Vertical Slice: Add Initiative Item ---

@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import type { StrategyState } from '@/lib/types';
-import '@/lib/domain/initiatives/catalog/projection';
-import { queryEligibleInitiatives } from '@/lib/domain/initiatives/catalog/projection';
+import '@/lib/domain/initiatives-catalog/projection';
+import { queryEligibleInitiatives } from '@/lib/domain/initiatives-catalog/projection';
 import { _getAllEvents, runProjectionOn } from '@/lib/db/event-store';
-import { resetInitiativeCatalogProjection } from '@/lib/domain/initiatives/catalog/projection';
+import { resetInitiativeCatalogProjection } from '@/lib/domain/initiatives-catalog/projection';
 
 export async function GET(req: NextRequest) {
   try {
@@ -34,7 +34,7 @@ export async function GET(req: NextRequest) {
       strategyDescription: r.strategyName || '',
       teamId: r.teamId,
       teamName: r.teamName || r.teamId,
-      teamLevel: 0,
+      teamLevel: typeof r.teamLevel === 'number' ? r.teamLevel : 0,
       state: (r.strategyState || 'Draft') as StrategyState,
     }));
     return NextResponse.json(results);
