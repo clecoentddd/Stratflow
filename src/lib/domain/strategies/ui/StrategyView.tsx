@@ -1,31 +1,17 @@
 "use client";
 
 import { useState, useEffect, useCallback, useMemo } from "react";
-import Link from 'next/link';
 import { Plus, Edit, MoreVertical, Search, Milestone, ListChecks, Target, Trash2 } from "lucide-react";
 import { v4 as uuidv4 } from 'uuid';
 import { useToast } from "@/hooks/use-toast";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { strategyStates } from "@/lib/data";
-import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import { Card, CardHeader, CardContent, CardFooter, CardTitle, CardDescription } from "@/components/ui/card";
-import styles from "./StrategyView.module.css";
-
+import { strategyStates } from "@/lib/data";
 import type { Strategy, RadarItem, Initiative, InitiativeStep } from "@/lib/types";
 import type { UpdateStrategyCommand } from "@/lib/domain/strategies/commands";
 import type { CreateInitiativeCommand, DeleteInitiativeCommand } from "@/lib/domain/initiatives/commands";
 import { InitiativeView } from "../../initiatives/ui";
 import { EditStrategyDialog } from "./EditStrategyDialog";
+import styles from "./StrategyView.module.css";
 
 const iconMap = { FilePenLine: Edit, Rocket: Plus, CheckCircle2: Plus, Archive: Plus };
 
@@ -62,9 +48,9 @@ export function StrategyView({
   const isSaving = strategy.id.startsWith('strat-temp-');
 
   const overallProgression = useMemo(() => {
-    if (strategy.initiatives.length === 0) return 0;
+    if (!strategy.initiatives || strategy.initiatives.length === 0) return 0;
     const total = strategy.initiatives.reduce(
-      (acc, i) => acc + i.progression,
+      (acc, i) => acc + (i.progression || 0),
       0
     );
     return Math.round(total / strategy.initiatives.length);
@@ -238,107 +224,129 @@ export function StrategyView({
   }, []);
 
 
+  const StatusDropdown = () => (
+    <div className={styles.dropdown}>
+      <button className={styles.statusTag} data-state={strategy.state}>
+        <CurrentStateIcon className={styles.statusIcon} />
+        {strategy.state}
+      </button>
+      <div className={styles.dropdownContent}>
+        {strategyStates.map(state => {
+          const Icon = iconMap[state.iconName as keyof typeof iconMap] || Edit;
+          return (
+            <button 
+              key={state.value} 
+              className={styles.dropdownItem}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleUpdateStrategy({ state: state.value });
+              }}
+            >
+              <Icon className={styles.dropdownIcon} />
+              <span>{state.label}</span>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+
   return (
-    <>
-      <Card className={cn(
-          styles.baseCard,
-          styles.card,
-          isSaving && styles.saving,
-          !isFocused && !isSaving && styles.unfocused,
-          strategy.state === 'Draft' && styles.cardDraft,
-          strategy.state === 'Active' && styles.cardOpen,
-          strategy.state === 'Closed' && styles.cardClosed,
-          strategy.state === 'Obsolete' && styles.cardObsolete
-      )}>
-        <Accordion type="single" collapsible defaultValue={isFocused ? strategy.id : undefined} className={styles.accordion}>
-         <AccordionItem value={strategy.id}>
-            <CardHeader>
-                <div className={styles.headerRow}>
-                    <AccordionTrigger className={styles.trigger}>
-                        <div className={styles.titleWrap}>
-                            <CardTitle className={styles.strategyTitle}>{strategy.description}</CardTitle>
-                            <CardDescription className={styles.timeframeTag}>Timeframe: {strategy.timeframe}</CardDescription>
-                        </div>
-                    </AccordionTrigger>
-                    <div className={styles.actionBar}>
-                         <Button variant="ghost" size="icon" className="h-8 w-8" onClick={(e) => { e.stopPropagation(); setEditStrategyOpen(true); }}>
-                            <Edit className="h-4 w-4" />
-                        </Button>
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <button className={styles.statusTag} data-state={strategy.state} onClick={(e) => e.stopPropagation()}>
-                                    <CurrentStateIcon />
-                                    {strategy.state}
-                                </button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
-                                {strategyStates.map(state => {
-                                const Icon = iconMap[state.iconName as keyof typeof iconMap] || Edit;
-                                return (
-                                <DropdownMenuItem key={state.value} onClick={() => handleUpdateStrategy({ state: state.value })}>
-                                    <Icon className={cn("mr-2 h-4 w-4", state.colorClass)} />
-                                    <span>{state.label}</span>
-                                </DropdownMenuItem>
-                                )})}
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-                    </div>
-                </div>
-            </CardHeader>
-            <AccordionContent>
-                <CardContent>
-                  <div>
-                    <div className={styles.progressBlock}>
-                      <span className={styles.progressLabel}>Overall Progress</span>
-                      <span className={styles.progressValue}>{overallProgression}%</span>
-                    </div>
-                    <Progress value={overallProgression} />
-                  </div>
-                  
-                  <div>
-                      <h4 className={styles.sectionTitle}>Initiatives</h4>
-                      {strategy.initiatives.length > 0 ? (
-                          <div className={styles.initiativesList}>
-                              {strategy.initiatives.map(initiative => (
-                                  <InitiativeView 
-                                      key={initiative.id} 
-                                      initialInitiative={initiative} 
-                                      radarItems={radarItems}
-                                      orgId={orgId}
-                                      onInitiativeChange={onInitiativeChanged}
-                                      onLocalUpdate={onInitiativeLocalUpdate}
-                                      onDeleteInitiative={handleDeleteInitiative}
-                                      strategyId={strategy.id}
-                                  />
-                              ))}
-                          </div>
-                      ) : (
-                          <p className={styles.noInitiatives}>No initiatives for this strategy yet.</p>
-                      )}
-                  </div>
-                </CardContent>
-                <CardFooter className={styles.footer}>
-                  <div className={styles.footerRow}>
-                    <Input 
-                      placeholder={isCreatingInitiative ? "Creating initiative..." : isSaving ? "Saving strategy..." : "Name your new initiative..."}
-                      value={newInitiativeName}
-                      onChange={(e) => setNewInitiativeName(e.target.value)}
-                      onKeyDown={(e) => e.key === 'Enter' && handleCreateInitiative()}
-                      disabled={isCreatingInitiative || isSaving}
-                    />
-                    <Button 
-                      onClick={handleCreateInitiative} 
-                      disabled={!newInitiativeName.trim() || isCreatingInitiative || isSaving}
-                      className="bg-[#388cfa] hover:bg-[#2a7ae8] text-white"
-                    >
-                      <Plus className="mr-2 h-4 w-4" /> Add Initiative
-                    </Button>
-                  </div>
-                </CardFooter>
-            </AccordionContent>
-         </AccordionItem>
-        </Accordion>
-      </Card>
+    <div className={cn(
+      styles.strategyContainer,
+      isSaving && styles.saving,
+      !isFocused && !isSaving && styles.unfocused,
+      strategy.state === 'Draft' && styles.cardDraft,
+      strategy.state === 'Active' && styles.cardOpen,
+      strategy.state === 'Closed' && styles.cardClosed,
+      strategy.state === 'Obsolete' && styles.cardObsolete
+    )}>
+      <div className={styles.strategyHeader} onClick={() => {}}>
+        <div className={styles.headerContent}>
+          <div className={styles.titleSection}>
+            <h3 className={styles.strategyTitle}>{strategy.description}</h3>
+            <span className={styles.timeframeTag}>Timeframe: {strategy.timeframe}</span>
+          </div>
+          <div className={styles.actions}>
+            <button 
+              className={styles.actionButton}
+              onClick={(e) => {
+                e.stopPropagation();
+                setEditStrategyOpen(true);
+              }}
+            >
+              <Edit className={styles.actionIcon} />
+            </button>
+            <StatusDropdown />
+          </div>
+        </div>
+      </div>
+
+      <div className={styles.strategyContent}>
+        <div className={styles.progressSection}>
+          <div className={styles.progressHeader}>
+            <span className={styles.progressLabel}>Overall Progress</span>
+            <span className={styles.progressValue}>{overallProgression}%</span>
+          </div>
+          <div className={styles.progressBarContainer}>
+            <div 
+              className={styles.progressBar}
+              style={{ width: `${overallProgression}%` }}
+            />
+          </div>
+        </div>
+        
+        <div className={styles.initiativesSection}>
+          <h4 className={styles.sectionTitle}>Initiatives</h4>
+          {strategy.initiatives && strategy.initiatives.length > 0 ? (
+              <div className={styles.initiativesList}>
+              {strategy.initiatives.map(initiative => (
+                <InitiativeView
+                  key={initiative.id}
+                  initialInitiative={initiative}
+                  radarItems={radarItems}
+                  orgId={orgId}
+                  onInitiativeChange={onInitiativeChanged}
+                  onDeleteInitiative={handleDeleteInitiative}
+                  strategyId={strategy.id}
+                  onLocalUpdate={onInitiativeLocalUpdate}
+                  className={styles.initiativeItem}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className={styles.noInitiatives}>
+              <p>No initiatives yet. Add one to get started.</p>
+            </div>
+          )}
+        </div>
+
+        <div className={styles.footer}>
+          <div className={styles.footerRow}>
+            <input
+              type="text"
+              placeholder="New initiative name"
+              value={newInitiativeName}
+              onChange={(e) => setNewInitiativeName(e.target.value)}
+              onKeyDown={async (e) => {
+                if (e.key === 'Enter' && newInitiativeName.trim() && !isCreatingInitiative) {
+                  await handleCreateInitiative();
+                }
+              }}
+              className={styles.initiativeInput}
+              disabled={isCreatingInitiative || isSaving}
+            />
+            <button
+              onClick={handleCreateInitiative}
+              disabled={!newInitiativeName.trim() || isCreatingInitiative || isSaving}
+              className={styles.addButton}
+            >
+              <Plus className={styles.buttonIcon} />
+              <span>Add Initiative</span>
+            </button>
+          </div>
+        </div>
+      </div>
       <EditStrategyDialog
         isOpen={isEditStrategyOpen}
         onOpenChange={setEditStrategyOpen}
@@ -346,6 +354,6 @@ export function StrategyView({
         onStrategyUpdated={handleEditStrategy}
         teamId={orgId}
       />
-    </>
+    </div>
   );
 }

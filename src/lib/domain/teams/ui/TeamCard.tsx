@@ -1,10 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Pencil, TrendingUp, Radar } from "lucide-react";
 import type { Team } from "@/lib/types";
+import styles from "./TeamCard.module.css";
 
 interface TeamCardProps {
   team: Team;
@@ -13,31 +12,35 @@ interface TeamCardProps {
 
 export function TeamCard({ team, onEdit }: TeamCardProps) {
   return (
-    <Card className="hover:shadow-lg transition-shadow flex flex-col bg-card">
-      <CardHeader className="flex flex-row justify-between items-start">
+    <div className={styles.card}>
+      <div className={styles.cardHeader}>
         <div>
-          <CardTitle>{team.name}</CardTitle>
-          <CardDescription>{team.purpose}</CardDescription>
+          <h3 className={styles.cardTitle}>{team.name}</h3>
+          <p className={styles.cardDescription}>{team.purpose}</p>
         </div>
-        <div className="flex items-center">
-          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => onEdit(team)} aria-label="Edit team">
-            <Pencil className="h-4 w-4" />
-          </Button>
+        <div className={styles.actions}>
+          <button 
+            className={styles.actionButton} 
+            onClick={() => onEdit(team)} 
+            aria-label="Edit team"
+          >
+            <Pencil className={styles.icon} />
+          </button>
           <Link href={`/team/${team.id}/radar?companyId=${team.companyId}`}>
-            <Button variant="ghost" size="icon" className="h-8 w-8 group">
-              <Radar className="h-5 w-5" color="#0c8" />
-            </Button>
+            <button className={styles.actionButton}>
+              <Radar className={styles.icon} color="#0c8" />
+            </button>
           </Link>
           <Link href={`/team/${team.id}?companyId=${team.companyId}`}>
-            <Button variant="ghost" size="icon" className="h-8 w-8 group">
-              <TrendingUp className="h-5 w-5" color="#2563eb" />
-            </Button>
+            <button className={styles.actionButton}>
+              <TrendingUp className={styles.icon} color="#2563eb" />
+            </button>
           </Link>
         </div>
-      </CardHeader>
-      <CardContent className="flex-grow">
-        <p className="text-sm text-muted-foreground">{team.context}</p>
-      </CardContent>
-    </Card>
+      </div>
+      <div className={styles.cardContent}>
+        <p className={styles.context}>{team.context}</p>
+      </div>
+    </div>
   );
 }

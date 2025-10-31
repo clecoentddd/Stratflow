@@ -112,6 +112,7 @@ interface InitiativeViewProps {
   onDeleteInitiative: (initiativeId: string, strategyId: string) => void;
   strategyId: string;
   onLocalUpdate?: (initiativeId: string, updated: Partial<Initiative>) => void;
+  className?: string;
 }
 
 const iconMap: Record<string, React.ComponentType<any>> = { Search, Milestone, ListChecks, Target };
@@ -416,16 +417,20 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
         </div>
 
         <div className={stepStyles.stepsGrid}>
-          {initiative.steps.map((step) => (
-            <InitiativeStepView
-                key={step.key}
-                step={step}
-                iconMap={iconMap}
-                onAddItem={() => handleAddInitiativeItem(step.key)}
-                onSaveItem={(itemId, newText) => handleSaveInitiativeItem(itemId, newText, step.key)}
-                onDeleteItem={(itemId) => handleDeleteInitiativeItem(itemId, step.key)}
-            />
-          ))}
+          {initiative.steps && initiative.steps.length > 0 ? (
+            initiative.steps.map((step) => (
+              <InitiativeStepView
+                  key={step.key}
+                  step={step}
+                  iconMap={iconMap}
+                  onAddItem={() => handleAddInitiativeItem(step.key)}
+                  onSaveItem={(itemId, newText) => handleSaveInitiativeItem(itemId, newText, step.key)}
+                  onDeleteItem={(itemId) => handleDeleteInitiativeItem(itemId, step.key)}
+              />
+            ))
+          ) : (
+            <p className="text-sm text-muted-foreground">No steps available for this initiative.</p>
+          )}
         </div>
 
         <LinkRadarItemsDialog
