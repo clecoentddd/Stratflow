@@ -1,4 +1,3 @@
-
 import { NextResponse, NextRequest } from 'next/server';
 import { v4 as uuidv4 } from 'uuid';
 import { saveEvents } from '@/lib/db/event-store';
@@ -7,11 +6,21 @@ import type { CreateInitiativeCommand } from '@/lib/domain/initiatives/commands'
 import type { InitiativeCreatedEvent } from '@/lib/domain/initiatives/events';
 import { newInitiativeTemplate } from '@/lib/data';
 
+// Helper to extract teamId from query or body
+async function resolveTeamId(request: NextRequest) {
+  const queryTeam = request.nextUrl.searchParams.get('teamId');
+  const body = await request.json().catch(() => undefined);
+  return queryTeam ?? (body && (body.teamId as string | undefined));
+}
+
 // --- Vertical Slice: Create Initiative ---
-export async function POST(request: NextRequest, { params }: { params: { teamId: string } | Promise<{ teamId: string }> }) {
+export async function POST(request: NextRequest) {
   try {
-    const { teamId } = (await params) as { teamId: string };
-    const command: CreateInitiativeCommand = await request.json();
+    const body = await request.json();
+    const teamId = request.nextUrl.searchParams.get('teamId') ?? body.teamId;
+    const command: CreateInitiativeCommand = body;
+
+    if (!teamId) return NextResponse.json({ message: 'teamId is required (query or body)' }, { status: 400 });
 
     // 1. Validation
     const team = await getTeamByIdProjection(teamId);

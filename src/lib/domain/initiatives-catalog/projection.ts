@@ -12,7 +12,7 @@ export type InitiativeCatalogRow = {
   deletedAt?: string | null;
 };
 
-const getTable = (): Map<string, InitiativeCatalogRow> => {
+export const getTable = (): Map<string, InitiativeCatalogRow> => {
   if (!(global as any)._initiativeCatalog) {
     (global as any)._initiativeCatalog = new Map<string, InitiativeCatalogRow>();
   }
@@ -34,23 +34,50 @@ export const resetInitiativeCatalogProjection = () => {
 };
 
 function onInitiativeCreated(e: any) {
+  console.log('Processing InitiativeCreated event:', e);
   const table = getTable();
   const id = e.payload?.template?.id;
-  if (!id) return;
+  
+  if (!id) {
+    console.warn('Received InitiativeCreated event without an ID:', e);
+    return;
+  }
+  
   const teamId = e.aggregateId;
+  if (!teamId) {
+    console.warn('Received InitiativeCreated event without a team ID:', e);
+    return;
+  }
+  
   const teamMeta = getTeamMeta().get(teamId);
+  console.log(`Team metadata for ${teamId}:`, teamMeta);
+  
+  const initiativeName = e.payload?.template?.name || `Initiative ${id}`;
+  
   const row: InitiativeCatalogRow = {
     id,
-    name: e.payload?.template?.name || id,
+    name: initiativeName,
     teamId,
     teamName: teamMeta?.name,
-    teamLevel: typeof teamMeta?.level === 'number' ? teamMeta!.level : undefined,
-    strategyId: e.payload?.strategyId,
-    strategyName: undefined,
+    teamLevel: typeof teamMeta?.level === 'number' ? teamMeta.level : undefined,
+    strategyId: e.payload?.strategyId || `strategy-${teamId}`,
+    strategyName: e.payload?.strategyName || `Strategy for ${teamId}`,
     strategyState: 'Draft',
     deletedAt: null,
   };
+  
+  console.log('Creating initiative row:', row);
   table.set(id, row);
+  
+  // Also ensure the team exists in our team metadata
+  const teamMetaMap = getTeamMeta();
+  if (!teamMetaMap.has(teamId)) {
+    console.log(`Adding team ${teamId} to team metadata`);
+    teamMetaMap.set(teamId, {
+      name: teamMeta?.name || `Team ${teamId}`,
+      level: teamMeta?.level || 0
+    });
+  }
 }
 
 function onInitiativeUpdated(e: any) {
@@ -140,3 +167,17 @@ export const queryEligibleInitiatives = (opts?: { states?: Array<'Draft'|'Active
   }
   return rows;
 };
+
+export function getAllTeams() {
+  // Get all unique teams from the catalog
+  const table = getTable();
+  const teams: { id: string; name?: string }[] = [];
+  for (const row of table.values()) {
+    if (!teams.some(t => t.id === row.teamId)) {
+      teams.push({ id: row.teamId, name: row.teamName || row.teamId });
+    }
+  }
+  return teams;
+}
+
+

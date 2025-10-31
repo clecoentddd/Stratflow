@@ -71,7 +71,7 @@ export function StrategyView({
     const command: UpdateStrategyCommand = { ...updatedValues, strategyId: originalStrategy.id };
     
     try {
-        const response = await fetch(`/api/teams/${orgId}/strategies/${originalStrategy.id}`, {
+    const response = await fetch(`/api/strategies/${encodeURIComponent(originalStrategy.id)}?teamId=${encodeURIComponent(orgId)}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(command)
@@ -113,7 +113,7 @@ export function StrategyView({
         timeframe: timeframe,
     };
     
-    fetch(`/api/teams/${orgId}/strategies/${strategy.id}`, {
+  fetch(`/api/strategies/${encodeURIComponent(strategy.id)}?teamId=${encodeURIComponent(orgId)}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(command),

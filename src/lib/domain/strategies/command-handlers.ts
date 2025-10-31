@@ -1,11 +1,12 @@
 import type { StrategyState } from '@/lib/types';
 import type { CreateStrategyCommand, UpdateStrategyCommand } from './commands';
 import type { StrategyEvent, StrategyCreatedEvent, StrategyUpdatedEvent } from './events';
+import type { TeamEvent } from '@/lib/domain/teams/events';
 
 type CommandHandlerResult<T> = { success: boolean; error?: string; event?: T };
 
 export class StrategyCommandHandlers {
-  private static getCurrentStates(events: StrategyEvent[]): Map<string, StrategyState> {
+  private static getCurrentStates(events: TeamEvent[] | StrategyEvent[]): Map<string, StrategyState> {
     const states = new Map<string, StrategyState>();
     
     events.forEach(event => {
@@ -43,7 +44,7 @@ export class StrategyCommandHandlers {
   static handleCreateStrategy(
     teamId: string,
     command: CreateStrategyCommand,
-    events: StrategyEvent[]
+    events: TeamEvent[] | StrategyEvent[]
   ): CommandHandlerResult<StrategyCreatedEvent> {
     const currentStates = this.getCurrentStates(events);
     
@@ -74,7 +75,7 @@ export class StrategyCommandHandlers {
   static handleUpdateStrategy(
     teamId: string,
     command: UpdateStrategyCommand,
-    events: StrategyEvent[]
+    events: TeamEvent[] | StrategyEvent[]
   ): CommandHandlerResult<StrategyUpdatedEvent> {
     // If not changing state or changing to a non-restricted state, allow it
     if (!command.state || !['Draft', 'Active'].includes(command.state)) {

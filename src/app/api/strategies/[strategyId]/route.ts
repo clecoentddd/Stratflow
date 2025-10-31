@@ -1,15 +1,17 @@
-
 import { NextResponse, NextRequest } from 'next/server';
 import { saveEvents, getEventsByEntityAndId } from '@/lib/db/event-store';
-import { getTeamByIdProjection } from '@/lib/db/projections';
-import type { UpdateStrategyCommand } from '@/lib/domain/strategies/commands';
 import { StrategyCommandHandlers } from '@/lib/domain/strategies/command-handlers';
+import type { UpdateStrategyCommand } from '@/lib/domain/strategies/commands';
 
-// --- Vertical Slice: Update Strategy ---
-export async function PUT(request: NextRequest, { params }: { params: { teamId: string, strategyId: string } | Promise<{ teamId: string, strategyId: string }> }) {
+// PUT /api/strategies/:strategyId?teamId=team-xyz  OR body.teamId
+export async function PUT(request: NextRequest, { params }: { params: { strategyId: string } | Promise<{ strategyId: string }> }) {
   try {
-    const { teamId, strategyId } = (await params) as { teamId: string, strategyId: string };
-    const command: UpdateStrategyCommand = await request.json();
+    const { strategyId } = (await params) as { strategyId: string };
+    const body = await request.json().catch(() => ({}));
+    const teamId = request.nextUrl.searchParams.get('teamId') ?? (body && (body.teamId as string | undefined));
+    const command: UpdateStrategyCommand = body;
+
+    if (!teamId) return NextResponse.json({ message: 'teamId is required (query or body)' }, { status: 400 });
 
     // 1. Basic validation
     const hasUpdateableField = command.state || command.description || command.timeframe;
@@ -22,7 +24,7 @@ export async function PUT(request: NextRequest, { params }: { params: { teamId: 
     const result = StrategyCommandHandlers.handleUpdateStrategy(
       teamId,
       { ...command, strategyId },
-      events
+      events as any
     );
     
     if (!result.success || !result.event) {

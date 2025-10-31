@@ -1,6 +1,11 @@
 import type { RadarEvent } from '../radar/events';
 import type { StrategyEvent } from '../strategies/events';
 import type { InitiativeEvent } from '../initiatives/events';
+import type {
+  InitiativeItemAddedEvent,
+  InitiativeItemUpdatedEvent,
+  InitiativeItemDeletedEvent,
+} from '../initiative-items/events';
 
 // Event Sourcing and CQRS Types
 export type Event<T extends string, P> = {
@@ -34,4 +39,12 @@ export type TeamUpdatedEvent = Event<
 
 
 // Union of all events related to an Team
-export type TeamEvent = TeamCreatedEvent | TeamUpdatedEvent | RadarEvent | StrategyEvent | InitiativeEvent;
+export type TeamEvent =
+  | TeamCreatedEvent
+  | TeamUpdatedEvent
+  | RadarEvent
+  | StrategyEvent
+  | InitiativeEvent
+  | InitiativeItemAddedEvent
+  | InitiativeItemUpdatedEvent
+  | InitiativeItemDeletedEvent;

@@ -1,4 +1,3 @@
-
 import { NextResponse, NextRequest } from 'next/server';
 import { v4 as uuidv4 } from 'uuid';
 import {
@@ -9,11 +8,11 @@ import { saveEvents, getEventsFor } from '@/lib/db/event-store';
 import type { UpsertRadarItemCommand } from '@/lib/domain/radar/commands';
 import type { RadarItemCreatedEvent, RadarItemUpdatedEvent, RadarItemDeletedEvent } from '@/lib/domain/radar/events';
 
-// This endpoint is now redundant with GET /api/teams/[teamId], but we keep it for logical separation if needed.
-// It simply fetches the team and the client can extract the radar data.
-export async function GET(request: NextRequest, { params }: { params: { teamId: string } | Promise<{ teamId: string }> }) {
+// --- Vertical Slice: Get Radar (teamId via query or body)
+export async function GET(request: NextRequest) {
   try {
-    const { teamId } = (await params) as { teamId: string };
+    const teamId = request.nextUrl.searchParams.get('teamId');
+    if (!teamId) return NextResponse.json({ message: 'teamId is required (query param)' }, { status: 400 });
     const team = await getTeamByIdProjection(teamId);
     if (!team) {
       return NextResponse.json({ message: 'Team not found' }, { status: 404 });
@@ -27,11 +26,14 @@ export async function GET(request: NextRequest, { params }: { params: { teamId: 
 
 
 // --- Vertical Slice: Create Radar Item ---
-export async function POST(request: NextRequest, { params }: { params: { teamId: string } | Promise<{ teamId: string }> }) {
+export async function POST(request: NextRequest) {
   try {
-    const { teamId } = (await params) as { teamId: string };
-    const command: UpsertRadarItemCommand = await request.json();
+    const body = await request.json();
+    const teamId = request.nextUrl.searchParams.get('teamId') ?? body.teamId;
+    const command: UpsertRadarItemCommand = body;
     
+    if (!teamId) return NextResponse.json({ message: 'teamId is required (query or body)' }, { status: 400 });
+
     // 1. Command Handler Logic (Validation)
     const team = await getTeamByIdProjection(teamId);
     if (!team) {
@@ -74,11 +76,14 @@ export async function POST(request: NextRequest, { params }: { params: { teamId:
 }
 
 // --- Vertical Slice: Update Radar Item ---
-export async function PUT(request: NextRequest, { params }: { params: { teamId: string } | Promise<{ teamId: string }> }) {
+export async function PUT(request: NextRequest) {
     try {
-        const { teamId } = (await params) as { teamId: string };
-        const command: UpsertRadarItemCommand = await request.json();
+        const body = await request.json();
+        const teamId = request.nextUrl.searchParams.get('teamId') ?? body.teamId;
+        const command: UpsertRadarItemCommand = body;
         
+        if (!teamId) return NextResponse.json({ message: 'teamId is required (query or body)' }, { status: 400 });
+
         // 1. Command Handler Logic (Validation)
         const team = await getTeamByIdProjection(teamId);
         if (!team) {
@@ -122,14 +127,14 @@ export async function PUT(request: NextRequest, { params }: { params: { teamId: 
 
 
 // --- Vertical Slice: Delete Radar Item ---
-export async function DELETE(request: NextRequest, { params }: { params: { teamId: string } | Promise<{ teamId: string }> }) {
+export async function DELETE(request: NextRequest) {
     try {
-        const { teamId } = (await params) as { teamId: string };
-        const { id: itemId } = await request.json();
+        const body = await request.json().catch(() => ({}));
+        const teamId = request.nextUrl.searchParams.get('teamId') ?? (body && (body.teamId as string | undefined));
+        const { id: itemId } = body;
 
-        if (!itemId) {
-             return NextResponse.json({ message: 'Radar item ID is required' }, { status: 400 });
-        }
+        if (!teamId) return NextResponse.json({ message: 'teamId is required (query or body)' }, { status: 400 });
+        if (!itemId) return NextResponse.json({ message: 'Radar item ID is required' }, { status: 400 });
 
         // 1. Command Handler Logic (Validation)
         const team = await getTeamByIdProjection(teamId);

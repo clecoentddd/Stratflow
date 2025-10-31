@@ -1,4 +1,3 @@
-
 import { NextResponse, NextRequest } from 'next/server';
 import { saveEvents } from '@/lib/db/event-store';
 import { getTeamByIdProjection } from '@/lib/db/projections';
@@ -6,10 +5,14 @@ import type { UpdateInitiativeItemCommand, DeleteInitiativeItemCommand } from '@
 import type { InitiativeItemUpdatedEvent, InitiativeItemDeletedEvent } from '@/lib/domain/initiative-items/events';
 
 // --- Vertical Slice: Update Initiative Item ---
-export async function PUT(request: NextRequest, { params }: { params: { teamId: string, itemId: string } | Promise<{ teamId: string, itemId: string }> }) {
+export async function PUT(request: NextRequest, { params }: { params: { itemId: string } | Promise<{ itemId: string }> }) {
   try {
-    const { teamId, itemId } = (await params) as { teamId: string, itemId: string };
-    const command: UpdateInitiativeItemCommand = await request.json();
+    const { itemId } = (await params) as { itemId: string };
+    const body = await request.json();
+    const teamId = request.nextUrl.searchParams.get('teamId') ?? body.teamId;
+    const command: UpdateInitiativeItemCommand = body;
+
+    if (!teamId) return NextResponse.json({ message: 'teamId is required (query or body)' }, { status: 400 });
 
     // 1. Validation
     const team = await getTeamByIdProjection(teamId);
@@ -56,9 +59,13 @@ export async function PUT(request: NextRequest, { params }: { params: { teamId: 
 
 
 // --- Vertical Slice: Delete Initiative Item ---
-export async function DELETE(request: NextRequest, { params }: { params: { teamId: string, itemId: string } | Promise<{ teamId: string, itemId: string }> }) {
+export async function DELETE(request: NextRequest, { params }: { params: { itemId: string } | Promise<{ itemId: string }> }) {
   try {
-    const { teamId, itemId } = (await params) as { teamId: string, itemId: string };
+    const { itemId } = (await params) as { itemId: string };
+    const body = await request.json().catch(() => ({}));
+    const teamId = request.nextUrl.searchParams.get('teamId') ?? (body && (body.teamId as string | undefined));
+
+    if (!teamId) return NextResponse.json({ message: 'teamId is required (query or body)' }, { status: 400 });
 
     // 1. Validation
      const team = await getTeamByIdProjection(teamId);

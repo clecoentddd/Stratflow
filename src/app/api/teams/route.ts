@@ -1,45 +1,46 @@
 
 import { NextResponse, NextRequest } from 'next/server';
 import { v4 as uuidv4 } from 'uuid';
-import {
-  getTeamsProjection,
-  applyEventsToTeam,
-  getTeamByIdProjection,
-} from '@/lib/db/projections';
+import { getTeamsProjection, applyEventsToTeam, getTeamByIdProjection } from '@/lib/db/projections';
 import { saveEvents, getEventsFor } from '@/lib/db/event-store';
 import type { CreateTeamCommand, UpdateTeamCommand } from '@/lib/domain/teams/commands';
-import type { TeamCreatedEvent, TeamUpdatedEvent, TeamEvent } from '@/lib/domain/teams/events';
+import type { TeamCreatedEvent, TeamUpdatedEvent } from '@/lib/domain/teams/events';
 
-// --- Vertical Slice: GET Teams ---
+// Keep GET behavior (teams list) — UI expects /api/teams to return teams projection.
 export async function GET(request: NextRequest) {
   try {
+    console.log('[api/teams] GET invoked', { url: request.url, headers: Object.fromEntries(request.headers) });
     const teams = await getTeamsProjection();
+    console.log('[api/teams] returning teams count', teams.length);
     return NextResponse.json(teams);
   } catch (error) {
     console.error('Failed to get teams projection:', error);
-    return NextResponse.json(
-      { message: 'Internal Server Error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
   }
 }
 
-// --- Vertical Slice: Create Team ---
+// POST and PUT are deprecated — respond with 410 to encourage flattened endpoints for team-scoped operations.
+const removed = (method = 'request') =>
+  NextResponse.json(
+    {
+      error: 'endpoint_removed',
+      message:
+        'This team-scoped API endpoint has been removed for write operations. Use flattened endpoints: /api/strategies, /api/initiatives, /api/initiative-items, /api/radar (pass teamId as query or in body).',
+      method,
+    },
+    { status: 410 }
+  );
+
 export async function POST(request: NextRequest) {
+  // Implement team creation to keep the UI flow working.
   try {
-    // 1. Parse and Validate the Command
-    const command: CreateTeamCommand = await request.json();
-    if (!command.name || !command.purpose || !command.companyId) {
-      return NextResponse.json(
-        { message: 'Company ID, name, and purpose are required' },
-        { status: 400 }
-      );
+    const body = await request.json();
+    const command = body as CreateTeamCommand;
+    if (!command || !command.name || !command.companyId) {
+      return NextResponse.json({ message: 'Invalid team create command' }, { status: 400 });
     }
 
-    // 2. Command Handler Logic
     const newTeamId = `team-${uuidv4()}`;
-
-    // 3. Create Event(s)
     const event: TeamCreatedEvent = {
       type: 'TeamCreated',
       entity: 'team',
@@ -49,77 +50,54 @@ export async function POST(request: NextRequest) {
         id: newTeamId,
         companyId: command.companyId,
         name: command.name,
-        purpose: command.purpose,
-        context: command.context,
-        level: command.level,
+        purpose: command.purpose ?? '',
+        context: command.context ?? '',
+        level: command.level ?? 0,
       },
     };
 
-    // 4. Save Event(s) to Event Store
     await saveEvents([event]);
 
-    // 5. Re-project from events to get the created state for the response
-    const newTeamState = applyEventsToTeam(null, [event]);
+  console.log('[api/teams] created team', newTeamId, { companyId: command.companyId, name: command.name });
 
-    if (!newTeamState) {
-      throw new Error('Failed to apply event to create team state.');
-    }
-
-    return NextResponse.json(newTeamState, { status: 201 });
+  // Return the created team projection
+  const created = await getTeamByIdProjection(newTeamId);
+  return NextResponse.json(created, { status: 201 });
   } catch (error) {
     console.error('Failed to create team:', error);
-    return NextResponse.json(
-      { message: 'Internal Server Error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
   }
 }
 
-// --- Vertical Slice: Update Team ---
 export async function PUT(request: NextRequest) {
-    try {
-        // 1. Parse and Validate Command
-        const command: UpdateTeamCommand = await request.json();
-        if (!command.id || !command.name || !command.purpose) {
-            return NextResponse.json({ message: 'ID, name, and purpose are required' }, { status: 400 });
-        }
-
-        // 2. Command Handler Logic
-        const { id, name, purpose, context } = command;
-
-        const existingTeam = await getTeamByIdProjection(id);
-        if (!existingTeam) {
-            return NextResponse.json({ message: 'Team not found' }, { status: 404 });
-        }
-
-        // 3. Create Event
-        const event: TeamUpdatedEvent = {
-            type: 'TeamUpdated',
-            entity: 'team',
-            aggregateId: id,
-            timestamp: new Date().toISOString(),
-            payload: {
-                name,
-                purpose,
-                context,
-            },
-        };
-
-        // 4. Save Event to Event Store
-        await saveEvents([event]);
-
-        // 5. Re-project all events for the aggregate to rebuild its state accurately for the response
-        const allEventsForTeam = await getEventsFor(id);
-        const updatedTeamState = applyEventsToTeam(null, allEventsForTeam);
-        
-        if (!updatedTeamState) {
-            throw new Error('Failed to apply events to update team state.');
-        }
-
-        return NextResponse.json(updatedTeamState, { status: 200 });
-
-    } catch (error) {
-        console.error('Failed to update team:', error);
-        return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
+  // Allow updating a team's basic fields so the EditTeamDialog works.
+  try {
+    const body = await request.json();
+    const command = body as UpdateTeamCommand;
+    if (!command || !command.id) {
+      return NextResponse.json({ message: 'Invalid update command' }, { status: 400 });
     }
+
+    const event: TeamUpdatedEvent = {
+      type: 'TeamUpdated',
+      entity: 'team',
+      aggregateId: command.id,
+      timestamp: new Date().toISOString(),
+      payload: {
+        name: command.name,
+        purpose: command.purpose,
+        context: command.context,
+      },
+    };
+
+    await saveEvents([event]);
+
+  console.log('[api/teams] updated team', command.id, { name: command.name });
+
+  const updated = await getTeamByIdProjection(command.id);
+  return NextResponse.json(updated);
+  } catch (error) {
+    console.error('Failed to update team:', error);
+    return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
+  }
 }

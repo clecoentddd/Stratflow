@@ -231,24 +231,31 @@ export const saveEvents = async (newEvents: AllEvents[]): Promise<void> => {
  */
 export const getEventsFor = async (
   aggregateId: string
-): Promise<AllEvents[]> => {
+): Promise<TeamEvent[]> => {
+  // Narrow to team-scoped events for the given aggregateId. Many callers
+  // expect a TeamEvent[] (radar, strategies, initiative operations), so
+  // filter by entity === 'team' to satisfy typing and avoid passing
+  // unrelated Company or Linking events into team projections.
   return new Promise((resolve) => {
     const db = getDb();
-    const aggregateEvents = db.events.filter((e) => e.aggregateId === aggregateId);
-    resolve(aggregateEvents);
+    const aggregateEvents = db.events.filter((e) => e.aggregateId === aggregateId && e.entity === 'team');
+    resolve(aggregateEvents as TeamEvent[]);
   });
 };
 
-export const getEventsByEntityAndId = async (
-  entity: string,
-  aggregateId: string
-): Promise<AllEvents[]> => {
+// Overloads: when requesting team events we return TeamEvent[] which is the
+// shape projections and command handlers expect. For other entity types we
+// return the generic AllEvents[] union.
+export function getEventsByEntityAndId(entity: 'team', aggregateId: string): Promise<TeamEvent[]>;
+export function getEventsByEntityAndId(entity: string, aggregateId: string): Promise<AllEvents[]>;
+export async function getEventsByEntityAndId(entity: string, aggregateId: string): Promise<any> {
   return new Promise((resolve) => {
     const db = getDb();
     const events = db.events.filter((e) => e.entity === entity && e.aggregateId === aggregateId);
+    if (entity === 'team') return resolve(events as TeamEvent[]);
     resolve(events);
   });
-};
+}
 
 /**
  * Retrieves all events in the store.
@@ -280,19 +287,83 @@ export const resetEventStore = () => {
   (global as any)._mockDbEvents = undefined;
 };
 
-export const seedDemoCompany = () => {
-  // Force re-seed by resetting and calling getDb
-  resetEventStore();
-  const db = getDb();
-  // Re-run projections for all existing events
-  db.events.forEach(e => dispatchProjectionHandlers(e));
-  return { totalEvents: db.events.length };
+export const seedDemoCompany = async () => {
+  try {
+    // Ensure projection handlers are loaded
+    await ensureProjectionHandlersLoaded();
+    
+    console.log('Seeding demo company...');
+    // Force re-seed by resetting and calling getDb
+    resetEventStore();
+    const db = getDb();
+    
+    console.log('Current events before seeding:', db.events.length);
+
+    // Create some sample initiatives for each team
+    const teamIds = [...new Set(initialTeams.map(team => team.id))];
+    const initiatives = [
+      { id: 'init-1', name: 'Improve Team Collaboration', teamId: 'team-bod' },
+      { id: 'init-2', name: 'Enhance Product Features', teamId: 'team-ceo' },
+      { id: 'init-3', name: 'Optimize Development Workflow', teamId: 'team-cto' },
+      { id: 'init-4', name: 'Streamline Financial Processes', teamId: 'team-cfo' },
+      { id: 'init-5', name: 'Improve User Experience', teamId: 'team-ceo' },
+    ];
+
+    // Create initiative created events. Must match the InitiativeCreatedEvent shape
+    // used by the projections (strategyId, initiativeId, tempId, name, template ...).
+    const initiativeEvents: InitiativeCreatedEvent[] = initiatives.map(initiative => ({
+      type: 'InitiativeCreated',
+      entity: 'team', // initiatives are scoped to a team aggregate in our projections
+      aggregateId: initiative.teamId,
+      timestamp: new Date().toISOString(),
+      payload: {
+        strategyId: '', // unknown in this simplified seed; empty string is acceptable for demo
+        initiativeId: initiative.id,
+        tempId: initiative.id,
+        name: initiative.name,
+        template: {
+          id: initiative.id,
+          name: initiative.name,
+          progression: 0,
+          steps: [],
+          linkedRadarItemIds: [],
+        },
+      },
+    }));
+
+    // Add the new events to the event store
+    await saveEvents(initiativeEvents);
+    
+    // Re-run projections for all existing events
+    const updatedDb = getDb();
+    updatedDb.events.forEach(e => {
+      console.log('Dispatching event:', e.type, e);
+      dispatchProjectionHandlers(e);
+    });
+    
+    console.log('Seeding complete. Total events:', updatedDb.events.length);
+    return { 
+      ok: true, 
+      totalEvents: updatedDb.events.length,
+      message: 'Demo data seeded successfully',
+      initiatives: initiatives.length
+    };
+  } catch (error) {
+    console.error('Error seeding demo company:', error);
+    return { 
+      ok: false, 
+      error: error instanceof Error ? error.message : 'Unknown error during seeding',
+      message: 'Failed to seed demo data' 
+    };
+  }
 };
 
 let _projectionsLoaded = false;
 const ensureProjectionHandlersLoaded = async () => {
   if (_projectionsLoaded) return;
+  console.log('Loading projection handlers...');
   await Promise.all([
+    import('@/lib/domain/initiatives-catalog/projection'),
     import('@/lib/domain/initiatives-linking/projection'),
     import('@/lib/domain/initiatives-catalog/projection'),
   ]);

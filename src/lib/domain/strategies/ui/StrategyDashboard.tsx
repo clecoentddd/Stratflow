@@ -77,7 +77,7 @@ export function StrategyDashboard({
     }));
     
     try {
-      const response = await fetch(`/api/teams/${orgId}/strategies`, {
+      const response = await fetch(`/api/strategies?teamId=${encodeURIComponent(orgId)}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(command),

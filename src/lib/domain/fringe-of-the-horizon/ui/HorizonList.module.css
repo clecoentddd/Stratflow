@@ -56,13 +56,12 @@
   min-height: 260px;
 }
 
-/* Level-based background tints: lower level = darker */
-.levelShade0 { background: hsla(160, 80%, 25%, 0.1); } /* Darkest green with opacity */
+.levelShade0 { background: hsla(160, 80%, 25%, 0.1); }
 .levelShade1 { background: hsla(160, 75%, 35%, 0.15); }
 .levelShade2 { background: hsla(160, 70%, 45%, 0.1); }
 .levelShade3 { background: hsla(160, 65%, 55%, 0.08); }
 .levelShade4 { background: hsla(160, 60%, 65%, 0.06); }
-.levelShade5 { background: hsla(160, 30%, 94%, 0.5); } /* Lightest pastel green */
+.levelShade5 { background: hsla(160, 30%, 94%, 0.5); }
 
 .cardHeader {
   display: flex;
@@ -214,14 +213,6 @@
 .mono {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   font-size: 0.875rem;
-}
-
-.badge {
-  display: inline-block;
-  padding: 0.125rem 0.5rem;
-  border-radius: 9999px;
-  font-size: 0.75rem;
-  font-weight: 600;
 }
 
 .typeOpportunity {

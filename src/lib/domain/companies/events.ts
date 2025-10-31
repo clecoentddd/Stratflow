@@ -1,4 +1,4 @@
-import type { Event } from '../organizations/events';
+import type { Event } from '../teams/events';
 
 export type CompanyCreatedEvent = Event<
   'CompanyCreated',

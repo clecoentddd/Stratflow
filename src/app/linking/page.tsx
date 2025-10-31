@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
 
-export default async function LegacyStrategicViewRedirect({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
+export default async function LinkingRootRedirect({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
   const params = await searchParams;
   const sp = new URLSearchParams();
   Object.entries(params).forEach(([k, v]) => {

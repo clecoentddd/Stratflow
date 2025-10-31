@@ -11,7 +11,7 @@ import { CreateTeamDialog } from "@/lib/domain/teams/ui/CreateTeamDialog";
 import { EditTeamDialog } from "@/lib/domain/teams/ui/EditTeamDialog";
 import { notFound, useParams } from "next/navigation";
 import { TeamCard } from "@/lib/domain/teams/ui/TeamCard";
-import styles from "./teams.module.css";
+import styles from "@/lib/domain/companies/ui/company.module.css";
 
 export default function TeamsPage() {
   const params = useParams();
