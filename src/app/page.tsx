@@ -13,6 +13,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import styles from './page.module.css';
 
 export default function WelcomePage() {
   const [isCreateCompanyOpen, setCreateCompanyOpen] = useState(false);
@@ -71,7 +72,10 @@ export default function WelcomePage() {
           <div className="max-w-4xl mx-auto">
             <div className="flex items-center justify-between mb-6">
                 <h1 className="text-3xl font-bold font-headline">Your Companies</h1>
-                <Button onClick={() => setCreateCompanyOpen(true)}>
+                <Button 
+                  onClick={() => setCreateCompanyOpen(true)}
+                  className={styles.primaryButton}
+                >
                     <Plus className="mr-2 h-4 w-4" />
                     Create New Company
                 </Button>
@@ -84,7 +88,7 @@ export default function WelcomePage() {
                   </CardHeader>
                   <CardContent>
                     <Link href={`/company/${company.id}/teams`}>
-                      <Button>
+                      <Button className={styles.primaryButton}>
                         View Teams <ArrowRight className="ml-2 h-4 w-4" />
                       </Button>
                     </Link>
@@ -104,7 +108,11 @@ export default function WelcomePage() {
                 organizational strategy. Get started by creating your first company.
               </p>
               <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
-                <Button size="lg" onClick={() => setCreateCompanyOpen(true)}>
+                <Button 
+                  size="lg" 
+                  onClick={() => setCreateCompanyOpen(true)}
+                  className={styles.primaryButton}
+                >
                   <Plus className="mr-2 h-5 w-5" />
                   Create Company
                 </Button>
