@@ -1,4 +1,4 @@
-# **App Name**: StratFlow
+# **App Name**: Stradar
 
 ## Core Features:
 
