@@ -79,12 +79,6 @@
   gap: 0.5rem;
 }
 
-.statusTag[data-state='Draft'] {
-  background-color: #0C8;
-  color: black;
-  border-color: transparent;
-}
-
 .statusTag[data-state='Active'] {
   background-color: #388CFA;
   color: white;
