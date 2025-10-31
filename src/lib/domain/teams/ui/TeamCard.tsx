@@ -25,7 +25,7 @@ export function TeamCard({ team, onEdit }: TeamCardProps) {
           </Button>
           <Link href={`/team/${team.id}/radar?companyId=${team.companyId}`}>
             <Button variant="ghost" size="icon" className="h-8 w-8 group">
-              <Radar className="h-5 w-5" color="#cc9966" />
+              <Radar className="h-5 w-5" color="#0c8" />
             </Button>
           </Link>
           <Link href={`/team/${team.id}?companyId=${team.companyId}`}>

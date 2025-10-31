@@ -57,12 +57,12 @@
 }
 
 /* Level-based background tints: lower level = darker */
-.levelShade0 { background: #a5742a21; } /* slate-300 */
-.levelShade1 { background: #e2e8f0; } /* slate-200 */
-.levelShade2 { background: #eef2f7; } /* custom light slate */
-.levelShade3 { background: #f1f5f9; } /* slate-100 */
-.levelShade4 { background: #f8fafc; } /* slate-50 */
-.levelShade5 { background: #ffffff; } /* white */
+.levelShade0 { background: hsla(160, 80%, 25%, 0.1); } /* Darkest green with opacity */
+.levelShade1 { background: hsla(160, 75%, 35%, 0.15); }
+.levelShade2 { background: hsla(160, 70%, 45%, 0.1); }
+.levelShade3 { background: hsla(160, 65%, 55%, 0.08); }
+.levelShade4 { background: hsla(160, 60%, 65%, 0.06); }
+.levelShade5 { background: hsla(160, 30%, 94%, 0.5); } /* Lightest pastel green */
 
 .cardHeader {
   display: flex;
@@ -106,9 +106,9 @@
 }
 
 .typeOpportunity {
-  background-color: #dcfce7; /* brighter green */
-  color: #166534;
-  border: 1px solid #86efac;
+  background-color: hsla(160, 65%, 85%, 0.8);
+  color: hsl(160, 80%, 20%);
+  border: 1px solid hsla(160, 65%, 70%, 0.6);
 }
 
 .typeThreat {
@@ -124,15 +124,15 @@
 }
 
 .levelBadge {
-  background: #dbeafe; /* blue */
-  color: #1e3a8a;
-  border: 1px solid #bfdbfe;
+  background: hsla(160, 80%, 35%, 0.1);
+  color: hsl(160, 80%, 20%);
+  border: 1px solid hsla(160, 70%, 35%, 0.3);
 }
 
 .categoryBadge {
-  background: #fde8d7; /* warm brown tint */
-  color: #7c2d12;
-  border: 1px solid #f3c7a6;
+  background: hsla(160, 60%, 55%, 0.1);
+  color: hsl(160, 70%, 20%);
+  border: 1px solid hsla(160, 60%, 55%, 0.3);
 }
 
 .details {
@@ -151,8 +151,8 @@
 
 .expandBtn {
   margin: 0.5rem auto 0;
-  background: #f9fafb;
-  border: 1px solid #e5e7eb;
+  background: hsla(160, 50%, 95%, 0.8);
+  border: 1px solid hsla(160, 30%, 85%, 0.8);
   border-radius: 9999px;
   padding: 0.25rem;
   cursor: pointer;
@@ -161,6 +161,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.expandBtn:hover {
+  background: hsla(160, 50%, 90%, 0.9);
+  border-color: hsla(160, 40%, 80%, 0.9);
 }
 
 .summaryIcon {

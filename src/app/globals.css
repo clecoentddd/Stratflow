@@ -9,73 +9,73 @@ body {
 
 @layer base {
   :root {
-    --background: 215 20% 96%; /* Very Light Blue-Grey */
-    --foreground: 220 10% 10%; /* Near Black */
+    --background: 0 0% 98%; /* Off-White */
+    --foreground: 160 10% 15%; /* Dark Green-Gray */
     --card: 0 0% 100%; /* White */
-    --card-foreground: 220 10% 10%;
+    --card-foreground: 160 10% 15%;
     --popover: 0 0% 100%;
-    --popover-foreground: 220 10% 10%;
-    --primary: 30 50% 60%; /* Light Brown */
+    --popover-foreground: 160 10% 15%;
+    --primary: 160 85% 27%; /* #0c8 */
     --primary-foreground: 0 0% 100%;
-    --secondary: 215 15% 91%; /* Lighter Blue-Grey for secondary elements */
-    --secondary-foreground: 220 10% 10%;
-    --muted: 215 15% 91%;
-    --muted-foreground: 215 15% 50%; /* Muted Blue-Grey Text */
-    --accent: 215 20% 85%; /* Slightly darker Blue-Grey for accents */
-    --accent-foreground: 220 10% 10%;
+    --secondary: 160 30% 95%; /* Very Light Green */
+    --secondary-foreground: 160 10% 15%;
+    --muted: 160 10% 95%;
+    --muted-foreground: 160 5% 45%;
+    --accent: 160 30% 90%; /* Light Green */
+    --accent-foreground: 160 10% 15%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
-    --border: 215 20% 88%; /* Blue-Grey Border */
-    --input: 215 20% 88%;
-    --ring: 30 50% 60%; /* Light Brown for focus rings */
-    --chart-1: 346.8 77.2% 49.8%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
-    --sidebar-background: 220 13% 97%;
-    --sidebar-foreground: 222.2 84% 4.9%;
-    --sidebar-primary: 346.8 77.2% 49.8%;
-    --sidebar-primary-foreground: 355.7 100% 97.3%;
-    --sidebar-accent: 210 40% 94%;
-    --sidebar-accent-foreground: 222.2 84% 4.9%;
-    --sidebar-border: 214.3 31.8% 91.4%;
-    --sidebar-ring: 346.8 77.2% 49.8%;
+    --border: 160 15% 90%;
+    --input: 160 15% 90%;
+    --ring: 160 85% 27%; /* #0c8 */
+    --chart-1: 160 85% 27%; /* #0c8 */
+    --chart-2: 160 70% 22%; /* Darker Green */
+    --chart-3: 160 60% 18%; /* Even Darker Green */
+    --chart-4: 160 50% 35%; /* Medium Green */
+    --chart-5: 160 30% 50%; /* Lighter Green */
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 160 10% 15%;
+    --sidebar-primary: 160 85% 27%; /* #0c8 */
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 160 30% 95%;
+    --sidebar-accent-foreground: 160 10% 15%;
+    --sidebar-border: 160 15% 90%;
+    --sidebar-ring: 160 85% 27%; /* #0c8 */
     --black: 0 0% 0%;
   }
   .dark {
-    --background: 220 15% 10%; /* Dark Blue-Grey */
-    --foreground: 210 20% 98%; /* Light Grey */
-    --card: 220 15% 15%; /* Slightly Lighter Dark Blue-Grey */
-    --card-foreground: 210 20% 98%;
-    --popover: 220 15% 10%;
-    --popover-foreground: 210 20% 98%;
-    --primary: 30 50% 65%; /* Light Brown */
-    --primary-foreground: 220 10% 10%;
-    --secondary: 220 15% 25%;
-    --secondary-foreground: 210 20% 98%;
-    --muted: 220 15% 25%;
-    --muted-foreground: 220 10% 60%;
-    --accent: 30 50% 70%; /* Lighter Brown for accent */
-    --accent-foreground: 220 10% 10%;
+    --background: 160 10% 8%; /* Dark Green-Black */
+    --foreground: 160 20% 95%; /* Off-White */
+    --card: 160 10% 10%; /* Slightly Lighter Dark Green */
+    --card-foreground: 160 20% 95%;
+    --popover: 160 10% 8%;
+    --popover-foreground: 160 20% 95%;
+    --primary: 160 75% 30%; /* Slightly Brighter #0c8 */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 160 15% 20%;
+    --secondary-foreground: 160 20% 95%;
+    --muted: 160 15% 20%;
+    --muted-foreground: 160 10% 70%;
+    --accent: 160 20% 25%;
+    --accent-foreground: 160 20% 95%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 100%;
-    --border: 220 15% 25%;
-    --input: 220 15% 25%;
-    --ring: 30 50% 65%;
-    --chart-1: 346.8 77.2% 49.8%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
-    --sidebar-background: 222.2 84% 4.9%;
-    --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 346.8 77.2% 49.8%;
-    --sidebar-primary-foreground: 355.7 100% 97.3%;
-    --sidebar-accent: 217.2 32.6% 17.5%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 217.2 32.6% 17.5%;
-    --sidebar-ring: 346.8 77.2% 49.8%;
+    --border: 160 15% 25%;
+    --input: 160 15% 25%;
+    --ring: 160 75% 30%;
+    --chart-1: 160 75% 30%; /* Slightly Brighter #0c8 */
+    --chart-2: 160 65% 35%; /* Lighter Green */
+    --chart-3: 160 55% 40%; /* Even Lighter Green */
+    --chart-4: 160 45% 30%; /* Darker Green */
+    --chart-5: 160 35% 25%; /* Even Darker Green */
+    --sidebar-background: 160 10% 8%;
+    --sidebar-foreground: 160 20% 95%;
+    --sidebar-primary: 160 75% 30%; /* Slightly Brighter #0c8 */
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 160 15% 20%;
+    --sidebar-accent-foreground: 160 20% 95%;
+    --sidebar-border: 160 15% 20%;
+    --sidebar-ring: 160 75% 30%;
     --black: 0 0% 0%;
   }
 }
@@ -91,16 +91,17 @@ body {
 
 /* D3 level-based node styling */
 .level-node {
-  stroke: rgba(0,0,0,0.35);
+  stroke: rgba(0,0,0,0.08);
+  stroke-width: 1.5;
 }
-.level-0 { fill: #1f77b4; stroke: #0b4b78; }
-.level-1 { fill: #2ca02c; stroke: #1a6b1a; }
-.level-2 { fill: #ff7f0e; stroke: #a85406; }
-.level-3 { fill: #d62728; stroke: #8f1a1c; }
-.level-4 { fill: #9467bd; stroke: #5f3f82; }
-.level-5 { fill: #8c564b; stroke: #593830; }
-.level-6 { fill: #e377c2; stroke: #a54f8a; }
-.level-7 { fill: #7f7f7f; stroke: #555555; }
-.level-8 { fill: #bcbd22; stroke: #808212; }
-.level-9 { fill: #17becf; stroke: #118693; }
-.level-10 { fill: #4db6ac; stroke: #2f7f77; }
+.level-0 { fill: hsl(160, 80%, 25%); stroke: hsl(160, 80%, 20%); }
+.level-1 { fill: hsl(160, 75%, 35%); stroke: hsl(160, 75%, 30%); }
+.level-2 { fill: hsl(160, 70%, 45%); stroke: hsl(160, 70%, 40%); }
+.level-3 { fill: hsl(160, 65%, 55%); stroke: hsl(160, 65%, 50%); }
+.level-4 { fill: hsl(160, 60%, 65%); stroke: hsl(160, 60%, 60%); }
+.level-5 { fill: hsl(160, 55%, 75%); stroke: hsl(160, 55%, 70%); }
+.level-6 { fill: hsl(160, 50%, 80%); stroke: hsl(160, 50%, 75%); }
+.level-7 { fill: hsl(160, 45%, 85%); stroke: hsl(160, 45%, 80%); }
+.level-8 { fill: hsl(160, 40%, 88%); stroke: hsl(160, 40%, 83%); }
+.level-9 { fill: hsl(160, 35%, 91%); stroke: hsl(160, 35%, 86%); }
+.level-10 { fill: hsl(160, 30%, 94%); stroke: hsl(160, 30%, 89%); }

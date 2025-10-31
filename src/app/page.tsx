@@ -97,7 +97,7 @@ export default function WelcomePage() {
           <div className="flex-1 flex flex-col items-center justify-center text-center">
             <div className="max-w-2xl">
               <h1 className="text-5xl font-bold font-headline tracking-tight">
-                Welcome to StratFlow
+                Welcome to Stradar
               </h1>
               <p className="mt-6 text-lg text-muted-foreground">
                 The ultimate tool for visualizing, planning, and executing your

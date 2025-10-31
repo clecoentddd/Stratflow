@@ -70,9 +70,20 @@ export default function BubbleGraph({ nodes, edges, selectedId: selectedIdProp }
     const svg = d3.select(svgRef.current);
     svg.selectAll("*").remove();
 
-    // Fallback color scale by level (brown base -> lighter by level)
-    const base = d3.color('#cc9966')!;
-    const color = (lv: number) => d3.color(base)?.brighter(Math.max(0, Math.min(10, lv)) * 0.25)!.formatHex();
+    // Color by level (0=dark green, 10=light green)
+    const color = (lv: number) => {
+      // Start with dark green (#0c8) and get progressively lighter
+      const baseHue = 160; // Green hue
+      const baseSaturation = 85; // Base saturation
+      const baseLightness = 27; // Base lightness for level 0
+      
+      // Calculate lightness increase per level (darker for lower levels, lighter for higher)
+      const lightness = Math.min(90, baseLightness + (lv * 6));
+      // Slightly reduce saturation as we go up levels for a more pastel look
+      const saturation = Math.max(30, baseSaturation - (lv * 3));
+      
+      return `hsl(${baseHue}, ${saturation}%, ${lightness}%)`;
+    };
 
     // Build node/edge maps
     const nodeMap = new Map(nodes.map(n => [n.id, n] as const));

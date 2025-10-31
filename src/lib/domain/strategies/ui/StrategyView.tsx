@@ -19,7 +19,7 @@ import { strategyStates } from "@/lib/data";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { Card, CardHeader, CardContent, CardFooter, CardTitle, CardDescription } from "@/components/ui/card";
-import styles from "./strategy-view.module.css";
+import styles from "./StrategyView.module.css";
 
 import type { Strategy, RadarItem, Initiative, InitiativeStep } from "@/lib/types";
 import type { UpdateStrategyCommand } from "@/lib/domain/strategies/commands";
@@ -326,7 +326,11 @@ export function StrategyView({
                       onKeyDown={(e) => e.key === 'Enter' && handleCreateInitiative()}
                       disabled={isCreatingInitiative || isSaving}
                     />
-                    <Button onClick={handleCreateInitiative} disabled={!newInitiativeName.trim() || isCreatingInitiative || isSaving}>
+                    <Button 
+                      onClick={handleCreateInitiative} 
+                      disabled={!newInitiativeName.trim() || isCreatingInitiative || isSaving}
+                      className="bg-[#388cfa] hover:bg-[#2a7ae8] text-white"
+                    >
                       <Plus className="mr-2 h-4 w-4" /> Add Initiative
                     </Button>
                   </div>

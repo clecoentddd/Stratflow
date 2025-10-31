@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { StratFlowLogo } from "./icons";
+import { StradarLogo } from "./icons";
 
 interface AppHeaderProps {
     companyName?: string;
@@ -33,8 +33,8 @@ export function AppHeader({ companyName }: AppHeaderProps) {
     <header className="sticky top-0 z-10 flex h-16 items-center justify-between border-b bg-card/80 px-4 backdrop-blur-sm sm:px-6">
       <div className="flex items-center gap-4">
         <Link href="/" className="flex items-center gap-2">
-            <StratFlowLogo className="w-8 h-8 text-primary" />
-            <h1 className="text-2xl font-headline font-semibold hidden sm:block">StratFlow</h1>
+            <StradarLogo className="w-8 h-8 text-primary" />
+            <h1 className="text-2xl font-headline font-semibold hidden sm:block">Stradar</h1>
         </Link>
         {companyName && (
             <div className="flex items-center gap-2">

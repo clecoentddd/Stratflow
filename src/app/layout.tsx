@@ -5,8 +5,8 @@ import { cn } from "@/lib/utils";
 import { AppHeader } from "@/components/header";
 
 export const metadata: Metadata = {
-  title: "StratFlow",
-  description: "Strategize and execute with clarity.",
+  title: "Stradar",
+  description: "Strategic Radar for visualizing and executing your organization's strategy.",
 };
 
 export default function RootLayout({

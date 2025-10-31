@@ -93,10 +93,7 @@ export default function TeamStrategyPage() {
                 </Link>
                  <Link href={`/team/${teamId}/radar?companyId=${team?.companyId || ''}`}>
                     <Button
-                      className="text-white"
-                      style={{ backgroundColor: '#cc9966', borderColor: '#cc9966' }}
-                      onMouseOver={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#b38355'; }}
-                      onMouseOut={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#cc9966'; }}
+                      className="text-white bg-[#0c8] hover:bg-[#0a6] border-[#0c8] hover:border-[#0a6] transition-colors"
                     >
                         <Radar className="mr-2 h-4 w-4" />
                         View Radar
@@ -107,7 +104,10 @@ export default function TeamStrategyPage() {
                  <h1 className="text-3xl font-bold font-headline">{team.name} - Strategy</h1>
             </div>
             <div className="flex items-center gap-4">
-                <Button onClick={() => setCreateStrategyOpen(true)}>
+                <Button 
+                    onClick={() => setCreateStrategyOpen(true)}
+                    className="bg-[#388cfa] hover:bg-[#2a7ae8] text-white"
+                >
                     <Plus className="mr-2 h-4 w-4" />
                     New Strategy
                 </Button>
