@@ -1,11 +1,14 @@
 "use client";
 
 import { Plus, Trash2 } from "lucide-react";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import type { InitiativeStep, InitiativeStepKey, InitiativeItem as InitiativeItemType } from "@/lib/types";
 import styles from "./initiative-step-view.module.css";
+import itemStyles from "./initiative-item-view.module.css";
+
 import { useState, useEffect } from "react";
 
 interface InitiativeItemViewProps {
@@ -47,22 +50,22 @@ function InitiativeItemView({ item, onSave, onDelete }: InitiativeItemViewProps)
 
   if (isEditing) {
     return (
-      <div className="relative">
+      <div className={itemStyles.container}>
         <Textarea
           value={editText}
           onChange={(e) => setEditText(e.target.value)}
           placeholder="Describe an item..."
           autoFocus
           rows={3}
-          className="resize-none"
+          className={itemStyles.textarea}
           onBlur={handleSave}
           onKeyDown={handleKeyDown}
         />
-         <div className="flex justify-between mt-2">
-            <Button size="icon" variant="ghost" className="text-destructive hover:bg-destructive/10" onClick={() => onDelete(item.id)}>
-                <Trash2 className="h-4 w-4" />
+         <div className={itemStyles.actions}>
+            <Button size="icon" variant="ghost" className={itemStyles.deleteBtn} onClick={() => onDelete(item.id)}>
+                <Trash2 className={itemStyles.iconSmall} />
             </Button>
-            <div className="flex gap-2">
+            <div className={itemStyles.actionsRight}>
                 <Button size="sm" variant="outline" onClick={handleCancel}>
                     Cancel
                 </Button>
@@ -77,7 +80,7 @@ function InitiativeItemView({ item, onSave, onDelete }: InitiativeItemViewProps)
 
   return (
     <div onClick={() => setIsEditing(true)} className={styles.item}>
-      <p className="text-sm leading-relaxed whitespace-pre-wrap">{item.text}</p>
+      <p className={itemStyles.itemText}>{item.text}</p>
     </div>
   );
 }
@@ -106,8 +109,8 @@ export function InitiativeStepView({
           {Icon && <Icon className={styles.stepIcon} />}
           {step.title}
         </div>
-        <Button size="icon" variant="ghost" className="h-8 w-8" onClick={onAddItem}>
-          <Plus className="h-4 w-4" />
+        <Button size="icon" variant="ghost" className={styles.addButton} onClick={onAddItem}>
+          <Plus className={styles.addIcon} />
         </Button>
       </div>
       <div className={styles.stepContent}>
@@ -122,7 +125,7 @@ export function InitiativeStepView({
               />
             ))
           ) : (
-            <p className="text-sm text-center text-muted-foreground w-full py-4">No items yet.</p>
+            <p className={styles.emptyText}>No items yet.</p>
           )}
         </div>
       </div>

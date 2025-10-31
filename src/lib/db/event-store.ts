@@ -4,7 +4,7 @@ import type {
   TeamEvent,
   TeamCreatedEvent,
 } from '@/lib/domain/teams/events';
-import type { Team, Company } from '@/lib/types';
+import type { Team, Company, InitiativeStep } from '@/lib/types';
 import { applyEventsToTeam, applyEventsToCompany } from './projections';
 import type { RadarItemCreatedEvent } from '../domain/radar/events';
 import type { StrategyCreatedEvent, StrategyUpdatedEvent } from '@/lib/domain/strategies/events';
@@ -121,6 +121,13 @@ const getDb = (): MockDb => {
         // Seed initiatives under this strategy
         if (s.initiatives && s.initiatives.length > 0) {
           s.initiatives.forEach((init) => {
+            const defaultSteps: InitiativeStep[] = [
+              { key: 'diagnostic', title: 'Diagnostic', iconName: 'Search', items: [] },
+              { key: 'overallApproach', title: 'Overall Approach', iconName: 'Milestone', items: [] },
+              { key: 'actions', title: 'Actions', iconName: 'ListChecks', items: [] },
+              { key: 'proximateObjectives', title: 'Proximate Objectives', iconName: 'Target', items: [] },
+            ];
+            const seededSteps = Array.isArray(init.steps) && init.steps.length > 0 ? init.steps : defaultSteps;
             const initCreated: InitiativeCreatedEvent = {
               type: 'InitiativeCreated',
               entity: 'team',
@@ -135,7 +142,7 @@ const getDb = (): MockDb => {
                   id: init.id,
                   name: init.name,
                   progression: init.progression ?? 0,
-                  steps: init.steps || [],
+                  steps: seededSteps,
                   linkedRadarItemIds: init.linkedRadarItemIds || [],
                 },
               },

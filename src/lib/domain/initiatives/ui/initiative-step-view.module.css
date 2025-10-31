@@ -46,6 +46,16 @@
   color: #6b7280;
 }
 
+/* Add button and icon (replace h-8 w-8 and h-4 w-4) */
+.addButton {
+  width: 2rem;
+  height: 2rem;
+}
+.addIcon {
+  width: 1rem;
+  height: 1rem;
+}
+
 /* Content area */
 .stepContent {
   padding: 0.5rem;
@@ -177,6 +187,7 @@
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 3; /* limit to 3 lines in read-only */
+  line-clamp: 3; /* standard property for compatibility */
   overflow: hidden;
   text-overflow: ellipsis;
 
