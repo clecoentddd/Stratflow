@@ -4,6 +4,7 @@
 import { User, LogOut, Settings } from "lucide-react";
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 import {
   DropdownMenu,
@@ -24,10 +25,20 @@ interface AppHeaderProps {
 export function AppHeader({ companyName }: AppHeaderProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const companyMatch = pathname.match(/\/company\/([^\/]+)/);
-  const companyIdFromPath = companyMatch ? companyMatch[1] : null;
-  const companyIdFromQuery = searchParams?.get('companyId') || null;
-  const companyId = companyIdFromPath || companyIdFromQuery;
+
+  // Defer company detection until after mount to avoid hydration mismatches
+  const [companyId, setCompanyId] = useState<string | null>(null);
+  useEffect(() => {
+    try {
+      const companyMatch = (pathname || '').match(/\/company\/([^\/]+)/);
+      const companyIdFromPath = companyMatch ? companyMatch[1] : null;
+      const companyIdFromQuery = searchParams?.get('companyId') || null;
+      setCompanyId(companyIdFromPath || companyIdFromQuery);
+    } catch (err) {
+      setCompanyId(null);
+    }
+  }, [pathname, searchParams]);
+
   const hasCompany = !!companyId;
   return (
     <header className="sticky top-0 z-10 flex h-16 items-center justify-between border-b bg-card/80 px-4 backdrop-blur-sm sm:px-6">
@@ -63,6 +74,12 @@ export function AppHeader({ companyName }: AppHeaderProps) {
             className="text-sm px-2 py-1 rounded-md hover:bg-accent hover:text-accent-foreground"
           >
             Horizon
+          </Link>
+          <Link
+            href={hasCompany ? `/kanban?companyId=${companyId}` : `/kanban`}
+            className="text-sm px-2 py-1 rounded-md hover:bg-accent hover:text-accent-foreground"
+          >
+            Kanban
           </Link>
           <Link href="/monitoring" className="text-sm px-2 py-1 rounded-md hover:bg-accent hover:text-accent-foreground">Monitoring</Link>
         </nav>

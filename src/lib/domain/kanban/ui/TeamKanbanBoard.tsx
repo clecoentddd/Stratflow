@@ -2,6 +2,7 @@
 
 import React, { useState, useCallback } from "react";
 import KanbanCardSimple from "./KanbanCardSimple";
+import styles from "./kanban.module.css";
 
 type Initiative = { id: string; name: string; status?: string };
 
@@ -53,27 +54,24 @@ export default function TeamKanbanBoard({ initialInitiatives = [] }: { initialIn
   }, []);
 
   const ACCENT_GREEN = "#0c8";
-  const ACCENT_BLUE = "#388cfa";
-  const ACCENT_PINK = "#ff006e";
 
   return (
-    <div className="overflow-x-auto">
-      <div className="flex gap-4 items-start">
-        {COLUMNS.map((col, idx) => {
+    <div className={styles.columnsWrapper}>
+      <div className={styles.columns} style={{ minHeight: 120 }}>
+        {COLUMNS.map((col) => {
           const colCards = cards.filter((c) => c.status === col.key);
           return (
             <div
               key={col.key}
-              className="flex-1 min-w-[220px] rounded-md p-3"
+              className={styles.column}
               onDragOver={onDragOver}
               onDrop={(e) => onDrop(e, col.key)}
-              style={{ background: idx % 2 === 0 ? 'rgba(255,255,255,0.02)' : 'transparent' }}
             >
-              <div className="mb-3 flex items-center justify-between">
-                <h3 className="text-sm font-medium" style={{ color: ACCENT_BLUE }}>{col.label}</h3>
-                <span className="text-xs text-muted-foreground" style={{ color: ACCENT_PINK }}>{colCards.length}</span>
+              <div style={{ marginBottom: 12, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <h3 className={styles.columnHeader}>{col.label}</h3>
+                <span className={styles.columnCount}>{colCards.length}</span>
               </div>
-              <div className="space-y-2 min-h-[80px]">
+              <div className={styles.columnBoard}>
                 {colCards.map((c) => (
                   <KanbanCardSimple
                     key={c.id}

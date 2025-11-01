@@ -102,6 +102,7 @@ export default async function MonitoringPage({ searchParams }: { searchParams: P
                 <tr>
                   <th>Initiative</th>
                   <th>Team</th>
+                  <th>Level</th>
                   <th>Strategy</th>
                   <th>State</th>
                 </tr>
@@ -110,7 +111,8 @@ export default async function MonitoringPage({ searchParams }: { searchParams: P
                 {catalog.map((r: any) => (
                   <tr key={r.id}>
                     <td>{r.name} ({r.id})</td>
-                    <td>{r.teamId}</td>
+                    <td>{r.teamName ?? r.teamId}</td>
+                    <td>{typeof r.teamLevel === 'number' ? `L${r.teamLevel}` : '-'}</td>
                     <td>{r.strategyId}</td>
                     <td>{r.strategyState || '-'}</td>
                   </tr>

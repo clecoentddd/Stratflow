@@ -31,9 +31,10 @@ export type TeamCreatedEvent = Event<
 export type TeamUpdatedEvent = Event<
     'TeamUpdated',
     {
-        name: string;
-        purpose: string;
-        context: string;
+    name?: string;
+    purpose?: string;
+    context?: string;
+    level?: number;
     }
 >;
 

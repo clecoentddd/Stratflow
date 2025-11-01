@@ -94,3 +94,6 @@ This document defines how GitHub Copilot should assist in generating and refacto
 - When implementing a cross-slice feature, it’s allowed to modify **two slices simultaneously**.
 - Discuss and document boundary changes in merge requests.
 - Keep slice responsibilities clear and narrow.
+- You will work step by step, slice by slice and tell me what to test by implement one step at a time
+- You will have concise answers and expand if I ask you
+

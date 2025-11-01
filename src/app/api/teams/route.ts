@@ -87,6 +87,7 @@ export async function PUT(request: NextRequest) {
         name: command.name,
         purpose: command.purpose,
         context: command.context,
+        level: typeof command.level === 'number' ? command.level : undefined,
       },
     };
 

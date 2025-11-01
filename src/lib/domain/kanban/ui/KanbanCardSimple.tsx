@@ -1,8 +1,9 @@
 "use client";
 
 import React from "react";
+import styles from "./kanban.module.css";
 
-type Initiative = { id: string; name: string; status?: string };
+type Initiative = { id: string; name?: string; status?: string };
 
 export default function KanbanCardSimple({
   initiative,
@@ -17,11 +18,11 @@ export default function KanbanCardSimple({
     <div
       draggable
       onDragStart={(e) => onDragStart(e, initiative.id)}
-      className="cursor-grab select-none rounded-md bg-white/5 p-3 text-sm shadow-sm"
+      className={styles.card}
       title={initiative.name}
-      style={style}
+      style={{ ...style }}
     >
-      {initiative.name}
+      <div className="title">{initiative.name}</div>
     </div>
   );
 }

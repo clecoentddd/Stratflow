@@ -11,5 +11,6 @@ export type UpdateTeamCommand = {
     id: string;
     name: string;
     purpose: string;
-    context: string;
+  context: string;
+  level?: number;
 };

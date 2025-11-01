@@ -50,9 +50,11 @@ export const applyEventsToTeam = (
       case 'TeamUpdated':
         return {
           ...team,
-          name: event.payload.name,
-          purpose: event.payload.purpose,
-          context: event.payload.context,
+          name: event.payload.name ?? team.name,
+          purpose: event.payload.purpose ?? team.purpose,
+          context: event.payload.context ?? team.context,
+          // If the update includes a level, apply it
+          level: typeof (event.payload as any).level === 'number' ? (event.payload as any).level : team.level,
         };
 
       // --- Radar Events ---

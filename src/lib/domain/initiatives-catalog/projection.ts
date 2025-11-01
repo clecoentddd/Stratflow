@@ -53,13 +53,23 @@ function onInitiativeCreated(e: any) {
   console.log(`Team metadata for ${teamId}:`, teamMeta);
   
   const initiativeName = e.payload?.template?.name || `Initiative ${id}`;
-  
+  // Some event producers may include a team level directly on the initiative
+  // payload (for example during seeding or cross-aggregate operations). Prefer
+  // an explicit level on the event if present, otherwise fall back to the
+  // cached team metadata.
+  const levelFromEvent =
+    typeof e.payload?.level === 'number'
+      ? e.payload.level
+      : typeof e.payload?.teamLevel === 'number'
+      ? e.payload.teamLevel
+      : undefined;
+
   const row: InitiativeCatalogRow = {
     id,
     name: initiativeName,
     teamId,
     teamName: teamMeta?.name,
-    teamLevel: typeof teamMeta?.level === 'number' ? teamMeta.level : undefined,
+    teamLevel: typeof levelFromEvent === 'number' ? levelFromEvent : typeof teamMeta?.level === 'number' ? teamMeta.level : undefined,
     strategyId: e.payload?.strategyId || `strategy-${teamId}`,
     strategyName: e.payload?.strategyName || `Strategy for ${teamId}`,
     strategyState: 'Draft',
@@ -171,13 +181,18 @@ export const queryEligibleInitiatives = (opts?: { states?: Array<'Draft'|'Active
 export function getAllTeams() {
   // Get all unique teams from the catalog
   const table = getTable();
-  const teams: { id: string; name?: string }[] = [];
+  const teamsMap = new Map<string, { id: string; name?: string; level?: number }>();
   for (const row of table.values()) {
-    if (!teams.some(t => t.id === row.teamId)) {
-      teams.push({ id: row.teamId, name: row.teamName || row.teamId });
+    if (!teamsMap.has(row.teamId)) {
+      teamsMap.set(row.teamId, { id: row.teamId, name: row.teamName || row.teamId, level: row.teamLevel });
+    } else {
+      const existing = teamsMap.get(row.teamId)!;
+      // prefer explicit teamName and teamLevel if available
+      if (!existing.name && row.teamName) existing.name = row.teamName;
+      if (typeof row.teamLevel === 'number') existing.level = row.teamLevel;
     }
   }
-  return teams;
+  return Array.from(teamsMap.values());
 }
 
 

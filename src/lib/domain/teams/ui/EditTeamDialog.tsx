@@ -33,6 +33,7 @@ export function EditTeamDialog({
   const [name, setName] = useState("");
   const [purpose, setPurpose] = useState("");
   const [context, setContext] = useState("");
+  const [level, setLevel] = useState<number | undefined>(undefined);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
@@ -41,6 +42,7 @@ export function EditTeamDialog({
       setName(team.name);
       setPurpose(team.purpose);
       setContext(team.context || "");
+      setLevel(typeof team.level === 'number' ? team.level : undefined);
     }
   }, [team]);
 
@@ -61,6 +63,7 @@ export function EditTeamDialog({
       name: name.trim(),
       purpose: purpose.trim(),
       context: context.trim(),
+      level: typeof level === 'number' ? level : undefined,
     };
 
     try {
@@ -135,6 +138,18 @@ export function EditTeamDialog({
               onChange={(e) => setContext(e.target.value)}
               placeholder="e.g., Sits within the executive leadership team."
               rows={2}
+              disabled={isSubmitting}
+            />
+          </div>
+          <div className="grid w-full gap-1.5">
+            <Label htmlFor="level">Level</Label>
+            <input
+              id="level"
+              type="number"
+              value={typeof level === 'number' ? level : ''}
+              onChange={(e) => setLevel(e.target.value === '' ? undefined : Number(e.target.value))}
+              className="input"
+              placeholder="e.g., 2"
               disabled={isSubmitting}
             />
           </div>
