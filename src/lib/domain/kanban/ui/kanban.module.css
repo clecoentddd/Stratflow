@@ -120,9 +120,14 @@
 }
 
 .columnHeader {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: #cfe8ff;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #388CFA; /* sharper, visible blue for column titles */
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding-bottom: 0.5rem;
+  margin-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
 }
 
 .columnCount {
@@ -131,22 +136,32 @@
 }
 
 .columnBoard {
-  display: block;
-  gap: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem; /* spacing between cards */
   min-height: 7.5rem; /* 120px */
 }
 
 .card {
   cursor: grab;
   user-select: none;
-  border-left: 4px solid var(--accent-teal);
+  /* white background with light grey border for clearer cards */
+  background: #ffffff;
+  color: #0b1220; /* dark text for contrast on white */
+  border: 1px solid #e6e9ee; /* light grey border */
+  border-left: 4px solid var(--accent-teal); /* accent on the left */
   padding: 0.75rem;
   border-radius: 6px;
-  color: var(--card-text);
-  background: linear-gradient(180deg, rgba(20,24,31,0.8), rgba(7,10,14,0.8));
-  box-shadow: 0 4px 10px rgba(2,6,23,0.6);
+  /* subtle shadow for separation */
+  box-shadow: 0 1px 4px rgba(2,6,23,0.06);
 }
-.card .title { font-weight: 600; }
+.card .title { font-weight: 600; color: inherit; }
+
+.card:hover {
+  transform: translateY(-4px);
+  transition: transform 120ms ease;
+  box-shadow: 0 6px 18px rgba(2,6,23,0.08);
+}
 
 /* Team selector dialog */
 .dialogContent { max-width: 520px; }

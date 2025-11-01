@@ -23,6 +23,8 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=PT+Sans:wght@400;700&display=swap"
           rel="stylesheet"
         />
+        {/* Explicit favicon (svg radar icon) - overrides default /favicon.ico */}
+        <link rel="icon" href="/favicon.svg" />
       </head>
       <body
         className={cn(

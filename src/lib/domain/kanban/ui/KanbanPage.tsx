@@ -32,7 +32,7 @@ export function KanbanPage({ initialTeams, initialInitiativesByTeam }: KanbanPag
   return (
     <div className="space-y-6 p-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Kanban</h1>
+        <h1 className="text-2xl font-semibold">Strategic Initiatives Kanban</h1>
         <div className="flex items-center gap-2">
           <Button
             variant="outline"
