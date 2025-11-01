@@ -52,25 +52,35 @@ export default function TeamKanbanBoard({ initialInitiatives = [] }: { initialIn
     e.dataTransfer.dropEffect = "move";
   }, []);
 
+  const ACCENT_GREEN = "#0c8";
+  const ACCENT_BLUE = "#388cfa";
+  const ACCENT_PINK = "#ff006e";
+
   return (
     <div className="overflow-x-auto">
       <div className="flex gap-4 items-start">
-        {COLUMNS.map((col) => {
+        {COLUMNS.map((col, idx) => {
           const colCards = cards.filter((c) => c.status === col.key);
           return (
             <div
               key={col.key}
-              className="flex-1 min-w-[220px] bg-zinc-900/40 rounded-md p-3"
+              className="flex-1 min-w-[220px] rounded-md p-3"
               onDragOver={onDragOver}
               onDrop={(e) => onDrop(e, col.key)}
+              style={{ background: idx % 2 === 0 ? 'rgba(255,255,255,0.02)' : 'transparent' }}
             >
               <div className="mb-3 flex items-center justify-between">
-                <h3 className="text-sm font-medium">{col.label}</h3>
-                <span className="text-xs text-muted-foreground">{colCards.length}</span>
+                <h3 className="text-sm font-medium" style={{ color: ACCENT_BLUE }}>{col.label}</h3>
+                <span className="text-xs text-muted-foreground" style={{ color: ACCENT_PINK }}>{colCards.length}</span>
               </div>
               <div className="space-y-2 min-h-[80px]">
                 {colCards.map((c) => (
-                  <KanbanCardSimple key={c.id} initiative={c} onDragStart={onDragStart} />
+                  <KanbanCardSimple
+                    key={c.id}
+                    initiative={c}
+                    onDragStart={onDragStart}
+                    style={{ borderLeft: `4px solid ${ACCENT_GREEN}`, paddingLeft: 12 }}
+                  />
                 ))}
               </div>
             </div>
