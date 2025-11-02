@@ -462,36 +462,7 @@ export const initialTeams: Omit<Team, 'companyId'>[] = [
           timeframe: 'Q4 2024',
           state: 'Active',
           initiatives: [
-            {
-              id: 'init-1-1',
-              name: 'Market Research & Analysis',
-              progression: 80,
-              steps: [
-                {
-                  key: 'diagnostic',
-                  title: 'Diagnostic',
-                  iconName: 'Search',
-                  items: [
-                    { id: 'item-1', text: 'Analyze competitor pricing' },
-                    { id: 'item-2', text: 'Survey target user base' },
-                  ],
-                },
-                {
-                  key: 'overallApproach',
-                  title: 'Overall Approach',
-                  iconName: 'Milestone',
-                  items: [{ id: 'item-3', text: 'Define phased rollout plan' }],
-                },
-                { key: 'actions', title: 'Actions', iconName: 'ListChecks', items: [] },
-                {
-                  key: 'proximateObjectives',
-                  title: 'Proximate Objectives',
-                  iconName: 'Target',
-                  items: [{ id: 'item-4', text: 'Achieve 500 survey responses' }],
-                },
-              ],
-              linkedRadarItemIds: ['radar-item-1'],
-            },
+            
             {
               id: 'init-1-2',
               name: 'MVP Scope & Architecture',
@@ -500,22 +471,15 @@ export const initialTeams: Omit<Team, 'companyId'>[] = [
               linkedRadarItemIds: [],
             },
             {
-              id: 'init-1-3',
-              name: 'Pilot Rollout',
-              progression: 5,
-              steps: [],
-              linkedRadarItemIds: [],
-            },
-            {
               id: 'init-1-4',
               name: 'Software Modeling',
               progression: 0,
               steps: [],
-              linkedRadarItemIds: ['radar-item-event-modeling', 'radar-item-lack-of-modelization'],
+              linkedRadarItemIds: ['radar-item-event-modeling', 'radar-item-lack-of-modelization','radar-item-event-sourcing', 'radar-item-data-mesh'],
             },
             {
               id: 'init-1-5',
-              name: 'Event Sourcing',
+              name: 'Events as Data',
               progression: 0,
               steps: [],
               linkedRadarItemIds: ['radar-item-event-sourcing', 'radar-item-data-mesh'],
@@ -1059,12 +1023,10 @@ export { newInitiativeTemplate };
 // Seed initiative links between existing initiatives (optional demo data)
 export const initialLinks: { from: string; to: string }[] = [
   // CTO chain
-  { from: 'init-1-1', to: 'init-1-2' },
-  { from: 'init-1-2', to: 'init-1-3' },
+  // (removed link to removed initiative init-1-3)
   // Cross org: CEO launch narrative depends on CTO MVP scope
   { from: 'init-ceo-1-1', to: 'init-1-2' },
-  // Alignment: CEO OKRs influenced by CTO market research
-  { from: 'init-ceo-1-2', to: 'init-1-1' },
+  // Alignment: CEO OKRs influenced by CTO work
   // Board (level 0) influencing CEO (level 1)
   { from: 'init-bod-1', to: 'init-ceo-1-1' },
   { from: 'init-bod-2', to: 'init-ceo-1-2' },
@@ -1083,7 +1045,6 @@ export const initialLinks: { from: string; to: string }[] = [
   { from: 'init-1-5', to: 'init-infra-2' },
   { from: 'init-1-5', to: 'init-saas-2' },
   { from: 'init-1-2', to: 'init-saas-1' },
-  { from: 'init-1-3', to: 'init-saas-2' },
   // EA (level 3) enabling Level 4 teams
   { from: 'init-ea-1', to: 'init-infra-1' },
   { from: 'init-ea-1', to: 'init-saas-1' },
