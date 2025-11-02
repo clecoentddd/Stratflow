@@ -36,8 +36,9 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const command = body as CreateTeamCommand;
-    if (!command || !command.name || !command.companyId) {
-      return NextResponse.json({ message: 'Invalid team create command' }, { status: 400 });
+    // Require name and level (level must be a number). purpose/context are optional.
+    if (!command || !command.name || !command.companyId || typeof command.level !== 'number' || Number.isNaN(command.level)) {
+      return NextResponse.json({ message: 'Invalid team create command: name, companyId and numeric level are required' }, { status: 400 });
     }
 
     const newTeamId = `team-${uuidv4()}`;

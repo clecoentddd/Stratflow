@@ -1,51 +1,186 @@
+/* purpose-page.css
+   Clean, balanced purple theme for purpose cards.
+   Consistent padding, font scales, and subtle depth.
+*/
+
+:root {
+  --purple: #9B51E0;
+  --purple-light: rgba(155, 81, 224, 0.08);
+  --purple-border: rgba(155, 81, 224, 0.16);
+  --text-primary: #111827;
+  --text-secondary: #4b5563;
+  --text-muted: #6b7280;
+  --surface: #ffffff;
+  --surface-alt: #f9fafb;
+  --border-soft: rgba(15, 23, 42, 0.05);
+}
+
+/* =====================
+   Layout Containers
+   ===================== */
 .container {
   display: flex;
-  gap: 24px;
+  flex-wrap: wrap;
+  gap: 28px;
   align-items: flex-start;
+  padding: 32px;
+  background: var(--surface-alt);
+  border-radius: 16px;
 }
 
+/* =====================
+   Card Component
+   ===================== */
 .card {
-  background: #ffffff;
-  border: 1px solid rgba(15, 23, 42, 0.04);
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 6px 18px rgba(16,24,40,0.04);
+  background: var(--surface);
+  border: 1px solid var(--border-soft);
+  border-left: 6px solid var(--purple-light);
+  border-radius: 14px;
+  padding: 28px;
+  box-shadow: 0 6px 18px rgba(16, 24, 40, 0.05);
+  max-width: 720px;
+  width: 100%;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
 
+.card:hover {
+  box-shadow: 0 10px 24px rgba(155, 81, 224, 0.1);
+  transform: translateY(-2px);
+}
+
+/* =====================
+   Headers & Titles
+   ===================== */
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.name {
+  font-size: 1.75rem; /* 28px */
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1.15;
+}
+
+.subtitle {
+  color: var(--text-muted);
+  font-size: 0.9rem; /* 14px */
+}
+
+.level {
+  display: inline-block;
+  background: var(--purple-light);
+  color: var(--purple);
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  margin-top: 8px;
+}
+
+/* =====================
+   Content Sections
+   ===================== */
 .headline {
-  font-size: 20px;
+  font-size: 1.25rem;
   font-weight: 700;
-  margin: 0 0 8px 0;
-  color: #111827;
+  margin-bottom: 10px;
+  color: var(--text-primary);
 }
 
 .purposeText {
-  font-size: 16px;
-  color: #111827;
-  margin-bottom: 10px;
+  font-size: 1.125rem; /* 18px */
+  color: var(--text-primary);
+  margin: 8px 0 16px;
+  line-height: 1.6;
 }
 
 .contextText {
-  font-size: 14px;
-  color: #6b7280;
+  font-size: 0.975rem;
+  color: var(--text-secondary);
   white-space: pre-wrap;
+  line-height: 1.55;
+}
+
+.sectionTitle {
+  margin-top: 20px;
+  margin-bottom: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
 }
 
 .meta {
-  font-size: 13px;
-  color: #6b7280;
-  margin-top: 12px;
-}
-
-.actions {
-  display: flex;
-  gap: 8px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
   margin-top: 16px;
 }
 
+/* =====================
+   Buttons
+   ===================== */
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.primaryButton,
+.outlinePurple,
+.ghostPurple {
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+/* Primary filled button */
+.primaryButton {
+  background: var(--purple);
+  color: #fff;
+  border: 1px solid var(--purple-border);
+  box-shadow: 0 4px 12px rgba(155, 81, 224, 0.15);
+}
+.primaryButton:hover {
+  background: #8c3dd6;
+  box-shadow: 0 6px 16px rgba(155, 81, 224, 0.2);
+}
+
+/* Outline purple */
+.outlinePurple {
+  background: transparent;
+  color: var(--purple);
+  border: 1px solid var(--purple-border);
+}
+.outlinePurple:hover {
+  background: var(--purple-light);
+}
+
+/* Ghost (neutral) */
+.ghostPurple {
+  background: transparent;
+  color: var(--text-muted);
+  border: none;
+}
+.ghostPurple:hover {
+  color: var(--purple);
+}
+
+/* =====================
+   Forms & Inputs
+   ===================== */
 .editForm {
   display: grid;
-  gap: 12px;
+  gap: 14px;
+  margin-top: 8px;
 }
 
 .field {
@@ -54,18 +189,24 @@
 
 .buttonGroup {
   display: flex;
-  gap: 8px;
-  margin-top: 8px;
+  gap: 10px;
+  margin-top: 12px;
 }
 
+/* =====================
+   Utility & Badges
+   ===================== */
 .aiBadge {
   display: inline-block;
-  padding: 6px 10px;
+  padding: 6px 12px;
   border-radius: 999px;
   font-weight: 600;
-  font-size: 12px;
+  font-size: 0.75rem;
+  color: var(--purple);
+  background: var(--purple-light);
+  letter-spacing: 0.3px;
 }
 
 .muted {
-  color: #9ca3af;
+  color: var(--text-muted);
 }

@@ -147,21 +147,22 @@ export default function PurposeForm({ team, onTeamUpdated }: PurposeFormProps) {
       <div className={styles.card} style={{ flex: 1 }}>
         {!isEditing ? (
           <div>
-            <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
-              <div>
-                <h1 style={{ margin: 0, fontSize: 20 }}>{team.name || name || 'Team'}</h1>
-                <div style={{ color: '#666', fontSize: 13 }}>Purpose</div>
-              </div>
+            <div className={styles.header}>
+              <div className={styles.name}>{team.name || name || 'Team'}</div>
+              <div className={styles.subtitle}>Team header</div>
             </div>
-            <h2 className={styles.headline} style={{ marginTop: 8 }}> </h2>
+
+            <div className={styles.level}>Level: {typeof level === 'number' ? level : <span className={styles.muted}>Not set</span>}</div>
+
+            <div className={styles.sectionTitle}>Purpose</div>
             <div className={styles.purposeText}>{purpose || <em>No purpose set</em>}</div>
-            <div className={styles.meta}>Level: {typeof level === 'number' ? level : <span className={styles.muted}>Not set</span>}</div>
-            <h3 className={styles.headline} style={{ marginTop: 16 }}>Context</h3>
+
+            <div className={styles.sectionTitle}>Context</div>
             <div className={styles.contextText}>{context || <em>No context provided</em>}</div>
 
             <div className={styles.actions}>
-              <Button onClick={() => setIsEditing(true)}>Edit</Button>
-              <Button variant="ghost" onClick={() => setAiOpen(true)}>Get AI Help</Button>
+              <Button onClick={() => setIsEditing(true)} className={styles.primaryButton}>Edit</Button>
+              <Button variant="outline" onClick={() => setAiOpen(true)} className={styles.outlinePurple}>Get AI Help</Button>
             </div>
           </div>
         ) : (
@@ -170,6 +171,11 @@ export default function PurposeForm({ team, onTeamUpdated }: PurposeFormProps) {
               <div className={styles.field}>
                 <Label htmlFor="team-name">Team name</Label>
                 <Input id="team-name" value={name} onChange={(e) => setName(e.target.value)} />
+              </div>
+
+              <div className={styles.field}>
+                <Label htmlFor="level">Level</Label>
+                <input id="level" type="number" value={typeof level === 'number' ? level : ''} onChange={(e) => setLevel(e.target.value === '' ? undefined : Number(e.target.value))} className="input" />
               </div>
 
               <div className={styles.field}>
@@ -182,15 +188,12 @@ export default function PurposeForm({ team, onTeamUpdated }: PurposeFormProps) {
                 <Textarea id="context" value={context} onChange={(e) => setContext(e.target.value)} rows={6} />
               </div>
 
-              <div className={styles.field}>
-                <Label htmlFor="level">Level</Label>
-                <input id="level" type="number" value={typeof level === 'number' ? level : ''} onChange={(e) => setLevel(e.target.value === '' ? undefined : Number(e.target.value))} className="input" />
-              </div>
+              
 
               <div className={styles.buttonGroup}>
-                <Button onClick={handleSave} disabled={!isFormValid || isSaving}>{isSaving ? 'Saving...' : 'Save'}</Button>
-                <Button variant="outline" onClick={() => setAiOpen(true)}>Get AI Help!</Button>
-                <Button variant="ghost" onClick={() => { setIsEditing(false); /* revert changes to original team values */ setPurpose(team.purpose || ''); setContext(team.context || ''); setLevel(typeof team.level === 'number' ? team.level : undefined); setName(team.name || ''); }}>Cancel</Button>
+                <Button onClick={handleSave} disabled={!isFormValid || isSaving} className={styles.primaryButton}>{isSaving ? 'Saving...' : 'Save'}</Button>
+                <Button variant="outline" onClick={() => setAiOpen(true)} className={styles.outlinePurple}>Get AI Help!</Button>
+                <Button variant="ghost" onClick={() => { setIsEditing(false); /* revert changes to original team values */ setPurpose(team.purpose || ''); setContext(team.context || ''); setLevel(typeof team.level === 'number' ? team.level : undefined); setName(team.name || ''); }} className={styles.ghostPurple}>Cancel</Button>
               </div>
             </div>
           </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -12,7 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+// no textarea needed for create flow (purpose/context optional)
 import { useToast } from "@/hooks/use-toast";
 import type { CreateTeamCommand } from "@/lib/domain/teams/commands";
 
@@ -30,33 +30,28 @@ export function CreateTeamDialog({
   companyId
 }: CreateTeamDialogProps) {
   const [name, setName] = useState("");
-  const [purpose, setPurpose] = useState("");
-  const [context, setContext] = useState("");
   const [level, setLevel] = useState("0");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
   const resetForm = () => {
     setName("");
-    setPurpose("");
-    setContext("");
     setLevel("0");
   };
 
   const handleSubmit = async () => {
     const levelNum = parseInt(level, 10);
-    if (!name.trim() || !purpose.trim() || isNaN(levelNum) || !companyId) {
-        toast({ title: "Missing Information", description: "Please fill out all fields.", variant: "destructive" });
-        return;
-    }
+  // Only name and level are required. Purpose/context are optional.
+  if (!name.trim() || isNaN(levelNum) || !companyId) {
+    toast({ title: "Missing Information", description: "Please provide a team name and numeric level.", variant: "destructive" });
+    return;
+  }
 
     setIsSubmitting(true);
 
     const command: CreateTeamCommand = {
       companyId,
       name: name.trim(),
-      purpose: purpose.trim(),
-      context: context.trim(),
       level: levelNum,
     };
 
@@ -91,7 +86,7 @@ export function CreateTeamDialog({
     }
   };
   
-  const isFormValid = name.trim() && purpose.trim() && companyId;
+  const isFormValid = !!(name.trim() && companyId && !isNaN(parseInt(level, 10)));
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -113,28 +108,6 @@ export function CreateTeamDialog({
               disabled={isSubmitting}
             />
           </div>
-          <div className="grid w-full gap-1.5">
-            <Label htmlFor="purpose">Purpose</Label>
-            <Textarea
-              id="purpose"
-              value={purpose}
-              onChange={(e) => setPurpose(e.target.value)}
-              placeholder="e.g., Leads the company and executes the board's vision."
-              rows={3}
-              disabled={isSubmitting}
-            />
-          </div>
-          <div className="grid w-full gap-1.5">
-            <Label htmlFor="context">Context</Label>
-            <Textarea
-              id="context"
-              value={context}
-              onChange={(e) => setContext(e.target.value)}
-              placeholder="e.g., Sits within the executive leadership team."
-              rows={2}
-              disabled={isSubmitting}
-            />
-          </div>
           <div className="grid w-full max-w-sm items-center gap-1.5">
             <Label htmlFor="level">Level</Label>
             <Input
@@ -145,6 +118,7 @@ export function CreateTeamDialog({
               placeholder="e.g., 0 for top-level"
               disabled={isSubmitting}
             />
+            <div style={{ color: '#666', fontSize: 13, marginTop: 6 }}>Purpose and context can be added later on the team's Purpose page.</div>
           </div>
         </div>
         <DialogFooter>

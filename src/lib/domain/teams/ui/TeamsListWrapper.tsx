@@ -18,7 +18,10 @@ export default function TeamsListWrapper({ teams, company }: Props) {
   const [isEditOpen, setEditOpen] = useState(false);
   const [editingTeam, setEditingTeam] = useState<Team | null>(null);
 
-  const handleCreate = () => setCreateOpen(true);
+  const handleCreate = () => {
+    // Open the create modal (preserve original popup UX)
+    setCreateOpen(true);
+  };
   const handleEdit = (team: Team) => {
     // Navigate to the canonical team purpose page instead of opening the inline dialog.
     // The inline dialog is kept for later reuse.
