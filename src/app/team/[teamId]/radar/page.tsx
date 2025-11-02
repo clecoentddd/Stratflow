@@ -5,6 +5,7 @@ import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { notFound, useParams } from "next/navigation";
 import { ChevronLeft, Plus, TrendingUp } from "lucide-react";
+import TeamSteps from '@/lib/domain/purpose/ui/TeamSteps';
 import type { Team, RadarItem } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { RadarDashboard } from "@/lib/domain/radar/ui";
@@ -201,18 +202,10 @@ export default function RadarPage() {
       <main className="p-4 md:p-6 flex-1">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-4">
-            <Link href={`/company/${team.companyId}/teams`}>
-              <Button variant="outline">
-                <ChevronLeft className="mr-2 h-4 w-4" />
-                Back to Teams
-              </Button>
-            </Link>
-            <Link href={`/team/${teamId}`}>
-              <Button className="bg-blue-600 text-white hover:bg-blue-700 border-blue-600">
-                <TrendingUp className="mr-2 h-4 w-4" />
-                View Strategy Dashboard
-              </Button>
-            </Link>
+            {/* Stepper replaces previous Back/View buttons */}
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <TeamSteps teamId={team.id} companyId={team.companyId} active={'radar'} />
+            </div>
           </div>
           <h1 className="text-3xl font-bold font-headline">{team.name} - Radar</h1>
           <Button onClick={() => handleOpenDialog()}><Plus className="mr-2 h-4 w-4" />New Radar Item</Button>

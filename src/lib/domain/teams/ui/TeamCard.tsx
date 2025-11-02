@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Pencil, TrendingUp, Radar } from "lucide-react";
+import { Compass, TrendingUp, Radar } from "lucide-react";
 import type { Team } from "@/lib/types";
 import styles from "./TeamCard.module.css";
 
@@ -19,21 +19,22 @@ export function TeamCard({ team, onEdit }: TeamCardProps) {
           <p className={styles.cardDescription}>{team.purpose}</p>
         </div>
         <div className={styles.actions}>
-          <button 
-            className={styles.actionButton} 
-            onClick={() => onEdit(team)} 
+          <button
+            className={styles.actionButton}
+            onClick={() => onEdit(team)}
             aria-label="Edit team"
+            title="Team purpose"
           >
-            <Pencil className={styles.icon} />
+            <Compass className={styles.icon} color="#9B51E0" />
           </button>
           <Link href={`/team/${team.id}/radar?companyId=${team.companyId}`}>
             <button className={styles.actionButton}>
-              <Radar className={styles.icon} color="#0c8" />
+              <Radar className={styles.icon} color="#00cc88" />
             </button>
           </Link>
-          <Link href={`/team/${team.id}?companyId=${team.companyId}`}>
+          <Link href={`/team/${team.id}/dashboard?companyId=${team.companyId}`}>
             <button className={styles.actionButton}>
-              <TrendingUp className={styles.icon} color="#2563eb" />
+              <TrendingUp className={styles.icon} color="#388cfa" />
             </button>
           </Link>
         </div>

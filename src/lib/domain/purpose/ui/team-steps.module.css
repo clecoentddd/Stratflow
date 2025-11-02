@@ -1,0 +1,117 @@
+.container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+}
+
+.circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  background: #e6eefb;
+  color: #1f2937;
+}
+.title {
+  color: #1f2937;
+  font-weight: 500;
+}
+
+/* color variables */
+:root {
+  --step-purpose: #9B51E0; /* purpose (purple) */
+  --step-purpose-600: #7a2db8;
+  --step-detect: #00cc88; /* green (0c8 -> #00cc88) */
+  --step-detect-600: #009e6a;
+  --step-strategize: #388cfa; /* blue */
+  --step-strategize-600: #2563eb;
+}
+
+/* Active circle styles per step */
+.purposeActive {
+  background: var(--step-purpose);
+  color: #fff;
+  box-shadow: 0 2px 6px rgba(155,81,224,0.18);
+}
+
+.radarActive {
+  background: var(--step-detect);
+  color: #fff;
+  box-shadow: 0 2px 6px rgba(0,204,136,0.18);
+}
+
+.dashboardActive {
+  background: var(--step-strategize);
+  color: #fff;
+  box-shadow: 0 2px 6px rgba(56,140,250,0.18);
+}
+
+/* Active title colors per step */
+.purposeActiveTitle {
+  color: var(--step-purpose-600);
+  font-weight: 700;
+}
+
+.radarActiveTitle {
+  color: var(--step-detect-600);
+  font-weight: 700;
+}
+
+.dashboardActiveTitle {
+  color: var(--step-strategize-600);
+  font-weight: 700;
+}
+
+/* Inactive (tinted) variants so circles hint at their step color */
+.purposeInactive {
+  background: #f5f0ff; /* purple-50 */
+  color: #4c1d95; /* purple-700 */
+}
+
+.radarInactive {
+  background: #ecfdf5; /* green-50 */
+  color: #065f46; /* green-700 */
+}
+
+.dashboardInactive {
+  background: #eff6ff; /* blue-50 */
+  color: #1e40af; /* blue-800 */
+}
+
+/* Connector fills per left-step */
+.connectorPurposeFilled {
+  background: var(--step-purpose);
+}
+
+.connectorRadarFilled {
+  background: var(--step-detect);
+}
+
+.connectorDashboardFilled {
+  background: var(--step-strategize);
+}
+
+.connector {
+  flex: 1;
+  height: 2px;
+  background: #e5e7eb;
+  margin: 0 8px;
+}
+
+.connectorFilled {
+  background: #388CFA;
+}
+
+.link {
+  display: inline-block;
+}

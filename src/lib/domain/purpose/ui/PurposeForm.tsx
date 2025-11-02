@@ -1,0 +1,243 @@
+"use client";
+
+import React, { useState, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { useToast } from '@/hooks/use-toast';
+import type { Team } from '@/lib/types';
+import type { UpdateTeamCommand } from '@/lib/domain/teams/commands';
+import styles from './purpose.module.css';
+
+type AiSuggestion = {
+  nps: number;
+  feedback: string;
+  suggestedPurpose: string;
+  confidence: number;
+};
+
+function npsColor(nps: number) {
+  if (nps >= 4) return '#00cc88';
+  if (nps === 3) return '#9B51E0';
+  return '#ef4444';
+}
+
+function fakeAiSuggest(current: string | undefined, context: string | undefined, nps: number, hint?: string): AiSuggestion {
+  const base = (current || '').trim() || 'Deliver value to customers';
+  let suggested = base;
+  let feedback = 'Looks good.';
+  let confidence = 0.7;
+
+  if (nps >= 4) {
+    // tighten
+    suggested = base.split(/\. |, /)[0];
+    if (!/^(Deliver|Provide|Improve|Increase|Reduce|Support|Enable)/i.test(suggested)) {
+      suggested = 'Deliver ' + suggested.charAt(0).toLowerCase() + suggested.slice(1);
+    }
+    feedback = 'Clear and focused. Consider adding a timeframe or metric.';
+    confidence = 0.85;
+  } else if (nps === 3) {
+    suggested = base.split(/ by | for | to /)[0];
+    suggested = suggested.replace(/\.$/, '');
+    if (!/\b(users|customers|teams)\b/i.test(suggested) && context) {
+      if (/user|customer/i.test(context)) suggested += ' for users';
+    }
+    suggested = suggested + ' — improve key outcomes in 6 months';
+    feedback = 'Some ambiguity. Add a measurable target or clearer owner.';
+    confidence = 0.6;
+  } else {
+    suggested = 'Provide a clear outcome for users and a measurable target. Example: Increase user engagement by 10% in 6 months.';
+    feedback = 'Vague or unmeasurable. Add who benefits and how success is measured.';
+    confidence = 0.45;
+  }
+
+  if (hint && hint.length > 8) feedback += ' Note: ' + hint.slice(0, 120);
+
+  return { nps, feedback, suggestedPurpose: suggested, confidence };
+}
+
+interface PurposeFormProps {
+  team: Team;
+  onTeamUpdated?: () => void;
+}
+
+export default function PurposeForm({ team, onTeamUpdated }: PurposeFormProps) {
+  const [purpose, setPurpose] = useState(team.purpose || '');
+  const [name, setName] = useState(team.name || '');
+  const [context, setContext] = useState(team.context || '');
+  const [level, setLevel] = useState<number | undefined>(typeof team.level === 'number' ? team.level : undefined);
+  const [isSaving, setIsSaving] = useState(false);
+  const { toast } = useToast();
+
+  // AI modal state
+  const [aiOpen, setAiOpen] = useState(false);
+  const [aiNps, setAiNps] = useState<number>(5);
+  const [aiHint, setAiHint] = useState<string>('');
+  const [aiResult, setAiResult] = useState<AiSuggestion | null>(null);
+  const [aiLoading, setAiLoading] = useState(false);
+
+  useEffect(() => {
+    setName(team.name || '');
+    setPurpose(team.purpose || '');
+    setContext(team.context || '');
+    setLevel(typeof team.level === 'number' ? team.level : undefined);
+  }, [team]);
+
+  const isFormValid = purpose.trim().length > 0 && name.trim().length > 0;
+
+  const handleSave = async () => {
+    if (!isFormValid) {
+      toast({ title: 'Missing purpose', description: 'Please provide a short purpose statement.', variant: 'destructive' });
+      return;
+    }
+
+    setIsSaving(true);
+    const command: UpdateTeamCommand = {
+      id: team.id,
+      name: name.trim(),
+      purpose: purpose.trim(),
+      context: context.trim(),
+      level: typeof level === 'number' ? level : undefined,
+    };
+
+    try {
+      const res = await fetch('/api/teams', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(command),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err?.message || 'Failed to save');
+      }
+
+      toast({ title: 'Saved', description: 'Team purpose updated.' });
+  onTeamUpdated?.();
+  setIsEditing(false);
+    } catch (err: any) {
+      console.error(err);
+      toast({ title: 'Error', description: err?.message || 'Unable to save.', variant: 'destructive' });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleGenerate = async () => {
+    setAiLoading(true);
+    setAiResult(null);
+    // fake latency
+    setTimeout(() => {
+      const r = fakeAiSuggest(purpose, context, aiNps, aiHint);
+      setAiResult(r);
+      setAiLoading(false);
+    }, 600 + Math.random() * 500);
+  };
+
+  const applySuggestion = () => {
+    if (aiResult) setPurpose(aiResult.suggestedPurpose);
+    setAiOpen(false);
+  };
+
+  const [isEditing, setIsEditing] = useState(false);
+
+  return (
+    <div className={styles.container}>
+      <div className={styles.card} style={{ flex: 1 }}>
+        {!isEditing ? (
+          <div>
+            <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
+              <div>
+                <h1 style={{ margin: 0, fontSize: 20 }}>{team.name || name || 'Team'}</h1>
+                <div style={{ color: '#666', fontSize: 13 }}>Purpose</div>
+              </div>
+            </div>
+            <h2 className={styles.headline} style={{ marginTop: 8 }}> </h2>
+            <div className={styles.purposeText}>{purpose || <em>No purpose set</em>}</div>
+            <div className={styles.meta}>Level: {typeof level === 'number' ? level : <span className={styles.muted}>Not set</span>}</div>
+            <h3 className={styles.headline} style={{ marginTop: 16 }}>Context</h3>
+            <div className={styles.contextText}>{context || <em>No context provided</em>}</div>
+
+            <div className={styles.actions}>
+              <Button onClick={() => setIsEditing(true)}>Edit</Button>
+              <Button variant="ghost" onClick={() => setAiOpen(true)}>Get AI Help</Button>
+            </div>
+          </div>
+        ) : (
+          <div>
+            <div className={styles.editForm}>
+              <div className={styles.field}>
+                <Label htmlFor="team-name">Team name</Label>
+                <Input id="team-name" value={name} onChange={(e) => setName(e.target.value)} />
+              </div>
+
+              <div className={styles.field}>
+                <Label htmlFor="purpose">Purpose</Label>
+                <Textarea id="purpose" value={purpose} onChange={(e) => setPurpose(e.target.value)} rows={3} />
+              </div>
+
+              <div className={styles.field}>
+                <Label htmlFor="context">Context</Label>
+                <Textarea id="context" value={context} onChange={(e) => setContext(e.target.value)} rows={6} />
+              </div>
+
+              <div className={styles.field}>
+                <Label htmlFor="level">Level</Label>
+                <input id="level" type="number" value={typeof level === 'number' ? level : ''} onChange={(e) => setLevel(e.target.value === '' ? undefined : Number(e.target.value))} className="input" />
+              </div>
+
+              <div className={styles.buttonGroup}>
+                <Button onClick={handleSave} disabled={!isFormValid || isSaving}>{isSaving ? 'Saving...' : 'Save'}</Button>
+                <Button variant="outline" onClick={() => setAiOpen(true)}>Get AI Help!</Button>
+                <Button variant="ghost" onClick={() => { setIsEditing(false); /* revert changes to original team values */ setPurpose(team.purpose || ''); setContext(team.context || ''); setLevel(typeof team.level === 'number' ? team.level : undefined); setName(team.name || ''); }}>Cancel</Button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+      <Dialog open={aiOpen} onOpenChange={setAiOpen}>
+        <DialogContent className="sm:max-w-[520px]">
+          <DialogHeader>
+            <DialogTitle>Get AI Help</DialogTitle>
+          </DialogHeader>
+
+          <div style={{ display: 'grid', gap: 12 }}>
+            <div>
+              <Label>How would you rate the current purpose? (0–5)</Label>
+              <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+                {[0,1,2,3,4,5].map(n => (
+                  <button key={n} onClick={() => setAiNps(n)} type="button" style={{ padding: 8, borderRadius: 6, border: aiNps === n ? '2px solid #111' : '1px solid #ddd', background: aiNps === n ? npsColor(n) : '#fff', color: aiNps === n ? '#fff' : '#111' }}>{n}</button>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <Label>Helpful hint (optional)</Label>
+              <Input value={aiHint} onChange={(e) => setAiHint(e.target.value)} placeholder="e.g., make it more measurable" />
+            </div>
+
+            <div>
+              <Button onClick={handleGenerate} disabled={aiLoading}>{aiLoading ? 'Generating...' : 'Generate suggestion'}</Button>
+            </div>
+
+            {aiResult && (
+              <div style={{ padding: 12, border: '1px solid #eee', borderRadius: 8 }}>
+                <div style={{ fontSize: 14, fontWeight: 600 }}>Result</div>
+                <div style={{ marginTop: 8 }}>{aiResult.suggestedPurpose}</div>
+                <div style={{ marginTop: 8, color: '#666' }}>{aiResult.feedback}</div>
+                <div style={{ marginTop: 12 }}>
+                  <Button onClick={applySuggestion}>Apply to form</Button>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setAiOpen(false)}>Close</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}

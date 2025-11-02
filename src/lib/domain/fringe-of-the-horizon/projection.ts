@@ -32,11 +32,14 @@ export async function getFringeOfTheHorizonProjection(limit = 20): Promise<Fring
     .forEach(event => {
       switch (event.type) {
         case 'TeamCreated': {
-          teamInfo.set(event.aggregateId, { name: event.payload.name, level: event.payload.level });
+          // Ensure we always store a string name/level in the map (avoid undefined)
+          const name = event.payload.name ?? `Team ${event.aggregateId}`;
+          const level = typeof event.payload.level === 'number' ? event.payload.level : 0;
+          teamInfo.set(event.aggregateId, { name, level });
           // Backfill existing items for this team with name and level
           for (const [id, item] of items.entries()) {
             if (item.teamId === event.aggregateId) {
-              items.set(id, { ...item, teamName: event.payload.name, teamLevel: event.payload.level });
+              items.set(id, { ...item, teamName: name, teamLevel: level });
             }
           }
           break;
@@ -44,11 +47,12 @@ export async function getFringeOfTheHorizonProjection(limit = 20): Promise<Fring
         case 'TeamUpdated': {
           const existing = teamInfo.get(event.aggregateId);
           const nextLevel = existing?.level ?? 0;
-          teamInfo.set(event.aggregateId, { name: event.payload.name, level: nextLevel });
+          const name = event.payload.name ?? existing?.name ?? `Team ${event.aggregateId}`;
+          teamInfo.set(event.aggregateId, { name, level: nextLevel });
           // Backfill name for existing items; keep their computed level from map
           for (const [id, item] of items.entries()) {
             if (item.teamId === event.aggregateId) {
-              items.set(id, { ...item, teamName: event.payload.name, teamLevel: nextLevel });
+              items.set(id, { ...item, teamName: name, teamLevel: nextLevel });
             }
           }
           break;

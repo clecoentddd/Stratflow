@@ -1,0 +1,71 @@
+.container {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.card {
+  background: #ffffff;
+  border: 1px solid rgba(15, 23, 42, 0.04);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 6px 18px rgba(16,24,40,0.04);
+}
+
+.headline {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+  color: #111827;
+}
+
+.purposeText {
+  font-size: 16px;
+  color: #111827;
+  margin-bottom: 10px;
+}
+
+.contextText {
+  font-size: 14px;
+  color: #6b7280;
+  white-space: pre-wrap;
+}
+
+.meta {
+  font-size: 13px;
+  color: #6b7280;
+  margin-top: 12px;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.editForm {
+  display: grid;
+  gap: 12px;
+}
+
+.field {
+  display: block;
+}
+
+.buttonGroup {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.aiBadge {
+  display: inline-block;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.muted {
+  color: #9ca3af;
+}

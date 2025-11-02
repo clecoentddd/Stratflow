@@ -5,6 +5,7 @@ import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { notFound, useParams } from "next/navigation";
 import { ChevronLeft, Plus, Radar } from "lucide-react";
+import TeamSteps from '@/lib/domain/purpose/ui/TeamSteps';
 import type { Team } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { StrategyDashboard } from "@/lib/domain/strategies/ui";
@@ -84,22 +85,9 @@ export default function TeamStrategyPage() {
     <div className="flex flex-col min-h-screen">
       <main className="p-4 md:p-6 flex-1">
         <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-4">
-                 <Link href={`/company/${team.companyId}/teams`}>
-                    <Button variant="outline">
-                        <ChevronLeft className="mr-2 h-4 w-4" />
-                        Back to Teams
-                    </Button>
-                </Link>
-                 <Link href={`/team/${teamId}/radar?companyId=${team?.companyId || ''}`}>
-                    <Button
-                      className="text-white bg-[#0c8] hover:bg-[#0a6] border-[#0c8] hover:border-[#0a6] transition-colors"
-                    >
-                        <Radar className="mr-2 h-4 w-4" />
-                        View Radar
-                    </Button>
-                </Link>
-            </div>
+        <div className="flex items-center gap-4">
+             <TeamSteps teamId={teamId} companyId={team?.companyId || ''} active={'dashboard'} />
+          </div>
             <div className="flex-1 text-center">
                  <h1 className="text-3xl font-bold font-headline">{team.name} - Strategy</h1>
             </div>
