@@ -109,7 +109,7 @@ export function StrategyDashboard({
   };
   
   return (
-    <div className={styles.container}>
+    <div className={styles.container} data-active={activeTab}>
       <div className={styles.tabs}>
         <button 
           className={styles.tab} 

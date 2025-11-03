@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
+import GetAIHelp from '@/lib/domain/nps-ai-coach/ui/GetAIHelp';
 import type { Team } from '@/lib/types';
 import type { UpdateTeamCommand } from '@/lib/domain/teams/commands';
 import styles from './purpose.module.css';
@@ -71,12 +72,8 @@ export default function PurposeForm({ team, onTeamUpdated }: PurposeFormProps) {
   const [isSaving, setIsSaving] = useState(false);
   const { toast } = useToast();
 
-  // AI modal state
+  // AI modal state (delegated to GetAIHelp component)
   const [aiOpen, setAiOpen] = useState(false);
-  const [aiNps, setAiNps] = useState<number>(5);
-  const [aiHint, setAiHint] = useState<string>('');
-  const [aiResult, setAiResult] = useState<AiSuggestion | null>(null);
-  const [aiLoading, setAiLoading] = useState(false);
 
   useEffect(() => {
     setName(team.name || '');
@@ -124,21 +121,7 @@ export default function PurposeForm({ team, onTeamUpdated }: PurposeFormProps) {
     }
   };
 
-  const handleGenerate = async () => {
-    setAiLoading(true);
-    setAiResult(null);
-    // fake latency
-    setTimeout(() => {
-      const r = fakeAiSuggest(purpose, context, aiNps, aiHint);
-      setAiResult(r);
-      setAiLoading(false);
-    }, 600 + Math.random() * 500);
-  };
-
-  const applySuggestion = () => {
-    if (aiResult) setPurpose(aiResult.suggestedPurpose);
-    setAiOpen(false);
-  };
+  // `GetAIHelp` component will manage generation and applying suggestions.
 
   const [isEditing, setIsEditing] = useState(false);
 
@@ -199,48 +182,17 @@ export default function PurposeForm({ team, onTeamUpdated }: PurposeFormProps) {
           </div>
         )}
       </div>
-      <Dialog open={aiOpen} onOpenChange={setAiOpen}>
-        <DialogContent className="sm:max-w-[520px]">
-          <DialogHeader>
-            <DialogTitle>Get AI Help</DialogTitle>
-          </DialogHeader>
-
-          <div style={{ display: 'grid', gap: 12 }}>
-            <div>
-              <Label>How would you rate the current purpose? (0–5)</Label>
-              <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
-                {[0,1,2,3,4,5].map(n => (
-                  <button key={n} onClick={() => setAiNps(n)} type="button" style={{ padding: 8, borderRadius: 6, border: aiNps === n ? '2px solid #111' : '1px solid #ddd', background: aiNps === n ? npsColor(n) : '#fff', color: aiNps === n ? '#fff' : '#111' }}>{n}</button>
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <Label>Helpful hint (optional)</Label>
-              <Input value={aiHint} onChange={(e) => setAiHint(e.target.value)} placeholder="e.g., make it more measurable" />
-            </div>
-
-            <div>
-              <Button onClick={handleGenerate} disabled={aiLoading}>{aiLoading ? 'Generating...' : 'Generate suggestion'}</Button>
-            </div>
-
-            {aiResult && (
-              <div style={{ padding: 12, border: '1px solid #eee', borderRadius: 8 }}>
-                <div style={{ fontSize: 14, fontWeight: 600 }}>Result</div>
-                <div style={{ marginTop: 8 }}>{aiResult.suggestedPurpose}</div>
-                <div style={{ marginTop: 8, color: '#666' }}>{aiResult.feedback}</div>
-                <div style={{ marginTop: 12 }}>
-                  <Button onClick={applySuggestion}>Apply to form</Button>
-                </div>
-              </div>
-            )}
-          </div>
-
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setAiOpen(false)}>Close</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <GetAIHelp
+        open={aiOpen}
+        onOpenChange={setAiOpen}
+        currentPurpose={purpose}
+        context={context}
+        teamId={team.id}
+        onApply={(s) => {
+          setPurpose(s);
+          setAiOpen(false);
+        }}
+      />
     </div>
   );
 }

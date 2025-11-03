@@ -72,3 +72,8 @@ export const radarConfig = {
 };
 
 export default radarConfig;
+
+// Legends to display on the radar (labels positioned above center at given radius percentages)
+export const LEGEND1 = { label: 'DETECT', radiusPct: 0.9, color: '#9CA3AF' };
+export const LEGEND2 = { label: 'ASSESS', radiusPct: 0.6, color: '#9CA3AF' };
+export const LEGEND3 = { label: 'RESPOND', radiusPct: 0.3, color: '#9CA3AF' };

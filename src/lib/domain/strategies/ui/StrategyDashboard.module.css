@@ -26,8 +26,9 @@
 }
 
 .tab[data-active="draft"] {
-  color: #0C8;
-  border-bottom-color: #0C8;
+  /* lighter blue for Draft tab */
+  color: #7FB3FF;
+  border-bottom-color: #7FB3FF;
 }
 
 .tab[data-active="active"] {
@@ -36,8 +37,21 @@
 }
 
 .tab[data-active="archive"] {
-  color: var(--foreground);
-  border-bottom-color: var(--muted-foreground);
+  /* grey for archived tab */
+  color: #6b7280;
+  border-bottom-color: #6b7280;
+}
+
+/* Style the strategy section when Draft tab is active */
+.container[data-active="draft"] .strategySection {
+  background: #eaf5ff; /* very light blue */
+  padding: 1rem;
+  border-radius: 0.5rem;
+}
+
+.container[data-active="draft"] .emptyStateTitle,
+.container[data-active="draft"] .emptyStateText {
+  color: #1e5fb8; /* darker blue for text inside draft section */
 }
 
 .strategySection {
