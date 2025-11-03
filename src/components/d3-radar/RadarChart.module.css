@@ -176,3 +176,12 @@
 .opportunityMedium { fill: none; stroke: #FFD580; stroke-width: 3; }
 .opportunityHigh { fill: none; stroke: #FF6961; stroke-width: 3; }
 
+.legendLabel {
+    fill: #9CA3AF;
+    font-size: 12px;
+    font-weight: 500;
+    opacity: 0.85;
+    pointer-events: none;
+    font-family: 'Inter', sans-serif !important;
+}
+

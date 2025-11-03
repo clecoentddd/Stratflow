@@ -235,18 +235,15 @@ const RadarChart: React.FC<{ items: any[], radius: number, onEditClick: (item: a
             // Draw the legend labels above the center at configured radius percentages
             const drawLegends = (g: d3.Selection<SVGGElement, unknown, null, undefined>, radius: number) => {
                 const legends = [LEGEND1, LEGEND2, LEGEND3];
-                legends.forEach(l => {
-                    g.append('text')
-                        .attr('x', 0)
-                        .attr('y', -radius * l.radiusPct)
-                        .attr('text-anchor', 'middle')
-                        .attr('dominant-baseline', 'middle')
-                        .style('fill', l.color)
-                        .style('font-size', '12px')
-                        .style('font-weight', '500')
-                        .style('opacity', '0.85')
-                        .text(l.label);
-                });
+                    legends.forEach(l => {
+                        g.append('text')
+                            .attr('x', 0)
+                            .attr('y', -radius * l.radiusPct)
+                            .attr('text-anchor', 'middle')
+                            .attr('dominant-baseline', 'middle')
+                            .classed(styles.legendLabel, true)
+                            .text(l.label);
+                    });
             };
 
             drawLegends(g, radius);

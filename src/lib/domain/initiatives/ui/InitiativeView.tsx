@@ -118,7 +118,8 @@ interface InitiativeViewProps {
 const iconMap: Record<string, React.ComponentType<any>> = { Search, Milestone, ListChecks, Target };
 
 export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiativeChange, onDeleteInitiative, strategyId, onLocalUpdate }: InitiativeViewProps) {
-  const [initiative, setInitiative] = useState({ ...initialInitiative, isExpanded: false });
+  const defaultExpanded = initialInitiative.isExpanded ?? !!(initialInitiative.steps && initialInitiative.steps.some((s: any) => Array.isArray(s.items) && s.items.length > 0));
+  const [initiative, setInitiative] = useState({ ...initialInitiative, isExpanded: defaultExpanded });
   const [isLinkRadarOpen, setLinkRadarOpen] = useState(false);
   const [isLinkInitiativesOpen, setLinkInitiativesOpen] = useState(false);
   const [linkedInits, setLinkedInits] = useState<Array<{ toInitiativeId: string; toInitiativeName?: string }>>([]);
