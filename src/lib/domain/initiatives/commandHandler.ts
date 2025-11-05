@@ -39,6 +39,7 @@ export class InitiativesCommandHandlers {
       timestamp: new Date().toISOString(),
       payload: {
         strategyId: command.strategyId,
+        strategyName: strategy.description, // Include strategy name
         name: command.name,
       },
       metadata: {

@@ -5,6 +5,7 @@ export type InitiativeCreatedEvent = Event<
   'InitiativeCreated',
   {
     strategyId: string;
+    strategyName: string;
     name: string;
   },
   {

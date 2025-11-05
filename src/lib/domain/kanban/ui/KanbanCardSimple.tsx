@@ -8,16 +8,19 @@ type Initiative = { id: string; name?: string; status?: string; strategyName?: s
 export default function KanbanCardSimple({
   initiative,
   onDragStart,
+  onDragEnd,
   style,
 }: {
   initiative: Initiative;
   onDragStart: (e: React.DragEvent, id: string) => void;
+  onDragEnd?: () => void;
   style?: React.CSSProperties;
 }) {
   return (
     <div
       draggable
       onDragStart={(e) => onDragStart(e, initiative.id)}
+      onDragEnd={onDragEnd}
       className={styles.card}
       title={initiative.name}
       style={{ ...style }}
