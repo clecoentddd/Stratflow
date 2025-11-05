@@ -4,9 +4,15 @@ import {
   getTeamByIdProjection,
   applyEventsToTeam,
 } from '@/lib/db/projections';
-import { saveEvents } from '@/lib/db/event-store';
+import { saveEvents, _getAllEvents } from '@/lib/db/event-store';
 import type { UpsertRadarItemCommand } from '@/lib/domain/radar/commands';
 import type { RadarItemCreatedEvent, RadarItemUpdatedEvent, RadarItemDeletedEvent } from '@/lib/domain/radar/events';
+
+// Helper function to get events for a specific team
+const getEventsForTeam = async (teamId: string) => {
+  const allEvents = await _getAllEvents();
+  return allEvents.filter(event => event.aggregateId === teamId && event.entity === 'team') as any[];
+};
 
 // --- Vertical Slice: Get Radar (teamId via query or body)
 export async function GET(request: NextRequest) {
@@ -61,7 +67,7 @@ export async function POST(request: NextRequest) {
     await saveEvents([event]);
 
     // 4. Re-project to get the latest state for the response
-    const allEventsForTeam = await getEventsFor(teamId);
+    const allEventsForTeam = await getEventsForTeam(teamId);
     const updatedTeamState = applyEventsToTeam(null, allEventsForTeam);
 
     if (!updatedTeamState) {
@@ -110,7 +116,7 @@ export async function PUT(request: NextRequest) {
         await saveEvents([event]);
         
         // 4. Re-project to get the latest state for the response
-        const allEventsForTeam = await getEventsFor(teamId);
+        const allEventsForTeam = await getEventsForTeam(teamId);
         const updatedTeamState = applyEventsToTeam(null, allEventsForTeam);
 
         if (!updatedTeamState) {
@@ -160,7 +166,7 @@ export async function DELETE(request: NextRequest) {
         await saveEvents([event]);
         
         // 4. Re-project to get the latest state for the response
-        const allEventsForTeam = await getEventsFor(teamId);
+        const allEventsForTeam = await getEventsForTeam(teamId);
         const updatedTeamState = applyEventsToTeam(null, allEventsForTeam);
 
         if(!updatedTeamState) {

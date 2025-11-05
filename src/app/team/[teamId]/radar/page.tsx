@@ -86,18 +86,19 @@ export default function RadarPage() {
     });
 
     try {
-      const response = await fetch(`/api/teams/${teamId}/radar`, {
+      const response = await fetch(`/api/radar?teamId=${teamId}`, {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(command),
+        body: JSON.stringify({ ...command, teamId }),
       });
 
       if (!response.ok) {
         throw new Error(`Failed to ${isUpdating ? 'update' : 'create'} radar item`);
       }
 
-      const updatedOrg = await response.json();
-      setTeam(updatedOrg);
+      const updatedTeam = await response.json();
+      // Independent API returns the full updated team state
+      setTeam(updatedTeam);
       
       toast({
         title: isUpdating ? "Radar Item Updated" : "Radar Item Created",
@@ -134,7 +135,7 @@ export default function RadarPage() {
     });
 
     try {
-        const response = await fetch(`/api/teams/${teamId}/radar`, {
+        const response = await fetch(`/api/radar?teamId=${teamId}`, {
             method: 'DELETE',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ id: itemId }),
@@ -144,8 +145,9 @@ export default function RadarPage() {
             throw new Error('Failed to delete radar item');
         }
 
-        const updatedOrg = await response.json();
-        setTeam(updatedOrg); // Replace optimistic state with server state
+        const updatedTeam = await response.json();
+        // Independent API returns the full updated team state
+        setTeam(updatedTeam);
 
         toast({ 
             title: "Radar Item Deleted", 

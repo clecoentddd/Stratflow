@@ -12,26 +12,26 @@ export type CreateInitiativePayload = {
 };
 
 export function createInitiative(teamId: string, payload: CreateInitiativePayload): Promise<Response> {
-  return fetch(`/api/teams/${teamId}/initiatives`, {
+  return fetch(`/api/initiatives?teamId=${teamId}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
+    body: JSON.stringify({ ...payload, teamId }),
   });
 }
 
 export function updateInitiative(teamId: string, initiativeId: string, payload: UpdateInitiativePayload): Promise<Response> {
-  return fetch(`/api/teams/${teamId}/initiatives/${initiativeId}`, {
+  return fetch(`/api/initiatives?teamId=${teamId}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
+    body: JSON.stringify({ ...payload, teamId }),
   });
 }
 
 export function deleteInitiative(teamId: string, initiativeId: string, strategyId: string): Promise<Response> {
-  return fetch(`/api/teams/${teamId}/initiatives/${initiativeId}`, {
+  return fetch(`/api/initiatives?teamId=${teamId}`, {
     method: 'DELETE',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ strategyId }),
+    body: JSON.stringify({ teamId, initiativeId, strategyId }),
   });
 }
 

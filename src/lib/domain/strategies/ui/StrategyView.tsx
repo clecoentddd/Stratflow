@@ -172,10 +172,10 @@ export function StrategyView({
     setNewInitiativeName("");
     
     try {
-        const response = await fetch(`/api/teams/${orgId}/initiatives`, {
+        const response = await fetch(`/api/initiatives?teamId=${orgId}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(command),
+            body: JSON.stringify({ ...command, teamId: orgId }),
         });
         if (!response.ok) {
             const errorData = await response.json().catch(() => ({}));
@@ -202,10 +202,10 @@ export function StrategyView({
 
     const command: DeleteInitiativeCommand = { strategyId, initiativeId };
 
-    fetch(`/api/teams/${orgId}/initiatives/${initiativeId}`, {
+    fetch(`/api/initiatives?teamId=${orgId}`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(command),
+        body: JSON.stringify({ ...command, teamId: orgId }),
     })
     .then(async res => {
         if (!res.ok) {

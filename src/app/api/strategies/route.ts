@@ -1,7 +1,13 @@
 import { NextResponse, NextRequest } from 'next/server';
-import { saveEvents } from '@/lib/db/event-store';
+import { saveEvents, _getAllEvents } from '@/lib/db/event-store';
 import { StrategyCommandHandlers } from '@/lib/domain/strategies/command-handlers';
 import type { CreateStrategyCommand } from '@/lib/domain/strategies/commands';
+
+// Helper function to get events for a specific team
+const getEventsForTeam = async (teamId: string) => {
+  const allEvents = await _getAllEvents();
+  return allEvents.filter(event => event.aggregateId === teamId && event.entity === 'team') as any[];
+};
 
 // POST /api/strategies?teamId=team-xyz  OR body.teamId
 export async function POST(request: NextRequest) {
@@ -19,7 +25,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 2. Get events and handle command
-    const events = await getEventsByEntityAndId('team', teamId);
+    const events = await getEventsForTeam(teamId);
     const result = StrategyCommandHandlers.handleCreateStrategy(teamId, command, events as any);
     
     if (!result.success || !result.event) {
