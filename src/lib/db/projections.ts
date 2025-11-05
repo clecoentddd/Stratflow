@@ -186,12 +186,18 @@ export const applyEventsToTeam = (
                 strategies: team.dashboard.strategies.map(s => ({
                     ...s,
                     initiatives: s.initiatives.map(i => {
-                        if (i.id !== event.payload.initiativeId) return i;
+                        if (i.id !== event.metadata?.initiativeId) return i;
                         return {
                             ...i,
                             steps: i.steps.map(step => 
                                 step.key === event.payload.stepKey 
-                                    ? { ...step, items: [...step.items, event.payload.item] } 
+                                    ? { 
+                                        ...step, 
+                                        items: [...step.items, { 
+                                          id: event.metadata!.itemId, 
+                                          ...event.payload.item 
+                                        }] 
+                                      } 
                                     : step
                             )
                         };
@@ -212,7 +218,7 @@ export const applyEventsToTeam = (
                         steps: i.steps.map(step => ({
                             ...step,
                             items: step.items.map(item => 
-                                item.id === event.payload.itemId ? { ...item, text: event.payload.text } : item
+                                item.id === event.metadata?.itemId ? { ...item, text: event.payload.text } : item
                             )
                         }))
                     }))
@@ -228,12 +234,12 @@ export const applyEventsToTeam = (
                 strategies: team.dashboard.strategies.map(s => ({
                     ...s,
                     initiatives: s.initiatives.map(i => {
-                         if (i.id !== event.payload.initiativeId) return i;
+                         if (i.id !== event.metadata?.initiativeId) return i;
                          const updatedInitiative = {
                             ...i,
                             steps: i.steps.map(step => ({
                                 ...step,
-                                items: step.items.filter(item => item.id !== event.payload.itemId)
+                                items: step.items.filter(item => item.id !== event.metadata?.itemId)
                             }))
                          };
                          return updatedInitiative;

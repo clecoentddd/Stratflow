@@ -8,9 +8,10 @@ import type {
 } from '../initiative-items/events';
 
 // Event Sourcing and CQRS Types
-export type Event<T extends string, P> = {
+export type Event<T extends string, P, M = {}> = {
   type: T;
   payload: P;
+  metadata?: M;
   timestamp: string;
   aggregateId: string; // The ID of the entity the event belongs to (e.g., Team ID)
   entity: string; // The type of entity (e.g., 'team')

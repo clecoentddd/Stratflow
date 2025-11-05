@@ -4,23 +4,29 @@ import type { InitiativeItem } from '@/lib/types';
 export type InitiativeItemAddedEvent = Event<
   'InitiativeItemAdded',
   {
-    initiativeId: string;
     stepKey: string;
-    item: InitiativeItem;
+    item: Omit<InitiativeItem, 'id'>;
+  },
+  {
+    initiativeId: string;
+    itemId: string;
   }
 >;
 
 export type InitiativeItemUpdatedEvent = Event<
   'InitiativeItemUpdated',
   {
+    text: string;
+  },
+  {
     initiativeId: string;
     itemId: string;
-    text: string;
   }
 >;
 
 export type InitiativeItemDeletedEvent = Event<
   'InitiativeItemDeleted',
+  {},
   {
     initiativeId: string;
     itemId: string;

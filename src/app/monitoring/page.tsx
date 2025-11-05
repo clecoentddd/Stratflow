@@ -76,6 +76,7 @@ export default async function MonitoringPage({ searchParams }: { searchParams: P
                   <th>Type</th>
                   <th>Aggregate ID</th>
                   <th>Payload</th>
+                  <th>Metadata</th>
                 </tr>
               </thead>
               <tbody className={styles.tbody}>
@@ -90,6 +91,11 @@ export default async function MonitoringPage({ searchParams }: { searchParams: P
                     <td style={{ verticalAlign: 'top', fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace', fontSize: '0.875rem' }}>
                       <pre style={{ margin: 0, whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
                         {JSON.stringify(e.payload, null, 2)}
+                      </pre>
+                    </td>
+                    <td style={{ verticalAlign: 'top', fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace', fontSize: '0.875rem' }}>
+                      <pre style={{ margin: 0, whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
+                        {e.metadata ? JSON.stringify(e.metadata, null, 2) : '-'}
                       </pre>
                     </td>
                   </tr>

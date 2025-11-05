@@ -37,8 +37,9 @@ export async function POST(request: NextRequest) {
 
 
     // 2. Create Event
+    const itemId = `item-${uuidv4()}`;
     const newItem: InitiativeItem = {
-        id: `item-${uuidv4()}`,
+        id: itemId,
         text: command.item.text // Use the text from the command
     };
 
@@ -48,9 +49,12 @@ export async function POST(request: NextRequest) {
       aggregateId: teamId,
       timestamp: new Date().toISOString(),
       payload: {
-        initiativeId: initiative.id, // Use the real ID for the event
         stepKey: command.stepKey,
-        item: newItem,
+        item: { text: command.item.text }, // Only business data in payload
+      },
+      metadata: {
+        initiativeId: initiative.id, // Use the real ID for the event
+        itemId: itemId,
       },
     };
 

@@ -39,9 +39,11 @@ export async function PUT(request: NextRequest, { params }: { params: { itemId: 
       aggregateId: teamId,
       timestamp: new Date().toISOString(),
       payload: {
+        text: command.text,
+      },
+      metadata: {
         initiativeId: command.initiativeId,
         itemId: itemId,
-        text: command.text,
       },
     };
 
@@ -85,7 +87,8 @@ export async function DELETE(request: NextRequest, { params }: { params: { itemI
       entity: 'team',
       aggregateId: teamId,
       timestamp: new Date().toISOString(),
-      payload: {
+      payload: {},
+      metadata: {
         initiativeId: initiative.id,
         itemId: itemId,
       },
