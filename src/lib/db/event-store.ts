@@ -366,6 +366,7 @@ const ensureProjectionHandlersLoaded = async () => {
     import('@/lib/domain/initiatives-catalog/projection'),
     import('@/lib/domain/initiatives-linking/projection'),
     import('@/lib/domain/initiatives-catalog/projection'),
+    import('@/lib/domain/companies/projection'), // Add companies projection handler for live updates
   ]);
   _projectionsLoaded = true;
 };

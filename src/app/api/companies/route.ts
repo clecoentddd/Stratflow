@@ -1,7 +1,6 @@
 import { NextResponse, NextRequest } from 'next/server';
 import { v4 as uuidv4 } from 'uuid';
 import { fetchCompanies } from '@/lib/domain/companies/getCompanies';
-import { applyEventsToCompany } from '@/lib/db/projections';
 import { saveEvents } from '@/lib/db/event-store';
 import type { CreateCompanyCommand } from '@/lib/domain/companies/commands';
 import type { CompanyCreatedEvent } from '@/lib/domain/companies/events';
@@ -48,10 +47,11 @@ export async function POST(request: NextRequest) {
     // 4. Save events to event store
     await saveEvents([event]);
 
-    // 5. Build new state for the response
-    const newCompanyState = applyEventsToCompany(null, [event]);
-
-    return NextResponse.json(newCompanyState, { status: 201 });
+    // 5. Return the created company (the live projection will be updated automatically)
+    return NextResponse.json({ 
+      id: newCompanyId, 
+      name: command.name 
+    }, { status: 201 });
   } catch (error) {
     console.error('Failed to create company:', error);
     return NextResponse.json(

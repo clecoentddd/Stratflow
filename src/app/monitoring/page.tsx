@@ -1,14 +1,13 @@
-import { getEventLogProjection } from '@/lib/domain/monitoring/projection';
-import RebuildButton from './rebuild-button';
-import styles from './monitoring.module.css';
+import { getEventLogProjection, ProjectionControls } from '@/lib/domain/monitoring';
+import styles from '@/lib/domain/monitoring/styles/monitoring.module.css';
 
-type SearchParams = { view?: 'events' | 'links' | 'catalog' };
+type SearchParams = { view?: 'events' | 'links' | 'catalog' | 'companies' };
 
 export default async function MonitoringPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
   const { view } = await searchParams;
-  const current = view === 'links' || view === 'catalog' ? view : 'events';
+  const current = view === 'links' || view === 'catalog' || view === 'companies' ? view : 'events';
 
-  const [events, links, catalog] = await Promise.all([
+  const [events, links, catalog, companies] = await Promise.all([
     current === 'events' ? getEventLogProjection() : Promise.resolve([] as any[]),
     current === 'links' ? (async () => {
       const mod = await import('@/lib/domain/initiatives-linking/projection');
@@ -17,6 +16,17 @@ export default async function MonitoringPage({ searchParams }: { searchParams: P
     current === 'catalog' ? (async () => {
       const mod = await import('@/lib/domain/initiatives-catalog/projection');
       return mod.queryEligibleInitiatives({});
+    })() : Promise.resolve([] as any[]),
+    current === 'companies' ? (async () => {
+      const { getCompaniesProjection } = await import('@/lib/domain/companies/projection');
+      try {
+        const companiesData = await getCompaniesProjection();
+        console.log('🔍 [MONITORING] Companies found:', companiesData.length);
+        return companiesData;
+      } catch (error) {
+        console.error('❌ [MONITORING] Error getting companies:', error);
+        return [];
+      }
     })() : Promise.resolve([] as any[])
   ]);
 
@@ -26,8 +36,12 @@ export default async function MonitoringPage({ searchParams }: { searchParams: P
         <a href="/monitoring?view=events" className={`${styles.tab} ${styles.eventsTab} ${current === 'events' ? styles.tabActive : ''}`}>Event Log</a>
         <a href="/monitoring?view=links" className={`${styles.tab} ${styles.linksTab} ${current === 'links' ? styles.tabActive : ''}`}>Initiative Links</a>
         <a href="/monitoring?view=catalog" className={`${styles.tab} ${styles.catalogTab} ${current === 'catalog' ? styles.tabActive : ''}`}>Initiative Catalog</a>
+        <a href="/monitoring?view=companies" className={`${styles.tab} ${styles.catalogTab} ${current === 'companies' ? styles.tabActive : ''}`}>Companies</a>
         <span className={styles.spacer}>
-          <RebuildButton />
+          <ProjectionControls projectionType="events" projectionName="Event Log" currentView={current} />
+          <ProjectionControls projectionType="links" projectionName="Initiative Links" currentView={current} />
+          <ProjectionControls projectionType="catalog" projectionName="Initiative Catalog" currentView={current} />
+          <ProjectionControls projectionType="companies" projectionName="Companies" currentView={current} isQueryTime={true} />
         </span>
       </div>
 
@@ -93,7 +107,7 @@ export default async function MonitoringPage({ searchParams }: { searchParams: P
             </table>
           </div>
         </>
-      ) : (
+      ) : current === 'catalog' ? (
         <>
           <h1 className={styles.heading}>Initiative Catalog Projection</h1>
           <div className={`${styles.tableWrap} ${styles.catalogAccent}`}>
@@ -117,6 +131,38 @@ export default async function MonitoringPage({ searchParams }: { searchParams: P
                     <td>{r.strategyState || '-'}</td>
                   </tr>
                 ))}
+              </tbody>
+            </table>
+          </div>
+        </>
+      ) : (
+        <>
+          <h1 className={styles.heading}>Companies Projection (Slice View)</h1>
+          <div className={`${styles.tableWrap} ${styles.catalogAccent}`}>
+            <table className={styles.table}>
+              <thead className={styles.thead}>
+                <tr>
+                  <th>Company ID</th>
+                  <th>Name</th>
+                  <th>Created</th>
+                </tr>
+              </thead>
+              <tbody className={styles.tbody}>
+                {companies.length === 0 ? (
+                  <tr>
+                    <td colSpan={3} style={{ textAlign: 'center', padding: '2rem', color: '#6b7280' }}>
+                      No companies found in projections. Try rebuilding companies projection.
+                    </td>
+                  </tr>
+                ) : (
+                  companies.map((company: any) => (
+                    <tr key={company.id}>
+                      <td style={{ fontFamily: 'ui-monospace', fontSize: '0.875rem' }}>{company.id}</td>
+                      <td style={{ fontWeight: 'bold' }}>{company.name}</td>
+                      <td>{company.createdAt ? new Date(company.createdAt).toLocaleString() : '-'}</td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
