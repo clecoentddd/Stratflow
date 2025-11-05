@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { seedDemoCompany } from '@/lib/db/event-store';
+// REMOVED: seedDemoCompany - use proper command handlers instead
 
 export const dynamic = 'force-dynamic'; // Ensure this is a dynamic route
 

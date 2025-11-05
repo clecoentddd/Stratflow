@@ -35,7 +35,7 @@ export default function TeamsHubPage() {
       <main className="flex-1 p-4 md:p-6">
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center justify-between mb-6">
-            <h1 className="text-3xl font-bold font-headline">Select a company · Teams</h1>
+            <h1 className="text-3xl font-bold font-headline">Companies</h1>
             <Button onClick={() => setCreateCompanyOpen(true)}>
               <Plus className="mr-2 h-4 w-4" />
               Create New Company

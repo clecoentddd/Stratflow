@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 
 interface ProjectionControlsProps {
-  projectionType: 'events' | 'links' | 'catalog' | 'companies';
+  projectionType: 'events' | 'links' | 'catalog' | 'companies' | 'teams';
   projectionName: string;
   currentView: string;
   isQueryTime?: boolean;

@@ -4,7 +4,7 @@ import { saveEvents } from '@/lib/db/event-store';
 import { getTeamByIdProjection } from '@/lib/db/projections';
 import type { CreateInitiativeCommand } from '@/lib/domain/initiatives/commands';
 import type { InitiativeCreatedEvent } from '@/lib/domain/initiatives/events';
-import { newInitiativeTemplate } from '@/lib/data';
+import { newInitiativeTemplate } from '@/lib/domain/initiatives/constants';
 
 // Helper to extract teamId from query or body
 async function resolveTeamId(request: NextRequest) {

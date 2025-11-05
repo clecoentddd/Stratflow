@@ -1,13 +1,13 @@
 import { getEventLogProjection, ProjectionControls } from '@/lib/domain/monitoring';
 import styles from '@/lib/domain/monitoring/styles/monitoring.module.css';
 
-type SearchParams = { view?: 'events' | 'links' | 'catalog' | 'companies' };
+type SearchParams = { view?: 'events' | 'links' | 'catalog' | 'companies' | 'teams' };
 
 export default async function MonitoringPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
   const { view } = await searchParams;
-  const current = view === 'links' || view === 'catalog' || view === 'companies' ? view : 'events';
+  const current = view === 'links' || view === 'catalog' || view === 'companies' || view === 'teams' ? view : 'events';
 
-  const [events, links, catalog, companies] = await Promise.all([
+  const [events, links, catalog, companies, teams] = await Promise.all([
     current === 'events' ? getEventLogProjection() : Promise.resolve([] as any[]),
     current === 'links' ? (async () => {
       const mod = await import('@/lib/domain/initiatives-linking/projection');
@@ -27,6 +27,17 @@ export default async function MonitoringPage({ searchParams }: { searchParams: P
         console.error('❌ [MONITORING] Error getting companies:', error);
         return [];
       }
+    })() : Promise.resolve([] as any[]),
+    current === 'teams' ? (async () => {
+      const { getTeamsProjection } = await import('@/lib/domain/teams/projection');
+      try {
+        const teamsData = await getTeamsProjection();
+        console.log('🔍 [MONITORING] Teams found:', teamsData.length);
+        return teamsData;
+      } catch (error) {
+        console.error('❌ [MONITORING] Error getting teams:', error);
+        return [];
+      }
     })() : Promise.resolve([] as any[])
   ]);
 
@@ -37,11 +48,13 @@ export default async function MonitoringPage({ searchParams }: { searchParams: P
         <a href="/monitoring?view=links" className={`${styles.tab} ${styles.linksTab} ${current === 'links' ? styles.tabActive : ''}`}>Initiative Links</a>
         <a href="/monitoring?view=catalog" className={`${styles.tab} ${styles.catalogTab} ${current === 'catalog' ? styles.tabActive : ''}`}>Initiative Catalog</a>
         <a href="/monitoring?view=companies" className={`${styles.tab} ${styles.catalogTab} ${current === 'companies' ? styles.tabActive : ''}`}>Companies</a>
+        <a href="/monitoring?view=teams" className={`${styles.tab} ${styles.catalogTab} ${current === 'teams' ? styles.tabActive : ''}`}>Teams</a>
         <span className={styles.spacer}>
           <ProjectionControls projectionType="events" projectionName="Event Log" currentView={current} />
           <ProjectionControls projectionType="links" projectionName="Initiative Links" currentView={current} />
           <ProjectionControls projectionType="catalog" projectionName="Initiative Catalog" currentView={current} />
           <ProjectionControls projectionType="companies" projectionName="Companies" currentView={current} isQueryTime={true} />
+          <ProjectionControls projectionType="teams" projectionName="Teams" currentView={current} isQueryTime={true} />
         </span>
       </div>
 
@@ -135,7 +148,7 @@ export default async function MonitoringPage({ searchParams }: { searchParams: P
             </table>
           </div>
         </>
-      ) : (
+      ) : current === 'companies' ? (
         <>
           <h1 className={styles.heading}>Companies Projection (Slice View)</h1>
           <div className={`${styles.tableWrap} ${styles.catalogAccent}`}>
@@ -160,6 +173,48 @@ export default async function MonitoringPage({ searchParams }: { searchParams: P
                       <td style={{ fontFamily: 'ui-monospace', fontSize: '0.875rem' }}>{company.id}</td>
                       <td style={{ fontWeight: 'bold' }}>{company.name}</td>
                       <td>{company.createdAt ? new Date(company.createdAt).toLocaleString() : '-'}</td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </>
+      ) : (
+        <>
+          <h1 className={styles.heading}>Teams Projection (Slice View)</h1>
+          <div className={`${styles.tableWrap} ${styles.catalogAccent}`}>
+            <table className={styles.table}>
+              <thead className={styles.thead}>
+                <tr>
+                  <th>Team ID</th>
+                  <th>Name</th>
+                  <th>Company</th>
+                  <th>Level</th>
+                  <th>Purpose</th>
+                  <th>Context</th>
+                </tr>
+              </thead>
+              <tbody className={styles.tbody}>
+                {teams.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} style={{ textAlign: 'center', padding: '2rem', color: '#6b7280' }}>
+                      No teams found in projections. Try rebuilding teams projection.
+                    </td>
+                  </tr>
+                ) : (
+                  teams.map((team: any) => (
+                    <tr key={team.id}>
+                      <td style={{ fontFamily: 'ui-monospace', fontSize: '0.875rem' }}>{team.id}</td>
+                      <td style={{ fontWeight: 'bold' }}>{team.name}</td>
+                      <td style={{ fontSize: '0.875rem' }}>{team.companyId}</td>
+                      <td style={{ textAlign: 'center' }}>{typeof team.level === 'number' ? `L${team.level}` : '-'}</td>
+                      <td style={{ fontSize: '0.875rem', maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {team.purpose || '-'}
+                      </td>
+                      <td style={{ fontSize: '0.875rem', maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {team.context || '-'}
+                      </td>
                     </tr>
                   ))
                 )}

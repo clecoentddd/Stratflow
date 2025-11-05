@@ -10,3 +10,11 @@ projections should be either a live projection reading from the event log or be 
 
 A projection must have an empty button and a rebuild button and be available for an administrator under /monitoring
 
+The UI always reads data using a query from a projection. the UI never accesses data directly from the event store or any database (mock or not)
+
+Decoupling is critical.
+
+Projection slice
+- A query
+- A live projection (reads events from the event store) or a table (Listens to events, pub/sub mecanism or synchronous INSERT/DELETE)
+- the UI to show the results

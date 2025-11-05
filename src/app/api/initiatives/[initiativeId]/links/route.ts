@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { saveEvents } from '@/lib/db/event-store';
 import '@/lib/domain/initiatives-linking/projection'; // ensure handlers are registered when this route loads
 import type { InitiativeLinkedEvent, InitiativeUnlinkedEvent } from '@/lib/domain/initiatives-linking/events';
-import { getTeamsProjection } from '@/lib/db/projections';
+import { getTeamsProjection } from '@/lib/domain/teams/projection';
 import type { Strategy, Team } from '@/lib/types';
 
 function findInitiativeContext(initiativeId: string, teams: Team | Team[]): { teamId: string; teamLevel: number; strategyId: string; strategyState: string } | null {

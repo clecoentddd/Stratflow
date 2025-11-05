@@ -1,8 +1,8 @@
 
 import { NextResponse, NextRequest } from 'next/server';
 import { v4 as uuidv4 } from 'uuid';
-import { getTeamsProjection, applyEventsToTeam, getTeamByIdProjection } from '@/lib/db/projections';
-import { saveEvents, getEventsFor } from '@/lib/db/event-store';
+import { getTeamsProjection, getTeamByIdProjection } from '@/lib/domain/teams/projection';
+import { saveEvents } from '@/lib/db/event-store';
 import type { CreateTeamCommand, UpdateTeamCommand } from '@/lib/domain/teams/commands';
 import type { TeamCreatedEvent, TeamUpdatedEvent } from '@/lib/domain/teams/events';
 

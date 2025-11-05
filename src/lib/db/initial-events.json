@@ -1,0 +1,26 @@
+[
+  {
+    "type": "CompanyCreated",
+    "entity": "company",
+    "aggregateId": "company-demo",
+    "timestamp": "2025-11-05T10:11:19.675Z",
+    "payload": {
+      "id": "company-demo",
+      "name": "Demo Company"
+    }
+  },
+  {
+    "type": "TeamCreated",
+    "entity": "team",
+    "aggregateId": "team-demo",
+    "timestamp": "2025-11-05T10:11:20.000Z",
+    "payload": {
+      "id": "team-demo",
+      "companyId": "company-demo",
+      "name": "Demo Team",
+      "purpose": "Demonstrate the system capabilities",
+      "context": "Sample team for testing",
+      "level": 1
+    }
+  }
+]

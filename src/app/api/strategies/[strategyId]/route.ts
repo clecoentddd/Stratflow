@@ -1,5 +1,5 @@
 import { NextResponse, NextRequest } from 'next/server';
-import { saveEvents, getEventsByEntityAndId } from '@/lib/db/event-store';
+import { saveEvents } from '@/lib/db/event-store';
 import { StrategyCommandHandlers } from '@/lib/domain/strategies/command-handlers';
 import type { UpdateStrategyCommand } from '@/lib/domain/strategies/commands';
 

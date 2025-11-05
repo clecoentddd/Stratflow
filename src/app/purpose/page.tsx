@@ -1,6 +1,6 @@
 import React from 'react';
 import PurposeDetail from '@/lib/domain/purpose/ui/PurposeDetail';
-import { getTeamByIdProjection, getTeamsProjection } from '@/lib/db/projections';
+import { getTeamByIdProjection, getTeamsProjection } from '@/lib/domain/teams/projection';
 
 export const revalidate = 0; // always server-render during dev
 

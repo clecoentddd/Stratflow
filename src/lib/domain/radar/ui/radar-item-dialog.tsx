@@ -16,7 +16,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { ZoomInDialog } from "./zoom-in-dialog";
 import type { RadarItem, RadarItemType, RadarCategory, RadarDistance, RadarImpact, RadarTolerance, Team } from "@/lib/types";
-import { radarAttributes } from "@/lib/data";
+import { radarAttributes } from "../constants";
 import { cn } from "@/lib/utils";
 import styles from './radar-item-dialog.module.css';
 

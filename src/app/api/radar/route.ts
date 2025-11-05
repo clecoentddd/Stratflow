@@ -4,7 +4,7 @@ import {
   getTeamByIdProjection,
   applyEventsToTeam,
 } from '@/lib/db/projections';
-import { saveEvents, getEventsFor } from '@/lib/db/event-store';
+import { saveEvents } from '@/lib/db/event-store';
 import type { UpsertRadarItemCommand } from '@/lib/domain/radar/commands';
 import type { RadarItemCreatedEvent, RadarItemUpdatedEvent, RadarItemDeletedEvent } from '@/lib/domain/radar/events';
 

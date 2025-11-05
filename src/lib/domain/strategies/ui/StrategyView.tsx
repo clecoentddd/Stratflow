@@ -5,7 +5,7 @@ import { Plus, Edit, MoreVertical, Search, Milestone, ListChecks, Target, Trash2
 import { v4 as uuidv4 } from 'uuid';
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
-import { strategyStates } from "@/lib/data";
+import { strategyStates } from "../constants";
 import type { Strategy, RadarItem, Initiative, InitiativeStep } from "@/lib/types";
 import {
   DropdownMenu,

@@ -172,11 +172,14 @@ export const getCompanyByIdProjection = async (id: string): Promise<Company | nu
 
 // Handler for CompanyCreated events - invalidates cache for live updates
 function onCompanyCreated(event: any) {
-  console.log('🔄 [LIVE-PROJECTION] CompanyCreated event received, directly updating projection:', event.aggregateId);
+  console.log('🔄 [LIVE-PROJECTION] *** CompanyCreated event handler called! ***');
+  console.log('🔄 [LIVE-PROJECTION] Event details:', JSON.stringify(event, null, 2));
+  console.log('🔄 [LIVE-PROJECTION] Directly updating projection for company:', event.aggregateId);
   
   try {
     // Get current cache or initialize empty
     let currentCache = getCompaniesProjectionCache() || {};
+    console.log('🔄 [LIVE-PROJECTION] Current cache before update:', Object.keys(currentCache));
     
     // Directly apply the event to the live projection (no rebuild needed)
     const newCompany = {
@@ -191,7 +194,8 @@ function onCompanyCreated(event: any) {
     setCompaniesProjectionCache(currentCache);
     setCompanyCacheExplicitlyEmptied(false);
     
-    console.log('🔄 [LIVE-PROJECTION] Company added directly to live projection:', newCompany);
+    console.log('🔄 [LIVE-PROJECTION] Company added to live projection:', newCompany);
+    console.log('🔄 [LIVE-PROJECTION] Cache now has keys:', Object.keys(currentCache));
     
   } catch (error) {
     console.error('❌ [LIVE-PROJECTION] Error updating live projection:', error);

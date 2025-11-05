@@ -1,4 +1,4 @@
-import { getTeamsProjection as _getTeamsProjection } from '@/lib/db/projections';
+import { getTeamsProjection as _getTeamsProjection } from '@/lib/domain/teams/projection';
 
 export type PurposeRow = {
   id: string;
