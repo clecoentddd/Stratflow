@@ -20,10 +20,10 @@ export async function POST(request: NextRequest) {
     if (!team) {
       return NextResponse.json({ message: 'Team not found' }, { status: 404 });
     }
-    // Find initiative by real ID or temporary ID
+    // Find initiative by ID
     const initiative = team.dashboard.strategies
         .flatMap(s => s.initiatives)
-        .find(i => i.id === command.initiativeId || i.tempId === command.initiativeId);
+        .find(i => i.id === command.initiativeId);
         
     if (!initiative) {
         return NextResponse.json({ message: 'Initiative not found' }, { status: 404 });

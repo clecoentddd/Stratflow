@@ -136,6 +136,15 @@ function onAnyEvent(event: any) {
 registerProjectionHandler('CompanyCreated', onAnyEvent);
 registerProjectionHandler('TeamCreated', onAnyEvent);
 registerProjectionHandler('TeamUpdated', onAnyEvent);
-// Add more event types as they are created
+registerProjectionHandler('StrategyCreated', onAnyEvent);
+registerProjectionHandler('StrategyUpdated', onAnyEvent);
+registerProjectionHandler('InitiativeCreated', onAnyEvent);
+registerProjectionHandler('InitiativeUpdated', onAnyEvent);
+registerProjectionHandler('InitiativeProgressUpdated', onAnyEvent);
+registerProjectionHandler('InitiativeDeleted', onAnyEvent);
+registerProjectionHandler('InitiativeItemAdded', onAnyEvent);
+registerProjectionHandler('InitiativeItemUpdated', onAnyEvent);
+registerProjectionHandler('InitiativeItemDeleted', onAnyEvent);
+registerProjectionHandler('InitiativeRadarItemsLinked', onAnyEvent);
 
 console.log('✅ Event log projection handlers registered for live updates');

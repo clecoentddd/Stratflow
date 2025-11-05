@@ -147,7 +147,6 @@ export function StrategyView({
     const command: CreateInitiativeCommand = { 
         strategyId: strategy.id, 
         name: newInitiativeName.trim(),
-        tempId: tempId,
     };
     
     setStrategy(prev => {

@@ -111,9 +111,18 @@ export const applyEventsToTeam = (
                 ...team.dashboard,
                 strategies: team.dashboard.strategies.map(s => {
                     if (s.id !== event.payload.strategyId) return s;
+                    // Create initiative from minimal event data - projection creates the structure
                     const newInitiative: Initiative = {
-                      ...event.payload.template,
-                      tempId: event.payload.tempId, // Store tempId for lookup
+                      id: event.metadata?.initiativeId || 'unknown',
+                      name: event.payload.name,
+                      progression: 0,
+                      steps: [
+                        { key: 'diagnostic', title: 'Diagnostic', iconName: 'Search', items: [] },
+                        { key: 'overallApproach', title: 'Overall Approach', iconName: 'Milestone', items: [] },
+                        { key: 'actions', title: 'Actions', iconName: 'ListChecks', items: [] },
+                        { key: 'proximateObjectives', title: 'Proximate Objectives', iconName: 'Target', items: [] },
+                      ],
+                      linkedRadarItemIds: [],
                     };
                     return { ...s, initiatives: [...s.initiatives, newInitiative] };
                 })
@@ -129,6 +138,20 @@ export const applyEventsToTeam = (
                     ...s,
                     initiatives: s.initiatives.map(i =>
                         i.id === event.payload.initiativeId ? { ...i, name: event.payload.name } : i
+                    )
+                }))
+            }
+        };
+
+      case 'InitiativeProgressUpdated':
+        return {
+            ...team,
+            dashboard: {
+                ...team.dashboard,
+                strategies: team.dashboard.strategies.map(s => ({
+                    ...s,
+                    initiatives: s.initiatives.map(i =>
+                        i.id === event.metadata?.initiativeId ? { ...i, progression: event.payload.progression } : i
                     )
                 }))
             }
@@ -157,7 +180,7 @@ export const applyEventsToTeam = (
                 strategies: team.dashboard.strategies.map(s => ({
                     ...s,
                     initiatives: s.initiatives.map(i => 
-                        i.id === event.payload.initiativeId ? { ...i, progression: event.payload.progression } : i
+                        i.id === event.metadata?.initiativeId ? { ...i, progression: event.payload.progression } : i
                     )
                 }))
             }

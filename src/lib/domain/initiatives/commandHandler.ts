@@ -15,9 +15,7 @@ export class InitiativesCommandHandlers {
     if (!command.name) {
       throw new Error('Initiative name is required');
     }
-    if (!command.tempId) {
-      throw new Error('Temporary ID is required');
-    }
+
     if (!command.strategyId) {
       throw new Error('Strategy ID is required');
     }
@@ -32,7 +30,7 @@ export class InitiativesCommandHandlers {
       throw new Error('Strategy not found');
     }
 
-    // 2. Create Event
+    // 2. Create Event - Clean minimal payload
     const initiativeId = `init-${uuidv4()}`;
     const event: InitiativeCreatedEvent = {
       type: 'InitiativeCreated',
@@ -41,13 +39,10 @@ export class InitiativesCommandHandlers {
       timestamp: new Date().toISOString(),
       payload: {
         strategyId: command.strategyId,
-        initiativeId: initiativeId,
-        tempId: command.tempId,
         name: command.name,
-        template: {
-          ...newInitiativeTemplate(initiativeId, command.name),
-          linkedRadarItemIds: [] // Ensure this is never undefined
-        },
+      },
+      metadata: {
+        initiativeId: initiativeId,
       },
     };
 
@@ -56,9 +51,18 @@ export class InitiativesCommandHandlers {
 
     console.log('[Initiatives CommandHandler] created initiative', initiativeId, { teamId, strategyId: command.strategyId, name: command.name });
 
-    // 4. Create the complete initiative data
+    // 4. Create the complete initiative data for response
     const newInitiative = {
-      ...event.payload.template,  // Base template
+      id: initiativeId,
+      name: command.name,
+      progression: 0,
+      steps: [
+        { key: 'diagnostic', title: 'Diagnostic', iconName: 'Search', items: [] },
+        { key: 'overallApproach', title: 'Overall Approach', iconName: 'Milestone', items: [] },
+        { key: 'actions', title: 'Actions', iconName: 'ListChecks', items: [] },
+        { key: 'proximateObjectives', title: 'Proximate Objectives', iconName: 'Target', items: [] },
+      ],
+      linkedRadarItemIds: [],
       created_at: event.timestamp,
       updated_at: event.timestamp,
     };
@@ -100,17 +104,36 @@ export class InitiativesCommandHandlers {
       throw new Error('Initiative not found');
     }
 
-    // 2. Create Event
-    const event: InitiativeUpdatedEvent = {
-      type: 'InitiativeUpdated',
-      entity: 'team',
-      aggregateId: teamId,
-      timestamp: new Date().toISOString(),
-      payload: {
-        initiativeId: command.initiativeId,
-        name: command.name || foundInitiative.name,
-      },
-    };
+    // 2. Create appropriate event based on what's being updated
+    let event;
+    
+    if (typeof command.progression === 'number' && !command.name) {
+      // Specific event for progression updates
+      event = {
+        type: 'InitiativeProgressUpdated' as const,
+        entity: 'team' as const,
+        aggregateId: teamId,
+        timestamp: new Date().toISOString(),
+        payload: {
+          progression: command.progression,
+        },
+        metadata: {
+          initiativeId: command.initiativeId,
+        },
+      };
+    } else {
+      // General update event for name and other fields
+      event = {
+        type: 'InitiativeUpdated' as const,
+        entity: 'team' as const,
+        aggregateId: teamId,
+        timestamp: new Date().toISOString(),
+        payload: {
+          initiativeId: command.initiativeId,
+          name: command.name || foundInitiative.name,
+        },
+      };
+    }
 
     // 3. Save Event
     await saveEvents([event]);

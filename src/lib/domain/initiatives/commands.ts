@@ -3,7 +3,6 @@
 export type CreateInitiativeCommand = {
   strategyId: string;
   name: string;
-  tempId: string; // Add temporary ID for optimistic UI
 };
 
 export type UpdateInitiativeCommand = {

@@ -5,16 +5,10 @@ export type InitiativeCreatedEvent = Event<
   'InitiativeCreated',
   {
     strategyId: string;
-    initiativeId: string;
-    tempId: string; // Add temporary ID for optimistic UI
     name: string;
-    template: {
-      id: string;
-      name: string;
-      progression: number;
-      steps: InitiativeStep[];
-      linkedRadarItemIds: string[];
-    }
+  },
+  {
+    initiativeId: string;
   }
 >;
 
@@ -26,20 +20,22 @@ export type InitiativeUpdatedEvent = Event<
   }
 >;
 
+export type InitiativeProgressUpdatedEvent = Event<
+  'InitiativeProgressUpdated',
+  {
+    progression: number;
+  },
+  {
+    initiativeId: string;
+  }
+>;
+
 export type InitiativeDeletedEvent = Event<
     'InitiativeDeleted',
     {
         initiativeId: string;
         strategyId: string;
     }
->;
-
-export type InitiativeProgressUpdatedEvent = Event<
-  'InitiativeProgressUpdated',
-  {
-    initiativeId: string;
-    progression: number;
-  }
 >;
 
 export type InitiativeRadarItemsLinkedEvent = Event<

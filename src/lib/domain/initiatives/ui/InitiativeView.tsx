@@ -373,7 +373,14 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
              </Label>
            <Slider
              value={[initiative.progression]}
-             onValueChange={(value) => handleUpdateInitiative({ progression: value[0] })}
+             onValueChange={(value) => {
+               // Update UI immediately for responsiveness
+               setInitiative(prev => ({ ...prev, progression: value[0] }));
+             }}
+             onValueCommit={(value) => {
+               // Only send API call when user stops dragging
+               handleUpdateInitiative({ progression: value[0] });
+             }}
              max={100}
              step={1}
            />

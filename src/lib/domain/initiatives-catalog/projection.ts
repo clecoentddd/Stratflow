@@ -36,7 +36,7 @@ export const resetInitiativeCatalogProjection = () => {
 function onInitiativeCreated(e: any) {
   console.log('Processing InitiativeCreated event:', e);
   const table = getTable();
-  const id = e.payload?.template?.id;
+  const id = e.metadata?.initiativeId;
   
   if (!id) {
     console.warn('Received InitiativeCreated event without an ID:', e);
@@ -52,7 +52,7 @@ function onInitiativeCreated(e: any) {
   const teamMeta = getTeamMeta().get(teamId);
   console.log(`Team metadata for ${teamId}:`, teamMeta);
   
-  const initiativeName = e.payload?.template?.name || `Initiative ${id}`;
+  const initiativeName = e.payload?.name || `Initiative ${id}`;
   // Some event producers may include a team level directly on the initiative
   // payload (for example during seeding or cross-aggregate operations). Prefer
   // an explicit level on the event if present, otherwise fall back to the

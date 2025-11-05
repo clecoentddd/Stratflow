@@ -61,14 +61,13 @@
     "aggregateId": "team-demo",
     "timestamp": "2025-11-05T10:11:24.000Z",
     "payload": {
+      "name": "Cloud Migration Phase 1",
+      "progression": 25,
       "strategyId": "strategy-draft-demo",
-      "strategyName": "Digital Transformation Strategy",
-      "template": {
-        "id": "initiative-draft-1",
-        "name": "Cloud Migration Phase 1",
-        "progression": 25,
-        "steps": []
-      }
+      "strategyName": "Digital Transformation Strategy"
+    },
+    "metadata": {
+      "initiativeId": "initiative-draft-1"
     }
   },
   {
@@ -77,14 +76,13 @@
     "aggregateId": "team-demo",
     "timestamp": "2025-11-05T10:11:25.000Z",
     "payload": {
+      "name": "API Modernization",
+      "progression": 10,
       "strategyId": "strategy-draft-demo",
-      "strategyName": "Digital Transformation Strategy",
-      "template": {
-        "id": "initiative-draft-2",
-        "name": "API Modernization",
-        "progression": 10,
-        "steps": []
-      }
+      "strategyName": "Digital Transformation Strategy"
+    },
+    "metadata": {
+      "initiativeId": "initiative-draft-2"
     }
   },
   {
@@ -93,14 +91,13 @@
     "aggregateId": "team-demo",
     "timestamp": "2025-11-05T10:11:26.000Z",
     "payload": {
+      "name": "Mobile App Redesign",
+      "progression": 60,
       "strategyId": "strategy-active-demo",
-      "strategyName": "Customer Experience Enhancement",
-      "template": {
-        "id": "initiative-active-1",
-        "name": "Mobile App Redesign",
-        "progression": 60,
-        "steps": []
-      }
+      "strategyName": "Customer Experience Enhancement"
+    },
+    "metadata": {
+      "initiativeId": "initiative-active-1"
     }
   },
   {
@@ -109,14 +106,13 @@
     "aggregateId": "team-demo",
     "timestamp": "2025-11-05T10:11:27.000Z",
     "payload": {
+      "name": "Customer Support Chatbot",
+      "progression": 80,
       "strategyId": "strategy-active-demo",
-      "strategyName": "Customer Experience Enhancement",
-      "template": {
-        "id": "initiative-active-2",
-        "name": "Customer Support Chatbot",
-        "progression": 80,
-        "steps": []
-      }
+      "strategyName": "Customer Experience Enhancement"
+    },
+    "metadata": {
+      "initiativeId": "initiative-active-2"
     }
   }
 ]

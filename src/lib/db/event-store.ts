@@ -44,6 +44,9 @@ const dispatchProjectionHandlers = (event: AllEvents) => {
 
 export const runProjectionOn = (event: AllEvents) => dispatchProjectionHandlers(event);
 
+// Ensure event-log projection handlers are registered after function definitions
+import('@/lib/domain/event-log/projection');
+
 let _projectionsLoaded = false;
 const ensureProjectionHandlersLoaded = async () => {
   if (_projectionsLoaded) return;
