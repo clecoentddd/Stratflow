@@ -1,3 +1,4 @@
+import { saveEvents, _getAllEvents } from '@/lib/db/event-store';
 import type { StrategyState } from '@/lib/types';
 import type { CreateStrategyCommand, UpdateStrategyCommand } from './commands';
 import type { StrategyEvent, StrategyCreatedEvent, StrategyUpdatedEvent } from './events';
@@ -5,7 +6,70 @@ import type { TeamEvent } from '@/lib/domain/teams/events';
 
 type CommandHandlerResult<T> = { success: boolean; error?: string; event?: T };
 
+// Helper function to get events for a specific team
+const getEventsForTeam = async (teamId: string) => {
+  const allEvents = await _getAllEvents();
+  return allEvents.filter(event => event.aggregateId === teamId && event.entity === 'team') as any[];
+};
+
 export class StrategyCommandHandlers {
+  
+  // New async methods that handle the full business logic
+  static async handleCreateStrategyCommand(teamId: string, command: CreateStrategyCommand) {
+    // 1. Validation
+    if (!teamId) {
+      throw new Error('teamId is required');
+    }
+    if (!command.description || !command.timeframe) {
+      throw new Error('Description and timeframe are required');
+    }
+
+    // 2. Get events and handle command
+    const events = await getEventsForTeam(teamId);
+    const result = this.handleCreateStrategy(teamId, command, events);
+    
+    if (!result.success || !result.event) {
+      throw new Error(result.error || 'Failed to create strategy');
+    }
+
+    // 3. Save Event
+    await saveEvents([result.event]);
+
+    console.log('[Strategies CommandHandler] created strategy', result.event.payload.strategyId, { teamId, description: command.description });
+
+    // 4. Return result
+    return { 
+      success: true, 
+      strategyId: result.event.payload.strategyId 
+    };
+  }
+
+  static async handleUpdateStrategyCommand(teamId: string, command: UpdateStrategyCommand) {
+    // 1. Validation
+    if (!teamId) {
+      throw new Error('teamId is required');
+    }
+    const hasUpdateableField = command.state || command.description || command.timeframe;
+    if (!hasUpdateableField) {
+      throw new Error('No updateable fields provided');
+    }
+
+    // 2. Get events and handle command
+    const events = await getEventsForTeam(teamId);
+    const result = this.handleUpdateStrategy(teamId, command, events);
+    
+    if (!result.success || !result.event) {
+      throw new Error(result.error || 'Failed to update strategy');
+    }
+
+    // 3. Save Event
+    await saveEvents([result.event]);
+
+    console.log('[Strategies CommandHandler] updated strategy', command.strategyId, { teamId });
+
+    // 4. Return result
+    return { success: true };
+  }
   private static getCurrentStates(events: TeamEvent[] | StrategyEvent[]): Map<string, StrategyState> {
     const states = new Map<string, StrategyState>();
     

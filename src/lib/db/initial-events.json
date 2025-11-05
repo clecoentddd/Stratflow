@@ -22,5 +22,101 @@
       "context": "Sample team for testing",
       "level": 1
     }
+  },
+  {
+    "type": "StrategyCreated",
+    "entity": "team",
+    "aggregateId": "team-demo",
+    "timestamp": "2025-11-05T10:11:21.000Z",
+    "payload": {
+      "strategyId": "strategy-draft-demo",
+      "description": "Digital Transformation Strategy",
+      "timeframe": "Q1-Q2 2025"
+    }
+  },
+  {
+    "type": "StrategyCreated",
+    "entity": "team",
+    "aggregateId": "team-demo",
+    "timestamp": "2025-11-05T10:11:22.000Z",
+    "payload": {
+      "strategyId": "strategy-active-demo",
+      "description": "Customer Experience Enhancement",
+      "timeframe": "Q4 2024 - Q1 2025"
+    }
+  },
+  {
+    "type": "StrategyUpdated",
+    "entity": "team",
+    "aggregateId": "team-demo",
+    "timestamp": "2025-11-05T10:11:23.000Z",
+    "payload": {
+      "strategyId": "strategy-active-demo",
+      "state": "Active"
+    }
+  },
+  {
+    "type": "InitiativeCreated",
+    "entity": "team",
+    "aggregateId": "team-demo",
+    "timestamp": "2025-11-05T10:11:24.000Z",
+    "payload": {
+      "strategyId": "strategy-draft-demo",
+      "strategyName": "Digital Transformation Strategy",
+      "template": {
+        "id": "initiative-draft-1",
+        "name": "Cloud Migration Phase 1",
+        "progression": 25,
+        "steps": []
+      }
+    }
+  },
+  {
+    "type": "InitiativeCreated",
+    "entity": "team",
+    "aggregateId": "team-demo",
+    "timestamp": "2025-11-05T10:11:25.000Z",
+    "payload": {
+      "strategyId": "strategy-draft-demo",
+      "strategyName": "Digital Transformation Strategy",
+      "template": {
+        "id": "initiative-draft-2",
+        "name": "API Modernization",
+        "progression": 10,
+        "steps": []
+      }
+    }
+  },
+  {
+    "type": "InitiativeCreated",
+    "entity": "team",
+    "aggregateId": "team-demo",
+    "timestamp": "2025-11-05T10:11:26.000Z",
+    "payload": {
+      "strategyId": "strategy-active-demo",
+      "strategyName": "Customer Experience Enhancement",
+      "template": {
+        "id": "initiative-active-1",
+        "name": "Mobile App Redesign",
+        "progression": 60,
+        "steps": []
+      }
+    }
+  },
+  {
+    "type": "InitiativeCreated",
+    "entity": "team",
+    "aggregateId": "team-demo",
+    "timestamp": "2025-11-05T10:11:27.000Z",
+    "payload": {
+      "strategyId": "strategy-active-demo",
+      "strategyName": "Customer Experience Enhancement",
+      "template": {
+        "id": "initiative-active-2",
+        "name": "Customer Support Chatbot",
+        "progression": 80,
+        "steps": []
+      }
+    }
   }
 ]
