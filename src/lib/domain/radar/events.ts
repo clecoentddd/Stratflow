@@ -1,12 +1,11 @@
 
-import type { Event } from '../teams/events';
-import type { RadarItem } from '@/lib/types';
+export { type RadarItemCreatedEvent } from './RadarItemCreatedEvent';
+export { type RadarItemUpdatedEvent } from './RadarItemUpdatedEvent';
+export { type RadarItemDeletedEvent } from './RadarItemDeletedEvent';
 
-export type RadarItemCreatedEvent = Event<'RadarItemCreated', RadarItem>;
-
-export type RadarItemUpdatedEvent = Event<'RadarItemUpdated', RadarItem>;
-
-export type RadarItemDeletedEvent = Event<'RadarItemDeleted', { id: string }>;
+import type { RadarItemCreatedEvent } from './RadarItemCreatedEvent';
+import type { RadarItemUpdatedEvent } from './RadarItemUpdatedEvent';
+import type { RadarItemDeletedEvent } from './RadarItemDeletedEvent';
 
 export type RadarEvent =
   | RadarItemCreatedEvent
