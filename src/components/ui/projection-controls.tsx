@@ -5,17 +5,21 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 
 interface ProjectionControlsProps {
-  projectionType: 'events' | 'links' | 'catalog' | 'companies' | 'teams';
-  projectionName: string;
+  domainName: string;
+  projectionEndpoint: string;
   currentView: string;
+  viewName: string;
   isQueryTime?: boolean;
+  canEmpty?: boolean;
 }
 
 export default function ProjectionControls({ 
-  projectionType, 
-  projectionName, 
-  currentView, 
-  isQueryTime = false 
+  domainName,
+  projectionEndpoint,
+  currentView,
+  viewName,
+  isQueryTime = false,
+  canEmpty = true
 }: ProjectionControlsProps) {
   const [rebuildLoading, setRebuildLoading] = useState(false);
   const [emptyLoading, setEmptyLoading] = useState(false);
@@ -23,16 +27,12 @@ export default function ProjectionControls({
   const router = useRouter();
 
   const onRebuild = async () => {
-    console.log(`🔧 Starting rebuild for ${projectionName} (${projectionType})`);
+    console.log(`🔧 Starting rebuild for ${domainName}`);
     setRebuildLoading(true);
     try {
-      // Events projection uses the legacy rebuild-projections endpoint
-      const url = projectionType === 'events' 
-        ? '/api/dev/rebuild-projections' 
-        : `/api/dev/projections/${projectionType}`;
-      console.log(`🔧 Calling POST ${url}`);
+      console.log(`🔧 Calling POST ${projectionEndpoint}`);
       
-      const res = await fetch(url, { method: 'POST' });
+      const res = await fetch(projectionEndpoint, { method: 'POST' });
       console.log(`🔧 Response status: ${res.status} ${res.statusText}`);
       
       if (!res.ok) {
@@ -42,37 +42,29 @@ export default function ProjectionControls({
         return;
       }
       
-      // Events endpoint doesn't return JSON, just reads the response text
-      if (projectionType === 'events') {
-        console.log(`🔧 Rebuild ${projectionName} SUCCESS (all projections rebuilt)`);
-        alert(`✅ ${projectionName} rebuild successful! (All projections rebuilt)`);
-      } else {
-        const result = await res.json();
-        console.log(`🔧 Rebuild ${projectionName} SUCCESS:`, result);
-        alert(`✅ ${projectionName} rebuild successful!`);
-      }
+      const result = await res.json();
+      console.log(`🔧 Rebuild ${domainName} SUCCESS:`, result);
+      alert(`✅ ${domainName} rebuild successful!`);
     } catch (error) {
-      console.error(`🔧 Failed to rebuild ${projectionName}:`, error);
-      alert(`❌ Failed to rebuild ${projectionName}: ${error instanceof Error ? error.message : String(error)}`);
+      console.error(`🔧 Failed to rebuild ${domainName}:`, error);
+      alert(`❌ Failed to rebuild ${domainName}: ${error instanceof Error ? error.message : String(error)}`);
     }
     setRebuildLoading(false);
     startTransition(() => router.refresh());
   };
 
   const onEmpty = async () => {
-    // Events cannot be "emptied" - they are the source of truth
-    if (projectionType === 'events') {
-      alert(`❌ Cannot empty Event Log - events are the source of truth for all projections`);
+    if (!canEmpty) {
+      alert(`❌ Cannot empty ${domainName} - it's the source of truth for other projections`);
       return;
     }
 
-    console.log(`🗑️ Starting empty for ${projectionName} (${projectionType})`);
+    console.log(`🗑️ Starting empty for ${domainName}`);
     setEmptyLoading(true);
     try {
-      const url = `/api/dev/projections/${projectionType}`;
-      console.log(`🗑️ Calling DELETE ${url}`);
+      console.log(`🗑️ Calling DELETE ${projectionEndpoint}`);
       
-      const res = await fetch(url, { method: 'DELETE' });
+      const res = await fetch(projectionEndpoint, { method: 'DELETE' });
       console.log(`🗑️ Response status: ${res.status} ${res.statusText}`);
       
       if (!res.ok) {
@@ -83,25 +75,22 @@ export default function ProjectionControls({
       }
       
       const result = await res.json();
-      console.log(`🗑️ Empty ${projectionName} SUCCESS:`, result);
-      alert(`✅ ${projectionName} emptied successfully!`);
+      console.log(`🗑️ Empty ${domainName} SUCCESS:`, result);
+      alert(`✅ ${domainName} emptied successfully!`);
     } catch (error) {
-      console.error(`🗑️ Failed to empty ${projectionName}:`, error);
-      alert(`❌ Failed to empty ${projectionName}: ${error instanceof Error ? error.message : String(error)}`);
+      console.error(`🗑️ Failed to empty ${domainName}:`, error);
+      alert(`❌ Failed to empty ${domainName}: ${error instanceof Error ? error.message : String(error)}`);
     }
     setEmptyLoading(false);
     startTransition(() => router.refresh());
   };
 
   // Only show controls on the relevant view
-  const showControls = currentView === projectionType;
+  const showControls = currentView === viewName;
 
   if (!showControls) {
     return null;
   }
-
-  // For query-time projections, show a note but still provide controls
-  const showNote = isQueryTime;
 
   return (
     <div style={{ 
@@ -114,9 +103,9 @@ export default function ProjectionControls({
       border: '1px solid #e2e8f0'
     }}>
       <span style={{ fontSize: '0.875rem', color: '#374151', fontWeight: '600' }}>
-        {projectionName}
+        {domainName}
       </span>
-      {showNote && (
+      {isQueryTime && (
         <span style={{ 
           fontSize: '0.75rem', 
           color: '#059669', 
@@ -129,7 +118,7 @@ export default function ProjectionControls({
           Live Projection
         </span>
       )}
-      {projectionType === 'events' && (
+      {!canEmpty && (
         <span style={{ 
           fontSize: '0.75rem', 
           color: '#6366f1', 
@@ -139,17 +128,17 @@ export default function ProjectionControls({
           borderRadius: '0.25rem',
           marginRight: '0.25rem'
         }}>
-          All Events
+          Source of Truth
         </span>
       )}
       <Button 
         size="sm" 
         variant="outline" 
         onClick={onEmpty} 
-        disabled={emptyLoading || pending || projectionType === 'events'}
+        disabled={emptyLoading || pending || !canEmpty}
         style={{ 
           minWidth: '60px',
-          opacity: projectionType === 'events' ? 0.5 : 1
+          opacity: !canEmpty ? 0.5 : 1
         }}
       >
         {emptyLoading ? '...' : 'Empty'}
@@ -161,7 +150,7 @@ export default function ProjectionControls({
         disabled={rebuildLoading || pending}
         style={{ minWidth: '70px' }}
       >
-        {rebuildLoading ? '...' : projectionType === 'events' ? 'Rebuild All' : 'Rebuild'}
+        {rebuildLoading ? '...' : 'Rebuild'}
       </Button>
     </div>
   );

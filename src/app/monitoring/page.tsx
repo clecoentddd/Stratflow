@@ -1,4 +1,10 @@
-import { getEventLogProjection, ProjectionControls } from '@/lib/domain/monitoring';
+import { getEventLogProjection } from '@/lib/domain/event-log';
+import '@/lib/domain/event-log/projection'; // Ensure handlers are registered
+import EventLogProjectionControls from '@/lib/domain/event-log/ui/EventLogProjectionControls';
+import CompaniesProjectionControls from '@/lib/domain/companies/ui/CompaniesProjectionControls';
+import TeamsProjectionControls from '@/lib/domain/teams/ui/TeamsProjectionControls';
+import InitiativeLinksProjectionControls from '@/lib/domain/initiatives-linking/ui/InitiativeLinksProjectionControls';
+import InitiativeCatalogProjectionControls from '@/lib/domain/initiatives-catalog/ui/InitiativeCatalogProjectionControls';
 import styles from '@/lib/domain/monitoring/styles/monitoring.module.css';
 
 type SearchParams = { view?: 'events' | 'links' | 'catalog' | 'companies' | 'teams' };
@@ -50,11 +56,11 @@ export default async function MonitoringPage({ searchParams }: { searchParams: P
         <a href="/monitoring?view=companies" className={`${styles.tab} ${styles.catalogTab} ${current === 'companies' ? styles.tabActive : ''}`}>Companies</a>
         <a href="/monitoring?view=teams" className={`${styles.tab} ${styles.catalogTab} ${current === 'teams' ? styles.tabActive : ''}`}>Teams</a>
         <span className={styles.spacer}>
-          <ProjectionControls projectionType="events" projectionName="Event Log" currentView={current} />
-          <ProjectionControls projectionType="links" projectionName="Initiative Links" currentView={current} />
-          <ProjectionControls projectionType="catalog" projectionName="Initiative Catalog" currentView={current} />
-          <ProjectionControls projectionType="companies" projectionName="Companies" currentView={current} isQueryTime={true} />
-          <ProjectionControls projectionType="teams" projectionName="Teams" currentView={current} isQueryTime={true} />
+          <EventLogProjectionControls currentView={current} />
+          <InitiativeLinksProjectionControls currentView={current} />
+          <InitiativeCatalogProjectionControls currentView={current} />
+          <CompaniesProjectionControls currentView={current} />
+          <TeamsProjectionControls currentView={current} />
         </span>
       </div>
 

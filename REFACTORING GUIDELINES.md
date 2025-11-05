@@ -18,3 +18,6 @@ Projection slice
 - A query
 - A live projection (reads events from the event store) or a table (Listens to events, pub/sub mecanism or synchronous INSERT/DELETE)
 - the UI to show the results
+
+Segregration of responsabilities and concerns: projections provide all the logic, mainly a query, empty and rebuild buttons, to customers (the UI). customers should not have to create projections. For instance, monitoring is a consumer and should be aware of end points.
+

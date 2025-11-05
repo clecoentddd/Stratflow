@@ -38,7 +38,7 @@ export async function POST() {
     return NextResponse.json({ 
       success: true, 
       message: 'Companies rebuild completed',
-      replayed: 'N/A (query-time projection)'
+      replayed: 'N/A (live projection)'
     });
   } catch (error) {
     console.error('❌ [COMPANIES] Error rebuilding companies:', error);

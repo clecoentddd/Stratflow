@@ -46,13 +46,9 @@ export default function WelcomePage() {
   };
 
   const handleCreateDemo = async () => {
-    try {
-      const res = await fetch('/api/dev/seed-demo', { method: 'POST' });
-      if (!res.ok) throw new Error('Seed failed');
-      await fetchCompanies();
-    } catch (e) {
-      console.error(e);
-    }
+    // Demo data is now loaded automatically from initial-events.json
+    // No need for manual seeding
+    await fetchCompanies();
   };
 
   if (isLoading) {
