@@ -48,6 +48,14 @@
   margin: 0.5rem 0;          /* Some breathing space */
 }
 
+.strategyName {
+  font-size: 0.875rem;       /* Smaller text (≈ Tailwind text-sm) */
+  font-weight: 400;          /* Normal weight */
+  color: #6b7280;            /* Muted gray color */
+  margin: 0.25rem 0 0 0;     /* Small top margin, no other margins */
+  font-style: italic;        /* Italicized to differentiate from initiative name */
+}
+
 /* Layout helpers to replace Tailwind */
 .headerRow {
   display: flex;

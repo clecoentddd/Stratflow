@@ -4,7 +4,7 @@ import React, { useState, useCallback } from "react";
 import KanbanCardSimple from "./KanbanCardSimple";
 import styles from "./kanban.module.css";
 
-type Initiative = { id: string; name: string; status?: string };
+type Initiative = { id: string; name: string; status?: string; strategyName?: string };
 
 const COLUMNS: { key: string; label: string }[] = [
   { key: "NEW", label: "NEW" },
@@ -27,6 +27,7 @@ export default function TeamKanbanBoard({ initialInitiatives = [] }: { initialIn
     id: String(i.id),
     name: i.name ?? String(i.id),
     status: normalizeStatus(i.status),
+    strategyName: i.strategyName, // Pass through strategy name
   }));
 
   const [cards, setCards] = useState<Initiative[]>(initial);

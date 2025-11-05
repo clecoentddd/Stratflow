@@ -3,7 +3,7 @@
 import React from "react";
 import styles from "./kanban.module.css";
 
-type Initiative = { id: string; name?: string; status?: string };
+type Initiative = { id: string; name?: string; status?: string; strategyName?: string };
 
 export default function KanbanCardSimple({
   initiative,
@@ -23,6 +23,9 @@ export default function KanbanCardSimple({
       style={{ ...style }}
     >
       <div className="title">{initiative.name}</div>
+      {initiative.strategyName && (
+        <div className={styles.strategyName}>{initiative.strategyName}</div>
+      )}
     </div>
   );
 }

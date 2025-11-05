@@ -163,6 +163,14 @@
   box-shadow: 0 6px 18px rgba(2,6,23,0.08);
 }
 
+.card .strategyName {
+  font-size: 0.75rem; /* smaller text */
+  font-weight: 400; /* normal weight */
+  color: #6b7280; /* muted gray color */
+  margin-top: 0.25rem; /* small top margin */
+  font-style: italic; /* italicized to differentiate */
+}
+
 /* Team selector dialog */
 .dialogContent { max-width: 520px; }
 .teamSelectorList {
