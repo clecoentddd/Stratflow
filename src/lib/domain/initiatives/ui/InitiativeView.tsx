@@ -226,6 +226,11 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
             return res.json();
         })
         .then((savedItem: InitiativeItemType) => {
+            toast({ 
+                title: "Success", 
+                description: "Initiative Item Saved",
+                variant: "default"
+            });
             onInitiativeChange(); 
         })
         .catch(err => {
@@ -273,6 +278,11 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
             const errorData = await res.json().catch(() => ({}));
             throw new Error(errorData.message || 'Failed to delete item.');
         }
+        toast({ 
+            title: "Success", 
+            description: "Initiative Item Deleted",
+            variant: "default"
+        });
     })
     .catch(err => {
         console.error(err);
