@@ -114,5 +114,199 @@
     "metadata": {
       "initiativeId": "initiative-active-2"
     }
+  },
+  {
+    "type": "TeamCreated",
+    "entity": "team",
+    "aggregateId": "team-cto",
+    "timestamp": "2025-11-05T10:11:28.000Z",
+    "payload": {
+      "id": "team-cto",
+      "companyId": "company-demo",
+      "name": "CTO",
+      "purpose": "Bold with simplicity",
+      "context": "Chief Technology Officer: kills inertia with simple solutions, make processes lighter, focus on outcomes, on the why. Remove the fat, be lean. Complexity accidental is our enemy",
+      "level": 2
+    }
+  },
+  {
+    "type": "RadarItemCreated",
+    "entity": "team",
+    "aggregateId": "team-cto",
+    "timestamp": "2025-11-05T10:11:29.000Z",
+    "payload": {
+      "id": "radar-item-event-modeling",
+      "name": "Event Modeling",
+      "detect": "Modelling Technique we should use for projects",
+      "assess": "We are using specifications, user stories but that kills communication, creating or reinforcing silos",
+      "respond": "Go ahead with a pilot project, train people",
+      "type": "Opportunity",
+      "category": "Capabilities",
+      "distance": "Responding",
+      "impact": "High",
+      "tolerance": "Medium"
+    }
+  },
+  {
+    "type": "RadarItemCreated",
+    "entity": "team",
+    "aggregateId": "team-cto",
+    "timestamp": "2025-11-05T10:11:30.000Z",
+    "payload": {
+      "id": "radar-item-event-sourcing",
+      "name": "Event Sourcing",
+      "detect": "AI needs context. Data Model loses context. So we need event sourcing",
+      "assess": "Simple, works even in a synchronous way with projections",
+      "respond": "Go - it is a no-brainer",
+      "type": "Opportunity",
+      "category": "Business",
+      "distance": "Assessed",
+      "impact": "High",
+      "tolerance": "Low"
+    }
+  },
+  {
+    "type": "RadarItemCreated",
+    "entity": "team",
+    "aggregateId": "team-cto",
+    "timestamp": "2025-11-05T10:11:31.000Z",
+    "payload": {
+      "id": "radar-item-slice-architecture",
+      "name": "Slice Architecture",
+      "detect": "Lack of consistency in the way we design/implement our software solutions. VSA (Vertical Slice Architecture) should give us clear directions",
+      "assess": "Easy to understand, works well with Event Sourcing & Event Modeling",
+      "respond": "Pilot on low-code and custom dev",
+      "type": "Opportunity",
+      "category": "Capabilities",
+      "distance": "Assessed",
+      "impact": "Medium",
+      "tolerance": "Medium"
+    }
+  },
+  {
+    "type": "RadarItemCreated",
+    "entity": "team",
+    "aggregateId": "team-cto",
+    "timestamp": "2025-11-05T10:11:32.000Z",
+    "payload": {
+      "id": "radar-item-accidental-complexity",
+      "name": "Accidental Complexity",
+      "detect": "Forget technical debt",
+      "assess": "Accidental complexity is killing our productivity and maintainability",
+      "respond": "Focus on essential complexity, eliminate the accidental",
+      "type": "Threat",
+      "category": "Capabilities",
+      "distance": "Assessed",
+      "impact": "High",
+      "tolerance": "Low"
+    }
+  },
+  {
+    "type": "RadarItemCreated",
+    "entity": "team",
+    "aggregateId": "team-cto",
+    "timestamp": "2025-11-05T10:11:33.000Z",
+    "payload": {
+      "id": "radar-item-cultural-inertia",
+      "name": "Cultural Inertia",
+      "detect": "Cultural Inertia: This form refers to deep-rooted norms and mindsets within an organization that resist change. An example is AT&T's struggle in the mid-1980s to transition from a monopolistic structure to an innovative tech company, hindered by its culture which was focused more on research than on product development.",
+      "assess": "Deep-rooted resistance to change is slowing our transformation",
+      "respond": "Address cultural barriers through leadership and communication",
+      "type": "Threat",
+      "category": "Business",
+      "distance": "Detected",
+      "impact": "Medium",
+      "tolerance": "Medium"
+    }
+  },
+  {
+    "type": "RadarItemCreated",
+    "entity": "team",
+    "aggregateId": "team-cto",
+    "timestamp": "2025-11-05T10:11:34.000Z",
+    "payload": {
+      "id": "radar-item-lack-of-modelization",
+      "name": "Lack of Modelization",
+      "detect": "We do not model; we write specs",
+      "assess": "We need to move to modeling techniques and facilitation",
+      "respond": "Implement modeling practices and train teams",
+      "type": "Threat",
+      "category": "Operating Model",
+      "distance": "Assessing",
+      "impact": "Medium",
+      "tolerance": "Medium"
+    }
+  },
+  {
+    "type": "RadarItemCreated",
+    "entity": "team",
+    "aggregateId": "team-cto",
+    "timestamp": "2025-11-05T10:11:35.000Z",
+    "payload": {
+      "id": "radar-item-reasoning",
+      "name": "Reasoning",
+      "detect": "Reasoning over Coding",
+      "assess": "Need to focus more on understanding problems before coding solutions",
+      "respond": "Emphasize problem analysis and reasoning skills",
+      "type": "Threat",
+      "category": "Capabilities",
+      "distance": "Assessing",
+      "impact": "High",
+      "tolerance": "Low"
+    }
+  },
+  {
+    "type": "RadarItemCreated",
+    "entity": "team",
+    "aggregateId": "team-cto",
+    "timestamp": "2025-11-05T10:11:36.000Z",
+    "payload": {
+      "id": "radar-item-forward-deployed-engineer",
+      "name": "Forward-Deployed Engineer",
+      "detect": "Engineer fully involved with the business & AI to speed up development",
+      "assess": "New role with 3 risks that need to be managed",
+      "respond": "Train people on Event Modeling and business context",
+      "type": "Opportunity",
+      "category": "Business",
+      "distance": "Assessed",
+      "impact": "High",
+      "tolerance": "Medium"
+    }
+  },
+  {
+    "type": "RadarItemCreated",
+    "entity": "team",
+    "aggregateId": "team-cto",
+    "timestamp": "2025-11-05T10:11:37.000Z",
+    "payload": {
+      "id": "radar-item-data-mesh",
+      "name": "Data Mesh",
+      "detect": "Way to have data easily, good match with event sourcing",
+      "assess": "Could provide better data access and governance",
+      "respond": "Explore data mesh patterns with event sourcing",
+      "type": "Opportunity",
+      "category": "Capabilities",
+      "distance": "Assessing",
+      "impact": "Medium",
+      "tolerance": "High"
+    }
+  },
+  {
+    "type": "RadarItemCreated",
+    "entity": "team",
+    "aggregateId": "team-cto",
+    "timestamp": "2025-11-05T10:11:38.000Z",
+    "payload": {
+      "id": "radar-item-agile-not-being-agile",
+      "name": "Agile",
+      "detect": "We are not agile by doing agile",
+      "assess": "Following agile practices without being truly agile",
+      "respond": "Focus on agile principles over processes",
+      "type": "Threat",
+      "category": "People & Knowledge",
+      "distance": "Assessing",
+      "impact": "High",
+      "tolerance": "Medium"
+    }
   }
 ]

@@ -713,8 +713,10 @@
       rgba(0, 255, 65, 0.4) 95%,
       rgba(0, 255, 65, 0.6) 100%
     );
-  --radar-text-primary: #00ff41;
-  --radar-text-secondary: #39ff14;
+  --radar-text-primary: #f0f0f0;
+  --radar-text-secondary: #e0e0e0;
+  --radar-text-muted: #c0c0c0;
+  --radar-text-label: #ffffff;
   --radar-bg-panel: rgba(0, 20, 0, 0.8);
   --radar-bg-tooltip: rgba(0, 30, 0, 0.9);
   --radar-quadrant-dark: #001100;
