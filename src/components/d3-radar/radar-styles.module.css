@@ -59,7 +59,7 @@
    📐 LAYOUT - CONTAINERS & PANELS  
    ========================================== */
 
-/* Main centering wrapper */
+/* Main centering wrapper with sci-fi styling */
 .centeringWrapper {
   width: 100%;
   display: flex;
@@ -70,6 +70,51 @@
   border-radius: 12px;
   padding: 20px;
   box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Sci-fi interface elements */
+.centeringWrapper::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60%;
+  background: 
+    /* Diagonal perspective lines converging to center */
+    linear-gradient(75deg, transparent 49%, rgba(255, 255, 255, 0.15) 50%, transparent 51%),
+    linear-gradient(105deg, transparent 49%, rgba(255, 255, 255, 0.15) 50%, transparent 51%),
+    linear-gradient(80deg, transparent 49%, rgba(255, 255, 255, 0.1) 50%, transparent 51%),
+    linear-gradient(100deg, transparent 49%, rgba(255, 255, 255, 0.1) 50%, transparent 51%),
+    linear-gradient(85deg, transparent 49%, rgba(255, 255, 255, 0.08) 50%, transparent 51%),
+    linear-gradient(95deg, transparent 49%, rgba(255, 255, 255, 0.08) 50%, transparent 51%);
+  transform: perspective(300px) rotateX(45deg);
+  transform-origin: bottom center;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.centeringWrapper::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60%;
+  background: 
+    /* Horizontal grid lines with perspective spacing */
+    linear-gradient(0deg, rgba(255, 255, 255, 0.2) 95%, transparent 96%),
+    linear-gradient(0deg, transparent 85%, rgba(255, 255, 255, 0.15) 88%, transparent 89%),
+    linear-gradient(0deg, transparent 75%, rgba(255, 255, 255, 0.12) 77%, transparent 78%),
+    linear-gradient(0deg, transparent 65%, rgba(255, 255, 255, 0.1) 66%, transparent 67%),
+    linear-gradient(0deg, transparent 55%, rgba(255, 255, 255, 0.08) 56%, transparent 57%),
+    linear-gradient(0deg, transparent 45%, rgba(255, 255, 255, 0.06) 46%, transparent 47%);
+  transform: perspective(300px) rotateX(30deg);
+  transform-origin: bottom center;
+  pointer-events: none;
+  z-index: 1;
 }
 
 /* Primary radar container */
@@ -142,6 +187,9 @@
   align-items: center;
   position: relative;
   box-sizing: border-box;
+  background: var(--radar-bg-main);
+  border-radius: 8px;
+  padding: 20px;
 }
 
 /* SVG text elements */
@@ -576,12 +624,22 @@
    🎨 THEME VARIANTS (for easy experimentation)
    ========================================== */
 
-/* Dark theme variant (default) - Improved harmony with gradient */
+/* Dark theme variant (default) - Sci-fi control panel */
 .darkTheme {
   --radar-primary: #10b981;
   --radar-secondary: #34d399;
   --radar-accent: #fbbf24;
-  --radar-bg-main: radial-gradient(ellipse at center, #064e3b 0%, #030712 70%, #000000 100%);
+  --radar-bg-main: 
+    linear-gradient(to top, #064e3b 0%, #030712 100%),
+    linear-gradient(180deg, 
+      transparent 0%, 
+      transparent 60%,
+      rgba(16, 185, 129, 0.1) 70%,
+      rgba(16, 185, 129, 0.2) 80%,
+      rgba(16, 185, 129, 0.3) 90%,
+      rgba(16, 185, 129, 0.4) 95%,
+      rgba(16, 185, 129, 0.5) 100%
+    );
   --radar-text-primary: #f3f4f6;
   --radar-text-secondary: #a7f3d0;
   --radar-bg-panel: rgba(6, 78, 59, 0.8);
@@ -590,7 +648,7 @@
   --radar-quadrant-light: #065f46;
 }
 
-/* Light theme variant - Multi-color quadrant radar */
+/* Light theme variant - High-tech laboratory interface */
 .lightTheme {
   --radar-primary: #1d4ed8;            /* blue radar base */
   --radar-secondary: #2563eb;
@@ -598,7 +656,17 @@
   --radar-danger: #dc2626;
   --radar-success: #16a34a;
 
-  --radar-bg-main: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 50%, #cbd5e1 100%);
+  --radar-bg-main: 
+    linear-gradient(to top, #e2e8f0 0%, #f8fafc 100%),
+    linear-gradient(180deg, 
+      transparent 0%, 
+      transparent 60%,
+      rgba(29, 78, 216, 0.1) 70%,
+      rgba(29, 78, 216, 0.2) 80%,
+      rgba(29, 78, 216, 0.3) 90%,
+      rgba(29, 78, 216, 0.4) 95%,
+      rgba(29, 78, 216, 0.5) 100%
+    );
   --radar-bg-panel: rgba(241, 245, 249, 0.9);
   --radar-bg-tooltip: rgba(226, 232, 240, 0.95);
   --radar-bg-button: rgba(29, 78, 216, 0.1);
@@ -627,14 +695,24 @@
   filter: drop-shadow(0 0 12px rgba(22, 163, 74, 0.6));
 }
 
-/* Cyberpunk theme variant - Classic radar neon green/pink with gradient */
+/* Cyberpunk theme variant - Matrix-style terminal interface */
 .cyberpunkTheme {
   --radar-primary: #00ff41;
   --radar-secondary: #39ff14;
   --radar-accent: #ff1493;
   --radar-danger: #ff073a;
   --radar-success: #00ff00;
-  --radar-bg-main: radial-gradient(circle at 30% 70%, #001100 0%, #000000 50%, #110011 100%);
+  --radar-bg-main: 
+    linear-gradient(to top, #001100 0%, #000000 100%),
+    linear-gradient(180deg, 
+      transparent 0%, 
+      transparent 60%,
+      rgba(0, 255, 65, 0.1) 70%,
+      rgba(0, 255, 65, 0.2) 80%,
+      rgba(0, 255, 65, 0.3) 90%,
+      rgba(0, 255, 65, 0.4) 95%,
+      rgba(0, 255, 65, 0.6) 100%
+    );
   --radar-text-primary: #00ff41;
   --radar-text-secondary: #39ff14;
   --radar-bg-panel: rgba(0, 20, 0, 0.8);
@@ -643,7 +721,7 @@
   --radar-quadrant-light: #002200;
 }
 
-/* Ocean theme variant - Bright blue on black radar */
+/* Ocean theme variant - Deep sea sonar interface */
 .oceanTheme {
   --radar-primary: #00d4ff;           /* bright cyan */
   --radar-secondary: #0ea5e9;
@@ -651,7 +729,17 @@
   --radar-danger: #f472b6;
   --radar-success: #00f5ff;
 
-  --radar-bg-main: radial-gradient(circle at 40% 60%, #001122 0%, #000000 100%);
+  --radar-bg-main: 
+    linear-gradient(to top, #001122 0%, #000000 100%),
+    linear-gradient(180deg, 
+      transparent 0%, 
+      transparent 60%,
+      rgba(0, 212, 255, 0.1) 70%,
+      rgba(0, 212, 255, 0.2) 80%,
+      rgba(0, 212, 255, 0.3) 90%,
+      rgba(0, 212, 255, 0.4) 95%,
+      rgba(0, 212, 255, 0.6) 100%
+    );
   --radar-bg-panel: rgba(0, 17, 34, 0.8);
   --radar-bg-tooltip: rgba(0, 34, 68, 0.9);
   --radar-bg-button: rgba(0, 212, 255, 0.1);
@@ -667,7 +755,7 @@
   --radar-quadrant-light: #002244;
 }
 
-/* Galaxy theme variant - Cosmic space radar */
+/* Galaxy theme variant - Starship command bridge */
 .sunsetTheme {
   --radar-primary: #a855f7;           /* cosmic purple */
   --radar-secondary: #c084fc;
@@ -675,7 +763,17 @@
   --radar-danger: #f472b6;
   --radar-success: #34d399;
 
-  --radar-bg-main: radial-gradient(ellipse at 30% 70%, #1e1b4b 0%, #0f0f23 40%, #000000 100%);
+  --radar-bg-main: 
+    linear-gradient(to top, #1e1b4b 0%, #000000 100%),
+    linear-gradient(180deg, 
+      transparent 0%, 
+      transparent 60%,
+      rgba(168, 85, 247, 0.1) 70%,
+      rgba(168, 85, 247, 0.2) 80%,
+      rgba(168, 85, 247, 0.3) 90%,
+      rgba(168, 85, 247, 0.4) 95%,
+      rgba(168, 85, 247, 0.6) 100%
+    );
   --radar-bg-panel: rgba(30, 27, 75, 0.8);
   --radar-bg-tooltip: rgba(15, 15, 35, 0.9);
   --radar-bg-button: rgba(168, 85, 247, 0.1);

@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from './RadarToolTip.module.css'; // Adjust the path as necessary
+import styles from './radar-styles.module.css';
 import { Pencil } from 'lucide-react';
 import Link from 'next/link';
 

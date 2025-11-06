@@ -3,7 +3,7 @@
 // Transforms raw data into normalized format for the radar chart
 
 import {radarConfig} from './RadarConfig';
-import styles from './RadarChart.module.css'; // import CSS module here
+import styles from './radar-styles.module.css'; // import consolidated CSS module
 import type { RadarItem } from '@/lib/types';
 
 /**
