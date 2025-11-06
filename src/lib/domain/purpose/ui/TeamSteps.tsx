@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { Compass, Radar, TrendingUp } from 'lucide-react';
 import styles from './team-steps.module.css';
 
 type StepKey = 'purpose' | 'radar' | 'dashboard';
@@ -17,17 +18,28 @@ export default function TeamSteps({ teamId, companyId = '', active }: Props) {
 
   const keys: StepKey[] = ['purpose', 'radar', 'dashboard'];
 
-  const stepNode = (num: number, key: StepKey, title: string, href: string) => {
+  const stepConfig = {
+    purpose: { icon: Compass, title: 'Purpose', subtitle: 'Define & Align', color: '#9B51E0' },
+    radar: { icon: Radar, title: 'Radar', subtitle: 'Detect, Assess & Respond', color: '#00cc88' },
+    dashboard: { icon: TrendingUp, title: 'Strategy', subtitle: 'Plan & Execute', color: '#388cfa' }
+  };
+
+  const stepNode = (key: StepKey, href: string) => {
     const isActive = active === key;
-    // per-step active/inactive classes (e.g. purposeActive, purposeInactive)
-    const circleStateClass = isActive ? styles[`${key}Active`] : styles[`${key}Inactive`];
-    const titleStateClass = isActive ? styles[`${key}ActiveTitle`] : '';
+    const config = stepConfig[key];
+    const cardClass = isActive ? styles[`${key}Active`] : styles[`${key}Inactive`];
 
     return (
-      <Link href={href} key={key} className={styles.link}>
-        <div className={styles.step}>
-          <div className={`${styles.circle} ${circleStateClass}`}>{num}</div>
-          <div className={`${styles.title} ${titleStateClass}`}>{title}</div>
+      <Link href={href} key={key} className={styles.stepLink}>
+        <div className={`${styles.stepCard} ${cardClass}`}>
+          <div className={styles.stepIcon}>
+            <config.icon size={18} color={isActive ? 'white' : config.color} />
+          </div>
+          <div className={styles.stepContent}>
+            <div className={styles.stepTitle}>{config.title}</div>
+            <div className={styles.stepSubtitle}>{config.subtitle}</div>
+          </div>
+          {isActive && <div className={styles.activeIndicator}></div>}
         </div>
       </Link>
     );
@@ -37,18 +49,27 @@ export default function TeamSteps({ teamId, companyId = '', active }: Props) {
     const leftIndex = keys.indexOf(leftKey);
     const activeIndex = keys.indexOf(active);
     const filled = activeIndex > leftIndex;
-    // choose connector fill class based on leftKey when filled
-    const connectorFillClass = filled ? styles[`connector${leftKey.charAt(0).toUpperCase() + leftKey.slice(1)}Filled`] : '';
-    return <div className={`${styles.connector} ${connectorFillClass}`} />;
+    
+    return (
+      <div className={styles.flowArrow}>
+        <div className={`${styles.arrowLine} ${filled ? styles.arrowLineFilled : ''}`}></div>
+        <div className={`${styles.arrowHead} ${filled ? styles.arrowHeadFilled : ''}`}>→</div>
+      </div>
+    );
   };
 
   return (
-    <div className={styles.container}>
-      {stepNode(1, 'purpose', 'Purpose', `/team/${teamId}/purpose${q}`)}
-      {connectorNode('purpose', 'radar')}
-      {stepNode(2, 'radar', 'Detect, Assess & Respond', `/team/${teamId}/radar${q}`)}
-      {connectorNode('radar', 'dashboard')}
-      {stepNode(3, 'dashboard', 'Strategize', `/team/${teamId}/dashboard${q}`)}
+    <div className={styles.flowContainer}>
+      <div className={styles.flowHeader}>
+        <h2 className={styles.flowTitle}>Team Workflow · Navigate through the strategic process</h2>
+      </div>
+      <div className={styles.stepsContainer}>
+        {stepNode('purpose', `/team/${teamId}/purpose${q}`)}
+        {connectorNode('purpose', 'radar')}
+        {stepNode('radar', `/team/${teamId}/radar${q}`)}
+        {connectorNode('radar', 'dashboard')}
+        {stepNode('dashboard', `/team/${teamId}/dashboard${q}`)}
+      </div>
     </div>
   );
 }

@@ -1,153 +1,238 @@
-.container {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+/* Modern flow container */
+.flowContainer {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border-radius: 12px;
+  padding: 16px 20px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e2e8f0;
+  margin: 16px 0;
 }
 
-.step {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  text-decoration: none;
+.flowHeader {
+  text-align: center;
+  margin-bottom: 16px;
 }
 
-.circle {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
+.flowTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0;
+}
+
+.stepsContainer {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 700;
-  background: #e6eefb;
-  color: #1f2937;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* Step cards */
+.stepLink {
+  text-decoration: none;
+  transition: transform 0.2s ease;
+}
+
+.stepLink:hover {
+  transform: translateY(-2px);
+}
+
+.stepCard {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 1.5px solid transparent;
+  background: white;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
   position: relative;
-  transition: all 0.25s ease;
-  box-shadow: 0 0 0 2px rgba(255,255,255,0.05), 0 3px 8px rgba(15,23,42,0.08);
+  min-width: 160px;
+  cursor: pointer;
 }
 
-/* Always visible right arrow */
-.circle::after {
-  content: "";
+.stepIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  background: #f8fafc;
+  transition: all 0.3s ease;
+}
+
+.stepContent {
+  flex: 1;
+}
+
+.stepTitle {
+  font-weight: 600;
+  font-size: 14px;
+  color: #1e293b;
+  margin-bottom: 1px;
+  transition: color 0.3s ease;
+}
+
+.stepSubtitle {
+  font-size: 11px;
+  color: #64748b;
+  font-weight: 400;
+  transition: color 0.3s ease;
+}
+
+.activeIndicator {
   position: absolute;
-  top: 50%;
-  right: -10px;
-  transform: translateY(-50%);
-  width: 0;
-  height: 0;
-  border-top: 6px solid transparent;
-  border-bottom: 6px solid transparent;
-  border-left: 10px solid currentColor;
-  opacity: 0.9;
-  transition: all 0.25s ease;
+  top: -1px;
+  right: -1px;
+  width: 6px;
+  height: 6px;
+  background: #10b981;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px white, 0 0 6px rgba(16, 185, 129, 0.4);
 }
 
-.title {
-  color: #1f2937;
-  font-weight: 500;
-}
-
-/* color variables */
+/* Color variables - matching TeamCard colors */
 :root {
   --step-purpose: #9B51E0; /* purple */
-  --step-purpose-600: #7a2db8;
-  --step-detect: #00cc88; /* green */
-  --step-detect-600: #009e6a;
-  --step-strategize: #388cfa; /* blue */
-  --step-strategize-600: #2563eb;
+  --step-radar: #00cc88; /* green */  
+  --step-dashboard: #388cfa; /* blue */
 }
 
-/* ===== ACTIVE CIRCLES ===== */
+/* ===== ACTIVE STATES ===== */
 .purposeActive {
-  background: linear-gradient(90deg, var(--step-purpose) 0%, #b57af0 100%);
-  color: #fff;
-  box-shadow: 0 3px 8px rgba(155,81,224,0.25);
+  border-color: var(--step-purpose);
+  background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
+  box-shadow: 0 4px 20px rgba(147, 51, 234, 0.15);
 }
-.purposeActive::after {
-  border-left-color: var(--step-purpose);
+
+.purposeActive .stepIcon {
+  background: var(--step-purpose);
+}
+
+.purposeActive .stepTitle {
+  color: var(--step-purpose);
+  font-weight: 700;
+}
+
+.purposeActive .stepSubtitle {
+  color: #8B5CF6;
 }
 
 .radarActive {
-  background: linear-gradient(90deg, var(--step-detect) 0%, #40e0a4 100%);
-  color: #fff;
-  box-shadow: 0 3px 8px rgba(0,204,136,0.25);
+  border-color: var(--step-radar);
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+  box-shadow: 0 4px 20px rgba(5, 150, 105, 0.15);
 }
-.radarActive::after {
-  border-left-color: var(--step-detect);
+
+.radarActive .stepIcon {
+  background: var(--step-radar);
+}
+
+.radarActive .stepTitle {
+  color: var(--step-radar);
+  font-weight: 700;
+}
+
+.radarActive .stepSubtitle {
+  color: #10B981;
 }
 
 .dashboardActive {
-  background: linear-gradient(90deg, var(--step-strategize) 0%, #66a8ff 100%);
-  color: #fff;
-  box-shadow: 0 3px 8px rgba(56,140,250,0.25);
-}
-.dashboardActive::after {
-  border-left-color: var(--step-strategize);
+  border-color: var(--step-dashboard);
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+  box-shadow: 0 4px 20px rgba(37, 99, 235, 0.15);
 }
 
-/* ===== ACTIVE TITLES ===== */
-.purposeActiveTitle {
-  color: var(--step-purpose-600);
-  font-weight: 700;
+.dashboardActive .stepIcon {
+  background: var(--step-dashboard);
 }
-.radarActiveTitle {
-  color: var(--step-detect-600);
-  font-weight: 700;
-}
-.dashboardActiveTitle {
-  color: var(--step-strategize-600);
+
+.dashboardActive .stepTitle {
+  color: var(--step-dashboard);
   font-weight: 700;
 }
 
-/* ===== INACTIVE CIRCLES ===== */
-.purposeInactive {
-  background: #f5f0ff;
-  color: #9B51E0;
-}
-.purposeInactive::after {
-  border-left-color: #9B51E0;
+.dashboardActive .stepSubtitle {
+  color: #60A5FA;
 }
 
-.radarInactive {
-  background: #ecfdf5;
-  color: #00cc88;
-}
-.radarInactive::after {
-  border-left-color: #00cc88;
+/* ===== INACTIVE STATES ===== */
+.purposeInactive:hover {
+  border-color: #e2e8f0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.dashboardInactive {
-  background: #eff6ff;
-  color: #388cfa;
-}
-.dashboardInactive::after {
-  border-left-color: #388cfa;
+.radarInactive:hover {
+  border-color: #e2e8f0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-/* ===== CONNECTORS ===== */
-.connectorPurposeFilled {
-  background: var(--step-purpose);
-}
-.connectorRadarFilled {
-  background: var(--step-detect);
-}
-.connectorDashboardFilled {
-  background: var(--step-strategize);
+.dashboardInactive:hover {
+  border-color: #e2e8f0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.connector {
-  flex: 1;
-  height: 2px;
-  background: #e5e7eb;
+/* ===== FLOW ARROWS ===== */
+.flowArrow {
+  display: flex;
+  align-items: center;
+  gap: 0px;
   margin: 0 8px;
-  border-radius: 2px;
-  transition: background 0.25s ease;
+  position: relative;
 }
 
-.connectorFilled {
-  background: #388CFA;
+.arrowLine {
+  width: 24px;
+  height: 2px;
+  background: #cbd5e1;
+  border-radius: 1px;
+  transition: all 0.3s ease;
+  position: relative;
 }
 
-.link {
-  display: inline-block;
+.arrowLine::after {
+  content: '';
+  position: absolute;
+  right: -6px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-left: 6px solid #cbd5e1;
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.arrowLineFilled {
+  background: #10b981;
+}
+
+.arrowLineFilled::after {
+  border-left-color: #10b981;
+}
+
+.arrowHead {
+  display: none;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .stepsContainer {
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .flowArrow {
+    transform: rotate(90deg);
+    margin: 8px 0;
+  }
+  
+  .stepCard {
+    min-width: 250px;
+    justify-content: center;
+  }
 }
