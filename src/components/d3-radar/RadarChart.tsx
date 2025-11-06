@@ -398,17 +398,35 @@ const RadarChart: React.FC<{
             const drawLegends = (g: d3.Selection<SVGGElement, unknown, null, undefined>, radius: number) => {
                 const themeColors = getCurrentThemeColors();
                 const legends = [LEGEND1, LEGEND2, LEGEND3];
-                    legends.forEach(l => {
-                        g.append('text')
-                            .attr('x', 0)
-                            .attr('y', -radius * l.radiusPct)
-                            .attr('text-anchor', 'middle')
-                            .attr('dominant-baseline', 'middle')
-                            .attr('fill', themeColors.primary)
-                            .attr('font-size', '12px')
-                            .attr('font-family', 'Arial, sans-serif')
-                            .text(l.label);
-                    });
+                
+                // Use more subtle legend colors based on theme
+                const getLegendColor = () => {
+                    switch(currentTheme) {
+                        case 'cyberpunk':
+                            return '#c0c0c0'; // light gray for cyberpunk
+                        case 'light':
+                            return '#4b5563'; // dark gray for light theme
+                        case 'ocean':
+                            return '#94a3b8'; // blue-gray for ocean
+                        case 'sunset':
+                            return '#e5e7eb'; // light gray for sunset
+                        case 'dark':
+                        default:
+                            return '#9ca3af'; // medium gray for dark theme
+                    }
+                };
+                
+                legends.forEach(l => {
+                    g.append('text')
+                        .attr('x', 0)
+                        .attr('y', -radius * l.radiusPct)
+                        .attr('text-anchor', 'middle')
+                        .attr('dominant-baseline', 'middle')
+                        .attr('fill', getLegendColor())
+                        .attr('font-size', '12px')
+                        .attr('font-family', 'Arial, sans-serif')
+                        .text(l.label);
+                });
             };
 
             drawLegends(g, radius);

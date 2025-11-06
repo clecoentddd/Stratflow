@@ -74,49 +74,6 @@
   overflow: hidden;
 }
 
-/* Sci-fi interface elements */
-.centeringWrapper::before {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 60%;
-  background: 
-    /* Diagonal perspective lines converging to center */
-    linear-gradient(75deg, transparent 49%, rgba(255, 255, 255, 0.15) 50%, transparent 51%),
-    linear-gradient(105deg, transparent 49%, rgba(255, 255, 255, 0.15) 50%, transparent 51%),
-    linear-gradient(80deg, transparent 49%, rgba(255, 255, 255, 0.1) 50%, transparent 51%),
-    linear-gradient(100deg, transparent 49%, rgba(255, 255, 255, 0.1) 50%, transparent 51%),
-    linear-gradient(85deg, transparent 49%, rgba(255, 255, 255, 0.08) 50%, transparent 51%),
-    linear-gradient(95deg, transparent 49%, rgba(255, 255, 255, 0.08) 50%, transparent 51%);
-  transform: perspective(300px) rotateX(45deg);
-  transform-origin: bottom center;
-  pointer-events: none;
-  z-index: 1;
-}
-
-.centeringWrapper::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 60%;
-  background: 
-    /* Horizontal grid lines with perspective spacing */
-    linear-gradient(0deg, rgba(255, 255, 255, 0.2) 95%, transparent 96%),
-    linear-gradient(0deg, transparent 85%, rgba(255, 255, 255, 0.15) 88%, transparent 89%),
-    linear-gradient(0deg, transparent 75%, rgba(255, 255, 255, 0.12) 77%, transparent 78%),
-    linear-gradient(0deg, transparent 65%, rgba(255, 255, 255, 0.1) 66%, transparent 67%),
-    linear-gradient(0deg, transparent 55%, rgba(255, 255, 255, 0.08) 56%, transparent 57%),
-    linear-gradient(0deg, transparent 45%, rgba(255, 255, 255, 0.06) 46%, transparent 47%);
-  transform: perspective(300px) rotateX(30deg);
-  transform-origin: bottom center;
-  pointer-events: none;
-  z-index: 1;
-}
-
 /* Primary radar container */
 .radarContainer {
   display: flex;
