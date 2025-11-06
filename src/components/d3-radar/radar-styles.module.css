@@ -1,0 +1,714 @@
+/* ==========================================
+   🎯 D3 RADAR - CONSOLIDATED STYLES
+   ==========================================
+   
+   All radar chart styling consolidated into one file for easier design experimentation.
+   Includes layout, SVG elements, tooltips, zoom controls, and responsive design.
+   
+   Sections:
+   - Design System (CSS variables & themes)
+   - Layout (containers, panels, wrappers)
+   - SVG Radar (chart elements, grid, quadrants)
+   - Interactive Elements (tooltips, buttons, hover states)
+   - Zoom Controls (navigation, buttons)
+   - Typography (font system)
+   - Responsive Design (mobile adaptations)
+   
+   ========================================== */
+
+/* ==========================================
+   🎨 DESIGN SYSTEM - VARIABLES & THEMES
+   ========================================== */
+:root {
+  /* Core Color Palette */
+  --radar-primary: #00cc88;
+  --radar-secondary: #00ffcc;
+  --radar-accent: #FFD580;
+  --radar-danger: #FF6961;
+  --radar-success: #77DD77;
+  
+  /* Background Colors */
+  --radar-bg-main: #000000;
+  --radar-bg-panel: rgba(20, 25, 25, 0.7);
+  --radar-bg-tooltip: rgba(10, 15, 15, 0.4);
+  --radar-bg-button: rgba(0, 0, 0, 0.4);
+  
+  /* Text Colors */
+  --radar-text-primary: #e8e8e8;
+  --radar-text-secondary: #c1fff4;
+  --radar-text-muted: #9CA3AF;
+  --radar-text-label: #00cc88;
+  
+  /* Grid & Chart Colors */
+  --radar-grid-primary: #00ff9f;
+  --radar-grid-secondary: #00ffcc;
+  --radar-quadrant-dark: #0a0f0f;
+  --radar-quadrant-light: #131a1a;
+  
+  /* Interactive States */
+  --radar-hover-primary: #00ff9f;
+  --radar-hover-accent: #FFB347;
+  --radar-border-subtle: rgba(0, 204, 136, 0.2);
+  --radar-border-active: rgba(0, 204, 136, 0.6);
+  
+  /* Typography */
+  --radar-font-family: 'Inter', sans-serif;
+}
+
+/* ==========================================
+   📐 LAYOUT - CONTAINERS & PANELS  
+   ========================================== */
+
+/* Main centering wrapper */
+.centeringWrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 20px;
+  background: var(--radar-bg-main);
+  border-radius: 12px;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* Primary radar container */
+.radarContainer {
+  display: flex;
+  flex-direction: row;
+  gap: 40px;
+  height: 100%;
+  font-family: var(--radar-font-family);
+  align-items: flex-start;
+  box-sizing: border-box;
+}
+
+/* Font inheritance for all nested elements */
+.radarContainer * {
+  font-family: var(--radar-font-family);
+}
+
+/* Left control panel */
+.leftPanel {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 280px;
+  max-width: 320px;
+  gap: 12px;
+  align-items: center;
+  box-sizing: border-box;
+  padding: 24px;
+}
+
+/* Middle radar chart panel */
+.middlePanel {
+  display: flex;
+  justify-content: center;
+  flex: 2;
+  min-width: 400px;
+}
+
+/* Right tooltip panel */
+.tooltipPanel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  padding: 20px 0 0 0;
+  gap: 16px;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+  color: var(--radar-text-primary);
+  width: 100%;
+}
+
+/* Font inheritance for tooltip elements */
+.tooltipPanel * {
+  font-family: var(--radar-font-family);
+}
+
+/* ==========================================
+   🎯 SVG RADAR - CHART ELEMENTS
+   ========================================== */
+
+/* Radar wrapper - flexible container */
+.radarWrapper {
+  flex: 2 1 0;
+  min-width: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  box-sizing: border-box;
+}
+
+/* SVG text elements */
+.radarWrapper text {
+  font-family: var(--radar-font-family) !important;
+}
+
+/* Category labels */
+.categoryLabel {
+  font-family: var(--radar-font-family) !important;
+  font-size: 14px;
+  font-weight: 600;
+  fill: var(--radar-primary);
+}
+
+/* Legend labels */
+.legendLabel {
+  fill: var(--radar-text-muted);
+  font-size: 12px;
+  font-weight: 500;
+  opacity: 0.85;
+  pointer-events: none;
+  font-family: var(--radar-font-family) !important;
+}
+
+/* Chart text styling */
+.chartText {
+  font-size: 12px;
+  fill: var(--radar-text-secondary);
+  font-weight: bold;
+  text-shadow: 0 0 4px rgba(0, 255, 191, 0.6);
+  letter-spacing: 0.5px;
+  font-family: var(--radar-font-family) !important;
+}
+
+.chartTextNormal {
+  font-size: 11px;
+  fill: var(--radar-text-primary);
+  font-weight: 300;
+  text-anchor: middle;
+  letter-spacing: -0.2px;
+  font-family: var(--radar-font-family) !important;
+}
+
+/* Radar grid circles */
+.radarGridCircle {
+  fill: none;
+  stroke: var(--radar-grid-primary);
+  stroke-opacity: 0.5;
+}
+
+.radarGridCircleOuter {
+  stroke-width: 5;
+  stroke: var(--radar-grid-secondary);
+  filter: drop-shadow(0 0 5px var(--radar-grid-secondary));
+}
+
+.radarGridCircleInner {
+  stroke-width: 1;
+  stroke: var(--radar-grid-primary);
+}
+
+/* Radial lines */
+.radialLine {
+  stroke: var(--radar-grid-primary);
+  stroke-width: 0.6;
+  stroke-dasharray: 2, 2;
+  opacity: 0.5;
+}
+
+/* Quadrant backgrounds */
+.quadrantFillDark {
+  fill: var(--radar-quadrant-dark);
+}
+
+.quadrantFillLight {
+  fill: var(--radar-quadrant-light);
+}
+
+/* Radar items - main chart elements */
+.radarItem {
+  fill: var(--radar-primary);
+  cursor: pointer;
+  filter: drop-shadow(0 0 6px var(--radar-primary));
+  transition: transform 0.2s ease, filter 0.3s ease;
+}
+
+.radarItem:hover {
+  transform: scale(1.15);
+  filter: drop-shadow(0 0 12px var(--radar-primary));
+}
+
+/* Item hover text enhancement */
+.itemGroup:hover text {
+  font-size: 20px !important;
+  font-weight: bold !important;
+}
+
+/* Item circles based on impact */
+.itemCircleLowImpact { 
+  fill: var(--radar-success); 
+}
+
+.itemCircleMediumImpact { 
+  fill: var(--radar-accent); 
+}
+
+.itemCircleHighImpact { 
+  fill: var(--radar-danger); 
+}
+
+.itemCircleDefault { 
+  fill: var(--radar-primary); 
+}
+
+/* Opportunity ring styles */
+.opportunityLow { 
+  fill: none; 
+  stroke: var(--radar-success); 
+  stroke-width: 3; 
+}
+
+.opportunityMedium { 
+  fill: none; 
+  stroke: var(--radar-accent); 
+  stroke-width: 3; 
+}
+
+.opportunityHigh { 
+  fill: none; 
+  stroke: var(--radar-danger); 
+  stroke-width: 3; 
+}
+
+/* ==========================================
+   🗨️ TOOLTIP - INTERACTIVE PANELS
+   ========================================== */
+
+/* Tooltip placeholder when nothing selected */
+.tooltipPlaceholder {
+  width: 100%;
+  min-height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background: var(--radar-bg-tooltip);
+  backdrop-filter: blur(4px);
+  color: var(--radar-text-muted);
+  border-radius: 6px;
+  box-sizing: border-box;
+  padding: 24px;
+  transition: all 0.3s ease;
+  font-size: 13px;
+  letter-spacing: 0.3px;
+}
+
+/* Active tooltip content */
+.tooltip {
+  width: 100%;
+  box-sizing: border-box;
+  border-radius: 6px;
+  padding: 16px;
+  background: var(--radar-bg-panel);
+  backdrop-filter: blur(6px);
+  color: var(--radar-text-primary);
+  border: 1px solid var(--radar-border-subtle);
+  transition: all 0.3s ease;
+}
+
+/* Tooltip field rows */
+.row {
+  margin-bottom: 10px;
+  line-height: 1.6;
+  display: flex;
+  align-items: baseline;
+}
+
+.label {
+  font-weight: 600;
+  color: var(--radar-text-label);
+  margin-right: 10px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  min-width: 80px;
+}
+
+.value {
+  color: var(--radar-text-primary);
+  font-size: 13px;
+}
+
+/* Tooltip links */
+.link {
+  color: var(--radar-secondary);
+  text-decoration: none;
+  cursor: pointer;
+  border-bottom: 1px solid var(--radar-border-subtle);
+  transition: all 0.2s ease;
+}
+
+.link:hover {
+  color: var(--radar-hover-primary);
+  border-bottom-color: var(--radar-border-active);
+}
+
+/* Muted text styling */
+.mutedText {
+  color: var(--radar-text-muted);
+  font-style: italic;
+  font-size: 13px;
+  font-weight: 300;
+}
+
+/* ==========================================
+   🎮 INTERACTIVE ELEMENTS - BUTTONS
+   ========================================== */
+
+/* Primary create button */
+.createButton {
+  padding: 10px 15px;
+  width: 100%;
+  background-color: var(--radar-primary);
+  color: var(--radar-bg-main);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-bottom: 20px;
+  transition: background-color 0.3s;
+  font-family: var(--radar-font-family);
+}
+
+.createButton:hover {
+  background-color: var(--radar-hover-primary);
+}
+
+/* Edit button in tooltip */
+.editButton {
+  background-color: var(--radar-bg-button);
+  border: 1px solid var(--radar-border-subtle);
+  color: var(--radar-text-label);
+  padding: 6px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.25s ease;
+  margin-top: 16px;
+  width: auto;
+  font-size: 11px;
+  font-weight: 500;
+  font-family: var(--radar-font-family);
+}
+
+.editButton .editIcon {
+  color: var(--radar-accent);
+  font-size: 13px;
+}
+
+.editButton:hover {
+  background-color: rgba(0, 204, 136, 0.1);
+  border-color: var(--radar-border-active);
+  color: var(--radar-hover-primary);
+  transform: translateY(-1px);
+}
+
+.editButton:hover .editIcon {
+  color: var(--radar-hover-accent);
+}
+
+/* ==========================================
+   🔍 ZOOM CONTROLS - NAVIGATION
+   ========================================== */
+
+/* Zoom control container */
+.zoomBar {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 40px;
+  align-items: center;
+}
+
+.zoomControls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  width: 100%;
+}
+
+/* Zoom section title */
+.zoomTitle {
+  font-family: var(--radar-font-family);
+  font-size: 12px;
+  font-weight: bold;
+  color: var(--radar-secondary);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  width: 100%;
+  text-align: center;
+}
+
+/* Generic zoom button */
+.zoomButton {
+  background-color: var(--radar-bg-button);
+  border: 1px solid var(--radar-border-subtle);
+  color: var(--radar-text-label);
+  font-family: var(--radar-font-family);
+  font-size: 11px;
+  font-weight: 500;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 100%;
+  transition: all 0.25s ease;
+}
+
+.zoomButton:hover {
+  background-color: rgba(0, 204, 136, 0.1);
+  border-color: var(--radar-border-active);
+  color: var(--radar-hover-primary);
+  transform: translateY(-1px);
+}
+
+/* Active zoom button state */
+.active {
+  background-color: rgba(0, 204, 136, 0.3);
+  border-color: rgba(0, 255, 159, 0.5);
+  color: var(--radar-hover-primary);
+}
+
+/* Reset button variant */
+.resetButton {
+  background-color: rgba(255, 100, 100, 0.2);
+  border-color: rgba(255, 100, 100, 0.4);
+  color: var(--radar-danger);
+}
+
+.resetButton:hover {
+  background-color: rgba(255, 100, 100, 0.3);
+  border-color: rgba(255, 100, 100, 0.6);
+  color: var(--radar-danger);
+}
+
+/* Theme button styling */
+.themeButton {
+  background-color: var(--radar-bg-button);
+  border: 1px solid var(--radar-border-subtle);
+  color: var(--radar-text-label);
+  font-family: var(--radar-font-family);
+  font-size: 10px;
+  font-weight: 500;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 100%;
+  transition: all 0.25s ease;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  justify-content: center;
+}
+
+.themeButton:hover {
+  background-color: rgba(0, 204, 136, 0.1);
+  border-color: var(--radar-border-active);
+  color: var(--radar-hover-primary);
+  transform: translateY(-1px);
+}
+
+/* ==========================================
+   📱 RESPONSIVE DESIGN - MOBILE ADAPTATIONS
+   ========================================== */
+
+@media (max-width: 1024px) {
+  .tooltipPanel {
+    flex: none;
+    max-width: none;
+    padding: 16px;
+  }
+  
+  .label {
+    min-width: 60px;
+  }
+  
+  .radarContainer {
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .leftPanel {
+    max-width: none;
+    min-width: auto;
+  }
+  
+  .middlePanel {
+    min-width: auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .centeringWrapper {
+    padding: 16px;
+    gap: 16px;
+  }
+  
+  .radarContainer {
+    gap: 16px;
+  }
+  
+  .leftPanel {
+    padding: 16px;
+  }
+  
+  .zoomControls {
+    flex-direction: column;
+  }
+  
+  .zoomButton {
+    width: 100%;
+  }
+}
+
+/* ==========================================
+   🎨 THEME VARIANTS (for easy experimentation)
+   ========================================== */
+
+/* Dark theme variant (default) - Improved harmony with gradient */
+.darkTheme {
+  --radar-primary: #10b981;
+  --radar-secondary: #34d399;
+  --radar-accent: #fbbf24;
+  --radar-bg-main: radial-gradient(ellipse at center, #064e3b 0%, #030712 70%, #000000 100%);
+  --radar-text-primary: #f3f4f6;
+  --radar-text-secondary: #a7f3d0;
+  --radar-bg-panel: rgba(6, 78, 59, 0.8);
+  --radar-bg-tooltip: rgba(6, 95, 70, 0.9);
+  --radar-quadrant-dark: #064e3b;
+  --radar-quadrant-light: #065f46;
+}
+
+/* Light theme variant - Multi-color quadrant radar */
+.lightTheme {
+  --radar-primary: #1d4ed8;            /* blue radar base */
+  --radar-secondary: #2563eb;
+  --radar-accent: #dc2626;             /* red highlights */
+  --radar-danger: #dc2626;
+  --radar-success: #16a34a;
+
+  --radar-bg-main: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 50%, #cbd5e1 100%);
+  --radar-bg-panel: rgba(241, 245, 249, 0.9);
+  --radar-bg-tooltip: rgba(226, 232, 240, 0.95);
+  --radar-bg-button: rgba(29, 78, 216, 0.1);
+
+  --radar-text-primary: #0f172a;
+  --radar-text-secondary: #1e40af;
+  --radar-text-muted: #64748b;
+  --radar-text-label: #1d4ed8;
+
+  --radar-grid-primary: #374151;
+  --radar-grid-secondary: #6b7280;
+  --radar-quadrant-0: #dcfce7;         /* pastel green */
+  --radar-quadrant-1: #fecaca;         /* pastel red */
+  --radar-quadrant-2: #dbeafe;         /* pastel blue */
+  --radar-quadrant-3: #fef3c7;         /* pastel yellow */
+
+  --radar-hover-primary: #2563eb;
+  --radar-hover-accent: #fbbf24;
+
+  --radar-border-subtle: rgba(29, 78, 216, 0.2);
+  --radar-border-active: rgba(29, 78, 216, 0.5);
+}
+
+/* Optional enhancement: soft glow on hover */
+.lightTheme .radarItem:hover {
+  filter: drop-shadow(0 0 12px rgba(22, 163, 74, 0.6));
+}
+
+/* Cyberpunk theme variant - Classic radar neon green/pink with gradient */
+.cyberpunkTheme {
+  --radar-primary: #00ff41;
+  --radar-secondary: #39ff14;
+  --radar-accent: #ff1493;
+  --radar-danger: #ff073a;
+  --radar-success: #00ff00;
+  --radar-bg-main: radial-gradient(circle at 30% 70%, #001100 0%, #000000 50%, #110011 100%);
+  --radar-text-primary: #00ff41;
+  --radar-text-secondary: #39ff14;
+  --radar-bg-panel: rgba(0, 20, 0, 0.8);
+  --radar-bg-tooltip: rgba(0, 30, 0, 0.9);
+  --radar-quadrant-dark: #001100;
+  --radar-quadrant-light: #002200;
+}
+
+/* Ocean theme variant - Bright blue on black radar */
+.oceanTheme {
+  --radar-primary: #00d4ff;           /* bright cyan */
+  --radar-secondary: #0ea5e9;
+  --radar-accent: #38bdf8;
+  --radar-danger: #f472b6;
+  --radar-success: #00f5ff;
+
+  --radar-bg-main: radial-gradient(circle at 40% 60%, #001122 0%, #000000 100%);
+  --radar-bg-panel: rgba(0, 17, 34, 0.8);
+  --radar-bg-tooltip: rgba(0, 34, 68, 0.9);
+  --radar-bg-button: rgba(0, 212, 255, 0.1);
+
+  --radar-text-primary: #e0f7ff;
+  --radar-text-secondary: #7dd3fc;
+  --radar-text-muted: #38bdf8;
+  --radar-text-label: #00d4ff;
+
+  --radar-grid-primary: #00d4ff;
+  --radar-grid-secondary: #0ea5e9;
+  --radar-quadrant-dark: #001122;
+  --radar-quadrant-light: #002244;
+}
+
+/* Galaxy theme variant - Cosmic space radar */
+.sunsetTheme {
+  --radar-primary: #a855f7;           /* cosmic purple */
+  --radar-secondary: #c084fc;
+  --radar-accent: #06b6d4;            /* cyan stars */
+  --radar-danger: #f472b6;
+  --radar-success: #34d399;
+
+  --radar-bg-main: radial-gradient(ellipse at 30% 70%, #1e1b4b 0%, #0f0f23 40%, #000000 100%);
+  --radar-bg-panel: rgba(30, 27, 75, 0.8);
+  --radar-bg-tooltip: rgba(15, 15, 35, 0.9);
+  --radar-bg-button: rgba(168, 85, 247, 0.1);
+
+  --radar-text-primary: #e0e7ff;
+  --radar-text-secondary: #c4b5fd;
+  --radar-text-muted: #a78bfa;
+  --radar-text-label: #a855f7;
+
+  --radar-grid-primary: #a855f7;
+  --radar-grid-secondary: #c084fc;
+  --radar-quadrant-dark: #1e1b4b;
+  --radar-quadrant-light: #312e81;
+
+  --radar-hover-primary: #fbbf24;
+  --radar-hover-accent: #facc15;
+
+  --radar-border-subtle: rgba(251, 146, 60, 0.2);
+  --radar-border-active: rgba(251, 146, 60, 0.5);
+}
+
+/* Add a glowing heat shimmer effect */
+.sunsetTheme .radarWrapper {
+  background: radial-gradient(circle at center, rgba(251, 146, 60, 0.08), transparent 70%);
+  animation: sunsetPulse 8s ease-in-out infinite;
+}
+
+@keyframes sunsetPulse {
+  0%, 100% { box-shadow: 0 0 30px rgba(251, 146, 60, 0.1); }
+  50% { box-shadow: 0 0 60px rgba(251, 146, 60, 0.25); }
+}
+
+/* Hover glow for high impact */
+.sunsetTheme .itemCircleHighImpact:hover {
+  filter: drop-shadow(0 0 16px rgba(239, 68, 68, 0.9));
+}
