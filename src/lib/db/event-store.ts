@@ -54,7 +54,7 @@ if (typeof global !== 'undefined') {
 import('@/lib/domain/event-log/projection');
 
 let _projectionsLoaded = false;
-const ensureProjectionHandlersLoaded = async () => {
+export const ensureProjectionHandlersLoaded = async () => {
   if (_projectionsLoaded) return;
   console.log('Loading projection handlers...');
   await Promise.all([
@@ -62,7 +62,9 @@ const ensureProjectionHandlersLoaded = async () => {
     import('@/lib/domain/initiatives-linking/projection'),
     import('@/lib/domain/initiatives-catalog/projection'),
     import('@/lib/domain/companies/projection'), // Add companies projection handler for live updates
+    import('@/lib/domain/initiative-kanban-status-mapped-projection/kanbanProjection'), // Add kanban projection handler
   ]);
+  console.log('All projection handlers loaded');
   _projectionsLoaded = true;
 };
 
