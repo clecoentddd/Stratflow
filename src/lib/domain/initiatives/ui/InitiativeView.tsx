@@ -182,17 +182,17 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
   };
 
   const handleAddInitiativeItem = (stepKey: InitiativeStepKey) => {
-    const tempId = `temp-${uuidv4()}`;
-    const newItem: InitiativeItemType = { id: tempId, text: "" };
-    
-    setInitiative(prev => {
-        const newInitiative = JSON.parse(JSON.stringify(prev));
-        const step = newInitiative.steps.find((s: any) => s.key === stepKey);
-        if (step) {
-            step.items.push(newItem);
-        }
-        return newInitiative;
-    });
+  const tempId = `temp-${uuidv4()}`;
+  const newItem: InitiativeItemType = { id: tempId, text: "" };
+  console.log('[UI] Adding new initiative item (optimistic):', { tempId, stepKey });
+  setInitiative(prev => {
+    const newInitiative = JSON.parse(JSON.stringify(prev));
+    const step = newInitiative.steps.find((s: any) => s.key === stepKey);
+    if (step) {
+      step.items.push(newItem);
+    }
+    return newInitiative;
+  });
   };
   
   const handleSaveInitiativeItem = (itemId: string, newText: string, stepKey: InitiativeStepKey) => {
@@ -202,42 +202,43 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
     }
 
     if (itemId.startsWith('temp-')) {
-        // CREATE (POST)
-        const command: AddInitiativeItemCommand = {
-            initiativeId: initiative.id,
-            stepKey,
-            item: { text: newText }, 
-        };
-        
-        const optimisticInitiative = { ...initiative };
-        const step = optimisticInitiative.steps.find(s => s.key === stepKey);
-        if(step) {
-            const item = step.items.find(i => i.id === itemId);
-            if(item) item.text = newText;
-        }
-        setInitiative(optimisticInitiative);
+    // CREATE (POST)
+    const command: AddInitiativeItemCommand = {
+      initiativeId: initiative.id,
+      stepKey,
+      item: { text: newText }, 
+    };
+    console.log('[UI] Sending addInitiativeItem command:', { orgId, command });
+    const optimisticInitiative = { ...initiative };
+    const step = optimisticInitiative.steps.find(s => s.key === stepKey);
+    if(step) {
+      const item = step.items.find(i => i.id === itemId);
+      if(item) item.text = newText;
+    }
+    setInitiative(optimisticInitiative);
 
-        addInitiativeItem(orgId, command)
-        .then(async res => {
-            if(!res.ok) {
-              const errorData = await res.json().catch(() => ({}));
-              throw new Error(errorData.message || "Server failed to create item.");
-            }
-            return res.json();
-        })
-        .then((savedItem: InitiativeItemType) => {
-            toast({ 
-                title: "Success", 
-                description: "Initiative Item Saved",
-                variant: "default"
-            });
-            onInitiativeChange(); 
-        })
-        .catch(err => {
-            console.error(err);
-            toast({ title: "Error", description: err.message, variant: "destructive" });
-            onInitiativeChange(); // Hard refresh on failure
-        });
+    addInitiativeItem(orgId, command)
+    .then(async res => {
+      if(!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.message || "Server failed to create item.");
+      }
+      return res.json();
+    })
+    .then((savedItem: InitiativeItemType) => {
+      console.log('[UI] Initiative item created on server:', savedItem);
+      toast({ 
+        title: "Success", 
+        description: "Initiative Item Saved",
+        variant: "default"
+      });
+      onInitiativeChange(); 
+    })
+    .catch(err => {
+      console.error('[UI] Error creating initiative item:', err);
+      toast({ title: "Error", description: err.message, variant: "destructive" });
+      onInitiativeChange(); // Hard refresh on failure
+    });
     } else {
         // UPDATE (PUT)
         const command: UpdateInitiativeItemCommand = { initiativeId: initiative.id, itemId, text: newText };

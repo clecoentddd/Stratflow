@@ -148,7 +148,7 @@ export function StrategyView({
         strategyId: strategy.id, 
         name: newInitiativeName.trim(),
     };
-    
+
     setStrategy(prev => {
         const newInitiative: Initiative = {
             id: tempId,
@@ -167,18 +167,28 @@ export function StrategyView({
           initiatives: [...prev.initiatives, newInitiative]
         };
     });
-    
+
     setNewInitiativeName("");
-    
+
     try {
         const response = await fetch(`/api/initiatives?teamId=${orgId}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ ...command, teamId: orgId }),
+            body: JSON.stringify({ ...command, teamId: orgId, tempId }),
         });
         if (!response.ok) {
             const errorData = await response.json().catch(() => ({}));
             throw new Error(errorData.message || 'Failed to create initiative.');
+        }
+        const data = await response.json();
+        // Reconcile tempId with real initiativeId
+        if (data && data.initiative && data.tempId && data.initiative.id) {
+          setStrategy(prev => {
+            const initiatives = prev.initiatives.map(i =>
+              i.id === data.tempId ? { ...data.initiative } : i
+            );
+            return { ...prev, initiatives };
+          });
         }
         toast({ title: "Success", description: `Initiative "${command.name}" created.` });
         onStrategyChange();

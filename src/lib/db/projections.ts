@@ -201,33 +201,39 @@ export const applyEventsToTeam = (
           };
 
       // --- Initiative Item Events ---
-      case 'InitiativeItemAdded':
-        return {
-            ...team,
-            dashboard: {
-                ...team.dashboard,
-                strategies: team.dashboard.strategies.map(s => ({
-                    ...s,
-                    initiatives: s.initiatives.map(i => {
-                        if (i.id !== event.metadata?.initiativeId) return i;
-                        return {
-                            ...i,
-                            steps: i.steps.map(step => 
-                                step.key === event.payload.stepKey 
-                                    ? { 
-                                        ...step, 
-                                        items: [...step.items, { 
-                                          id: event.metadata!.itemId, 
-                                          ...event.payload.item 
-                                        }] 
-                                      } 
-                                    : step
-                            )
-                        };
-                    })
-                }))
-            }
-        };
+    case 'InitiativeItemAdded':
+    console.log('[PROJECTION] InitiativeItemAdded: initiativeId', event.metadata?.initiativeId, 'itemId', event.metadata?.itemId, 'stepKey', event.payload.stepKey);
+    const foundStrategyIds = team.dashboard.strategies.map(s => s.id);
+    const foundInitiativeIds = team.dashboard.strategies.flatMap(s => s.initiatives.map(i => i.id));
+    console.log('[PROJECTION] Current strategyIds:', foundStrategyIds);
+    console.log('[PROJECTION] Current initiativeIds:', foundInitiativeIds);
+    return {
+      ...team,
+      dashboard: {
+        ...team.dashboard,
+        strategies: team.dashboard.strategies.map(s => ({
+          ...s,
+          initiatives: s.initiatives.map(i => {
+            if (i.id !== event.metadata?.initiativeId) return i;
+            console.log('[PROJECTION] Adding item to initiative:', i.id, 'stepKey:', event.payload.stepKey);
+            return {
+              ...i,
+              steps: i.steps.map(step => 
+                step.key === event.payload.stepKey 
+                  ? { 
+                    ...step, 
+                    items: [...step.items, { 
+                      id: event.metadata!.itemId, 
+                      ...event.payload.item 
+                    }] 
+                    } 
+                  : step
+              )
+            };
+          })
+        }))
+      }
+    };
 
       case 'InitiativeItemUpdated':
          return {
@@ -310,7 +316,7 @@ export const applyEventsToCompany = (
 export const getTeamsProjection = async (): Promise<Team[]> => {
   const allEvents = await _getAllEvents();
   const teamEvents = allEvents.filter(e => e.entity === 'team') as TeamEvent[];
-  
+
   const eventsByAggId: Record<string, TeamEvent[]> = {};
   teamEvents.forEach(event => {
     if (!eventsByAggId[event.aggregateId]) {
@@ -318,11 +324,11 @@ export const getTeamsProjection = async (): Promise<Team[]> => {
     }
     eventsByAggId[event.aggregateId].push(event);
   });
-  
+
   const projection: Record<string, Team> = {};
   for (const aggregateId in eventsByAggId) {
     const aggregateEvents = eventsByAggId[aggregateId];
-    // Important: ensure TeamCreated is applied first, then sort remaining by timestamp
+    // Ensure TeamCreated is first, then ALL other events strictly by timestamp
     aggregateEvents.sort((a, b) => {
       if (a.type === 'TeamCreated' && b.type !== 'TeamCreated') return -1;
       if (b.type === 'TeamCreated' && a.type !== 'TeamCreated') return 1;
@@ -333,7 +339,7 @@ export const getTeamsProjection = async (): Promise<Team[]> => {
       projection[aggregateId] = team;
     }
   }
-  
+
   return Object.values(projection);
 };
 

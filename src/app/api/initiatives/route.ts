@@ -9,12 +9,14 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const teamId = request.nextUrl.searchParams.get('teamId') ?? body.teamId;
+    const tempId = body.tempId;
     const command: CreateInitiativeCommand = body;
 
     if (!teamId) return NextResponse.json({ message: 'teamId is required (query or body)' }, { status: 400 });
 
     const result = await InitiativesCommandHandlers.handleCreateInitiative(teamId, command);
-    return NextResponse.json(result, { status: 201 });
+    // Return the real initiative id and the tempId for frontend reconciliation
+    return NextResponse.json({ ...result, tempId }, { status: 201 });
 
   } catch (error) {
     console.error('Failed to create initiative:', error);
