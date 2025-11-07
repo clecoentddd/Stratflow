@@ -14,7 +14,11 @@ console.log('[KANBAN PROJECTION] Module loaded, registering handlers');
 
 // Register event handlers
 registerProjectionHandler('InitiativeItemAdded', (event: any) => {
-  console.log('[KANBAN PROJECTION] InitiativeItemAdded handler invoked', { eventType: event.type });
+  console.log('[KANBAN PROJECTION] 📥 HANDLER: InitiativeItemAdded handler invoked', {
+    eventType: event.type,
+    hasPayload: !!event.payload,
+    hasMetadata: !!event.metadata
+  });
   if (event.type !== 'InitiativeItemAdded') return;
 
   const { stepKey, item } = event.payload || {};
@@ -23,40 +27,64 @@ registerProjectionHandler('InitiativeItemAdded', (event: any) => {
   const itemId = meta?.itemId;
   const teamId = meta?.teamId || 'unknown';
 
-  console.log('[KANBAN PROJECTION] Processing InitiativeItemAdded:', { stepKey, initiativeId, itemId, teamId });
+  console.log('[KANBAN PROJECTION] 📥 HANDLER: Processing InitiativeItemAdded:', {
+    stepKey,
+    initiativeId,
+    itemId,
+    teamId,
+    itemText: item?.text,
+    itemKeys: item ? Object.keys(item) : []
+  });
 
   if (!initiativeId || !itemId) {
-    console.warn('[KANBAN PROJECTION] Missing initiativeId or itemId:', { initiativeId, itemId });
+    console.warn('[KANBAN PROJECTION] ❌ HANDLER: Missing initiativeId or itemId:', { initiativeId, itemId });
     return;
   }
 
   if (!teamId || teamId === 'unknown') {
-    console.warn('[KANBAN PROJECTION] Missing or unknown teamId:', { teamId });
+    console.warn('[KANBAN PROJECTION] ❌ HANDLER: Missing or unknown teamId:', { teamId });
     return;
   }
 
   if (!KANBAN_STEP_KEYS.includes(stepKey)) {
-    console.log('[KANBAN PROJECTION] Skipping non-kanban step:', { stepKey });
+    console.log('[KANBAN PROJECTION] ⏭️ HANDLER: Skipping non-kanban step:', { stepKey, validSteps: KANBAN_STEP_KEYS });
     return;
   }
 
-  if (!kanbanBoard[teamId]) kanbanBoard[teamId] = [];
+  console.log('[KANBAN PROJECTION] ✅ HANDLER: Adding item to kanban board:', { teamId, itemId, initiativeId });
 
-  kanbanBoard[teamId].push({
+  if (!kanbanBoard[teamId]) {
+    kanbanBoard[teamId] = [];
+    console.log('[KANBAN PROJECTION] 🆕 HANDLER: Created new team array for:', teamId);
+  }
+
+  const newItem: KanbanBoardItem = {
     itemId,
     initiativeId,
     teamId,
     name: '',
     text: item?.text || '',
-    status: 'ToDo',
-  });
+    status: 'ToDo' as KanbanStatus,
+  };
 
-  console.log('[KANBAN PROJECTION] Added item to kanbanBoard:', { teamId, itemId, initiativeId, text: item?.text });
-  console.log('[KANBAN PROJECTION] Current board state:', Object.keys(kanbanBoard).map(teamId => ({ teamId, count: kanbanBoard[teamId].length })));
+  kanbanBoard[teamId].push(newItem);
+
+  console.log('[KANBAN PROJECTION] ✅ HANDLER: Added item to kanbanBoard:', {
+    teamId,
+    itemId,
+    initiativeId,
+    text: item?.text,
+    newItemCount: kanbanBoard[teamId].length
+  });
+  console.log('[KANBAN PROJECTION] 📊 HANDLER: Current board state:', Object.keys(kanbanBoard).map(teamId => ({ teamId, count: kanbanBoard[teamId].length })));
 });
 
 registerProjectionHandler('InitiativeItemUpdated', (event: any) => {
-  console.log('[KANBAN PROJECTION] InitiativeItemUpdated handler invoked');
+  console.log('[KANBAN PROJECTION] 📥 HANDLER: InitiativeItemUpdated handler invoked', {
+    eventType: event.type,
+    hasPayload: !!event.payload,
+    hasMetadata: !!event.metadata
+  });
   if (event.type !== 'InitiativeItemUpdated') return;
 
   const { text } = event.payload || {};
@@ -64,39 +92,88 @@ registerProjectionHandler('InitiativeItemUpdated', (event: any) => {
   const initiativeId = meta?.initiativeId;
   const itemId = meta?.itemId;
 
-  if (!initiativeId || !itemId) return;
+  console.log('[KANBAN PROJECTION] 📥 HANDLER: Processing InitiativeItemUpdated:', {
+    initiativeId,
+    itemId,
+    newText: text
+  });
 
+  if (!initiativeId || !itemId) {
+    console.warn('[KANBAN PROJECTION] ❌ HANDLER: Missing initiativeId or itemId:', { initiativeId, itemId });
+    return;
+  }
+
+  let updated = false;
   Object.values(kanbanBoard).forEach(items => {
     const idx = items.findIndex(i => i.itemId === itemId && i.initiativeId === initiativeId);
     if (idx !== -1) {
+      const oldText = items[idx].text;
       items[idx].text = text;
-      console.log('[KANBAN PROJECTION] Updated item text:', { itemId, text });
+      updated = true;
+      console.log('[KANBAN PROJECTION] ✅ HANDLER: Updated item text:', {
+        itemId,
+        oldText,
+        newText: text,
+        initiativeId
+      });
     }
   });
+
+  if (!updated) {
+    console.warn('[KANBAN PROJECTION] ❌ HANDLER: Item not found for text update:', { itemId, initiativeId });
+  }
 });
 
 registerProjectionHandler('InitiativeItemDeleted', (event: any) => {
-  console.log('[KANBAN PROJECTION] InitiativeItemDeleted handler invoked');
+  console.log('[KANBAN PROJECTION] 📥 HANDLER: InitiativeItemDeleted handler invoked', {
+    eventType: event.type,
+    hasPayload: !!event.payload,
+    hasMetadata: !!event.metadata
+  });
   if (event.type !== 'InitiativeItemDeleted') return;
 
   const meta = event.metadata as { initiativeId: string; itemId: string };
   const initiativeId = meta?.initiativeId;
   const itemId = meta?.itemId;
 
-  if (!initiativeId || !itemId) return;
+  console.log('[KANBAN PROJECTION] 📥 HANDLER: Processing InitiativeItemDeleted:', {
+    initiativeId,
+    itemId
+  });
 
+  if (!initiativeId || !itemId) {
+    console.warn('[KANBAN PROJECTION] ❌ HANDLER: Missing initiativeId or itemId:', { initiativeId, itemId });
+    return;
+  }
+
+  let removed = false;
   Object.keys(kanbanBoard).forEach(teamId => {
     const beforeCount = kanbanBoard[teamId].length;
     kanbanBoard[teamId] = kanbanBoard[teamId].filter(i => !(i.itemId === itemId && i.initiativeId === initiativeId));
     const afterCount = kanbanBoard[teamId].length;
     if (beforeCount !== afterCount) {
-      console.log('[KANBAN PROJECTION] Removed item from team:', { teamId, itemId, removed: beforeCount - afterCount });
+      removed = true;
+      console.log('[KANBAN PROJECTION] ✅ HANDLER: Removed item from team:', {
+        teamId,
+        itemId,
+        initiativeId,
+        removedCount: beforeCount - afterCount,
+        remainingCount: afterCount
+      });
     }
   });
+
+  if (!removed) {
+    console.warn('[KANBAN PROJECTION] ❌ HANDLER: Item not found for deletion:', { itemId, initiativeId });
+  }
 });
 
 registerProjectionHandler('ItemKanbanStatusMapped', (event: any) => {
-  console.log('[KANBAN PROJECTION] ItemKanbanStatusMapped handler invoked');
+  console.log('[KANBAN PROJECTION] 📥 HANDLER: ItemKanbanStatusMapped handler invoked', {
+    eventType: event.type,
+    hasPayload: !!event.payload,
+    hasMetadata: !!event.metadata
+  });
   if (event.type !== 'ItemKanbanStatusMapped') return;
 
   const { metadata, payload } = event;
@@ -106,14 +183,42 @@ registerProjectionHandler('ItemKanbanStatusMapped', (event: any) => {
   const itemId = meta?.itemId;
   const status = payload?.status;
 
-  if (!teamId || !itemId) return;
+  console.log('[KANBAN PROJECTION] 📥 HANDLER: Processing ItemKanbanStatusMapped:', {
+    teamId,
+    initiativeId,
+    itemId,
+    status,
+    payloadKeys: payload ? Object.keys(payload) : []
+  });
 
-  if (!kanbanBoard[teamId]) kanbanBoard[teamId] = [];
+  if (!teamId || !itemId) {
+    console.warn('[KANBAN PROJECTION] ❌ HANDLER: Missing teamId or itemId:', { teamId, itemId });
+    return;
+  }
+
+  if (!kanbanBoard[teamId]) {
+    kanbanBoard[teamId] = [];
+    console.log('[KANBAN PROJECTION] 🆕 HANDLER: Created new team array for status mapping:', teamId);
+  }
 
   const idx = kanbanBoard[teamId].findIndex(i => i.itemId === itemId && i.initiativeId === initiativeId);
   if (idx !== -1) {
+    const oldStatus = kanbanBoard[teamId][idx].status;
     kanbanBoard[teamId][idx].status = status;
-    console.log('[KANBAN PROJECTION] Updated item status:', { itemId, status });
+    console.log('[KANBAN PROJECTION] ✅ HANDLER: Updated item status:', {
+      itemId,
+      oldStatus,
+      newStatus: status,
+      teamId,
+      initiativeId
+    });
+  } else {
+    console.warn('[KANBAN PROJECTION] ❌ HANDLER: Item not found for status update:', {
+      itemId,
+      initiativeId,
+      teamId,
+      availableItems: kanbanBoard[teamId].map(i => ({ itemId: i.itemId, initiativeId: i.initiativeId }))
+    });
   }
 });
 
@@ -149,47 +254,76 @@ export async function getKanbanBoardForTeam(teamId: string): Promise<KanbanBoard
 }
 
 export async function emptyKanbanProjection() {
-  console.log('[KANBAN PROJECTION] Emptying kanbanBoard');
+  console.log('[KANBAN PROJECTION] 🔄 EMPTY: Starting emptyKanbanProjection');
+  console.log('[KANBAN PROJECTION] 🔄 EMPTY: Current board state before empty:', Object.keys(kanbanBoard).map(teamId => ({ teamId, count: kanbanBoard[teamId].length })));
   Object.keys(kanbanBoard).forEach(teamId => {
     kanbanBoard[teamId] = [];
   });
-  console.log('[KANBAN PROJECTION] Board emptied, current state:', Object.keys(kanbanBoard).map(teamId => ({ teamId, count: kanbanBoard[teamId].length })));
+  console.log('[KANBAN PROJECTION] ✅ EMPTY: Board emptied successfully');
+  console.log('[KANBAN PROJECTION] ✅ EMPTY: Final board state:', Object.keys(kanbanBoard).map(teamId => ({ teamId, count: kanbanBoard[teamId].length })));
 }
 
 export async function rebuildKanbanProjection() {
-  console.log('[KANBAN PROJECTION] Starting kanbanBoard rebuild');
+  console.log('[KANBAN PROJECTION] 🔄 REBUILD: Starting rebuildKanbanProjection');
+  console.log('[KANBAN PROJECTION] 🔄 REBUILD: Current board state before rebuild:', Object.keys(kanbanBoard).map(teamId => ({ teamId, count: kanbanBoard[teamId].length })));
 
   await emptyKanbanProjection();
 
+  console.log('[KANBAN PROJECTION] 🔄 REBUILD: Board emptied, now loading events');
+
   const allEvents = await _getAllEvents();
-  console.log(`[KANBAN PROJECTION] Loaded ${allEvents.length} events from event store`);
+  console.log(`[KANBAN PROJECTION] 🔄 REBUILD: Loaded ${allEvents.length} events from event store`);
 
   if (!Array.isArray(allEvents)) {
-    console.warn('[KANBAN PROJECTION] No events array returned from _getAllEvents');
+    console.warn('[KANBAN PROJECTION] ❌ REBUILD: No events array returned from _getAllEvents');
     return;
   }
 
-  // Ensure projection handlers are loaded before dispatching events
-  console.log('[KANBAN PROJECTION] Ensuring projection handlers are loaded');
-  const { ensureProjectionHandlersLoaded } = await import('@/lib/db/event-store');
-  await ensureProjectionHandlersLoaded();
+  console.log('[KANBAN PROJECTION] 🔄 REBUILD: All events to process:', allEvents.map(e => ({ type: e.type, entity: e.entity, aggregateId: e.aggregateId })));
 
-  console.log('[KANBAN PROJECTION] Dispatching events to handlers');
+  console.log('[KANBAN PROJECTION] 🔄 REBUILD: Dispatching events to handlers');
+  let dispatchedCount = 0;
+  let processedCount = 0;
+
   for (const event of allEvents) {
-    console.log('[KANBAN PROJECTION] Processing event:', {
+    console.log(`[KANBAN PROJECTION] 🔄 REBUILD: Processing event ${processedCount + 1}/${allEvents.length}:`, {
       type: event.type,
       entity: event.entity,
       aggregateId: event.aggregateId,
-      hasMetadata: 'metadata' in event
+      hasMetadata: 'metadata' in event,
+      payloadKeys: event.payload ? Object.keys(event.payload) : 'no payload'
     });
 
+    const boardStateBefore = Object.keys(kanbanBoard).reduce((acc, teamId) => {
+      acc[teamId] = kanbanBoard[teamId].length;
+      return acc;
+    }, {} as Record<string, number>);
+
     if (typeof (global as any).dispatchProjectionHandlers === 'function') {
-      console.log('[KANBAN PROJECTION] Dispatching event to handlers:', event.type);
+      console.log('[KANBAN PROJECTION] 🔄 REBUILD: Dispatching event to handlers:', event.type);
       (global as any).dispatchProjectionHandlers(event);
+      dispatchedCount++;
+      console.log('[KANBAN PROJECTION] ✅ REBUILD: Event dispatched successfully');
     } else {
-      console.warn('[KANBAN PROJECTION] dispatchProjectionHandlers not found on global');
+      console.warn('[KANBAN PROJECTION] ❌ REBUILD: dispatchProjectionHandlers not found on global');
     }
+
+    const boardStateAfter = Object.keys(kanbanBoard).reduce((acc, teamId) => {
+      acc[teamId] = kanbanBoard[teamId].length;
+      return acc;
+    }, {} as Record<string, number>);
+
+    const stateChanged = JSON.stringify(boardStateBefore) !== JSON.stringify(boardStateAfter);
+    console.log(`[KANBAN PROJECTION] 🔄 REBUILD: Board state ${stateChanged ? 'CHANGED' : 'UNCHANGED'} after event:`, {
+      before: boardStateBefore,
+      after: boardStateAfter
+    });
+
+    processedCount++;
   }
 
-  console.log('[KANBAN PROJECTION] Rebuild complete. Final board state:', Object.keys(kanbanBoard).map(teamId => ({ teamId, count: kanbanBoard[teamId].length })));
+  console.log(`[KANBAN PROJECTION] ✅ REBUILD: Dispatched ${dispatchedCount} events to handlers out of ${allEvents.length} total events`);
+
+  console.log('[KANBAN PROJECTION] ✅ REBUILD: Rebuild complete. Final board state:', Object.keys(kanbanBoard).map(teamId => ({ teamId, count: kanbanBoard[teamId].length })));
+  console.log('[KANBAN PROJECTION] ✅ REBUILD: Final board details:', kanbanBoard);
 }

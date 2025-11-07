@@ -126,7 +126,6 @@ export const saveEvents = async (newEvents: AllEvents[]): Promise<void> => {
     
     // Dispatch events to live projection handlers
     (async () => {
-      await ensureProjectionHandlersLoaded();
       newEvents.forEach(event => dispatchProjectionHandlers(event));
       resolve();
     })();

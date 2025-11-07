@@ -7,6 +7,7 @@ import { InitiativeLinksProjectionControls } from '@/lib/domain/initiatives-link
 
 import { InitiativeKanbanProjectionControls } from '@/lib/domain/initiative-kanban/ui/InitiativeKanbanProjectionControls';
 import { AllTeamsKanbanBoard } from '@/lib/domain/initiative-kanban/ui/AllTeamsKanbanBoard';
+import '@/lib/domain/initiative-kanban-status-mapped-projection/kanbanProjection'; // Ensure kanban handlers are registered
 
 import { InitiativeCatalogProjectionControls } from '@/lib/domain/initiatives-catalog/ui/InitiativeCatalogProjectionControls';
 
