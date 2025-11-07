@@ -6,6 +6,7 @@ import type { ItemKanbanStatusMappedEvent } from '@/lib/domain/initiative-kanban
 
 // In-memory projection (replace with persistent store as needed)
 const kanbanBoard: Record<string, KanbanBoardItem[]> = {};
+let _projectionBuilt = false;
 
 const KANBAN_STEP_KEYS = ['actions', 'proximateObjectives'];
 
@@ -117,7 +118,14 @@ registerProjectionHandler('ItemKanbanStatusMapped', (event: any) => {
 });
 
 // Query: Return all Kanban items grouped by team as an array for UI compatibility
-export function queryKanbanBoard() {
+export async function queryKanbanBoard() {
+  // Ensure projection is built before returning data
+  if (!_projectionBuilt) {
+    console.log('[KANBAN PROJECTION] Projection not built yet, rebuilding...');
+    await rebuildKanbanProjection();
+    _projectionBuilt = true;
+  }
+
   console.log('[KANBAN PROJECTION] queryKanbanBoard called');
   const result = Object.keys(kanbanBoard).map(teamId => ({
     teamId,
@@ -127,7 +135,14 @@ export function queryKanbanBoard() {
   return result;
 }
 
-export function getKanbanBoardForTeam(teamId: string): KanbanBoardItem[] {
+export async function getKanbanBoardForTeam(teamId: string): Promise<KanbanBoardItem[]> {
+  // Ensure projection is built before returning data
+  if (!_projectionBuilt) {
+    console.log('[KANBAN PROJECTION] Projection not built yet, rebuilding...');
+    await rebuildKanbanProjection();
+    _projectionBuilt = true;
+  }
+
   const items = kanbanBoard[teamId] || [];
   console.log('[KANBAN PROJECTION] getKanbanBoardForTeam called for teamId:', teamId, 'items:', items.length);
   return items;
