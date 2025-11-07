@@ -16,7 +16,7 @@ export function useKanbanBoard(teamId: string): KanbanBoardResult {
 
   useEffect(() => {
     console.log('[KANBAN UI] ===== STARTING KANBAN BOARD LOAD =====');
-    console.log('[KANBAN UI] Team ID:', teamId);
+    console.log('[KANBAN UI] 🔍 ROOT CAUSE ANALYSIS: Team ID being queried:', teamId);
     console.log('[KANBAN UI] 🔄 UI Slice: Calling API endpoint (proper decoupling)');
 
     const loadBoard = async () => {
@@ -24,41 +24,44 @@ export function useKanbanBoard(teamId: string): KanbanBoardResult {
       setLoading(true);
 
       try {
-        console.log('[KANBAN UI] 📡 Making API call to /api/initiative-kanban-status-mapped-projection/team/', teamId);
-        const response = await fetch(`/api/initiative-kanban-status-mapped-projection/team/${teamId}`);
+        const apiUrl = `/api/initiative-kanban-status-mapped-projection/team/${teamId}`;
+        console.log('[KANBAN UI] 📡 Making API call to:', apiUrl);
+
+        const response = await fetch(apiUrl);
+        console.log('[KANBAN UI] 📡 API response status:', response.status, response.statusText);
 
         if (!response.ok) {
           throw new Error(`API call failed: ${response.status} ${response.statusText}`);
         }
 
         const items: KanbanBoardItem[] = await response.json();
-        console.log('[KANBAN UI] ✅ API call successful, received items:', items);
-        console.log('[KANBAN UI] Items array length:', items.length);
-        console.log('[KANBAN UI] Items details:', JSON.stringify(items, null, 2));
+        console.log('[KANBAN UI] ✅ API call successful, received items array:', items);
+        console.log('[KANBAN UI] 📊 RAW API RESPONSE - Items count:', items.length);
+        console.log('[KANBAN UI] 📊 RAW API RESPONSE - Full items data:', JSON.stringify(items, null, 2));
 
-        console.log('[KANBAN UI] Filtering items by status...');
+        console.log('[KANBAN UI] 🔍 ROOT CAUSE: Filtering items by status...');
         const toDoItems = items.filter((i: KanbanBoardItem) => {
           const match = i.status === 'ToDo';
-          console.log(`[KANBAN UI] Item ${i.itemId}: status="${i.status}" matches ToDo=${match}`);
+          console.log(`[KANBAN UI] 🔍 Item ${i.itemId} (team: ${i.teamId}): status="${i.status}" matches ToDo=${match}`);
           return match;
         });
 
         const doingItems = items.filter((i: KanbanBoardItem) => {
           const match = i.status === 'Doing';
-          console.log(`[KANBAN UI] Item ${i.itemId}: status="${i.status}" matches Doing=${match}`);
+          console.log(`[KANBAN UI] 🔍 Item ${i.itemId} (team: ${i.teamId}): status="${i.status}" matches Doing=${match}`);
           return match;
         });
 
         const doneItems = items.filter((i: KanbanBoardItem) => {
           const match = i.status === 'Done';
-          console.log(`[KANBAN UI] Item ${i.itemId}: status="${i.status}" matches Done=${match}`);
+          console.log(`[KANBAN UI] 🔍 Item ${i.itemId} (team: ${i.teamId}): status="${i.status}" matches Done=${match}`);
           return match;
         });
 
-        console.log('[KANBAN UI] Filtered results:');
-        console.log('[KANBAN UI] - ToDo items:', toDoItems.length);
-        console.log('[KANBAN UI] - Doing items:', doingItems.length);
-        console.log('[KANBAN UI] - Done items:', doneItems.length);
+        console.log('[KANBAN UI] 🔍 ROOT CAUSE - Filtered results:');
+        console.log('[KANBAN UI] - ToDo items:', toDoItems.length, toDoItems);
+        console.log('[KANBAN UI] - Doing items:', doingItems.length, doingItems);
+        console.log('[KANBAN UI] - Done items:', doneItems.length, doneItems);
 
         const newBoard = {
           ToDo: toDoItems,
@@ -66,7 +69,7 @@ export function useKanbanBoard(teamId: string): KanbanBoardResult {
           Done: doneItems,
         };
 
-        console.log('[KANBAN UI] Setting board state:', newBoard);
+        console.log('[KANBAN UI] 🔍 ROOT CAUSE - Final board state:', newBoard);
         setBoard(newBoard);
 
         console.log('[KANBAN UI] ✅ Board state updated successfully');

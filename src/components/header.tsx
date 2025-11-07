@@ -75,12 +75,25 @@ export function AppHeader({ companyName }: AppHeaderProps) {
           >
             Horizon
           </Link>
-          <Link
-            href={hasCompany ? `/kanban?companyId=${companyId}` : `/kanban`}
-            className="text-sm px-2 py-1 rounded-md hover:bg-accent hover:text-accent-foreground"
-          >
-            Kanban
-          </Link>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="text-sm px-2 py-1 rounded-md hover:bg-accent hover:text-accent-foreground">
+                Kanban ▼
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start">
+              <DropdownMenuItem asChild>
+                <Link href={hasCompany ? `/kanban?companyId=${companyId}` : `/kanban`}>
+                  Teams Initiatives
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/monitoring?view=kanban">
+                  Initiative Actions and Objectives
+                </Link>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
           <Link href="/monitoring" className="text-sm px-2 py-1 rounded-md hover:bg-accent hover:text-accent-foreground">Monitoring</Link>
         </nav>
       <DropdownMenu>

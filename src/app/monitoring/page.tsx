@@ -6,6 +6,7 @@ import { TeamsProjectionControls } from '@/lib/domain/teams/ui/TeamsProjectionCo
 import { InitiativeLinksProjectionControls } from '@/lib/domain/initiatives-linking/ui/InitiativeLinksProjectionControls';
 
 import { InitiativeKanbanProjectionControls } from '@/lib/domain/initiative-kanban/ui/InitiativeKanbanProjectionControls';
+import { AllTeamsKanbanBoard } from '@/lib/domain/initiative-kanban/ui/AllTeamsKanbanBoard';
 
 import { InitiativeCatalogProjectionControls } from '@/lib/domain/initiatives-catalog/ui/InitiativeCatalogProjectionControls';
 
@@ -114,7 +115,8 @@ export default async function MonitoringPage({ searchParams }: { searchParams: P
         </>
       ) : current === 'kanban' ? (
         <>
-          <h1 className={styles.heading}>Initiative Kanban Projection</h1>
+          <h1 className={styles.heading}>Initiative Actions and Objectives - All Teams</h1>
+          <AllTeamsKanbanBoard />
           <InitiativeKanbanProjectionControls currentView={current} renderTableBelowHeading />
         </>
       ) : current === 'links' ? (
