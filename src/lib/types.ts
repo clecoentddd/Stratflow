@@ -4,6 +4,7 @@ export type StrategyState = 'Draft' | 'Active' | 'Closed' | 'Obsolete' | 'Delete
 export type InitiativeItem = {
   id: string;
   text: string;
+  status?: 'todo' | 'doing' | 'done'; // Kanban status
 };
 
 export type InitiativeStepKey = 'diagnostic' | 'overallApproach' | 'actions' | 'proximateObjectives';

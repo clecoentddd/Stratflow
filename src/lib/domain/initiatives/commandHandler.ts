@@ -47,6 +47,9 @@ export class InitiativesCommandHandlers {
       },
     };
 
+    // Log event structure for debugging
+    console.log('[Initiatives CommandHandler] InitiativeCreated event to be saved:', JSON.stringify(event, null, 2));
+
     // 3. Save Event
     await saveEvents([event]);
 

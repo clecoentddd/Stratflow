@@ -9,11 +9,12 @@ import type { RadarItemCreatedEvent } from '../domain/radar/events';
 import type { StrategyCreatedEvent, StrategyUpdatedEvent } from '@/lib/domain/strategies/events';
 import type { InitiativeCreatedEvent } from '@/lib/domain/initiatives/events';
 import type { LinkingEvents, InitiativeLinkedEvent } from '@/lib/domain/initiatives/linking/events';
+import type { ItemKanbanStatusMappedEvent } from '@/lib/domain/initiative-kanban-status-mapped-event/events';
 
 // In a real app, this would be a proper database. We're using a file-based mock store
 // for simplicity and to ensure state persists across serverless function invocations.
 
-type AllEvents = TeamEvent | CompanyEvent | LinkingEvents;
+type AllEvents = TeamEvent | CompanyEvent | LinkingEvents | ItemKanbanStatusMappedEvent;
 
 // We no longer keep state in memory. We'll use functions to read/write from a mock DB file.
 // Let's define the structure of our mock database.
@@ -43,6 +44,11 @@ const dispatchProjectionHandlers = (event: AllEvents) => {
 };
 
 export const runProjectionOn = (event: AllEvents) => dispatchProjectionHandlers(event);
+
+// Expose dispatcher for projection replay (for rebuilds)
+if (typeof global !== 'undefined') {
+  (global as any).dispatchProjectionHandlers = dispatchProjectionHandlers;
+}
 
 // Ensure event-log projection handlers are registered after function definitions
 import('@/lib/domain/event-log/projection');

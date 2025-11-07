@@ -1,20 +1,24 @@
 import { getEventLogProjection } from '@/lib/domain/event-log';
 import '@/lib/domain/event-log/projection'; // Ensure handlers are registered
 import EventLogProjectionControls from '@/lib/domain/event-log/ui/EventLogProjectionControls';
-import CompaniesProjectionControls from '@/lib/domain/companies/ui/CompaniesProjectionControls';
-import TeamsProjectionControls from '@/lib/domain/teams/ui/TeamsProjectionControls';
-import InitiativeLinksProjectionControls from '@/lib/domain/initiatives-linking/ui/InitiativeLinksProjectionControls';
-import InitiativeCatalogProjectionControls from '@/lib/domain/initiatives-catalog/ui/InitiativeCatalogProjectionControls';
+import { CompaniesProjectionControls } from '@/lib/domain/companies/ui/CompaniesProjectionControls';
+import { TeamsProjectionControls } from '@/lib/domain/teams/ui/TeamsProjectionControls';
+import { InitiativeLinksProjectionControls } from '@/lib/domain/initiatives-linking/ui/InitiativeLinksProjectionControls';
+
+import { InitiativeKanbanProjectionControls } from '@/lib/domain/initiative-kanban/ui/InitiativeKanbanProjectionControls';
+
+import { InitiativeCatalogProjectionControls } from '@/lib/domain/initiatives-catalog/ui/InitiativeCatalogProjectionControls';
+
 import styles from '@/lib/domain/monitoring/styles/monitoring.module.css';
 
-type SearchParams = { view?: 'events' | 'links' | 'catalog' | 'companies' | 'teams' };
+type SearchParams = { view?: 'events' | 'links' | 'catalog' | 'companies' | 'teams' | 'kanban' };
 
 export default async function MonitoringPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
   const { view } = await searchParams;
-  const current = view === 'links' || view === 'catalog' || view === 'companies' || view === 'teams' ? view : 'events';
+  const current = view === 'links' || view === 'catalog' || view === 'companies' || view === 'teams' || view === 'kanban' ? view : 'events';
 
   const [events, links, catalog, companies, teams] = await Promise.all([
-    current === 'events' ? getEventLogProjection() : Promise.resolve([] as any[]),
+  current === 'events' ? getEventLogProjection() : Promise.resolve([] as any[]),
     current === 'links' ? (async () => {
       const mod = await import('@/lib/domain/initiatives-linking/projection');
       return mod.queryAllActiveLinks();
@@ -55,12 +59,16 @@ export default async function MonitoringPage({ searchParams }: { searchParams: P
         <a href="/monitoring?view=catalog" className={`${styles.tab} ${styles.catalogTab} ${current === 'catalog' ? styles.tabActive : ''}`}>Initiative Catalog</a>
         <a href="/monitoring?view=companies" className={`${styles.tab} ${styles.catalogTab} ${current === 'companies' ? styles.tabActive : ''}`}>Companies</a>
         <a href="/monitoring?view=teams" className={`${styles.tab} ${styles.catalogTab} ${current === 'teams' ? styles.tabActive : ''}`}>Teams</a>
+        <a href="/monitoring?view=kanban" className={`${styles.tab} ${styles.catalogTab} ${current === 'kanban' ? styles.tabActive : ''}`}>Kanban</a>
         <span className={styles.spacer}>
           <EventLogProjectionControls currentView={current} />
           <InitiativeLinksProjectionControls currentView={current} />
           <InitiativeCatalogProjectionControls currentView={current} />
+
           <CompaniesProjectionControls currentView={current} />
           <TeamsProjectionControls currentView={current} />
+          <InitiativeKanbanProjectionControls currentView={current} />
+
         </span>
       </div>
 
@@ -103,6 +111,11 @@ export default async function MonitoringPage({ searchParams }: { searchParams: P
               </tbody>
             </table>
           </div>
+        </>
+      ) : current === 'kanban' ? (
+        <>
+          <h1 className={styles.heading}>Initiative Kanban Projection</h1>
+          <InitiativeKanbanProjectionControls currentView={current} renderTableBelowHeading />
         </>
       ) : current === 'links' ? (
         <>

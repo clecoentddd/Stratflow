@@ -1,12 +1,12 @@
 "use client";
 
-import ProjectionControls from "@/components/ui/projection-controls";
+import { ProjectionControls } from "@/components/ui/projection-controls";
 
 interface CompaniesProjectionControlsProps {
   currentView: string;
 }
 
-export default function CompaniesProjectionControls({ currentView }: CompaniesProjectionControlsProps) {
+export function CompaniesProjectionControls({ currentView }: CompaniesProjectionControlsProps) {
   return (
     <ProjectionControls
       domainName="Companies"

@@ -1,12 +1,12 @@
 "use client";
 
-import ProjectionControls from "@/components/ui/projection-controls";
+import { ProjectionControls } from "@/components/ui/projection-controls";
 
 interface InitiativeCatalogProjectionControlsProps {
   currentView: string;
 }
 
-export default function InitiativeCatalogProjectionControls({ currentView }: InitiativeCatalogProjectionControlsProps) {
+export function InitiativeCatalogProjectionControls({ currentView }: InitiativeCatalogProjectionControlsProps) {
   return (
     <ProjectionControls
       domainName="Initiative Catalog"

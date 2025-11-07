@@ -44,6 +44,7 @@ export async function PUT(request: NextRequest, { params }: { params: { itemId: 
       metadata: {
         initiativeId: command.initiativeId,
         itemId: itemId,
+        teamId: teamId,
       },
     };
 
@@ -91,6 +92,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { itemI
       metadata: {
         initiativeId: initiative.id,
         itemId: itemId,
+        teamId: teamId,
       },
     };
 

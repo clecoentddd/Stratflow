@@ -55,6 +55,7 @@ export async function POST(request: NextRequest) {
       metadata: {
         initiativeId: initiative.id, // Use the real ID for the event
         itemId: itemId,
+        teamId: teamId,
       },
     };
 

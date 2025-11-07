@@ -1,6 +1,6 @@
 "use client";
 
-import ProjectionControls from "@/components/ui/projection-controls";
+import { ProjectionControls } from "@/components/ui/projection-controls";
 
 interface EventLogProjectionControlsProps {
   currentView: string;

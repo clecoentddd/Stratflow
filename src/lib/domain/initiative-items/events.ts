@@ -10,6 +10,7 @@ export type InitiativeItemAddedEvent = Event<
   {
     initiativeId: string;
     itemId: string;
+    teamId: string;
   }
 >;
 
@@ -21,6 +22,7 @@ export type InitiativeItemUpdatedEvent = Event<
   {
     initiativeId: string;
     itemId: string;
+    teamId: string;
   }
 >;
 
@@ -30,5 +32,6 @@ export type InitiativeItemDeletedEvent = Event<
   {
     initiativeId: string;
     itemId: string;
+    teamId: string;
   }
 >;

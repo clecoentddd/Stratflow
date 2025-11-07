@@ -11,46 +11,44 @@ interface ProjectionControlsProps {
   viewName: string;
   isQueryTime?: boolean;
   canEmpty?: boolean;
+  onAfterAction?: () => void;
 }
 
-export default function ProjectionControls({ 
-  domainName,
-  projectionEndpoint,
-  currentView,
-  viewName,
-  isQueryTime = false,
-  canEmpty = true
-}: ProjectionControlsProps) {
+export function ProjectionControls(props: ProjectionControlsProps) {
+  const {
+    domainName,
+    projectionEndpoint,
+    currentView,
+    viewName,
+    isQueryTime = false,
+    canEmpty = true,
+    onAfterAction
+  } = props;
+
   const [rebuildLoading, setRebuildLoading] = useState(false);
   const [emptyLoading, setEmptyLoading] = useState(false);
   const [pending, startTransition] = useTransition();
   const router = useRouter();
 
   const onRebuild = async () => {
-    console.log(`🔧 Starting rebuild for ${domainName}`);
     setRebuildLoading(true);
     try {
-      console.log(`🔧 Calling POST ${projectionEndpoint}`);
-      
       const res = await fetch(projectionEndpoint, { method: 'POST' });
-      console.log(`🔧 Response status: ${res.status} ${res.statusText}`);
-      
       if (!res.ok) {
         const errorText = await res.text();
-        console.error(`🔧 ERROR: ${res.status} - ${errorText}`);
         alert(`Rebuild failed: ${res.status} - ${errorText}`);
         return;
       }
-      
-      const result = await res.json();
-      console.log(`🔧 Rebuild ${domainName} SUCCESS:`, result);
       alert(`✅ ${domainName} rebuild successful!`);
     } catch (error) {
-      console.error(`🔧 Failed to rebuild ${domainName}:`, error);
       alert(`❌ Failed to rebuild ${domainName}: ${error instanceof Error ? error.message : String(error)}`);
     }
     setRebuildLoading(false);
-    startTransition(() => router.refresh());
+    if (onAfterAction) {
+      onAfterAction();
+    } else {
+      startTransition(() => router.refresh());
+    }
   };
 
   const onEmpty = async () => {
@@ -58,36 +56,28 @@ export default function ProjectionControls({
       alert(`❌ Cannot empty ${domainName} - it's the source of truth for other projections`);
       return;
     }
-
-    console.log(`🗑️ Starting empty for ${domainName}`);
     setEmptyLoading(true);
     try {
-      console.log(`🗑️ Calling DELETE ${projectionEndpoint}`);
-      
       const res = await fetch(projectionEndpoint, { method: 'DELETE' });
-      console.log(`🗑️ Response status: ${res.status} ${res.statusText}`);
-      
       if (!res.ok) {
         const errorText = await res.text();
-        console.error(`🗑️ ERROR: ${res.status} - ${errorText}`);
         alert(`Empty failed: ${res.status} - ${errorText}`);
         return;
       }
-      
-      const result = await res.json();
-      console.log(`🗑️ Empty ${domainName} SUCCESS:`, result);
       alert(`✅ ${domainName} emptied successfully!`);
     } catch (error) {
-      console.error(`🗑️ Failed to empty ${domainName}:`, error);
       alert(`❌ Failed to empty ${domainName}: ${error instanceof Error ? error.message : String(error)}`);
     }
     setEmptyLoading(false);
-    startTransition(() => router.refresh());
+    if (onAfterAction) {
+      onAfterAction();
+    } else {
+      startTransition(() => router.refresh());
+    }
   };
 
   // Only show controls on the relevant view
   const showControls = currentView === viewName;
-
   if (!showControls) {
     return null;
   }
@@ -152,6 +142,6 @@ export default function ProjectionControls({
       >
         {rebuildLoading ? '...' : 'Rebuild'}
       </Button>
-    </div>
-  );
-}
+      </div>
+    );
+  }
