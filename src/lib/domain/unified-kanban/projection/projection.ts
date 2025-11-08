@@ -1,6 +1,5 @@
 import { registerProjectionHandler } from '@/lib/db/event-store';
-import type { KanbanProjection, KanbanProjectionEntry } from './types';
-import type { ElementMovedEvent, ElementAddedToKanbanEvent } from './events';
+import type { KanbanProjection, KanbanProjectionEntry } from '../types';
 
 // In-memory kanban projection - stores status for each element
 const kanbanProjection: KanbanProjection = {};

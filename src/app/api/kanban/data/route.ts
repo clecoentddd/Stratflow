@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getKanbanProjection } from '@/lib/domain/unified-kanban/projection';
+import { getKanbanProjection } from '@/lib/domain/unified-kanban/projection/projection';
 import { queryEligibleInitiatives } from '@/lib/domain/initiatives-catalog/projection';
 import { queryInitiativeItems } from '@/lib/domain/initiative-items/api';
 import type { EnrichedKanbanElement, KanbanColumnDefinition, KanbanBoardData } from '@/lib/domain/unified-kanban/types';

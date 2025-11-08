@@ -1,7 +1,7 @@
 import type { MoveElementCommand } from './commands';
-import type { ElementMovedEvent } from './events';
+import type { ElementMovedEvent } from '../events';
 import { saveEvents } from '@/lib/db/event-store';
-import { getKanbanProjection } from './projection';
+import { getKanbanProjection } from '../projection/projection';
 
 // Handle element move - updates kanban projection only
 export async function handleMoveElement(command: MoveElementCommand): Promise<void> {

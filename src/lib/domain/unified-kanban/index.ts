@@ -7,7 +7,7 @@ export * from './types';
 export * from './events';
 
 // Commands
-export * from './commands';
+export * from './MoveElements/commands';
 
 // Command Handlers
 export * from './commandHandlers';
