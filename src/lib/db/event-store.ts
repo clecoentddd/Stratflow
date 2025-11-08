@@ -9,13 +9,12 @@ import type { RadarItemCreatedEvent } from '../domain/radar/events';
 import type { StrategyCreatedEvent, StrategyUpdatedEvent } from '@/lib/domain/strategies/events';
 import type { InitiativeCreatedEvent } from '@/lib/domain/initiatives/events';
 import type { LinkingEvents, InitiativeLinkedEvent } from '@/lib/domain/initiatives/linking/events';
-import type { ItemKanbanStatusMappedEvent } from '@/lib/domain/initiative-kanban-status-mapped-event/events';
 import type { UnifiedKanbanEvent } from '@/lib/domain/unified-kanban/events';
 
 // In a real app, this would be a proper database. We're using a file-based mock store
 // for simplicity and to ensure state persists across serverless function invocations.
 
-type AllEvents = TeamEvent | CompanyEvent | LinkingEvents | ItemKanbanStatusMappedEvent | UnifiedKanbanEvent;
+type AllEvents = TeamEvent | CompanyEvent | LinkingEvents | UnifiedKanbanEvent;
 
 // We no longer keep state in memory. We'll use functions to read/write from a mock DB file.
 // Let's define the structure of our mock database.
@@ -63,7 +62,6 @@ export const ensureProjectionHandlersLoaded = async () => {
     import('@/lib/domain/initiatives-linking/projection'),
     import('@/lib/domain/initiatives-catalog/projection'),
     import('@/lib/domain/companies/projection'), // Add companies projection handler for live updates
-    import('@/lib/domain/initiative-kanban-status-mapped-projection/kanbanProjection'), // Add kanban projection handler
     import('@/lib/domain/unified-kanban/domainListeners'), // Add unified kanban domain listeners
   ]);
   console.log('All projection handlers loaded');
