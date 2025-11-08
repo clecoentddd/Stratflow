@@ -5,13 +5,12 @@ import type { KanbanBoardData, EnrichedKanbanElement, KanbanColumnDefinition } f
 import { startDrag, setDragOverColumn, endDrag, getDragState } from '../drag-state';
 import styles from './kanban-board.module.css';
 
-interface KanbanBoardProps {
-  data: KanbanBoardData;
-  onMoveElement: (elementId: string, fromStatus: string, toStatus: string) => Promise<void>;
-  className?: string;
-}
 
-export function KanbanBoard({ data, onMoveElement, className = '' }: KanbanBoardProps) {
+export function KanbanBoard({ data, onMoveElement, className = '' }: {
+  data: KanbanBoardData;
+  onMoveElement: (elementId: string, fromStatus: string, toStatus: string, elementType?: string) => Promise<void>;
+  className?: string;
+}) {
   const handleDragStart = useCallback((element: EnrichedKanbanElement) => {
     startDrag(element);
   }, []);
@@ -35,17 +34,30 @@ export function KanbanBoard({ data, onMoveElement, className = '' }: KanbanBoard
       return;
     }
 
+    console.log('[KANBAN UI] Card move initiated:', {
+      elementId: draggedElement.id,
+      fromStatus: draggedElement.status,
+      toStatus,
+      elementType: draggedElement.type
+    });
+
     try {
-      await onMoveElement(draggedElement.id, draggedElement.status, toStatus);
+      await onMoveElement(draggedElement.id, draggedElement.status, toStatus, draggedElement.type);
+      console.log('[KANBAN UI] Card move API call completed:', {
+        elementId: draggedElement.id,
+        fromStatus: draggedElement.status,
+        toStatus,
+        elementType: draggedElement.type
+      });
     } catch (error) {
-      console.error('Failed to move element:', error);
+      console.error('[KANBAN UI] Failed to move element:', error);
     }
 
     endDrag();
   }, [onMoveElement]);
 
   const getElementsForColumn = useCallback((status: string) => {
-    return data.elements.filter(element => element.status === status);
+    return data.elements.filter((element: EnrichedKanbanElement) => element.status === status);
   }, [data.elements]);
 
   const dragState = getDragState();
@@ -53,7 +65,7 @@ export function KanbanBoard({ data, onMoveElement, className = '' }: KanbanBoard
   return (
     <div className={`${styles.kanbanBoard} ${className}`}>
       <div className={styles.columns}>
-        {data.columns.map(column => (
+        {data.columns.map((column: KanbanColumnDefinition) => (
           <KanbanColumn
             key={column.id}
             column={column}

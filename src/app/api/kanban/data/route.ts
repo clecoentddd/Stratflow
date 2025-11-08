@@ -1,11 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getKanbanProjection } from '@/lib/domain/unified-kanban/projection/projection';
+import { rebuildKanbanProjection } from '@/lib/domain/unified-kanban/projection/projection';
 import { queryEligibleInitiatives } from '@/lib/domain/initiatives-catalog/projection';
 import { queryInitiativeItems } from '@/lib/domain/initiative-items/api';
 import type { EnrichedKanbanElement, KanbanColumnDefinition, KanbanBoardData } from '@/lib/domain/unified-kanban/types';
 
 // Column definitions for different kanban types
 const INITIATIVE_COLUMNS: KanbanColumnDefinition[] = [
+  { id: 'new', status: 'NEW', title: 'New', description: 'Recently created' },
   { id: 'draft', status: 'Draft', title: 'Strategic Thinking', description: 'Initial planning phase' },
   { id: 'active', status: 'Active', title: 'In Progress', description: 'Currently being worked on' },
   { id: 'closed', status: 'Closed', title: 'Completed', description: 'Successfully finished' },
@@ -89,15 +91,20 @@ function enrichElement(
 }
 
 export async function GET(request: NextRequest) {
+  // Always rebuild the projection from the event log before serving data
+  await rebuildKanbanProjection();
+  console.log('[KANBAN API] Projection rebuilt from event log before responding');
   try {
     const { searchParams } = new URL(request.url);
     const boardType = searchParams.get('type') || 'items'; // 'initiatives' or 'items'
     const boardId = searchParams.get('boardId'); // optional board filter
 
+
     console.log('[KANBAN API] Fetching kanban data:', { boardType, boardId });
 
     // Get kanban projection
     const projection = getKanbanProjection();
+    console.log('[KANBAN API] Raw projection:', JSON.stringify(projection, null, 2));
 
     // Normalize requested board type values and map to projection entry types
     const requestedType = (boardType || 'items').toLowerCase();
@@ -111,6 +118,7 @@ export async function GET(request: NextRequest) {
       if (entry.type !== allowedEntryType) continue;
       filteredProjection[elementId] = entry;
     }
+    console.log('[KANBAN API] Filtered projection:', JSON.stringify(filteredProjection, null, 2));
 
     // Get lookup tables
     const [initiativeLookup, itemLookup] = await Promise.all([

@@ -145,6 +145,10 @@ registerProjectionHandler('InitiativeDeleted', onAnyEvent);
 registerProjectionHandler('InitiativeItemAdded', onAnyEvent);
 registerProjectionHandler('InitiativeItemUpdated', onAnyEvent);
 registerProjectionHandler('InitiativeItemDeleted', onAnyEvent);
+
+// Kanban events
+registerProjectionHandler('ElementMoved', onAnyEvent);
+registerProjectionHandler('ElementAddedToKanban', onAnyEvent);
 registerProjectionHandler('InitiativeRadarItemsLinked', onAnyEvent);
 
 console.log('✅ Event log projection handlers registered for live updates');

@@ -1,13 +1,15 @@
 import type { Event } from '../teams/events';
 
 // Element moved in kanban (updates projection only)
+
 export type ElementMovedEvent = Event<'ElementMoved', {
   elementId: string;
-  fromStatus: string;
+  elementType: 'initiative' | 'item';
   toStatus: string;
-  boardId?: string;
+  // Optionally, add timestamp here if not in root
+  tags: string[];
 }, {
-  teamId?: string;
+  // Add any additional metadata if needed
 }>;
 
 // Element added to kanban (when initiative/item is created)

@@ -7,31 +7,46 @@ import { getKanbanProjection } from '../projection/projection';
 export async function handleMoveElement(command: MoveElementCommand): Promise<void> {
   console.log('[UNIFIED KANBAN] Handling MoveElement command:', command);
 
-  const { elementId, fromStatus, toStatus, boardId } = command;
+  const { elementId, toStatus, elementType } = command;
 
-  // Validate that the element exists in the projection
-  const projection = getKanbanProjection();
-  if (!projection[elementId]) {
-    throw new Error(`Element ${elementId} not found in kanban projection`);
+  // Instead of checking the in-memory projection, check the latest move event for this element
+  // (In a real system, this would be an indexed query; here, we scan the event log)
+  const { _getAllEvents } = await import('@/lib/db/event-store');
+  const allEvents = await _getAllEvents();
+  // Find the latest move event for this element
+  const latestMove = [...allEvents]
+    .reverse()
+    .find(e =>
+      e.type === 'ElementMoved' &&
+      e.payload &&
+      typeof e.payload === 'object' &&
+      'elementId' in e.payload &&
+      (e.payload as any).elementId === elementId &&
+      'toStatus' in e.payload
+    );
+
+  if (latestMove && (latestMove.payload as any).toStatus === toStatus) {
+    throw new Error(`Element ${elementId} is already in status ${toStatus}`);
   }
 
-  // Publish ElementMoved event (this will update the projection via the event handler)
+  // Build the new event structure
   const event: ElementMovedEvent = {
     type: 'ElementMoved',
-    entity: 'team',
-    aggregateId: boardId || 'global',
+    entity: elementType, // 'initiative' or 'item'
+    aggregateId: elementId, // or use a boardId if you have one
     timestamp: new Date().toISOString(),
     payload: {
       elementId,
-      fromStatus,
+      elementType,
       toStatus,
-      boardId,
+      tags: ['kanban'],
     },
     metadata: {
-      teamId: boardId,
+      // Add any additional metadata if needed
     },
   };
 
+  console.log('[UNIFIED KANBAN] About to append event:', event);
   await saveEvents([event]);
   console.log('[UNIFIED KANBAN] ElementMoved event published:', event);
 }

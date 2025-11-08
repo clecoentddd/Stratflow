@@ -1,4 +1,7 @@
+
 import React from 'react';
+import { KanbanProjectionSection } from './KanbanProjectionSection';
+import { KanbanProjectionDisplay } from './KanbanProjectionDisplay';
 
 export function MonitoringPageUI({
   current,
@@ -69,10 +72,7 @@ export function MonitoringPageUI({
           </div>
         </>
       ) : current === 'kanban' ? (
-        <>
-          <h1 className={styles.heading}>Initiative Actions and Objectives - All Teams</h1>
-          {/* Kanban board and controls should be rendered here by parent */}
-        </>
+        <KanbanProjectionSection styles={styles} />
       ) : current === 'initiatives' ? (
         <>
           {/* InitiativesKanban rendered by parent */}

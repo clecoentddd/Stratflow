@@ -1,9 +1,10 @@
-import type { MoveElementCommand } from './types';
+import type { MoveElementCommand } from '../types';
+export type { MoveElementCommand };
 
 // Re-export for convenience
-export type { MoveElementCommand };
+// Removed re-export of MoveElementCommand
 
 // Generic command for moving elements in kanban
 // Updates only the kanban projection, no domain logic
 
-export type UnifiedKanbanCommand = MoveElementCommand;
+export type UnifiedKanbanCommand = MoveElementCommand; // Only export UnifiedKanbanCommand

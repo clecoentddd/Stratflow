@@ -7,13 +7,15 @@ export * from './types';
 export * from './events';
 
 // Commands
-export * from './MoveElements/commands';
+// Commands
+export type { UnifiedKanbanCommand } from './MoveElements/commands';
 
 // Command Handlers
-export * from './commandHandlers';
+export * from './MoveElements/commandHandlers';
 
 // Projection
-export * from './projection';
+export * from './projection/projection';
+
 
 // Domain Listeners
 export * from './domainListeners';

@@ -56,13 +56,14 @@ export default async function MonitoringPage({ searchParams }: { searchParams: P
   // Compose controls for toolbar
   const controls = (
     <>
-      <a href="/monitoring?view=events" className={`${styles.tab} ${styles.eventsTab} ${current === 'events' ? styles.tabActive : ''}`}>Event Log</a>
-      <a href="/monitoring?view=links" className={`${styles.tab} ${styles.linksTab} ${current === 'links' ? styles.tabActive : ''}`}>Initiative Links</a>
-      <a href="/monitoring?view=catalog" className={`${styles.tab} ${styles.catalogTab} ${current === 'catalog' ? styles.tabActive : ''}`}>Initiative Catalog</a>
-      <a href="/monitoring?view=companies" className={`${styles.tab} ${styles.catalogTab} ${current === 'companies' ? styles.tabActive : ''}`}>Companies</a>
-      <a href="/monitoring?view=teams" className={`${styles.tab} ${styles.catalogTab} ${current === 'teams' ? styles.tabActive : ''}`}>Teams</a>
-      <a href="/monitoring?view=initiatives" className={`${styles.tab} ${styles.catalogTab} ${current === 'initiatives' ? styles.tabActive : ''}`}>Initiatives</a>
-      <a href="/monitoring?view=items" className={`${styles.tab} ${styles.catalogTab} ${current === 'items' ? styles.tabActive : ''}`}>Items</a>
+  <a href="/monitoring?view=events" className={`${styles.tab} ${styles.eventsTab} ${current === 'events' ? styles.tabActive : ''}`}>Event Log</a>
+  <a href="/monitoring?view=links" className={`${styles.tab} ${styles.linksTab} ${current === 'links' ? styles.tabActive : ''}`}>Initiative Links</a>
+  <a href="/monitoring?view=catalog" className={`${styles.tab} ${styles.catalogTab} ${current === 'catalog' ? styles.tabActive : ''}`}>Initiative Catalog</a>
+  <a href="/monitoring?view=companies" className={`${styles.tab} ${styles.catalogTab} ${current === 'companies' ? styles.tabActive : ''}`}>Companies</a>
+  <a href="/monitoring?view=teams" className={`${styles.tab} ${styles.catalogTab} ${current === 'teams' ? styles.tabActive : ''}`}>Teams</a>
+  <a href="/monitoring?view=kanban" className={`${styles.tab} ${styles.catalogTab} ${current === 'kanban' ? styles.tabActive : ''}`}>Kanban</a>
+  <a href="/monitoring?view=initiatives" className={`${styles.tab} ${styles.catalogTab} ${current === 'initiatives' ? styles.tabActive : ''}`}>Initiatives</a>
+  <a href="/monitoring?view=items" className={`${styles.tab} ${styles.catalogTab} ${current === 'items' ? styles.tabActive : ''}`}>Items</a>
       <span className={styles.spacer}>
         <EventLogProjectionControls currentView={current} />
         <InitiativeLinksProjectionControls currentView={current} />

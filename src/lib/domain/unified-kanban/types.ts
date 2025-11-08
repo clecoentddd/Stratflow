@@ -65,5 +65,6 @@ export type MoveElementCommand = {
   elementId: string;
   fromStatus: string;
   toStatus: string;
+  elementType: 'initiative' | 'item';
   boardId?: string;
 };
