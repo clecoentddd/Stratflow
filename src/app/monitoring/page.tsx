@@ -11,15 +11,20 @@ import '@/lib/domain/initiative-kanban-status-mapped-projection/kanbanProjection
 
 import { InitiativeCatalogProjectionControls } from '@/lib/domain/initiatives-catalog/ui/InitiativeCatalogProjectionControls';
 
+import { InitiativesKanban } from '@/components/kanban/initiatives-kanban';
+import { InitiativeItemsKanban } from '@/components/kanban/initiative-items-kanban';
+import { queryEligibleInitiatives } from '@/lib/domain/initiatives-catalog/projection';
+import { queryInitiativeItems } from '@/lib/domain/initiative-items/api';
+
 import styles from '@/lib/domain/monitoring/styles/monitoring.module.css';
 
-type SearchParams = { view?: 'events' | 'links' | 'catalog' | 'companies' | 'teams' | 'kanban' };
+type SearchParams = { view?: 'events' | 'links' | 'catalog' | 'companies' | 'teams' | 'kanban' | 'initiatives' | 'items' };
 
 export default async function MonitoringPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
   const { view } = await searchParams;
-  const current = view === 'links' || view === 'catalog' || view === 'companies' || view === 'teams' || view === 'kanban' ? view : 'events';
+  const current = view === 'links' || view === 'catalog' || view === 'companies' || view === 'teams' || view === 'kanban' || view === 'initiatives' || view === 'items' ? view : 'events';
 
-  const [events, links, catalog, companies, teams] = await Promise.all([
+  const [events, links, catalog, companies, teams, initiatives, items] = await Promise.all([
   current === 'events' ? getEventLogProjection() : Promise.resolve([] as any[]),
     current === 'links' ? (async () => {
       const mod = await import('@/lib/domain/initiatives-linking/projection');
@@ -50,7 +55,9 @@ export default async function MonitoringPage({ searchParams }: { searchParams: P
         console.error('❌ [MONITORING] Error getting teams:', error);
         return [];
       }
-    })() : Promise.resolve([] as any[])
+    })() : Promise.resolve([] as any[]),
+    current === 'initiatives' ? queryEligibleInitiatives() : Promise.resolve([] as any[]),
+    current === 'items' ? queryInitiativeItems() : Promise.resolve([] as any[])
   ]);
 
   return (
@@ -61,7 +68,9 @@ export default async function MonitoringPage({ searchParams }: { searchParams: P
         <a href="/monitoring?view=catalog" className={`${styles.tab} ${styles.catalogTab} ${current === 'catalog' ? styles.tabActive : ''}`}>Initiative Catalog</a>
         <a href="/monitoring?view=companies" className={`${styles.tab} ${styles.catalogTab} ${current === 'companies' ? styles.tabActive : ''}`}>Companies</a>
         <a href="/monitoring?view=teams" className={`${styles.tab} ${styles.catalogTab} ${current === 'teams' ? styles.tabActive : ''}`}>Teams</a>
-        <a href="/monitoring?view=kanban" className={`${styles.tab} ${styles.catalogTab} ${current === 'kanban' ? styles.tabActive : ''}`}>Kanban</a>
+        <a href="/monitoring?view=kanban" className={`${styles.tab} ${styles.catalogTab} ${current === 'kanban' ? styles.tabActive : ''}`}>Legacy Kanban</a>
+        <a href="/monitoring?view=initiatives" className={`${styles.tab} ${styles.catalogTab} ${current === 'initiatives' ? styles.tabActive : ''}`}>Initiatives</a>
+        <a href="/monitoring?view=items" className={`${styles.tab} ${styles.catalogTab} ${current === 'items' ? styles.tabActive : ''}`}>Items</a>
         <span className={styles.spacer}>
           <EventLogProjectionControls currentView={current} />
           <InitiativeLinksProjectionControls currentView={current} />
@@ -119,6 +128,14 @@ export default async function MonitoringPage({ searchParams }: { searchParams: P
           <h1 className={styles.heading}>Initiative Actions and Objectives - All Teams</h1>
           <AllTeamsKanbanBoard />
           <InitiativeKanbanProjectionControls currentView={current} renderTableBelowHeading />
+        </>
+      ) : current === 'initiatives' ? (
+        <>
+          <InitiativesKanban initialData={initiatives} />
+        </>
+      ) : current === 'items' ? (
+        <>
+          <InitiativeItemsKanban initialData={items} />
         </>
       ) : current === 'links' ? (
         <>
