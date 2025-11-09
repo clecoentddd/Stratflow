@@ -1,2 +1,5 @@
-import KanbanPage from "@/lib/domain/initiative-kanban/ui/KanbanPage";
-export default KanbanPage;
+import { redirect } from 'next/navigation';
+
+export default function KanbanPage() {
+  redirect('/unified-kanban');
+}

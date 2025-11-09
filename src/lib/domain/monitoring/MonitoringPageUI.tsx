@@ -12,6 +12,7 @@ export function MonitoringPageUI({
   teams,
   initiatives,
   items,
+  tagsProjection,
   styles,
   controls
 }: {
@@ -23,6 +24,7 @@ export function MonitoringPageUI({
   teams: any[];
   initiatives: any[];
   items: any[];
+  tagsProjection: Array<{ initiativeId: string; radarItemIds: string[] }>;
   styles: any;
   controls: React.ReactNode;
 }) {
@@ -212,6 +214,37 @@ export function MonitoringPageUI({
           </div>
         </>
       )}
+      {current === 'tags' ? (
+        <>
+          <h1 className={styles.heading}>Tags Projection</h1>
+          <div className={`${styles.tableWrap} ${styles.catalogAccent}`}>
+            <table className={styles.table}>
+              <thead className={styles.thead}>
+                <tr>
+                  <th>Initiative ID</th>
+                  <th>Radar Item IDs</th>
+                </tr>
+              </thead>
+              <tbody className={styles.tbody}>
+                {tagsProjection.length === 0 ? (
+                  <tr>
+                    <td colSpan={2} style={{ textAlign: 'center', padding: '2rem', color: '#6b7280' }}>
+                      No tags found in projection.
+                    </td>
+                  </tr>
+                ) : (
+                  tagsProjection.map(({ initiativeId, radarItemIds }) => (
+                    <tr key={initiativeId}>
+                      <td style={{ fontFamily: 'ui-monospace', fontSize: '0.875rem' }}>{initiativeId}</td>
+                      <td style={{ fontFamily: 'ui-monospace', fontSize: '0.875rem' }}>{radarItemIds.join(', ')}</td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </>
+      ) : null}
     </main>
   );
 }

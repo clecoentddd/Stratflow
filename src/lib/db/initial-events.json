@@ -308,5 +308,139 @@
       "impact": "High",
       "tolerance": "Medium"
     }
+  },
+  {
+    "type": "TeamCreated",
+    "entity": "team",
+    "aggregateId": "team-bod",
+    "timestamp": "2025-11-09T10:00:00.000Z",
+    "payload": {
+      "id": "team-bod",
+      "companyId": "company-demo",
+      "name": "Boards Of Directors",
+      "purpose": "Board-level strategic oversight",
+      "context": "Top-level governance and direction",
+      "level": 3
+    }
+  },
+  {
+    "type": "RadarItemCreated",
+    "entity": "team",
+    "aggregateId": "team-bod",
+    "timestamp": "2025-11-09T10:01:00.000Z",
+    "payload": {
+      "id": "radar-item-echo-chamber",
+      "name": "Echo Chamber",
+      "detect": "Board discussions reinforce existing beliefs, lack of challenge",
+      "assess": "Risk of groupthink and missed opportunities",
+      "respond": "Invite external perspectives",
+      "type": "Threat",
+      "category": "Governance",
+      "distance": "Detected",
+      "impact": "High",
+      "tolerance": "Low"
+    }
+  },
+  {
+    "type": "RadarItemCreated",
+    "entity": "team",
+    "aggregateId": "team-bod",
+    "timestamp": "2025-11-09T10:01:10.000Z",
+    "payload": {
+      "id": "radar-item-own-strategy",
+      "name": "Own Strategy",
+      "detect": "Board focuses on its own strategy, not the company's needs",
+      "assess": "Misalignment between board and company direction",
+      "respond": "Realign board objectives with company goals",
+      "type": "Threat",
+      "category": "Governance",
+      "distance": "Detected",
+      "impact": "Medium",
+      "tolerance": "Medium"
+    }
+  },
+  {
+    "type": "RadarItemCreated",
+    "entity": "team",
+    "aggregateId": "team-bod",
+    "timestamp": "2025-11-09T10:01:20.000Z",
+    "payload": {
+      "id": "radar-item-deglobalization",
+      "name": "Deglobalization",
+      "detect": "Shifting focus from global to local markets",
+      "assess": "Potential loss of international opportunities",
+      "respond": "Assess risks and opportunities of deglobalization",
+      "type": "Trend",
+      "category": "Market",
+      "distance": "Emerging",
+      "impact": "Medium",
+      "tolerance": "Medium"
+    }
+  },
+  {
+    "type": "StrategyCreated",
+    "entity": "team",
+    "aggregateId": "team-bod",
+    "timestamp": "2025-11-09T10:02:00.000Z",
+    "payload": {
+      "strategyId": "strategy-bod-modernize",
+      "description": "Modernize Approach",
+      "timeframe": "2026"
+    }
+  },
+  {
+    "type": "StrategyUpdated",
+    "entity": "team",
+    "aggregateId": "team-bod",
+    "timestamp": "2025-11-09T10:02:10.000Z",
+    "payload": {
+      "strategyId": "strategy-bod-modernize",
+      "state": "Active"
+    }
+  },
+  {
+    "type": "InitiativeCreated",
+    "entity": "team",
+    "aggregateId": "team-bod",
+    "timestamp": "2025-11-09T10:03:00.000Z",
+    "payload": {
+      "name": "Build First Board Strategy",
+      "progression": 0,
+      "strategyId": "strategy-bod-modernize",
+      "strategyName": "Modernize Approach"
+    },
+    "metadata": {
+      "initiativeId": "initiative-bod-1"
+    }
+  },
+  {
+    "type": "InitiativeDiagnosisAdded",
+    "entity": "team",
+    "aggregateId": "team-bod",
+    "timestamp": "2025-11-09T10:03:10.000Z",
+    "payload": {
+      "initiativeId": "initiative-bod-1",
+      "diagnosis": "poor at challenging"
+    }
+  },
+  {
+    "type": "InitiativeRadarLinkCreated",
+    "entity": "team",
+    "aggregateId": "team-bod",
+    "timestamp": "2025-11-09T10:03:20.000Z",
+    "payload": {
+      "initiativeId": "initiative-bod-1",
+      "radarItemId": "radar-item-own-strategy"
+    }
+  },
+  {
+    "type": "InitiativeRadarLinkCreated",
+    "entity": "team",
+    "aggregateId": "team-bod",
+    "timestamp": "2025-11-09T10:03:30.000Z",
+    "payload": {
+      "initiativeId": "initiative-bod-1",
+      "radarItemId": "radar-item-echo-chamber"
+    }
   }
 ]

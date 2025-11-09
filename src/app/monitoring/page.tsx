@@ -9,15 +9,16 @@ import { InitiativeCatalogProjectionControls } from '@/lib/domain/initiatives-ca
 import { queryEligibleInitiatives } from '@/lib/domain/initiatives-catalog/projection';
 import { queryInitiativeItems } from '@/lib/domain/initiative-items/api';
 
+import { headers } from 'next/headers';
 import styles from '@/lib/domain/monitoring/styles/monitoring.module.css';
 
-type SearchParams = { view?: 'events' | 'links' | 'catalog' | 'companies' | 'teams' | 'kanban' | 'initiatives' | 'items' };
+type SearchParams = { view?: 'events' | 'links' | 'catalog' | 'companies' | 'teams' | 'kanban' | 'initiatives' | 'items' | 'tags' };
 
 export default async function MonitoringPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
   const { view } = await searchParams;
-  const current = view === 'links' || view === 'catalog' || view === 'companies' || view === 'teams' || view === 'kanban' || view === 'initiatives' || view === 'items' ? view : 'events';
+  const current = view === 'links' || view === 'catalog' || view === 'companies' || view === 'teams' || view === 'kanban' || view === 'initiatives' || view === 'items' || view === 'tags' ? view : 'events';
 
-  const [events, links, catalog, companies, teams, initiatives, items] = await Promise.all([
+  const [events, links, catalog, companies, teams, initiatives, items, tagsProjection] = await Promise.all([
   current === 'events' ? getEventLogProjection() : Promise.resolve([] as any[]),
     current === 'links' ? (async () => {
       const mod = await import('@/lib/domain/initiatives-linking/projection');
@@ -50,7 +51,23 @@ export default async function MonitoringPage({ searchParams }: { searchParams: P
       }
     })() : Promise.resolve([] as any[]),
     current === 'initiatives' ? queryEligibleInitiatives() : Promise.resolve([] as any[]),
-    current === 'items' ? queryInitiativeItems() : Promise.resolve([] as any[])
+    current === 'items' ? queryInitiativeItems() : Promise.resolve([] as any[]),
+    current === 'tags' ? (async () => {
+      let url = '';
+      if (typeof window === 'undefined') {
+        // Server: build absolute URL
+        const h = await headers();
+        const host = h.get('host');
+        url = `http://${host}/monitoring/projection/tags`;
+      } else {
+        // Client: relative is fine
+        url = `/monitoring/projection/tags`;
+      }
+      const res = await fetch(url);
+      if (!res.ok) return [];
+      const data = await res.json();
+      return data.tagsProjection || [];
+    })() : Promise.resolve([])
   ]);
 
   // Compose controls for toolbar
@@ -64,6 +81,7 @@ export default async function MonitoringPage({ searchParams }: { searchParams: P
   <a href="/monitoring?view=kanban" className={`${styles.tab} ${styles.catalogTab} ${current === 'kanban' ? styles.tabActive : ''}`}>Kanban</a>
   <a href="/monitoring?view=initiatives" className={`${styles.tab} ${styles.catalogTab} ${current === 'initiatives' ? styles.tabActive : ''}`}>Initiatives</a>
   <a href="/monitoring?view=items" className={`${styles.tab} ${styles.catalogTab} ${current === 'items' ? styles.tabActive : ''}`}>Items</a>
+  <a href="/monitoring?view=tags" className={`${styles.tab} ${styles.catalogTab} ${current === 'tags' ? styles.tabActive : ''}`}>Tags</a>
       <span className={styles.spacer}>
         <EventLogProjectionControls currentView={current} />
         <InitiativeLinksProjectionControls currentView={current} />
@@ -87,6 +105,7 @@ export default async function MonitoringPage({ searchParams }: { searchParams: P
       items={items}
       styles={styles}
       controls={controls}
+      tagsProjection={tagsProjection}
     />
   );
 }

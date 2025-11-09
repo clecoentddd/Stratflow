@@ -146,9 +146,14 @@ registerProjectionHandler('InitiativeItemAdded', onAnyEvent);
 registerProjectionHandler('InitiativeItemUpdated', onAnyEvent);
 registerProjectionHandler('InitiativeItemDeleted', onAnyEvent);
 
+
 // Kanban events
 registerProjectionHandler('ElementMoved', onAnyEvent);
 registerProjectionHandler('ElementAddedToKanban', onAnyEvent);
 registerProjectionHandler('InitiativeRadarItemsLinked', onAnyEvent);
+
+// Tag-an-initiative-with-a-risk events
+registerProjectionHandler('TagAdded', onAnyEvent);
+registerProjectionHandler('TagRemoved', onAnyEvent);
 
 console.log('✅ Event log projection handlers registered for live updates');

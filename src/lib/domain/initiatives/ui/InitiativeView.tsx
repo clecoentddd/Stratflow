@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
-import { LinkRadarItemsDialog } from './LinkRadarItemsDialog';
+import { LinkRadarItemsDialog } from '../../tag-an-initiative-with-a-risk/ui/LinkRadarItemsDialog';
 import { EditInitiativeDialog } from './EditInitiativeDialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -18,9 +18,10 @@ import { InitiativeLinkDialog } from "@/lib/domain/initiatives-linking/ui/Initia
 import type { Initiative, InitiativeStepKey, InitiativeItem as InitiativeItemType, RadarItem } from "@/lib/types";
 import type { UpdateInitiativeCommand } from '@/lib/domain/initiatives/commands';
 import type { AddInitiativeItemCommand, UpdateInitiativeItemCommand } from '@/lib/domain/initiative-items/commands';
+import { getTagsForInitiative } from '@/lib/domain/tag-an-initiative-with-a-risk/tagsProjection';
+import { getTagsForInitiativeProjection } from '@/lib/domain/tag-an-initiative-with-a-risk/queryTagsProjection';
 import stepStyles from "./initiative-step-view.module.css";
 import { InitiativeStepView } from "@/lib/domain/initiative-items/ui/InitiativeStepView";
-import { updateInitiative } from "@/lib/api/initiatives";
 import { addInitiativeItem, updateInitiativeItem, deleteInitiativeItem } from "@/lib/api/initiative-items";
 import styles from "./InitiativeView.module.css"
 
@@ -162,8 +163,7 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
     }
     const command: UpdateInitiativeCommand = { ...updatedValues, initiativeId: initiative.id };
     setInitiative(prev => ({ ...prev, ...updatedValues }));
-    const promise = updateInitiative(orgId, initiative.id, command);
-    fireAndForget(promise, "Could not update initiative.");
+    // Removed: updateInitiative call (now handled by tag-an-initiative-with-a-risk slice)
   };
 
   const handleEditName = (newName: string) => {
@@ -173,8 +173,7 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
     }
     const command: UpdateInitiativeCommand = { name: newName, initiativeId: initiative.id };
     setInitiative(prev => ({ ...prev, name: newName }));
-    const promise = updateInitiative(orgId, initiative.id, command);
-    fireAndForget(promise, "Could not update initiative name.");
+    // Removed: updateInitiative call (now handled by tag-an-initiative-with-a-risk slice)
   };
 
   const handleDeleteConfirmed = () => {
@@ -292,13 +291,105 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
     });
   };
 
-  const handleLinkRadarItems = (selectedIds: string[]) => {
-    handleUpdateInitiative({ linkedRadarItemIds: selectedIds });
+  // Tag/untag radar items using the tag-an-initiative-with-a-risk API slice
+  // Pessimistic UI: update state on successful API responses
+  const [tagIds, setTagIds] = useState<string[]>([]);
+
+  // Load initial tags from projection (server or API)
+  useEffect(() => {
+    // Try to use the projection query directly (works on server), fallback to API fetch on client
+    let didCancel = false;
+    async function loadTags() {
+      let tags: string[] = [];
+      try {
+        // Try direct import (works in SSR/server context)
+        tags = getTagsForInitiativeProjection
+          ? getTagsForInitiativeProjection(initiative.id)
+          : [];
+        // If SSR returns empty, or we're on client, fetch from API
+        if (!tags.length && typeof window !== 'undefined') {
+          const res = await fetch(`/monitoring/projection/tags?initiativeId=${initiative.id}`);
+          if (res.ok) {
+            const data = await res.json();
+            tags = data.tags || [];
+          }
+        }
+      } catch (err) {
+        // Always fallback to API fetch on error
+        if (typeof window !== 'undefined') {
+          const res = await fetch(`/monitoring/projection/tags?initiativeId=${initiative.id}`);
+          if (res.ok) {
+            const data = await res.json();
+            tags = data.tags || [];
+          }
+        }
+      }
+      if (!didCancel) setTagIds(tags);
+    }
+    loadTags();
+    return () => { didCancel = true; };
+  }, [initiative.id]);
+
+  const handleLinkRadarItems = async (selectedIds: string[]) => {
+    const prevIds = tagIds;
+    const toAdd = selectedIds.filter(id => !prevIds.includes(id));
+    const toRemove = prevIds.filter(id => !selectedIds.includes(id));
+    console.log('[InitiativeView] Tagging radar items. To add:', toAdd, 'To remove:', toRemove);
+    let allOk = true;
+    for (const radarItemId of toAdd) {
+      try {
+        const res = await fetch('/api/tag-an-initiative-with-a-risk', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ initiativeId: initiative.id, radarItemId, action: 'add' })
+        });
+        const data = await res.json();
+        console.log('[InitiativeView] Tag add response:', data);
+        if (!data.ok) allOk = false;
+      } catch (err) {
+        allOk = false;
+        console.error('[InitiativeView] Error tagging radar item:', radarItemId, err);
+      }
+    }
+    for (const radarItemId of toRemove) {
+      try {
+        const res = await fetch('/api/tag-an-initiative-with-a-risk', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ initiativeId: initiative.id, radarItemId, action: 'remove' })
+        });
+        const data = await res.json();
+        console.log('[InitiativeView] Tag remove response:', data);
+        if (!data.ok) allOk = false;
+      } catch (err) {
+        allOk = false;
+        console.error('[InitiativeView] Error untagging radar item:', radarItemId, err);
+      }
+    }
+    if (allOk) {
+      // Update state after successful tagging (pessimistic UI)
+      setTagIds(prevIds => {
+        const newIds = [...prevIds];
+        toAdd.forEach(id => { if (!newIds.includes(id)) newIds.push(id); });
+        toRemove.forEach(id => { const idx = newIds.indexOf(id); if (idx !== -1) newIds.splice(idx, 1); });
+        return newIds;
+      });
+      toast({
+        title: "Success",
+        description: `Tagged ${toAdd.length} radar item${toAdd.length !== 1 ? 's' : ''}${toRemove.length > 0 ? ` and untagged ${toRemove.length}` : ''}.`,
+        variant: "default"
+      });
+    }
   };
   
-  const linkedItems = (initiative.linkedRadarItemIds || [])
-    .map(id => radarItems.find(item => item.id === id))
-    .filter((item): item is RadarItem => !!item);
+  // Always use projection for linked tags
+  // Show all tagIds, even if radarItems does not include them yet
+  type FallbackRadarItem = { id: string; name: string; type?: undefined; radarId: string; fallback: true };
+  const linkedItems: (RadarItem | FallbackRadarItem)[] = tagIds.map(id => radarItems.find(item => item.id === id) || { id, name: id, type: undefined, radarId: '', fallback: true });
+
+  function isFallbackRadarItem(item: RadarItem | FallbackRadarItem): item is FallbackRadarItem {
+    return (item as FallbackRadarItem).fallback === true;
+  }
   const isTempInitiative = typeof initiative.id === 'string' && initiative.id.startsWith('init-temp-');
 
   useEffect(() => {
@@ -397,19 +488,37 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
                 {isTempInitiative && (
                   <span className="text-xs text-muted-foreground">Save this initiative before linking</span>
                 )}
-                {linkedItems.length > 0 ? (
-                    <div className="flex flex-wrap gap-2">
-                        {linkedItems.map(item => (
-                            <Link href={`/team/${item.radarId}/radar#${item.id}`} key={item.id}>
-                                <Badge variant={item.type === 'Threat' ? 'destructive' : 'default'}>
-                                    {item.name}
-                                </Badge>
-                            </Link>
-                        ))}
-                    </div>
+        {linkedItems.length > 0 ? (
+          <div className="flex flex-wrap gap-2">
+            {linkedItems.map(item => (
+              <span key={item.id} className="flex items-center">
+                {isFallbackRadarItem(item) ? (
+                  <Badge variant="outline">{item.id}</Badge>
                 ) : (
-                    <p className="text-sm text-muted-foreground">No radar items tagged yet.</p>
+                  <Link href={`/team/${item.radarId}/radar#${item.id}`}>
+                    <Badge variant={item.type === 'Threat' ? 'destructive' : 'default'}>
+                      {item.name}
+                    </Badge>
+                  </Link>
                 )}
+                <button
+                  aria-label="Remove tag"
+                  className="ml-1 text-xs text-red-500 hover:text-red-700"
+                  style={{ background: 'none', border: 'none', cursor: 'pointer' }}
+                  onClick={() => {
+                    // Remove this tag and call handleLinkRadarItems
+                    const newIds = tagIds.filter(id => id !== item.id);
+                    handleLinkRadarItems(newIds);
+                  }}
+                >
+                  ×
+                </button>
+              </span>
+            ))}
+          </div>
+        ) : (
+          <p className="text-sm text-muted-foreground">No radar items tagged yet.</p>
+        )}
             </div>
         </div>
 
@@ -452,13 +561,13 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
           )}
         </div>
 
-        <LinkRadarItemsDialog
-            isOpen={isLinkRadarOpen}
-            onOpenChange={setLinkRadarOpen}
-            availableItems={radarItems}
-            linkedItemIds={initiative.linkedRadarItemIds || []}
-            onLinkItems={handleLinkRadarItems}
-        />
+    <LinkRadarItemsDialog
+      isOpen={isLinkRadarOpen}
+      onOpenChange={setLinkRadarOpen}
+      availableItems={radarItems}
+      linkedItemIds={tagIds}
+      onLinkItems={handleLinkRadarItems}
+    />
       </div>
     </div>
     <InitiativeLinkDialog
