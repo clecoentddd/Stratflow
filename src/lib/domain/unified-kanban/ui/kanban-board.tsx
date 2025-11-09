@@ -56,27 +56,24 @@ export function KanbanBoard({ data, onMoveElement, className = '' }: {
     endDrag();
   }, [onMoveElement]);
 
-  // Group elements by teamId and level
-  const swimlanes: Record<string, { teamId: string; teamName: string; teamLevel: number | undefined; elements: EnrichedKanbanElement[] }> = {};
+  // Group teams by level
+  const teamsByLevel: Record<number, { teamId: string; teamName: string; elements: EnrichedKanbanElement[] }[]> = {};
   for (const element of data.elements) {
     const teamId = element.metadata?.teamId || 'unknown';
     const teamName = element.metadata?.teamName || 'Unknown Team';
     const teamLevel = element.metadata?.teamLevel ?? 0;
-    const key = `${teamLevel}__${teamId}`;
-    if (!swimlanes[key]) {
-      swimlanes[key] = { teamId, teamName, teamLevel, elements: [] };
+    if (!teamsByLevel[teamLevel]) teamsByLevel[teamLevel] = [];
+    let team = teamsByLevel[teamLevel].find(t => t.teamId === teamId);
+    if (!team) {
+      team = { teamId, teamName, elements: [] };
+      teamsByLevel[teamLevel].push(team);
     }
-    swimlanes[key].elements.push(element);
+    team.elements.push(element);
   }
-  const sortedSwimlaneKeys = Object.keys(swimlanes).sort((a, b) => {
-    // Sort by teamLevel, then teamName
-    const [levelA, nameA] = [swimlanes[a].teamLevel ?? 0, swimlanes[a].teamName];
-    const [levelB, nameB] = [swimlanes[b].teamLevel ?? 0, swimlanes[b].teamName];
-    if (levelA !== levelB) return levelA - levelB;
-    return nameA.localeCompare(nameB);
-  });
-
+  const sortedLevels = Object.keys(teamsByLevel).map(Number).sort((a, b) => a - b);
   const dragState = getDragState();
+
+
 
   // Set CSS variable for column count
   const columnCount = data.columns.length;
@@ -92,32 +89,38 @@ export function KanbanBoard({ data, onMoveElement, className = '' }: {
           </div>
         ))}
       </div>
-      {/* Swimlanes per team */}
+      {/* Grouped by level */}
       <div>
-        {sortedSwimlaneKeys.map((key) => {
-          const lane = swimlanes[key];
-          return (
-            <div key={key} className={styles.swimlane}>
-              <div className={styles.swimlaneHeaderRow}>
-                Team: {lane.teamName} (Level {lane.teamLevel ?? 0})
-              </div>
-              <div className={styles.columns}>
-                {data.columns.map((column: KanbanColumnDefinition) => (
-                  <KanbanColumn
-                    key={column.id}
-                    column={column}
-                    elements={lane.elements.filter(e => e.status === column.status)}
-                    isDragOver={dragState.dragOverColumn === column.status}
-                    onDragStart={handleDragStart}
-                    onDragOver={(e) => handleDragOver(e, column.status)}
-                    onDragLeave={handleDragLeave}
-                    onDrop={(e) => handleDrop(e, column.status)}
-                  />
-                ))}
-              </div>
+        {sortedLevels.map(level => (
+          <div key={level} style={{ marginBottom: 40 }}>
+            <div style={{ fontWeight: 700, fontSize: 20, margin: '24px 0 12px 0', color: '#3b82f6', letterSpacing: 1 }}>
+              Level {level}
             </div>
-          );
-        })}
+            {teamsByLevel[level]
+              .sort((a, b) => a.teamName.localeCompare(b.teamName))
+              .map(team => (
+                <div key={team.teamId} className={styles.swimlane} style={{ marginBottom: 16, borderLeft: '4px solid #3b82f6', borderRadius: 6, background: '#f9fafb' }}>
+                  <div className={styles.swimlaneHeaderRow} style={{ fontWeight: 600, fontSize: 16, color: '#0f172a', background: '#e0e7ef', padding: '6px 0 6px 12px', borderRadius: '6px 6px 0 0' }}>
+                    {team.teamName}
+                  </div>
+                  <div className={styles.columns}>
+                    {data.columns.map((column: KanbanColumnDefinition) => (
+                      <KanbanColumn
+                        key={column.id}
+                        column={column}
+                        elements={team.elements.filter(e => e.status === column.status)}
+                        isDragOver={dragState.dragOverColumn === column.status}
+                        onDragStart={handleDragStart}
+                        onDragOver={(e) => handleDragOver(e, column.status)}
+                        onDragLeave={handleDragLeave}
+                        onDrop={(e) => handleDrop(e, column.status)}
+                      />
+                    ))}
+                  </div>
+                </div>
+              ))}
+          </div>
+        ))}
       </div>
     </div>
   );
