@@ -14,6 +14,8 @@ export function KanbanProjectionDisplay({ projection }: { projection: any }) {
             <th style={{ border: '1px solid #ccc', padding: 4 }}>Type</th>
             <th style={{ border: '1px solid #ccc', padding: 4 }}>Status</th>
             <th style={{ border: '1px solid #ccc', padding: 4 }}>Name/Title</th>
+            <th style={{ border: '1px solid #ccc', padding: 4 }}>Team Name</th>
+            <th style={{ border: '1px solid #ccc', padding: 4 }}>Team Level</th>
           </tr>
         </thead>
         <tbody>
@@ -23,6 +25,8 @@ export function KanbanProjectionDisplay({ projection }: { projection: any }) {
               <td style={{ border: '1px solid #ccc', padding: 4 }}>{el.type}</td>
               <td style={{ border: '1px solid #ccc', padding: 4 }}>{el.status}</td>
               <td style={{ border: '1px solid #ccc', padding: 4 }}>{el.title || el.name || ''}</td>
+              <td style={{ border: '1px solid #ccc', padding: 4 }}>{el.metadata?.teamName || ''}</td>
+              <td style={{ border: '1px solid #ccc', padding: 4 }}>{el.metadata?.teamLevel ?? ''}</td>
             </tr>
           ))}
         </tbody>

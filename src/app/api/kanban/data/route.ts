@@ -3,6 +3,8 @@ import { getKanbanProjection } from '@/lib/domain/unified-kanban/projection/proj
 import { rebuildKanbanProjection } from '@/lib/domain/unified-kanban/projection/projection';
 import { queryEligibleInitiatives } from '@/lib/domain/initiatives-catalog/projection';
 import { queryInitiativeItems } from '@/lib/domain/initiative-items/api';
+
+import { getTeamByIdProjection } from '@/lib/domain/teams/projection/index';
 import type { EnrichedKanbanElement, KanbanColumnDefinition, KanbanBoardData } from '@/lib/domain/unified-kanban/types';
 
 // Column definitions for different kanban types
@@ -39,18 +41,28 @@ async function getItemLookup(): Promise<Record<string, any>> {
   return lookup;
 }
 
-function enrichElement(
+async function enrichElement(
   elementId: string,
   projectionEntry: any,
   initiativeLookup: Record<string, any>,
   itemLookup: Record<string, any>
-): EnrichedKanbanElement {
+): Promise<EnrichedKanbanElement> {
   // elementId is constructed as `${prefix}-${id}` where id itself may already
   // contain a prefix (e.g. initiative-initiative-draft-1 or item-item-<uuid>).
   // Normalize by checking known prefixes and taking the remainder as the id.
   if (elementId.startsWith('initiative-')) {
     const id = elementId.substring('initiative-'.length);
     const initiative = initiativeLookup[id] || initiativeLookup[`initiative-${id}`] || initiativeLookup[id.replace(/^initiative-/, '')];
+    const teamId = projectionEntry.teamId || initiative?.teamId || '';
+    let teamName = '';
+    let teamLevel: number | undefined = undefined;
+    if (teamId) {
+      const team = await getTeamByIdProjection(teamId);
+      if (team) {
+        teamName = team.name;
+        teamLevel = team.level;
+      }
+    }
     return {
       id: elementId,
       type: 'initiative',
@@ -59,7 +71,9 @@ function enrichElement(
       description: `Strategy: ${initiative?.strategyName || 'Unknown'}`,
       metadata: {
         initiativeId: id,
-        teamId: initiative?.teamId || '',
+        teamId,
+        teamName,
+        teamLevel,
         strategyId: initiative?.strategyId || '',
         createdAt: projectionEntry.addedAt,
         updatedAt: projectionEntry.updatedAt,
@@ -70,6 +84,16 @@ function enrichElement(
   if (elementId.startsWith('item-')) {
     const id = elementId.substring('item-'.length);
     const item = itemLookup[id] || itemLookup[`item-${id}`] || itemLookup[id.replace(/^item-/, '')];
+    const teamId = item?.teamId || '';
+    let teamName = '';
+    let teamLevel: number | undefined = undefined;
+    if (teamId) {
+      const team = await getTeamByIdProjection(teamId);
+      if (team) {
+        teamName = team.name;
+        teamLevel = team.level;
+      }
+    }
     return {
       id: elementId,
       type: 'initiative-item',
@@ -79,7 +103,9 @@ function enrichElement(
       metadata: {
         itemId: id,
         initiativeId: item?.initiativeId || '',
-        teamId: item?.teamId || '',
+        teamId,
+        teamName,
+        teamLevel,
         stepKey: item?.stepKey || 'actions',
         createdAt: projectionEntry.addedAt,
         updatedAt: projectionEntry.updatedAt,
@@ -130,13 +156,11 @@ export async function GET(request: NextRequest) {
     const enrichedElements: EnrichedKanbanElement[] = [];
     for (const [elementId, entry] of Object.entries(filteredProjection)) {
       try {
-        const enriched = enrichElement(elementId, entry, initiativeLookup, itemLookup);
-        
+        const enriched = await enrichElement(elementId, entry, initiativeLookup, itemLookup);
         // Filter elements based on board type
         const shouldInclude = boardType === 'initiatives' 
           ? enriched.type === 'initiative' 
           : enriched.type === 'initiative-item';
-        
         if (shouldInclude) {
           enrichedElements.push(enriched);
         }

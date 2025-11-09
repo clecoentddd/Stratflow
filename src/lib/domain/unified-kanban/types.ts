@@ -11,11 +11,13 @@ export type KanbanColumnDefinition = {
   color?: string;
 };
 
+
 // Kanban projection entry - stores only status and type
 export type KanbanProjectionEntry = {
   type: KanbanElementType;
   status: string;
   boardId?: string; // for filtering different kanban boards
+  teamId?: string; // for team lookup and enrichment
   addedAt: string;
   updatedAt: string;
 };
@@ -36,6 +38,7 @@ export type EnrichedKanbanElement = {
     // Common metadata
     teamId?: string;
     teamName?: string;
+    teamLevel?: number;
     createdAt?: string;
     updatedAt?: string;
 

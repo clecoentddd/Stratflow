@@ -46,14 +46,17 @@ registerProjectionHandler('ElementAddedToKanban', (event: any) => {
   if (event.type !== 'ElementAddedToKanban') return;
 
   const { elementId, elementType, initialStatus, boardId } = event.payload;
+  // teamId may be in event.metadata
+  const teamId = event.metadata?.teamId;
   kanbanProjection[elementId] = {
     type: elementType,
     status: initialStatus,
     boardId,
     addedAt: event.timestamp,
     updatedAt: event.timestamp,
+    teamId,
   };
-  console.log('[KANBAN PROJECTION] Added element to kanban:', { elementId, elementType, initialStatus });
+  console.log('[KANBAN PROJECTION] Added element to kanban:', { elementId, elementType, initialStatus, teamId });
 });
 
 // Query functions
@@ -105,14 +108,16 @@ export async function rebuildKanbanProjection(): Promise<void> {
     console.log(`[KANBAN PROJECTION] [REPLAY] Event:`, JSON.stringify(event, null, 2));
     if (event.type === 'ElementAddedToKanban' && event.payload) {
       const { elementId, elementType, initialStatus, boardId } = event.payload;
+      const teamId = event.metadata?.teamId;
       kanbanProjection[elementId] = {
         type: elementType,
         status: initialStatus,
         boardId,
+        teamId,
         addedAt: event.timestamp,
         updatedAt: event.timestamp,
       };
-      console.log(`[KANBAN PROJECTION] [REPLAY] Added element: ${elementId} (${elementType}) to ${initialStatus}`);
+      console.log(`[KANBAN PROJECTION] [REPLAY] Added element: ${elementId} (${elementType}) to ${initialStatus} (teamId: ${teamId})`);
     }
     if (event.type === 'ElementMoved' && event.payload) {
       const { elementId, toStatus } = event.payload;
