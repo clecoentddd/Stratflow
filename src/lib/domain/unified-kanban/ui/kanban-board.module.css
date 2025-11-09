@@ -1,3 +1,10 @@
+.swimlaneHeaderRow {
+  display: flex;
+  align-items: center;
+  font-weight: bold;
+  font-size: 18px;
+  margin: 12px 0 8px 0;
+}
 /* Shared Kanban Board Component Styles */
 
 .kanbanBoard {
@@ -26,16 +33,15 @@
 }
 
 .columns {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(var(--kanban-column-count, 4), 1fr);
   gap: 1.5rem;
   overflow-x: auto;
   padding: 0.5rem 0;
 }
 
 .column {
-  flex: 1;
-  min-width: 280px;
-  max-width: 320px;
+  width: 100%;
   background: #ffffff;
   border-radius: 8px;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
@@ -60,6 +66,9 @@
   border-bottom: 1px solid #e2e8f0;
   background: #f8fafc;
   border-radius: 8px 8px 0 0;
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
 .columnTitle {
@@ -89,12 +98,14 @@
 }
 
 .columnContent {
-  padding: 1rem;
+  padding: 1rem 0.5rem;
   flex: 1;
-  min-height: 200px;
+  min-height: 120px;
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .emptyColumn {

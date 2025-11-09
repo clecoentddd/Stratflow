@@ -9,15 +9,15 @@ import type { EnrichedKanbanElement, KanbanColumnDefinition, KanbanBoardData } f
 
 // Column definitions for different kanban types
 const INITIATIVE_COLUMNS: KanbanColumnDefinition[] = [
-  { id: 'new', status: 'NEW', title: 'New', description: 'Recently created' },
-  { id: 'draft', status: 'Draft', title: 'Strategic Thinking', description: 'Initial planning phase' },
-  { id: 'active', status: 'Active', title: 'In Progress', description: 'Currently being worked on' },
+  { id: 'new', status: 'NEW', title: 'New', description: 'Use the radar as input' },
+  { id: 'draft', status: 'Draft', title: 'Strategic Thinking', description: 'Diagnosis is key, make the initiative concrete' },
+  { id: 'active', status: 'Active', title: 'In Progress', description: 'Getting a sense of moving' },
   { id: 'closed', status: 'Closed', title: 'Completed', description: 'Successfully finished' },
 ];
 
 const ITEM_COLUMNS: KanbanColumnDefinition[] = [
   { id: 'new', status: 'NEW', title: 'New', description: 'Recently created' },
-  { id: 'in_progress', status: 'IN_PROGRESS', title: 'In Progress', description: 'Currently working' },
+  { id: 'in_progress', status: 'IN_PROGRESS', title: 'In Progress', description: 'Getting a sense of moving' },
   { id: 'done', status: 'DONE', title: 'Done', description: 'Completed' },
 ];
 

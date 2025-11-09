@@ -56,27 +56,68 @@ export function KanbanBoard({ data, onMoveElement, className = '' }: {
     endDrag();
   }, [onMoveElement]);
 
-  const getElementsForColumn = useCallback((status: string) => {
-    return data.elements.filter((element: EnrichedKanbanElement) => element.status === status);
-  }, [data.elements]);
+  // Group elements by teamId and level
+  const swimlanes: Record<string, { teamId: string; teamName: string; teamLevel: number | undefined; elements: EnrichedKanbanElement[] }> = {};
+  for (const element of data.elements) {
+    const teamId = element.metadata?.teamId || 'unknown';
+    const teamName = element.metadata?.teamName || 'Unknown Team';
+    const teamLevel = element.metadata?.teamLevel ?? 0;
+    const key = `${teamLevel}__${teamId}`;
+    if (!swimlanes[key]) {
+      swimlanes[key] = { teamId, teamName, teamLevel, elements: [] };
+    }
+    swimlanes[key].elements.push(element);
+  }
+  const sortedSwimlaneKeys = Object.keys(swimlanes).sort((a, b) => {
+    // Sort by teamLevel, then teamName
+    const [levelA, nameA] = [swimlanes[a].teamLevel ?? 0, swimlanes[a].teamName];
+    const [levelB, nameB] = [swimlanes[b].teamLevel ?? 0, swimlanes[b].teamName];
+    if (levelA !== levelB) return levelA - levelB;
+    return nameA.localeCompare(nameB);
+  });
 
   const dragState = getDragState();
 
+  // Set CSS variable for column count
+  const columnCount = data.columns.length;
   return (
-    <div className={`${styles.kanbanBoard} ${className}`}>
-      <div className={styles.columns}>
+    <div className={`${styles.kanbanBoard} ${className}`}
+      style={{ ['--kanban-column-count' as any]: columnCount }}>
+      {/* Fixed column headers */}
+      <div className={styles.columns} style={{ position: 'sticky', top: 0, zIndex: 2, background: '#fff' }}>
         {data.columns.map((column: KanbanColumnDefinition) => (
-          <KanbanColumn
-            key={column.id}
-            column={column}
-            elements={getElementsForColumn(column.status)}
-            isDragOver={dragState.dragOverColumn === column.status}
-            onDragStart={handleDragStart}
-            onDragOver={(e) => handleDragOver(e, column.status)}
-            onDragLeave={handleDragLeave}
-            onDrop={(e) => handleDrop(e, column.status)}
-          />
+          <div key={column.id} className={styles.columnHeader}>
+            <h3 className={styles.columnTitle}>{column.title}</h3>
+            {column.description && <p className={styles.columnDescription}>{column.description}</p>}
+          </div>
         ))}
+      </div>
+      {/* Swimlanes per team */}
+      <div>
+        {sortedSwimlaneKeys.map((key) => {
+          const lane = swimlanes[key];
+          return (
+            <div key={key} className={styles.swimlane}>
+              <div className={styles.swimlaneHeaderRow}>
+                Team: {lane.teamName} (Level {lane.teamLevel ?? 0})
+              </div>
+              <div className={styles.columns}>
+                {data.columns.map((column: KanbanColumnDefinition) => (
+                  <KanbanColumn
+                    key={column.id}
+                    column={column}
+                    elements={lane.elements.filter(e => e.status === column.status)}
+                    isDragOver={dragState.dragOverColumn === column.status}
+                    onDragStart={handleDragStart}
+                    onDragOver={(e) => handleDragOver(e, column.status)}
+                    onDragLeave={handleDragLeave}
+                    onDrop={(e) => handleDrop(e, column.status)}
+                  />
+                ))}
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
@@ -108,16 +149,9 @@ export function KanbanColumn({
       onDragLeave={onDragLeave}
       onDrop={onDrop}
     >
-      <div className={styles.columnHeader}>
-        <h3 className={styles.columnTitle}>
-          {column.title}
-          <span className={styles.columnCount}>({elements.length})</span>
-        </h3>
-        {column.description && (
-          <p className={styles.columnDescription}>{column.description}</p>
-        )}
+      <div className={styles.columnCount} style={{ textAlign: 'right', fontSize: 12, color: '#888', marginBottom: 4 }}>
+        {elements.length > 0 ? `${elements.length} item${elements.length > 1 ? 's' : ''}` : ''}
       </div>
-
       <div className={styles.columnContent}>
         {elements.length === 0 ? (
           <div className={styles.emptyColumn}>
