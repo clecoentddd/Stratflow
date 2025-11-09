@@ -477,53 +477,49 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
              step={1}
            />
          </div>
-        <div className="mb-6">
-            <div className="flex items-center gap-4">
-                 <Button variant="outline" size="sm" onClick={() => setLinkRadarOpen(true)}>
-                    Tag radar item
-                </Button>
-                <Button variant="outline" size="sm" onClick={() => setLinkInitiativesOpen(true)} disabled={isTempInitiative}>
-                    Link initiatives
-                </Button>
-                {isTempInitiative && (
-                  <span className="text-xs text-muted-foreground">Save this initiative before linking</span>
-                )}
-        {linkedItems.length > 0 ? (
-          <div className="flex flex-wrap gap-2">
-            {linkedItems.map(item => (
-              <span key={item.id} className="flex items-center">
-                {isFallbackRadarItem(item) ? (
-                  <Badge variant="outline">{item.id}</Badge>
-                ) : (
-                  <Link href={`/team/${item.radarId}/radar#${item.id}`}>
-                    <Badge variant={item.type === 'Threat' ? 'destructive' : 'default'}>
-                      {item.name}
-                    </Badge>
-                  </Link>
-                )}
-                <button
-                  aria-label="Remove tag"
-                  className="ml-1 text-xs text-red-500 hover:text-red-700"
-                  style={{ background: 'none', border: 'none', cursor: 'pointer' }}
-                  onClick={() => {
-                    // Remove this tag and call handleLinkRadarItems
-                    const newIds = tagIds.filter(id => id !== item.id);
-                    handleLinkRadarItems(newIds);
-                  }}
-                >
-                  ×
-                </button>
-              </span>
-            ))}
-          </div>
-        ) : (
-          <p className="text-sm text-muted-foreground">No radar items tagged yet.</p>
-        )}
+
+        {/* Tag radar items group */}
+        <div className={styles.tagButtonGroup}>
+          <Button className={styles.tagButton} variant="outline" size="sm" onClick={() => setLinkRadarOpen(true)}>
+            Tag radar item
+          </Button>
+          {linkedItems.length > 0 ? (
+            <div className="flex flex-wrap gap-2">
+              {linkedItems.map(item => (
+                <span key={item.id} className="flex items-center">
+                  {isFallbackRadarItem(item) ? (
+                    <Badge variant="outline">{item.id}</Badge>
+                  ) : (
+                    <Link href={`/team/${item.radarId}/radar#${item.id}`}>
+                      <Badge style={{ background: '#bbf7d0', color: '#166534' }}>{item.name}</Badge>
+                    </Link>
+                  )}
+                  <button
+                    aria-label="Remove tag"
+                    className={styles.deleteButton}
+                    onClick={() => {
+                      const newIds = tagIds.filter(id => id !== item.id);
+                      handleLinkRadarItems(newIds);
+                    }}
+                  >
+                    ×
+                  </button>
+                </span>
+              ))}
             </div>
+          ) : (
+            <p className="text-sm text-muted-foreground">No radar items tagged yet.</p>
+          )}
         </div>
 
-        <div className="mb-6">
-          <div className="mb-2 text-sm font-medium text-muted-foreground">Linked initiatives</div>
+        {/* Link initiatives group */}
+        <div className={styles.initiativeButtonGroup}>
+          <Button className={styles.initiativeButton} variant="outline" size="sm" onClick={() => setLinkInitiativesOpen(true)} disabled={isTempInitiative}>
+            Link initiatives
+          </Button>
+          {isTempInitiative && (
+            <span className="text-xs text-muted-foreground">Save this initiative before linking</span>
+          )}
           {linkedInits.length > 0 ? (
             <div className="flex flex-wrap gap-2">
               {linkedInits.map(li => (
@@ -531,7 +527,7 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
                   {li.toInitiativeName || li.toInitiativeId}
                   <button
                     aria-label="Unlink initiative"
-                    className="ml-2 text-xs"
+                    className={styles.deleteButton}
                     onClick={() => handleUnlink(li.toInitiativeId)}
                   >
                     ×
