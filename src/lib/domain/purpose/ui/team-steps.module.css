@@ -99,6 +99,7 @@
   --step-purpose: #9B51E0; /* purple */
   --step-radar: #00cc88; /* green */  
   --step-dashboard: #388cfa; /* blue */
+  --step-kanban: #F5A623; /* orange */
 }
 
 /* ===== ACTIVE STATES ===== */
@@ -159,6 +160,25 @@
   color: #60A5FA;
 }
 
+.kanbanActive {
+  border-color: var(--step-kanban);
+  background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+  box-shadow: 0 4px 20px rgba(249, 115, 22, 0.15);
+}
+
+.kanbanActive .stepIcon {
+  background: var(--step-kanban);
+}
+
+.kanbanActive .stepTitle {
+  color: var(--step-kanban);
+  font-weight: 700;
+}
+
+.kanbanActive .stepSubtitle {
+  color: #F97316;
+}
+
 /* ===== INACTIVE STATES ===== */
 .purposeInactive:hover {
   border-color: #e2e8f0;
@@ -171,6 +191,11 @@
 }
 
 .dashboardInactive:hover {
+  border-color: #e2e8f0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.kanbanInactive:hover {
   border-color: #e2e8f0;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }

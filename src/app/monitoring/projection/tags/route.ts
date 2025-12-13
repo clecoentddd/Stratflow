@@ -1,9 +1,11 @@
 import { NextResponse } from 'next/server';
 import { getTagsForInitiative } from '@/lib/domain/tag-an-initiative-with-a-risk/tagsProjection';
 import { getAllTagsProjection } from '@/lib/domain/tag-an-initiative-with-a-risk/queryTagsProjection';
+import { waitForEventStore } from '@/lib/db/event-store';
 
 // Example: /monitoring/projection/tags?initiativeId=xyz
 export async function GET(req: Request) {
+  await waitForEventStore();
   const { searchParams } = new URL(req.url);
   const initiativeId = searchParams.get('initiativeId');
   if (initiativeId) {

@@ -1,14 +1,27 @@
 import { NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
 import { 
   queryEligibleInitiatives, 
   resetInitiativeCatalogProjection 
 } from '@/lib/domain/initiatives-catalog/projection';
+import { getUsersProjection } from '@/lib/domain/userManagement/user-projection';
 import { _getAllEvents, runProjectionOn } from '@/lib/db/event-store';
 
 export async function GET() {
   try {
     console.log('📋 [CATALOG] Getting initiative catalog projection...');
-    const catalog = await queryEligibleInitiatives({});
+    
+    const users = await getUsersProjection();
+    const cookieStore = await cookies();
+    const userIdFromCookie = cookieStore.get('userId')?.value;
+    
+    let user;
+    if (userIdFromCookie) {
+        user = users.find(u => u.userId === userIdFromCookie);
+    }
+    
+    const companyId = user?.companyId;
+    const catalog = await queryEligibleInitiatives({ companyId });
     
     console.log('📋 [CATALOG] Catalog retrieved:', catalog.length, 'initiatives');
     return NextResponse.json(catalog);

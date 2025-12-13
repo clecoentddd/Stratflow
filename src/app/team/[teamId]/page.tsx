@@ -84,22 +84,17 @@ export default function TeamStrategyPage() {
   return (
     <div className="flex flex-col min-h-screen">
       <main className="p-4 md:p-6 flex-1">
-        <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-4">
-             <TeamSteps teamId={teamId} companyId={team?.companyId || ''} active={'dashboard'} />
+        <div className="flex flex-col gap-4 mb-6">
+          <TeamSteps teamId={teamId} teamName={team.name} companyId={team?.companyId || ''} active={'dashboard'} />
+          <div className="flex justify-end">
+            <Button 
+                onClick={() => setCreateStrategyOpen(true)}
+                className="bg-[#388cfa] hover:bg-[#2a7ae8] text-white"
+            >
+                <Plus className="mr-2 h-4 w-4" />
+                New Strategy
+            </Button>
           </div>
-            <div className="flex-1 text-center">
-                 <h1 className="text-3xl font-bold font-headline">{team.name} - Strategy</h1>
-            </div>
-            <div className="flex items-center gap-4">
-                <Button 
-                    onClick={() => setCreateStrategyOpen(true)}
-                    className="bg-[#388cfa] hover:bg-[#2a7ae8] text-white"
-                >
-                    <Plus className="mr-2 h-4 w-4" />
-                    New Strategy
-                </Button>
-            </div>
         </div>
         <StrategyDashboard 
             initialDashboard={team.dashboard}

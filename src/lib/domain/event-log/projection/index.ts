@@ -95,6 +95,8 @@ export const getEventLogProjection = async (): Promise<AnyEvent[]> => {
   const liveProjection = getEventLogProjectionCache();
   if (liveProjection) {
     console.log('🎯 Returning live event log projection:', liveProjection.length, 'events');
+    const slice = liveProjection.slice(0, 3).map(ev => ({ type: ev.type, timestamp: ev.timestamp, aggregateId: ev.aggregateId }));
+    console.log('🎯 [EVENT-LOG] Live projection head (max 3):', slice);
     return liveProjection;
   }
   
@@ -105,13 +107,15 @@ export const getEventLogProjection = async (): Promise<AnyEvent[]> => {
   setEventLogCacheExplicitlyEmptied(false);
   
   console.log('🎯 Initial projection built with', initialCache.length, 'events');
+    const initialSlice = initialCache.slice(0, 3).map(ev => ({ type: ev.type, timestamp: ev.timestamp, aggregateId: ev.aggregateId }));
+    console.log('🎯 [EVENT-LOG] Initial projection head (max 3):', initialSlice);
   return initialCache;
 };
 
 // Handler for ANY event - updates live event log projection
 function onAnyEvent(event: any) {
   console.log('🔄 [LIVE-PROJECTION] *** Event Log: New event received! ***');
-  console.log('🔄 [LIVE-PROJECTION] Event type:', event.type, 'Entity:', event.entity);
+  console.log('🔄 [LIVE-PROJECTION] Event type:', event.type, 'Entity:', event.entity, 'Timestamp:', event.timestamp);
   
   try {
     // Get current cache or initialize empty
@@ -120,18 +124,38 @@ function onAnyEvent(event: any) {
     
     // Add the new event at the beginning (newest first)
     const updatedCache = [event, ...currentCache];
+    console.log('🔄 [LIVE-PROJECTION] Appending event to cache. New length will be', updatedCache.length);
+    console.log('🔄 [LIVE-PROJECTION] Event payload preview:', JSON.stringify(event.payload, null, 2));
+    if (currentCache[0]) {
+      console.log('🔄 [LIVE-PROJECTION] Previous head before append:', {
+        type: currentCache[0].type,
+        timestamp: currentCache[0].timestamp,
+        aggregateId: currentCache[0].aggregateId,
+      });
+    } else {
+      console.log('🔄 [LIVE-PROJECTION] Cache was empty before append');
+    }
     
     // Update the live projection
     setEventLogProjectionCache(updatedCache);
     setEventLogCacheExplicitlyEmptied(false);
     
+    const head = updatedCache[0];
     console.log('🔄 [LIVE-PROJECTION] Event added to live projection. Cache now has', updatedCache.length, 'events');
+    console.log('🔄 [LIVE-PROJECTION] New head of cache:', {
+      type: head?.type,
+      timestamp: head?.timestamp,
+      aggregateId: head?.aggregateId,
+    });
+    const topThree = updatedCache.slice(0, 3).map(ev => ({ type: ev.type, timestamp: ev.timestamp, aggregateId: ev.aggregateId }));
+    console.log('🔄 [LIVE-PROJECTION] Current top three events:', topThree);
     
   } catch (error) {
     console.error('❌ [LIVE-PROJECTION] Error updating event log projection:', error);
   }
 }
 
+registerProjectionHandler('UserAdded', onAnyEvent);
 // Register handlers for all event types
 registerProjectionHandler('CompanyCreated', onAnyEvent);
 registerProjectionHandler('TeamCreated', onAnyEvent);
@@ -146,10 +170,10 @@ registerProjectionHandler('InitiativeItemAdded', onAnyEvent);
 registerProjectionHandler('InitiativeItemUpdated', onAnyEvent);
 registerProjectionHandler('InitiativeItemDeleted', onAnyEvent);
 
-
 // Kanban events
 registerProjectionHandler('ElementMoved', onAnyEvent);
-registerProjectionHandler('ElementAddedToKanban', onAnyEvent);
+registerProjectionHandler('InitiativeAddedToKanban', onAnyEvent);
+registerProjectionHandler('InitiativeItemAddedToKanban', onAnyEvent);
 registerProjectionHandler('InitiativeRadarItemsLinked', onAnyEvent);
 
 // Tag-an-initiative-with-a-risk events

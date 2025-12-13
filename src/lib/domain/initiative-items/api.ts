@@ -1,4 +1,5 @@
-import { getTeamsProjection } from '@/lib/db/projections';
+import { queryItems } from '@/lib/domain/initiatives-catalog/projection';
+import { waitForEventStore } from '@/lib/db/event-store';
 
 export type InitiativeItemQueryResult = {
   id: string;
@@ -14,64 +15,33 @@ export type InitiativeItemQueryResult = {
  * Query all initiative items across all teams
  * This aggregates items from all team dashboards
  */
-export async function queryInitiativeItems(): Promise<InitiativeItemQueryResult[]> {
-  const teams = await getTeamsProjection();
-  const allItems: InitiativeItemQueryResult[] = [];
-
-  for (const team of teams) {
-    // Navigate through the team dashboard structure
-    for (const strategy of team.dashboard.strategies) {
-      for (const initiative of strategy.initiatives) {
-        for (const step of initiative.steps) {
-          for (const item of step.items) {
-            allItems.push({
-              id: item.id,
-              text: item.text,
-              status: item.status || 'todo',
-              initiativeId: initiative.id,
-              stepKey: step.key,
-              teamId: team.id,
-              strategyId: strategy.id,
-            });
-          }
-        }
-      }
-    }
-  }
-
-  return allItems;
+export async function queryInitiativeItems(companyId?: string): Promise<InitiativeItemQueryResult[]> {
+  await waitForEventStore();
+  const items = queryItems({ companyId });
+  return items.map(item => ({
+    id: item.id,
+    text: item.text,
+    status: (item.status as any) || 'todo',
+    initiativeId: item.initiativeId,
+    stepKey: item.stepKey || '',
+    teamId: item.teamId,
+    strategyId: item.strategyId,
+  }));
 }
 
 /**
  * Query initiative items for a specific team
  */
 export async function queryInitiativeItemsByTeam(teamId: string): Promise<InitiativeItemQueryResult[]> {
-  const teams = await getTeamsProjection();
-  const team = teams.find((t: any) => t.id === teamId);
-
-  if (!team) {
-    return [];
-  }
-
-  const items: InitiativeItemQueryResult[] = [];
-
-  for (const strategy of team.dashboard.strategies) {
-    for (const initiative of strategy.initiatives) {
-      for (const step of initiative.steps) {
-        for (const item of step.items) {
-          items.push({
-            id: item.id,
-            text: item.text,
-            status: item.status || 'todo',
-            initiativeId: initiative.id,
-            stepKey: step.key,
-            teamId: team.id,
-            strategyId: strategy.id,
-          });
-        }
-      }
-    }
-  }
-
-  return items;
+  await waitForEventStore();
+  const items = queryItems({ teamId });
+  return items.map(item => ({
+    id: item.id,
+    text: item.text,
+    status: (item.status as any) || 'todo',
+    initiativeId: item.initiativeId,
+    stepKey: item.stepKey || '',
+    teamId: item.teamId,
+    strategyId: item.strategyId,
+  }));
 }

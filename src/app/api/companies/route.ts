@@ -1,12 +1,35 @@
 import { NextResponse, NextRequest } from 'next/server';
+import { cookies } from 'next/headers';
 import { fetchCompanies } from '@/lib/domain/companies/getCompanies';
+import { getUsersProjection } from '@/lib/domain/userManagement/user-projection';
 import type { CreateCompanyCommand } from '@/lib/domain/companies/commands';
 import { CompaniesCommandHandlers } from '@/lib/domain/companies/commandHandler';
+
+export const dynamic = 'force-dynamic';
 
 // --- Vertical Slice: GET Companies ---
 export async function GET(request: NextRequest) {
   try {
-    const companies = await fetchCompanies(); // <— shared helper
+    let companies = await fetchCompanies(); // <— shared helper
+
+    // Filter by user's company
+    const users = await getUsersProjection();
+    const cookieStore = await cookies();
+    const userIdFromCookie = cookieStore.get('userId')?.value;
+    let user;
+    if (userIdFromCookie) {
+        user = users.find(u => u.userId === userIdFromCookie);
+    }
+
+    if (!user) {
+        // Require login to see companies
+        return NextResponse.json([]);
+    }
+
+    if (user.companyId) {
+        companies = companies.filter(c => c.id === user.companyId);
+    }
+
     return NextResponse.json(companies);
   } catch (error) {
     console.error('Failed to get companies projection:', error);

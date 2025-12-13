@@ -1,13 +1,16 @@
 import { NextResponse, NextRequest } from 'next/server';
+import { cookies } from 'next/headers';
 import { v4 as uuidv4 } from 'uuid';
-import { saveEvents } from '@/lib/db/event-store';
+import { saveEvents, ensureProjectionHandlersLoaded } from '@/lib/db/event-store';
 import { getTeamByIdProjection } from '@/lib/db/projections';
+import { getUsersProjection } from '@/lib/domain/userManagement/user-projection';
 import type { AddInitiativeItemCommand } from '@/lib/domain/initiative-items/commands';
 import type { InitiativeItemAddedEvent } from '@/lib/domain/initiative-items/events';
 import type { InitiativeItem } from '@/lib/types';
 
 // --- Vertical Slice: Add Initiative Item ---
 export async function POST(request: NextRequest) {
+  await ensureProjectionHandlersLoaded();
   try {
     const body = await request.json();
     const teamId = request.nextUrl.searchParams.get('teamId') ?? body.teamId;
@@ -20,6 +23,20 @@ export async function POST(request: NextRequest) {
     if (!team) {
       return NextResponse.json({ message: 'Team not found' }, { status: 404 });
     }
+
+    // Check tenancy
+    const users = await getUsersProjection();
+    const cookieStore = await cookies();
+    const userIdFromCookie = cookieStore.get('userId')?.value;
+    let user;
+    if (userIdFromCookie) {
+        user = users.find(u => u.userId === userIdFromCookie);
+    }
+
+    if (user?.companyId && team.companyId && team.companyId !== user.companyId) {
+        return NextResponse.json({ message: 'Unauthorized access to team' }, { status: 403 });
+    }
+
     // Find initiative by ID
     const initiative = team.dashboard.strategies
         .flatMap(s => s.initiatives)

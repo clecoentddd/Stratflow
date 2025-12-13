@@ -11,11 +11,12 @@ import type { InitiativeCreatedEvent } from '@/lib/domain/initiatives/events';
 import type { LinkingEvents, InitiativeLinkedEvent } from '@/lib/domain/initiatives/linking/events';
 import type { TagAddedEvent, TagRemovedEvent } from '../domain/tag-an-initiative-with-a-risk/events';
 import type { UnifiedKanbanEvent } from '@/lib/domain/unified-kanban/events';
+import type { UserEvent } from '@/lib/domain/userManagement/UserEvent';
 
 // In a real app, this would be a proper database. We're using a file-based mock store
 // for simplicity and to ensure state persists across serverless function invocations.
 
-export type AllEvents = TeamEvent | CompanyEvent | LinkingEvents | UnifiedKanbanEvent | TagAddedEvent | TagRemovedEvent;
+export type AllEvents = TeamEvent | CompanyEvent | LinkingEvents | UnifiedKanbanEvent | TagAddedEvent | TagRemovedEvent | UserEvent;
 
 // We no longer keep state in memory. We'll use functions to read/write from a mock DB file.
 // Let's define the structure of our mock database.
@@ -31,17 +32,24 @@ type MockDb = {
 // It is used here to solve the state-persistence issue in a serverless dev environment.
 
 // Projection handler management
-type ProjectionHandler = (event: AllEvents) => void;
+type ProjectionHandler = (event: AllEvents, isReplay?: boolean) => void;
 const projectionHandlers: Record<string, ProjectionHandler[]> = {};
 
 export const registerProjectionHandler = (eventType: string, handler: ProjectionHandler) => {
   if (!projectionHandlers[eventType]) projectionHandlers[eventType] = [];
   projectionHandlers[eventType].push(handler);
+  const handlerCount = projectionHandlers[eventType].length;
+  console.log(`[EVENT-STORE] registerProjectionHandler(${eventType}) count=${handlerCount}`);
 };
 
-const dispatchProjectionHandlers = (event: AllEvents) => {
+const dispatchProjectionHandlers = (event: AllEvents, isReplay: boolean = false) => {
   const handlers = projectionHandlers[event.type] || [];
-  handlers.forEach(h => h(event));
+  console.log(`[EVENT-STORE] Dispatching event type ${event.type} to ${handlers.length} handler(s). isReplay=${isReplay}`);
+  handlers.forEach((h, index) => {
+    const handlerName = h.name || 'anonymous';
+    console.log(`[EVENT-STORE] -> Handler[${index}] ${handlerName}`);
+    h(event, isReplay);
+  });
 };
 
 export const runProjectionOn = (event: AllEvents) => dispatchProjectionHandlers(event);
@@ -61,10 +69,11 @@ export const ensureProjectionHandlersLoaded = async () => {
   await Promise.all([
     import('@/lib/domain/initiatives-catalog/projection'),
     import('@/lib/domain/initiatives-linking/projection'),
-    import('@/lib/domain/initiatives-catalog/projection'),
     import('@/lib/domain/companies/projection'), // Add companies projection handler for live updates
     import('@/lib/domain/unified-kanban/domainListeners'), // Add unified kanban domain listeners
-  import('@/lib/domain/tag-an-initiative-with-a-risk/tagsProjection'), // Ensure tagsProjection is loaded and handlers registered
+    import('@/lib/domain/unified-kanban/projection/kanban-initiatives-projection'),
+    import('@/lib/domain/unified-kanban/projection/kanban-initiative-item-projection'),
+    import('@/lib/domain/tag-an-initiative-with-a-risk/tagsProjection'), // Ensure tagsProjection is loaded and handlers registered
   ]);
   console.log('All projection handlers loaded');
   _projectionsLoaded = true;
@@ -96,10 +105,18 @@ const initializeEventStore = (): void => {
   (global as any)._mockDbEvents = initialEvents;
   
   // Dispatch initial events to projection handlers
-  (async () => {
+  (global as any)._initializationPromise = (async () => {
     await ensureProjectionHandlersLoaded();
-    initialEvents.forEach(event => dispatchProjectionHandlers(event));
+    initialEvents.forEach(event => dispatchProjectionHandlers(event, true));
+    console.log('Event store initialization complete');
   })();
+};
+
+export const waitForEventStore = async () => {
+  initializeEventStore();
+  if ((global as any)._initializationPromise) {
+    await (global as any)._initializationPromise;
+  }
 };
 
 const saveDb = (db: MockDb) => {
@@ -118,6 +135,11 @@ export const saveEvents = async (newEvents: AllEvents[]): Promise<void> => {
     
     // Get current events array for write operation
     const currentEvents = (global as any)._mockDbEvents || [];
+    console.log('[EVENT-STORE] saveEvents called with', newEvents.length, 'event(s)');
+    newEvents.forEach((evt, idx) => {
+      console.log(`[EVENT-STORE] Event[${idx}] -> type=${evt.type}, aggregateId=${(evt as any).aggregateId}, timestamp=${(evt as any).timestamp}`);
+      console.log(`[EVENT-STORE] Event[${idx}] payload snapshot:`, evt.payload);
+    });
     
     // Append new events
     const updatedEvents = [...currentEvents, ...newEvents];
@@ -128,7 +150,9 @@ export const saveEvents = async (newEvents: AllEvents[]): Promise<void> => {
     
     // Dispatch events to live projection handlers
     (async () => {
-      newEvents.forEach(event => dispatchProjectionHandlers(event));
+      newEvents.forEach(event => dispatchProjectionHandlers(event, false));
+      const lastThree = updatedEvents.slice(-3).map(e => ({ type: e.type, aggregateId: (e as any).aggregateId, timestamp: (e as any).timestamp }));
+      console.log('[EVENT-STORE] Updated event store size:', updatedEvents.length, 'Last three events:', lastThree);
       resolve();
     })();
   });

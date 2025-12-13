@@ -1,6 +1,6 @@
 .stepsGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 0.5rem;
 }
 
@@ -184,16 +184,9 @@
   transition: background-color 0.2s, border-color 0.2s, color 0.2s;
   color: #1a1a1a;
 
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3; /* limit to 3 lines in read-only */
-  line-clamp: 3; /* standard property for compatibility */
-  overflow: hidden;
-  text-overflow: ellipsis;
-
-  word-break: break-word; /* ensures long words don’t break the clamp */
-  line-height: 1.4rem;    /* consistent 3-line height */
-  max-height: calc(1.4rem * 3); /* ensures flex doesn’t override clamp */
+  /* Removed line-clamp to show whole text */
+  word-break: break-word; /* ensures long words don’t break the layout */
+  line-height: 1.4rem;    
 }
 
 .item:hover {

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Compass, TrendingUp, Radar } from "lucide-react";
+import { Compass, TrendingUp, Radar, Kanban } from "lucide-react";
 import type { Team } from "@/lib/types";
 import styles from "./TeamCard.module.css";
 
@@ -35,6 +35,11 @@ export function TeamCard({ team, onEdit }: TeamCardProps) {
           <Link href={`/team/${team.id}/dashboard?companyId=${team.companyId}`}>
             <button className={styles.actionButton}>
               <TrendingUp className={styles.icon} color="#388cfa" />
+            </button>
+          </Link>
+          <Link href={`/team/${team.id}/kanban?companyId=${team.companyId}`}>
+            <button className={styles.actionButton} title="Kanban Board">
+              <Kanban className={styles.icon} color="#f59e0b" />
             </button>
           </Link>
         </div>

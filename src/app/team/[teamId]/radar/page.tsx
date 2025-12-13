@@ -202,15 +202,11 @@ export default function RadarPage() {
   return (
     <div className="flex flex-col min-h-screen">
       <main className="p-4 md:p-6 flex-1">
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-4">
-            {/* Stepper replaces previous Back/View buttons */}
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <TeamSteps teamId={team.id} companyId={team.companyId} active={'radar'} />
-            </div>
+        <div className="flex flex-col gap-4 mb-6">
+          <TeamSteps teamId={team.id} teamName={team.name} companyId={team.companyId} active={'radar'} />
+          <div className="flex justify-end">
+            <Button onClick={() => handleOpenDialog()}><Plus className="mr-2 h-4 w-4" />New Radar Item</Button>
           </div>
-          <h1 className="text-3xl font-bold font-headline">{team.name} - Radar</h1>
-          <Button onClick={() => handleOpenDialog()}><Plus className="mr-2 h-4 w-4" />New Radar Item</Button>
         </div>
         <RadarDashboard
           radarItems={team.radar || []}

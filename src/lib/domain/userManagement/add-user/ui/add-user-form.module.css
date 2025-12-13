@@ -1,0 +1,59 @@
+.addUserForm {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 400px;
+  margin: 2rem auto;
+  padding: 32px 28px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 2px 16px 0 rgba(0,0,0,0.04);
+}
+.addUserForm label {
+  font-weight: 500;
+  color: #222;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.addUserForm input,
+.addUserForm select {
+  padding: 8px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 1rem;
+  background: #f9fafb;
+  margin-top: 2px;
+}
+.addUserForm select[multiple] {
+  min-height: 60px;
+}
+.addUserForm button {
+  margin-top: 12px;
+  padding: 10px 0;
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.addUserForm button:disabled {
+  background: #a5b4fc;
+  cursor: not-allowed;
+}
+.addUserForm .success {
+  color: #16a34a;
+  font-weight: 500;
+  margin-top: 8px;
+  text-align: center;
+}
+.addUserForm .error {
+  color: #dc2626;
+  font-weight: 500;
+  margin-top: 8px;
+  text-align: center;
+}

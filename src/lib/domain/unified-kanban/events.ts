@@ -4,7 +4,7 @@ import type { Event } from '../teams/events';
 
 export type ElementMovedEvent = Event<'ElementMoved', {
   elementId: string;
-  elementType: 'initiative' | 'item';
+  elementType: 'initiative' | 'initiative-item';
   toStatus: string;
   // Optionally, add timestamp here if not in root
   tags: string[];
@@ -12,14 +12,24 @@ export type ElementMovedEvent = Event<'ElementMoved', {
   // Add any additional metadata if needed
 }>;
 
-// Element added to kanban (when initiative/item is created)
-export type ElementAddedToKanbanEvent = Event<'ElementAddedToKanban', {
-  elementId: string;
-  elementType: 'initiative' | 'initiative-item';
-  initialStatus: string; // typically "NEW"
+export type InitiativeAddedToKanbanEvent = Event<'InitiativeAddedToKanban', {
+  initiativeId: string;
+  initialStatus: string;
   boardId?: string;
 }, {
   teamId?: string;
 }>;
 
-export type UnifiedKanbanEvent = ElementMovedEvent | ElementAddedToKanbanEvent;
+export type InitiativeItemAddedToKanbanEvent = Event<'InitiativeItemAddedToKanban', {
+  itemId: string;
+  initiativeId: string;
+  initialStatus: string;
+  boardId?: string;
+}, {
+  teamId?: string;
+}>;
+
+export type UnifiedKanbanEvent =
+  | ElementMovedEvent
+  | InitiativeAddedToKanbanEvent
+  | InitiativeItemAddedToKanbanEvent;

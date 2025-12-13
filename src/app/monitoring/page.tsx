@@ -9,7 +9,8 @@ import { InitiativeCatalogProjectionControls } from '@/lib/domain/initiatives-ca
 import { queryEligibleInitiatives } from '@/lib/domain/initiatives-catalog/projection';
 import { queryInitiativeItems } from '@/lib/domain/initiative-items/api';
 
-import { headers } from 'next/headers';
+import { headers, cookies } from 'next/headers';
+import { getUsersProjection } from '@/lib/domain/userManagement/user-projection';
 import styles from '@/lib/domain/monitoring/styles/monitoring.module.css';
 
 type SearchParams = { view?: 'events' | 'links' | 'catalog' | 'companies' | 'teams' | 'kanban' | 'initiatives' | 'items' | 'tags' };
@@ -17,6 +18,13 @@ type SearchParams = { view?: 'events' | 'links' | 'catalog' | 'companies' | 'tea
 export default async function MonitoringPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
   const { view } = await searchParams;
   const current = view === 'links' || view === 'catalog' || view === 'companies' || view === 'teams' || view === 'kanban' || view === 'initiatives' || view === 'items' || view === 'tags' ? view : 'events';
+
+  // Get current user company
+  const users = await getUsersProjection();
+  const cookieStore = await cookies();
+  const userIdFromCookie = cookieStore.get('userId')?.value;
+  const user = userIdFromCookie ? users.find(u => u.userId === userIdFromCookie) : undefined;
+  const companyId = user?.companyId;
 
   const [events, links, catalog, companies, teams, initiatives, items, tagsProjection] = await Promise.all([
   current === 'events' ? getEventLogProjection() : Promise.resolve([] as any[]),
@@ -26,7 +34,7 @@ export default async function MonitoringPage({ searchParams }: { searchParams: P
     })() : Promise.resolve([] as any[]),
     current === 'catalog' ? (async () => {
       const mod = await import('@/lib/domain/initiatives-catalog/projection');
-      return mod.queryEligibleInitiatives({});
+      return mod.queryEligibleInitiatives({ companyId });
     })() : Promise.resolve([] as any[]),
     current === 'companies' ? (async () => {
       const { getCompaniesProjection } = await import('@/lib/domain/companies/projection');
@@ -50,8 +58,8 @@ export default async function MonitoringPage({ searchParams }: { searchParams: P
         return [];
       }
     })() : Promise.resolve([] as any[]),
-    current === 'initiatives' ? queryEligibleInitiatives() : Promise.resolve([] as any[]),
-    current === 'items' ? queryInitiativeItems() : Promise.resolve([] as any[]),
+    current === 'initiatives' ? queryEligibleInitiatives({ companyId }) : Promise.resolve([] as any[]),
+    current === 'items' ? queryInitiativeItems(companyId) : Promise.resolve([] as any[]),
     current === 'tags' ? (async () => {
       let url = '';
       if (typeof window === 'undefined') {

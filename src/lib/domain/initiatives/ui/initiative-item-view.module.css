@@ -29,6 +29,8 @@
   font-size: 0.875rem; /* text-sm */
   line-height: 1.625; /* leading-relaxed */
   white-space: pre-wrap; /* whitespace-pre-wrap */
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .iconSmall {

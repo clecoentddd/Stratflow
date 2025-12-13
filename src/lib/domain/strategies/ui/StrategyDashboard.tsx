@@ -56,7 +56,7 @@ export function StrategyDashboard({
     return { currentStrategies: current, archivedStrategies: archived };
   }, [dashboard]);
 
-  const handleCreateStrategy = async (description: string, timeframe: string) => {
+  const handleCreateStrategy = async (description: string, timeframe: string, _teamId?: string) => {
     setCreateStrategyOpen(false);
     
     const command: CreateStrategyCommand = { description, timeframe };
@@ -213,6 +213,7 @@ export function StrategyDashboard({
         isOpen={isCreateStrategyOpen}
         onOpenChange={setCreateStrategyOpen}
         onCreate={handleCreateStrategy}
+        teamId={orgId}
       />
     </div>
   );

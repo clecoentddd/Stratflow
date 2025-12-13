@@ -1,11 +1,32 @@
 import { NextResponse, NextRequest } from 'next/server';
+import { cookies } from 'next/headers';
 import type { CreateInitiativeCommand, UpdateInitiativeCommand, DeleteInitiativeCommand } from '@/lib/domain/initiatives/commands';
 import { InitiativesCommandHandlers } from '@/lib/domain/initiatives/commandHandler';
+import { ensureProjectionHandlersLoaded } from '@/lib/db/event-store';
+import { getTeamByIdProjection } from '@/lib/db/projections';
+import { getUsersProjection } from '@/lib/domain/userManagement/user-projection';
 
+async function checkTenancy(teamId: string) {
+    const team = await getTeamByIdProjection(teamId);
+    if (!team) return { error: 'Team not found', status: 404 };
 
+    const users = await getUsersProjection();
+    const cookieStore = await cookies();
+    const userIdFromCookie = cookieStore.get('userId')?.value;
+    let user;
+    if (userIdFromCookie) {
+        user = users.find(u => u.userId === userIdFromCookie);
+    }
+
+    if (user?.companyId && team.companyId && team.companyId !== user.companyId) {
+        return { error: 'Unauthorized access to team', status: 403 };
+    }
+    return null;
+}
 
 // --- Vertical Slice: Create Initiative ---
 export async function POST(request: NextRequest) {
+  await ensureProjectionHandlersLoaded();
   try {
     const body = await request.json();
     const teamId = request.nextUrl.searchParams.get('teamId') ?? body.teamId;
@@ -13,6 +34,9 @@ export async function POST(request: NextRequest) {
     const command: CreateInitiativeCommand = body;
 
     if (!teamId) return NextResponse.json({ message: 'teamId is required (query or body)' }, { status: 400 });
+
+    const tenancyCheck = await checkTenancy(teamId);
+    if (tenancyCheck) return NextResponse.json({ message: tenancyCheck.error }, { status: tenancyCheck.status });
 
     const result = await InitiativesCommandHandlers.handleCreateInitiative(teamId, command);
     // Return the real initiative id and the tempId for frontend reconciliation
@@ -36,6 +60,9 @@ export async function PUT(request: NextRequest) {
 
     if (!teamId) return NextResponse.json({ message: 'teamId is required (query or body)' }, { status: 400 });
 
+    const tenancyCheck = await checkTenancy(teamId);
+    if (tenancyCheck) return NextResponse.json({ message: tenancyCheck.error }, { status: tenancyCheck.status });
+
     const result = await InitiativesCommandHandlers.handleUpdateInitiative(teamId, command);
     return NextResponse.json(result, { status: 200 });
 
@@ -56,6 +83,9 @@ export async function DELETE(request: NextRequest) {
     const command: DeleteInitiativeCommand = body;
 
     if (!teamId) return NextResponse.json({ message: 'teamId is required (query or body)' }, { status: 400 });
+
+    const tenancyCheck = await checkTenancy(teamId);
+    if (tenancyCheck) return NextResponse.json({ message: tenancyCheck.error }, { status: tenancyCheck.status });
 
     const result = await InitiativesCommandHandlers.handleDeleteInitiative(teamId, command);
     return NextResponse.json(result, { status: 200 });

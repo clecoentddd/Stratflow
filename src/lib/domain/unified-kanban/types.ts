@@ -34,6 +34,7 @@ export type EnrichedKanbanElement = {
   // Looked-up domain data
   title: string;
   description?: string;
+  swimlaneId?: string;
   metadata: {
     // Common metadata
     teamId?: string;
@@ -45,6 +46,8 @@ export type EnrichedKanbanElement = {
     // Initiative-specific
     initiativeId?: string;
     strategyId?: string;
+    strategyName?: string;
+    strategyState?: string;
 
     // Initiative item-specific
     itemId?: string;
@@ -53,8 +56,19 @@ export type EnrichedKanbanElement = {
   tags?: string[];
 };
 
+export type KanbanSwimlaneDefinition = {
+  id: string;
+  title: string;
+  color?: string;
+  teamId?: string;
+  teamName?: string;
+  teamLevel?: number;
+  state?: string;
+};
+
 export type KanbanBoardData = {
   columns: KanbanColumnDefinition[];
+  swimlanes?: KanbanSwimlaneDefinition[];
   elements: EnrichedKanbanElement[];
   metadata?: {
     title?: string;
@@ -68,6 +82,6 @@ export type MoveElementCommand = {
   elementId: string;
   fromStatus: string;
   toStatus: string;
-  elementType: 'initiative' | 'item';
+  elementType: 'initiative' | 'initiative-item';
   boardId?: string;
 };

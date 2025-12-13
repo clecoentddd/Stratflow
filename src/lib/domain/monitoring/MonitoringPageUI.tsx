@@ -81,7 +81,43 @@ export function MonitoringPageUI({
         </>
       ) : current === 'items' ? (
         <>
-          {/* InitiativeItemsKanban rendered by parent */}
+          <h1 className={styles.heading}>Initiative Items Projection</h1>
+          <div className={`${styles.tableWrap} ${styles.catalogAccent}`}>
+            <table className={styles.table}>
+              <thead className={styles.thead}>
+                <tr>
+                  <th>Item ID</th>
+                  <th>Text</th>
+                  <th>Status</th>
+                  <th>Step</th>
+                  <th>Initiative ID</th>
+                  <th>Strategy ID</th>
+                  <th>Team ID</th>
+                </tr>
+              </thead>
+              <tbody className={styles.tbody}>
+                {items.length === 0 ? (
+                  <tr>
+                    <td colSpan={7} style={{ textAlign: 'center', padding: '2rem', color: '#6b7280' }}>
+                      No items found in projection.
+                    </td>
+                  </tr>
+                ) : (
+                  items.map((item: any) => (
+                    <tr key={item.id}>
+                      <td style={{ fontFamily: 'ui-monospace', fontSize: '0.875rem' }}>{item.id}</td>
+                      <td>{item.text}</td>
+                      <td>{item.status}</td>
+                      <td>{item.stepKey}</td>
+                      <td style={{ fontFamily: 'ui-monospace', fontSize: '0.875rem' }}>{item.initiativeId}</td>
+                      <td style={{ fontFamily: 'ui-monospace', fontSize: '0.875rem' }}>{item.strategyId}</td>
+                      <td style={{ fontFamily: 'ui-monospace', fontSize: '0.875rem' }}>{item.teamId}</td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
         </>
       ) : current === 'links' ? (
         <>

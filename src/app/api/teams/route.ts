@@ -1,6 +1,8 @@
 
 import { NextResponse, NextRequest } from 'next/server';
+import { cookies } from 'next/headers';
 import { getTeamsProjection } from '@/lib/domain/teams/projection';
+import { getUsersProjection } from '@/lib/domain/userManagement/user-projection';
 import type { CreateTeamCommand, UpdateTeamCommand } from '@/lib/domain/teams/commands';
 import { TeamsCommandHandlers } from '@/lib/domain/teams/commandHandler';
 
@@ -8,7 +10,28 @@ import { TeamsCommandHandlers } from '@/lib/domain/teams/commandHandler';
 export async function GET(request: NextRequest) {
   try {
     console.log('[api/teams] GET invoked', { url: request.url, headers: Object.fromEntries(request.headers) });
-    const teams = await getTeamsProjection();
+    const { searchParams } = request.nextUrl;
+    let companyId = searchParams.get('companyId');
+
+    const users = await getUsersProjection();
+    const cookieStore = await cookies();
+    const userIdFromCookie = cookieStore.get('userId')?.value;
+    let user;
+    if (userIdFromCookie) {
+        user = users.find(u => u.userId === userIdFromCookie);
+    }
+
+    // If no companyId provided, default to user's company
+    if (!companyId && user?.companyId) {
+        companyId = user.companyId;
+    }
+
+    let teams = await getTeamsProjection();
+    
+    if (companyId) {
+      teams = teams.filter(t => t.companyId === companyId);
+    }
+
     console.log('[api/teams] returning teams count', teams.length);
     return NextResponse.json(teams);
   } catch (error) {
@@ -35,6 +58,22 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const command = body as CreateTeamCommand;
     
+    const users = await getUsersProjection();
+    const cookieStore = await cookies();
+    const userIdFromCookie = cookieStore.get('userId')?.value;
+    let user;
+    if (userIdFromCookie) {
+        user = users.find(u => u.userId === userIdFromCookie);
+    }
+
+    // Enforce companyId from user context
+    if (user?.companyId) {
+        if (command.companyId && command.companyId !== user.companyId) {
+             return NextResponse.json({ message: 'Cannot create team for another company' }, { status: 403 });
+        }
+        command.companyId = user.companyId;
+    }
+
     const created = await TeamsCommandHandlers.handleCreateTeam(command);
     return NextResponse.json(created, { status: 201 });
   } catch (error) {

@@ -18,8 +18,6 @@ import { InitiativeLinkDialog } from "@/lib/domain/initiatives-linking/ui/Initia
 import type { Initiative, InitiativeStepKey, InitiativeItem as InitiativeItemType, RadarItem } from "@/lib/types";
 import type { UpdateInitiativeCommand } from '@/lib/domain/initiatives/commands';
 import type { AddInitiativeItemCommand, UpdateInitiativeItemCommand } from '@/lib/domain/initiative-items/commands';
-import { getTagsForInitiative } from '@/lib/domain/tag-an-initiative-with-a-risk/tagsProjection';
-import { getTagsForInitiativeProjection } from '@/lib/domain/tag-an-initiative-with-a-risk/queryTagsProjection';
 import stepStyles from "./initiative-step-view.module.css";
 import { InitiativeStepView } from "@/lib/domain/initiative-items/ui/InitiativeStepView";
 import { addInitiativeItem, updateInitiativeItem, deleteInitiativeItem } from "@/lib/api/initiative-items";
@@ -302,20 +300,6 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
     async function loadTags() {
       let tags: string[] = [];
       try {
-        // Try direct import (works in SSR/server context)
-        tags = getTagsForInitiativeProjection
-          ? getTagsForInitiativeProjection(initiative.id)
-          : [];
-        // If SSR returns empty, or we're on client, fetch from API
-        if (!tags.length && typeof window !== 'undefined') {
-          const res = await fetch(`/monitoring/projection/tags?initiativeId=${initiative.id}`);
-          if (res.ok) {
-            const data = await res.json();
-            tags = data.tags || [];
-          }
-        }
-      } catch (err) {
-        // Always fallback to API fetch on error
         if (typeof window !== 'undefined') {
           const res = await fetch(`/monitoring/projection/tags?initiativeId=${initiative.id}`);
           if (res.ok) {
@@ -323,6 +307,8 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
             tags = data.tags || [];
           }
         }
+      } catch (err) {
+        console.error("Failed to load tags", err);
       }
       if (!didCancel) setTagIds(tags);
     }

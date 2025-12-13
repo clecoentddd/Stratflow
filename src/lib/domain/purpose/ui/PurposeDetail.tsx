@@ -15,16 +15,8 @@ export default function PurposeDetail({ team, step }: Props) {
 
   return (
     <div style={{ padding: 24 }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, marginBottom: 16 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <TeamSteps teamId={team.id} companyId={team.companyId} active={step} />
-        </div>
-
-        <div style={{ flex: 1, textAlign: 'center' }}>
-          <h1 className="text-3xl font-bold font-headline">{team.name} - {stepTitle}</h1>
-        </div>
-
-        <div style={{ width: 160 }} />
+      <div style={{ marginBottom: 16 }}>
+        <TeamSteps teamId={team.id} teamName={team.name} companyId={team.companyId} active={step} />
       </div>
 
       <section style={{ background: '#fff', border: '1px solid #e6e6e6', borderRadius: 8, padding: 16 }}>

@@ -442,5 +442,2049 @@
       "initiativeId": "initiative-bod-1",
       "radarItemId": "radar-item-echo-chamber"
     }
+  },
+  {
+    "type": "InitiativeAddedToKanban",
+    "entity": "team",
+    "aggregateId": "team-demo",
+    "timestamp": "2025-12-11T13:34:43.734Z",
+    "payload": {
+      "initiativeId": "initiative-draft-1",
+      "initialStatus": "NEW",
+      "boardId": "team-demo"
+    },
+    "metadata": {
+      "teamId": "team-demo"
+    }
+  },
+  {
+    "type": "InitiativeAddedToKanban",
+    "entity": "team",
+    "aggregateId": "team-demo",
+    "timestamp": "2025-12-11T13:34:43.740Z",
+    "payload": {
+      "initiativeId": "initiative-draft-2",
+      "initialStatus": "NEW",
+      "boardId": "team-demo"
+    },
+    "metadata": {
+      "teamId": "team-demo"
+    }
+  },
+  {
+    "type": "InitiativeAddedToKanban",
+    "entity": "team",
+    "aggregateId": "team-demo",
+    "timestamp": "2025-12-11T13:34:43.745Z",
+    "payload": {
+      "initiativeId": "initiative-active-1",
+      "initialStatus": "NEW",
+      "boardId": "team-demo"
+    },
+    "metadata": {
+      "teamId": "team-demo"
+    }
+  },
+  {
+    "type": "InitiativeAddedToKanban",
+    "entity": "team",
+    "aggregateId": "team-demo",
+    "timestamp": "2025-12-11T13:34:43.750Z",
+    "payload": {
+      "initiativeId": "initiative-active-2",
+      "initialStatus": "NEW",
+      "boardId": "team-demo"
+    },
+    "metadata": {
+      "teamId": "team-demo"
+    }
+  },
+  {
+    "type": "InitiativeAddedToKanban",
+    "entity": "team",
+    "aggregateId": "team-bod",
+    "timestamp": "2025-12-11T13:34:43.759Z",
+    "payload": {
+      "initiativeId": "initiative-bod-1",
+      "initialStatus": "NEW",
+      "boardId": "team-bod"
+    },
+    "metadata": {
+      "teamId": "team-bod"
+    }
+  },
+  {
+    "type": "StrategyCreated",
+    "entity": "team",
+    "aggregateId": "team-cto",
+    "timestamp": "2025-12-11T13:35:20.364Z",
+    "payload": {
+      "strategyId": "strat-0888a5ea-2038-4fc4-b6c0-94001150b06f",
+      "description": "Innovation is about connecting the dots",
+      "timeframe": "2026"
+    }
+  },
+  {
+    "type": "InitiativeCreated",
+    "entity": "team",
+    "aggregateId": "team-cto",
+    "timestamp": "2025-12-11T13:38:51.003Z",
+    "payload": {
+      "strategyId": "strat-0888a5ea-2038-4fc4-b6c0-94001150b06f",
+      "strategyName": "Innovation is about connecting the dots",
+      "name": "Enforce modeling techniques"
+    },
+    "metadata": {
+      "initiativeId": "init-db0eb092-6f93-40f5-a5cd-a7369202fdfb"
+    }
+  },
+  {
+    "type": "InitiativeAddedToKanban",
+    "entity": "team",
+    "aggregateId": "team-cto",
+    "timestamp": "2025-12-11T13:38:51.008Z",
+    "payload": {
+      "initiativeId": "init-db0eb092-6f93-40f5-a5cd-a7369202fdfb",
+      "initialStatus": "NEW",
+      "boardId": "team-cto"
+    },
+    "metadata": {
+      "teamId": "team-cto"
+    }
+  },
+  {
+    "type": "InitiativeItemAdded",
+    "entity": "team",
+    "aggregateId": "team-cto",
+    "timestamp": "2025-12-11T13:39:27.972Z",
+    "payload": {
+      "stepKey": "diagnostic",
+      "item": {
+        "text": "BAs are not probing... Just listening and projecting. Projection w/o mining is hope at most"
+      }
+    },
+    "metadata": {
+      "initiativeId": "init-db0eb092-6f93-40f5-a5cd-a7369202fdfb",
+      "itemId": "item-28cd7c25-9043-41ff-8ca8-5762ab1ad407",
+      "teamId": "team-cto"
+    }
+  },
+  {
+    "type": "InitiativeItemAddedToKanban",
+    "entity": "team",
+    "aggregateId": "team-cto",
+    "timestamp": "2025-12-11T13:39:27.974Z",
+    "payload": {
+      "itemId": "item-28cd7c25-9043-41ff-8ca8-5762ab1ad407",
+      "initiativeId": "init-db0eb092-6f93-40f5-a5cd-a7369202fdfb",
+      "initialStatus": "NEW",
+      "boardId": "team-cto"
+    },
+    "metadata": {
+      "teamId": "team-cto"
+    }
+  },
+  {
+    "type": "InitiativeItemAdded",
+    "entity": "team",
+    "aggregateId": "team-cto",
+    "timestamp": "2025-12-11T13:39:56.642Z",
+    "payload": {
+      "stepKey": "diagnostic",
+      "item": {
+        "text": "Business people think flows and events. We are forcing them to think data model."
+      }
+    },
+    "metadata": {
+      "initiativeId": "init-db0eb092-6f93-40f5-a5cd-a7369202fdfb",
+      "itemId": "item-f2287127-b031-4548-8416-1329cec0ce5c",
+      "teamId": "team-cto"
+    }
+  },
+  {
+    "type": "InitiativeItemAddedToKanban",
+    "entity": "team",
+    "aggregateId": "team-cto",
+    "timestamp": "2025-12-11T13:39:56.643Z",
+    "payload": {
+      "itemId": "item-f2287127-b031-4548-8416-1329cec0ce5c",
+      "initiativeId": "init-db0eb092-6f93-40f5-a5cd-a7369202fdfb",
+      "initialStatus": "NEW",
+      "boardId": "team-cto"
+    },
+    "metadata": {
+      "teamId": "team-cto"
+    }
+  },
+  {
+    "type": "TagAdded",
+    "entity": "initiative",
+    "aggregateId": "init-db0eb092-6f93-40f5-a5cd-a7369202fdfb",
+    "timestamp": "2025-12-11T13:40:08.124Z",
+    "payload": {
+      "radarItemId": "radar-item-cultural-inertia",
+      "radarName": ""
+    }
+  },
+  {
+    "type": "TagAdded",
+    "entity": "initiative",
+    "aggregateId": "init-db0eb092-6f93-40f5-a5cd-a7369202fdfb",
+    "timestamp": "2025-12-11T13:40:08.262Z",
+    "payload": {
+      "radarItemId": "radar-item-lack-of-modelization",
+      "radarName": ""
+    }
+  },
+  {
+    "type": "ElementMoved",
+    "entity": "initiative",
+    "aggregateId": "initiative-init-db0eb092-6f93-40f5-a5cd-a7369202fdfb",
+    "timestamp": "2025-12-11T13:40:17.390Z",
+    "payload": {
+      "elementId": "initiative-init-db0eb092-6f93-40f5-a5cd-a7369202fdfb",
+      "elementType": "initiative",
+      "toStatus": "Diagnosis",
+      "tags": [
+        "kanban"
+      ]
+    },
+    "metadata": {}
+  },
+  {
+    "type": "InitiativeAddedToKanban",
+    "entity": "team",
+    "aggregateId": "team-demo",
+    "timestamp": "2025-12-11T16:58:04.889Z",
+    "payload": {
+      "initiativeId": "initiative-draft-1",
+      "initialStatus": "NEW",
+      "boardId": "team-demo"
+    },
+    "metadata": {
+      "teamId": "team-demo"
+    }
+  },
+  {
+    "type": "InitiativeAddedToKanban",
+    "entity": "team",
+    "aggregateId": "team-demo",
+    "timestamp": "2025-12-11T16:58:04.897Z",
+    "payload": {
+      "initiativeId": "initiative-draft-2",
+      "initialStatus": "NEW",
+      "boardId": "team-demo"
+    },
+    "metadata": {
+      "teamId": "team-demo"
+    }
+  },
+  {
+    "type": "InitiativeAddedToKanban",
+    "entity": "team",
+    "aggregateId": "team-demo",
+    "timestamp": "2025-12-11T16:58:04.905Z",
+    "payload": {
+      "initiativeId": "initiative-active-1",
+      "initialStatus": "NEW",
+      "boardId": "team-demo"
+    },
+    "metadata": {
+      "teamId": "team-demo"
+    }
+  },
+  {
+    "type": "InitiativeAddedToKanban",
+    "entity": "team",
+    "aggregateId": "team-demo",
+    "timestamp": "2025-12-11T16:58:04.914Z",
+    "payload": {
+      "initiativeId": "initiative-active-2",
+      "initialStatus": "NEW",
+      "boardId": "team-demo"
+    },
+    "metadata": {
+      "teamId": "team-demo"
+    }
+  },
+  {
+    "type": "InitiativeAddedToKanban",
+    "entity": "team",
+    "aggregateId": "team-bod",
+    "timestamp": "2025-12-11T16:58:04.930Z",
+    "payload": {
+      "initiativeId": "initiative-bod-1",
+      "initialStatus": "NEW",
+      "boardId": "team-bod"
+    },
+    "metadata": {
+      "teamId": "team-bod"
+    }
+  },
+  {
+    "type": "ElementAddedToKanban",
+    "entity": "team",
+    "aggregateId": "team-cto",
+    "timestamp": "2025-12-11T16:58:04.954Z",
+    "payload": {
+      "elementId": "initiative-init-db0eb092-6f93-40f5-a5cd-a7369202fdfb",
+      "elementType": "initiative",
+      "initialStatus": "NEW",
+      "boardId": "team-cto"
+    },
+    "metadata": {
+      "teamId": "team-cto"
+    }
+  },
+  {
+    "type": "ElementAddedToKanban",
+    "entity": "team",
+    "aggregateId": "team-cto",
+    "timestamp": "2025-12-11T16:58:04.964Z",
+    "payload": {
+      "elementId": "item-item-28cd7c25-9043-41ff-8ca8-5762ab1ad407",
+      "elementType": "initiative-item",
+      "initialStatus": "NEW",
+      "boardId": "team-cto"
+    },
+    "metadata": {
+      "teamId": "team-cto"
+    }
+  },
+  {
+    "type": "ElementAddedToKanban",
+    "entity": "team",
+    "aggregateId": "team-cto",
+    "timestamp": "2025-12-11T16:58:04.974Z",
+    "payload": {
+      "elementId": "item-item-f2287127-b031-4548-8416-1329cec0ce5c",
+      "elementType": "initiative-item",
+      "initialStatus": "NEW",
+      "boardId": "team-cto"
+    },
+    "metadata": {
+      "teamId": "team-cto"
+    }
+  },
+  {
+    "type": "InitiativeCreated",
+    "entity": "team",
+    "aggregateId": "team-cto",
+    "timestamp": "2025-12-11T16:59:31.896Z",
+    "payload": {
+      "strategyId": "strat-0888a5ea-2038-4fc4-b6c0-94001150b06f",
+      "strategyName": "Innovation is about connecting the dots",
+      "name": "New ways of doing Agile"
+    },
+    "metadata": {
+      "initiativeId": "init-16ffd67a-ab43-4e46-97f2-cec0392818a8"
+    }
+  },
+  {
+    "type": "ElementAddedToKanban",
+    "entity": "team",
+    "aggregateId": "team-cto",
+    "timestamp": "2025-12-11T16:59:31.902Z",
+    "payload": {
+      "elementId": "initiative-init-16ffd67a-ab43-4e46-97f2-cec0392818a8",
+      "elementType": "initiative",
+      "initialStatus": "NEW",
+      "boardId": "team-cto"
+    },
+    "metadata": {
+      "teamId": "team-cto"
+    }
+  },
+  {
+    "type": "InitiativeItemAdded",
+    "entity": "team",
+    "aggregateId": "team-cto",
+    "timestamp": "2025-12-11T17:00:24.669Z",
+    "payload": {
+      "stepKey": "diagnostic",
+      "item": {
+        "text": "Doing Agile changes Thinking: to change culture, we need to do things differently"
+      }
+    },
+    "metadata": {
+      "initiativeId": "init-16ffd67a-ab43-4e46-97f2-cec0392818a8",
+      "itemId": "item-fa53f7b1-480a-4c6c-83ec-280c88e302ca",
+      "teamId": "team-cto"
+    }
+  },
+  {
+    "type": "ElementAddedToKanban",
+    "entity": "team",
+    "aggregateId": "team-cto",
+    "timestamp": "2025-12-11T17:00:24.672Z",
+    "payload": {
+      "elementId": "item-item-fa53f7b1-480a-4c6c-83ec-280c88e302ca",
+      "elementType": "initiative-item",
+      "initialStatus": "NEW",
+      "boardId": "team-cto"
+    },
+    "metadata": {
+      "teamId": "team-cto"
+    }
+  },
+  {
+    "type": "InitiativeItemAdded",
+    "entity": "team",
+    "aggregateId": "team-cto",
+    "timestamp": "2025-12-11T17:00:44.849Z",
+    "payload": {
+      "stepKey": "diagnostic",
+      "item": {
+        "text": "Customers do not want agile coaches: not value for money."
+      }
+    },
+    "metadata": {
+      "initiativeId": "init-16ffd67a-ab43-4e46-97f2-cec0392818a8",
+      "itemId": "item-230fe439-b7c5-4065-9ed9-c21ff87157bc",
+      "teamId": "team-cto"
+    }
+  },
+  {
+    "type": "ElementAddedToKanban",
+    "entity": "team",
+    "aggregateId": "team-cto",
+    "timestamp": "2025-12-11T17:00:44.850Z",
+    "payload": {
+      "elementId": "item-item-230fe439-b7c5-4065-9ed9-c21ff87157bc",
+      "elementType": "initiative-item",
+      "initialStatus": "NEW",
+      "boardId": "team-cto"
+    },
+    "metadata": {
+      "teamId": "team-cto"
+    }
+  },
+  {
+    "type": "InitiativeItemAdded",
+    "entity": "team",
+    "aggregateId": "team-cto",
+    "timestamp": "2025-12-11T17:01:13.754Z",
+    "payload": {
+      "stepKey": "diagnostic",
+      "item": {
+        "text": "SAFe has limits; we see customers moving away from SAFe: too expensive."
+      }
+    },
+    "metadata": {
+      "initiativeId": "init-16ffd67a-ab43-4e46-97f2-cec0392818a8",
+      "itemId": "item-cddf86ed-27a9-4f4c-aa1d-43eb86a996de",
+      "teamId": "team-cto"
+    }
+  },
+  {
+    "type": "ElementAddedToKanban",
+    "entity": "team",
+    "aggregateId": "team-cto",
+    "timestamp": "2025-12-11T17:01:13.757Z",
+    "payload": {
+      "elementId": "item-item-cddf86ed-27a9-4f4c-aa1d-43eb86a996de",
+      "elementType": "initiative-item",
+      "initialStatus": "NEW",
+      "boardId": "team-cto"
+    },
+    "metadata": {
+      "teamId": "team-cto"
+    }
+  },
+  {
+    "type": "InitiativeItemAdded",
+    "entity": "team",
+    "aggregateId": "team-cto",
+    "timestamp": "2025-12-11T17:01:45.736Z",
+    "payload": {
+      "stepKey": "diagnostic",
+      "item": {
+        "text": "Flight Levels is an option with a Lean approach, easy to implement"
+      }
+    },
+    "metadata": {
+      "initiativeId": "init-16ffd67a-ab43-4e46-97f2-cec0392818a8",
+      "itemId": "item-9920ede6-33cc-4c40-a57b-6bf82b433eaa",
+      "teamId": "team-cto"
+    }
+  },
+  {
+    "type": "ElementAddedToKanban",
+    "entity": "team",
+    "aggregateId": "team-cto",
+    "timestamp": "2025-12-11T17:01:45.739Z",
+    "payload": {
+      "elementId": "item-item-9920ede6-33cc-4c40-a57b-6bf82b433eaa",
+      "elementType": "initiative-item",
+      "initialStatus": "NEW",
+      "boardId": "team-cto"
+    },
+    "metadata": {
+      "teamId": "team-cto"
+    }
+  },
+  {
+    "type": "InitiativeItemAdded",
+    "entity": "team",
+    "aggregateId": "team-cto",
+    "timestamp": "2025-12-11T17:02:02.913Z",
+    "payload": {
+      "stepKey": "diagnostic",
+      "item": {
+        "text": "Flow Engineering is easy, impactful"
+      }
+    },
+    "metadata": {
+      "initiativeId": "init-16ffd67a-ab43-4e46-97f2-cec0392818a8",
+      "itemId": "item-79141f85-0d4b-4257-a364-7ff0f7afa580",
+      "teamId": "team-cto"
+    }
+  },
+  {
+    "type": "ElementAddedToKanban",
+    "entity": "team",
+    "aggregateId": "team-cto",
+    "timestamp": "2025-12-11T17:02:02.914Z",
+    "payload": {
+      "elementId": "item-item-79141f85-0d4b-4257-a364-7ff0f7afa580",
+      "elementType": "initiative-item",
+      "initialStatus": "NEW",
+      "boardId": "team-cto"
+    },
+    "metadata": {
+      "teamId": "team-cto"
+    }
+  },
+  {
+    "type": "RadarItemCreated",
+    "entity": "team",
+    "aggregateId": "team-cto",
+    "timestamp": "2025-12-11T17:03:52.806Z",
+    "payload": {
+      "name": "Flight Levels",
+      "detect": "Customers turning away from expensive SAFe.",
+      "assess": "We need to provide an alternative that is pragmatic and impactful",
+      "respond": "",
+      "type": "Opportunity",
+      "category": "Business",
+      "distance": "Assessing",
+      "impact": "Medium",
+      "tolerance": "Medium",
+      "zoom_in": null,
+      "id": "radar-70030179-5368-4cce-b317-73ee75f4ef02",
+      "radarId": "team-cto",
+      "created_at": "2025-12-11T17:03:52.806Z",
+      "updated_at": null,
+      "teamId": "team-cto"
+    }
+  },
+  {
+    "type": "RadarItemCreated",
+    "entity": "team",
+    "aggregateId": "team-cto",
+    "timestamp": "2025-12-11T17:04:49.665Z",
+    "payload": {
+      "name": "Eventz",
+      "detect": "Maybe an easier way to implement event sourcing",
+      "assess": "",
+      "respond": "",
+      "type": "Opportunity",
+      "category": "Operating Model",
+      "distance": "Detected",
+      "impact": "Low",
+      "tolerance": "High",
+      "zoom_in": null,
+      "id": "radar-1699d0ea-2815-4f06-b357-e00c6ad1cc04",
+      "radarId": "team-cto",
+      "created_at": "2025-12-11T17:04:49.665Z",
+      "updated_at": null,
+      "teamId": "team-cto"
+    }
+  },
+  {
+    "type": "RadarItemCreated",
+    "entity": "team",
+    "aggregateId": "team-cto",
+    "timestamp": "2025-12-11T17:05:34.334Z",
+    "payload": {
+      "name": "Learn How To Learn",
+      "detect": "Are we learning enough? ",
+      "assess": "",
+      "respond": "",
+      "type": "Threat",
+      "category": "People & Knowledge",
+      "distance": "Detected",
+      "impact": "Low",
+      "tolerance": "Medium",
+      "zoom_in": null,
+      "id": "radar-4f5b295d-ead6-40dc-a4ca-4b3ecef95161",
+      "radarId": "team-cto",
+      "created_at": "2025-12-11T17:05:34.335Z",
+      "updated_at": null,
+      "teamId": "team-cto"
+    }
+  },
+  {
+    "type": "RadarItemCreated",
+    "entity": "team",
+    "aggregateId": "team-cto",
+    "timestamp": "2025-12-11T17:06:26.227Z",
+    "payload": {
+      "name": "Flow Engineering",
+      "detect": "Simple and impactful Value Stream Mapping and can be used LPM too",
+      "assess": "",
+      "respond": "",
+      "type": "Threat",
+      "category": "Business",
+      "distance": "Detected",
+      "impact": "Low",
+      "tolerance": "Medium",
+      "zoom_in": null,
+      "id": "radar-d6dd4679-85b3-4481-98e5-e4c118f32fc1",
+      "radarId": "team-cto",
+      "created_at": "2025-12-11T17:06:26.227Z",
+      "updated_at": null,
+      "teamId": "team-cto"
+    }
+  },
+  {
+    "type": "RadarItemCreated",
+    "entity": "team",
+    "aggregateId": "team-cto",
+    "timestamp": "2025-12-11T17:07:06.775Z",
+    "payload": {
+      "name": "LPM",
+      "detect": "LPM is easy - we have expertise",
+      "assess": "Should build an offer",
+      "respond": "",
+      "type": "Opportunity",
+      "category": "Business",
+      "distance": "Detected",
+      "impact": "Low",
+      "tolerance": "Medium",
+      "zoom_in": null,
+      "id": "radar-64b7c754-9efe-4ea9-ad3b-8f24bfbb0f35",
+      "radarId": "team-cto",
+      "created_at": "2025-12-11T17:07:06.775Z",
+      "updated_at": null,
+      "teamId": "team-cto"
+    }
+  },
+  {
+    "type": "RadarItemCreated",
+    "entity": "team",
+    "aggregateId": "team-cto",
+    "timestamp": "2025-12-11T17:07:33.761Z",
+    "payload": {
+      "name": "Event Modeling",
+      "detect": "Modelling Technique we should use for projects",
+      "assess": "We are using specifications, user stories but that kills communication, creating or reinforcing silos",
+      "respond": "Go ahead with a pilot project, train people",
+      "type": "Opportunity",
+      "category": "Operating Model",
+      "distance": "Responding",
+      "impact": "High",
+      "tolerance": "Medium",
+      "id": "radar-1bb8157f-4a36-4681-a92e-ec1ef12c8533",
+      "radarId": "team-cto",
+      "created_at": "2025-12-11T17:07:33.761Z",
+      "updated_at": null,
+      "teamId": "team-cto"
+    }
+  },
+  {
+    "type": "CompanyCreated",
+    "entity": "company",
+    "aggregateId": "company-socraft",
+    "timestamp": "2025-12-12T10:00:00.000Z",
+    "payload": {
+      "id": "company-socraft",
+      "name": "Socraft"
+    }
+  },
+  {
+    "type": "TeamCreated",
+    "entity": "team",
+    "aggregateId": "team-socraft-hq",
+    "timestamp": "2025-12-12T10:00:01.000Z",
+    "payload": {
+      "id": "team-socraft-hq",
+      "companyId": "company-socraft",
+      "name": "CEO",
+      "purpose": "Act differently: be the best for our customers",
+      "context": "IT consulting companies care more about effort than value for customers. We care for more value to customers with minumum effort",
+      "level": 1
+    }
+  },
+  {
+    "type": "UserAdded",
+    "entity": "user",
+    "aggregateId": "user-chris-socraft",
+    "timestamp": "2025-12-12T10:00:02.000Z",
+    "payload": {
+      "userId": "chris@socraft.fr",
+      "username": "Chris",
+      "companyId": "company-socraft",
+      "teamIds": [
+        "team-socraft-hq",
+        "team-socraft-cto"
+      ]
+    }
+  },
+  {
+    "type": "UserAdded",
+    "entity": "user",
+    "aggregateId": "user-admin",
+    "timestamp": "2025-12-12T10:00:03.000Z",
+    "payload": {
+      "userId": "admin@admin.com",
+      "username": "Admin",
+      "companyId": "company-demo",
+      "teamIds": [
+        "team-demo"
+      ]
+    }
+  },
+  {
+    "type": "TeamCreated",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2025-12-12T11:00:00.100Z",
+    "payload": {
+      "id": "team-socraft-cto",
+      "companyId": "company-socraft",
+      "name": "Socraft CTO",
+      "purpose": "Bold with simplicity",
+      "context": "Chief Technology Officer: kills inertia with simple solutions, make processes lighter, focus on outcomes, on the why. Remove the fat, be lean. Complexity accidental is our enemy",
+      "level": 2
+    }
+  },
+  {
+    "type": "RadarItemCreated",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2025-12-12T11:00:00.200Z",
+    "payload": {
+      "id": "radar-item-event-modeling-socraft",
+      "name": "Event Modeling",
+      "detect": "Modelling Technique we should use for projects",
+      "assess": "We are using specifications, user stories but that kills communication, creating or reinforcing silos",
+      "respond": "Go ahead with a pilot project, train people",
+      "type": "Opportunity",
+      "category": "Capabilities",
+      "distance": "Responding",
+      "impact": "High",
+      "tolerance": "Medium"
+    }
+  },
+  {
+    "type": "RadarItemCreated",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2025-12-12T11:00:00.300Z",
+    "payload": {
+      "id": "radar-item-event-sourcing-socraft",
+      "name": "Event Sourcing",
+      "detect": "AI needs context. Data Model loses context. So we need event sourcing",
+      "assess": "Simple, works even in a synchronous way with projections",
+      "respond": "Go - it is a no-brainer",
+      "type": "Opportunity",
+      "category": "Business",
+      "distance": "Assessed",
+      "impact": "High",
+      "tolerance": "Low"
+    }
+  },
+  {
+    "type": "RadarItemCreated",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2025-12-12T11:00:00.400Z",
+    "payload": {
+      "id": "radar-item-slice-architecture-socraft",
+      "name": "Slice Architecture",
+      "detect": "Lack of consistency in the way we design/implement our software solutions. VSA (Vertical Slice Architecture) should give us clear directions",
+      "assess": "Easy to understand, works well with Event Sourcing & Event Modeling",
+      "respond": "Pilot on low-code and custom dev",
+      "type": "Opportunity",
+      "category": "Capabilities",
+      "distance": "Assessed",
+      "impact": "Medium",
+      "tolerance": "Medium"
+    }
+  },
+  {
+    "type": "RadarItemCreated",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2025-12-12T11:00:00.500Z",
+    "payload": {
+      "id": "radar-item-accidental-complexity-socraft",
+      "name": "Accidental Complexity",
+      "detect": "Forget technical debt",
+      "assess": "Accidental complexity is killing our productivity and maintainability",
+      "respond": "Focus on essential complexity, eliminate the accidental",
+      "type": "Threat",
+      "category": "Capabilities",
+      "distance": "Assessed",
+      "impact": "High",
+      "tolerance": "Low"
+    }
+  },
+  {
+    "type": "RadarItemCreated",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2025-12-12T11:00:00.600Z",
+    "payload": {
+      "id": "radar-item-cultural-inertia-socraft",
+      "name": "Cultural Inertia",
+      "detect": "Cultural Inertia: This form refers to deep-rooted norms and mindsets within an organization that resist change. An example is AT&T's struggle in the mid-1980s to transition from a monopolistic structure to an innovative tech company, hindered by its culture which was focused more on research than on product development.",
+      "assess": "Deep-rooted resistance to change is slowing our transformation",
+      "respond": "Address cultural barriers through leadership and communication",
+      "type": "Threat",
+      "category": "Business",
+      "distance": "Detected",
+      "impact": "Medium",
+      "tolerance": "Medium"
+    }
+  },
+  {
+    "type": "RadarItemCreated",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2025-12-12T11:00:00.700Z",
+    "payload": {
+      "id": "radar-item-lack-of-modelization-socraft",
+      "name": "Lack of Modelization",
+      "detect": "We do not model; we write specs",
+      "assess": "We need to move to modeling techniques and facilitation",
+      "respond": "Implement modeling practices and train teams",
+      "type": "Threat",
+      "category": "Operating Model",
+      "distance": "Assessing",
+      "impact": "Medium",
+      "tolerance": "Medium"
+    }
+  },
+  {
+    "type": "RadarItemCreated",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2025-12-12T11:00:00.800Z",
+    "payload": {
+      "id": "radar-item-reasoning-socraft",
+      "name": "Reasoning",
+      "detect": "Reasoning over Coding",
+      "assess": "Need to focus more on understanding problems before coding solutions",
+      "respond": "Emphasize problem analysis and reasoning skills",
+      "type": "Threat",
+      "category": "Capabilities",
+      "distance": "Assessing",
+      "impact": "High",
+      "tolerance": "Low"
+    }
+  },
+  {
+    "type": "RadarItemCreated",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2025-12-12T11:00:00.900Z",
+    "payload": {
+      "id": "radar-item-forward-deployed-engineer-socraft",
+      "name": "Forward-Deployed Engineer",
+      "detect": "Engineer fully involved with the business & AI to speed up development",
+      "assess": "New role with 3 risks that need to be managed",
+      "respond": "Train people on Event Modeling and business context",
+      "type": "Opportunity",
+      "category": "Business",
+      "distance": "Assessed",
+      "impact": "High",
+      "tolerance": "Medium"
+    }
+  },
+  {
+    "type": "RadarItemCreated",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2025-12-12T11:00:01.000Z",
+    "payload": {
+      "id": "radar-item-data-mesh-socraft",
+      "name": "Data Mesh",
+      "detect": "Way to have data easily, good match with event sourcing",
+      "assess": "Could provide better data access and governance",
+      "respond": "Explore data mesh patterns with event sourcing",
+      "type": "Opportunity",
+      "category": "Capabilities",
+      "distance": "Assessing",
+      "impact": "Medium",
+      "tolerance": "High"
+    }
+  },
+  {
+    "type": "RadarItemCreated",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2025-12-12T11:00:01.100Z",
+    "payload": {
+      "id": "radar-item-agile-not-being-agile-socraft",
+      "name": "Agile",
+      "detect": "We are not agile by doing agile",
+      "assess": "Following agile practices without being truly agile",
+      "respond": "Focus on agile principles over processes",
+      "type": "Threat",
+      "category": "People & Knowledge",
+      "distance": "Assessing",
+      "impact": "High",
+      "tolerance": "Medium"
+    }
+  },
+  {
+    "type": "StrategyCreated",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2025-12-12T11:00:01.200Z",
+    "payload": {
+      "strategyId": "strat-socraft-61d30985-a233-4da3-ba9a-420bd50b8abf",
+      "description": "Innovation is about connecting the dots",
+      "timeframe": "2026"
+    }
+  },
+  {
+    "type": "InitiativeCreated",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2025-12-12T11:00:01.300Z",
+    "payload": {
+      "strategyId": "strat-socraft-61d30985-a233-4da3-ba9a-420bd50b8abf",
+      "strategyName": "Innovation is about connecting the dots",
+      "name": "Enforce modeling techniques"
+    },
+    "metadata": {
+      "initiativeId": "init-socraft-77bef4ff-0d2a-451b-b63f-d5ede7d79eba"
+    }
+  },
+  {
+    "type": "ElementAddedToKanban",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2025-12-12T11:00:01.400Z",
+    "payload": {
+      "elementId": "initiative-init-socraft-77bef4ff-0d2a-451b-b63f-d5ede7d79eba",
+      "elementType": "initiative",
+      "initialStatus": "NEW",
+      "boardId": "team-socraft-cto"
+    },
+    "metadata": {
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "InitiativeItemAdded",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2025-12-12T11:00:01.500Z",
+    "payload": {
+      "stepKey": "diagnostic",
+      "item": {
+        "text": "BAs are not probing... Just listening and projecting. Projection w/o mining is hope at most"
+      }
+    },
+    "metadata": {
+      "initiativeId": "init-socraft-77bef4ff-0d2a-451b-b63f-d5ede7d79eba",
+      "itemId": "item-socraft-a6fa720a-e789-40c2-88fc-e23ee9d89f08",
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "ElementAddedToKanban",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2025-12-12T11:00:01.600Z",
+    "payload": {
+      "elementId": "item-item-28cd7c25-9043-41ff-8ca8-5762ab1ad407",
+      "elementType": "initiative-item",
+      "initialStatus": "NEW",
+      "boardId": "team-socraft-cto"
+    },
+    "metadata": {
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "InitiativeItemAdded",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2025-12-12T11:00:01.700Z",
+    "payload": {
+      "stepKey": "diagnostic",
+      "item": {
+        "text": "Business people think flows and events. We are forcing them to think data model."
+      }
+    },
+    "metadata": {
+      "initiativeId": "init-socraft-77bef4ff-0d2a-451b-b63f-d5ede7d79eba",
+      "itemId": "item-socraft-f44cd50e-ea29-48d9-a2ad-5906524a73ff",
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "ElementAddedToKanban",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2025-12-12T11:00:01.800Z",
+    "payload": {
+      "elementId": "item-item-f2287127-b031-4548-8416-1329cec0ce5c",
+      "elementType": "initiative-item",
+      "initialStatus": "NEW",
+      "boardId": "team-socraft-cto"
+    },
+    "metadata": {
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "TagAdded",
+    "entity": "initiative",
+    "aggregateId": "init-socraft-77bef4ff-0d2a-451b-b63f-d5ede7d79eba",
+    "timestamp": "2025-12-12T11:00:01.900Z",
+    "payload": {
+      "radarItemId": "radar-item-cultural-inertia-socraft",
+      "radarName": ""
+    }
+  },
+  {
+    "type": "TagAdded",
+    "entity": "initiative",
+    "aggregateId": "init-socraft-77bef4ff-0d2a-451b-b63f-d5ede7d79eba",
+    "timestamp": "2025-12-12T11:00:02.000Z",
+    "payload": {
+      "radarItemId": "radar-item-lack-of-modelization-socraft",
+      "radarName": ""
+    }
+  },
+  {
+    "type": "ElementAddedToKanban",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2025-12-12T11:00:02.100Z",
+    "payload": {
+      "elementId": "initiative-init-socraft-77bef4ff-0d2a-451b-b63f-d5ede7d79eba",
+      "elementType": "initiative",
+      "initialStatus": "NEW",
+      "boardId": "team-socraft-cto"
+    },
+    "metadata": {
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "ElementAddedToKanban",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2025-12-12T11:00:02.200Z",
+    "payload": {
+      "elementId": "item-item-28cd7c25-9043-41ff-8ca8-5762ab1ad407",
+      "elementType": "initiative-item",
+      "initialStatus": "NEW",
+      "boardId": "team-socraft-cto"
+    },
+    "metadata": {
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "ElementAddedToKanban",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2025-12-12T11:00:02.300Z",
+    "payload": {
+      "elementId": "item-item-f2287127-b031-4548-8416-1329cec0ce5c",
+      "elementType": "initiative-item",
+      "initialStatus": "NEW",
+      "boardId": "team-socraft-cto"
+    },
+    "metadata": {
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "InitiativeCreated",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2025-12-12T11:00:02.400Z",
+    "payload": {
+      "strategyId": "strat-socraft-61d30985-a233-4da3-ba9a-420bd50b8abf",
+      "strategyName": "Innovation is about connecting the dots",
+      "name": "New ways of doing Agile"
+    },
+    "metadata": {
+      "initiativeId": "init-socraft-08e832a4-d2c3-48f6-9028-f524ccf146b1"
+    }
+  },
+  {
+    "type": "ElementAddedToKanban",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2025-12-12T11:00:02.500Z",
+    "payload": {
+      "elementId": "initiative-init-socraft-08e832a4-d2c3-48f6-9028-f524ccf146b1",
+      "elementType": "initiative",
+      "initialStatus": "NEW",
+      "boardId": "team-socraft-cto"
+    },
+    "metadata": {
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "InitiativeItemAdded",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2025-12-12T11:00:02.600Z",
+    "payload": {
+      "stepKey": "diagnostic",
+      "item": {
+        "text": "Doing Agile changes Thinking: to change culture, we need to do things differently"
+      }
+    },
+    "metadata": {
+      "initiativeId": "init-socraft-08e832a4-d2c3-48f6-9028-f524ccf146b1",
+      "itemId": "item-socraft-f0b9db62-a607-4e9c-9d53-c321ad99c833",
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "ElementAddedToKanban",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2025-12-12T11:00:02.700Z",
+    "payload": {
+      "elementId": "item-item-fa53f7b1-480a-4c6c-83ec-280c88e302ca",
+      "elementType": "initiative-item",
+      "initialStatus": "NEW",
+      "boardId": "team-socraft-cto"
+    },
+    "metadata": {
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "InitiativeItemAdded",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2025-12-12T11:00:02.800Z",
+    "payload": {
+      "stepKey": "diagnostic",
+      "item": {
+        "text": "Customers do not want agile coaches: not value for money."
+      }
+    },
+    "metadata": {
+      "initiativeId": "init-socraft-08e832a4-d2c3-48f6-9028-f524ccf146b1",
+      "itemId": "item-socraft-6bbcb530-853c-42fd-82ef-8cefebd584b3",
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "ElementAddedToKanban",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2025-12-12T11:00:02.900Z",
+    "payload": {
+      "elementId": "item-item-230fe439-b7c5-4065-9ed9-c21ff87157bc",
+      "elementType": "initiative-item",
+      "initialStatus": "NEW",
+      "boardId": "team-socraft-cto"
+    },
+    "metadata": {
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "InitiativeItemAdded",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2025-12-12T11:00:03.000Z",
+    "payload": {
+      "stepKey": "diagnostic",
+      "item": {
+        "text": "SAFe has limits; we see customers moving away from SAFe: too expensive."
+      }
+    },
+    "metadata": {
+      "initiativeId": "init-socraft-08e832a4-d2c3-48f6-9028-f524ccf146b1",
+      "itemId": "item-socraft-e65c2dd5-a6c5-483f-b8bc-a6b41f8831f6",
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "ElementAddedToKanban",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2025-12-12T11:00:03.100Z",
+    "payload": {
+      "elementId": "item-item-cddf86ed-27a9-4f4c-aa1d-43eb86a996de",
+      "elementType": "initiative-item",
+      "initialStatus": "NEW",
+      "boardId": "team-socraft-cto"
+    },
+    "metadata": {
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "InitiativeItemAdded",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2025-12-12T11:00:03.200Z",
+    "payload": {
+      "stepKey": "diagnostic",
+      "item": {
+        "text": "Flight Levels is an option with a Lean approach, easy to implement"
+      }
+    },
+    "metadata": {
+      "initiativeId": "init-socraft-08e832a4-d2c3-48f6-9028-f524ccf146b1",
+      "itemId": "item-socraft-9988510c-fe1f-4b64-908d-c5c05590307a",
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "ElementAddedToKanban",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2025-12-12T11:00:03.300Z",
+    "payload": {
+      "elementId": "item-item-9920ede6-33cc-4c40-a57b-6bf82b433eaa",
+      "elementType": "initiative-item",
+      "initialStatus": "NEW",
+      "boardId": "team-socraft-cto"
+    },
+    "metadata": {
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "InitiativeItemAdded",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2025-12-12T11:00:03.400Z",
+    "payload": {
+      "stepKey": "diagnostic",
+      "item": {
+        "text": "Flow Engineering is easy, impactful"
+      }
+    },
+    "metadata": {
+      "initiativeId": "init-socraft-08e832a4-d2c3-48f6-9028-f524ccf146b1",
+      "itemId": "item-socraft-7b29bcb8-d78a-4958-a681-b3a2251e1ad3",
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "ElementAddedToKanban",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2025-12-12T11:00:03.500Z",
+    "payload": {
+      "elementId": "item-item-79141f85-0d4b-4257-a364-7ff0f7afa580",
+      "elementType": "initiative-item",
+      "initialStatus": "NEW",
+      "boardId": "team-socraft-cto"
+    },
+    "metadata": {
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "RadarItemCreated",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2025-12-12T11:00:03.600Z",
+    "payload": {
+      "name": "Flight Levels",
+      "detect": "Customers turning away from expensive SAFe.",
+      "assess": "We need to provide an alternative that is pragmatic and impactful",
+      "respond": "",
+      "type": "Opportunity",
+      "category": "Business",
+      "distance": "Assessing",
+      "impact": "Medium",
+      "tolerance": "Medium",
+      "zoom_in": null,
+      "id": "radar-70030179-5368-4cce-b317-73ee75f4ef02-socraft",
+      "radarId": "team-socraft-cto",
+      "created_at": "2025-12-11T17:03:52.806Z",
+      "updated_at": null,
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "RadarItemCreated",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2025-12-12T11:00:03.700Z",
+    "payload": {
+      "name": "Eventz",
+      "detect": "Maybe an easier way to implement event sourcing",
+      "assess": "",
+      "respond": "",
+      "type": "Opportunity",
+      "category": "Operating Model",
+      "distance": "Detected",
+      "impact": "Low",
+      "tolerance": "High",
+      "zoom_in": null,
+      "id": "radar-1699d0ea-2815-4f06-b357-e00c6ad1cc04-socraft",
+      "radarId": "team-socraft-cto",
+      "created_at": "2025-12-11T17:04:49.665Z",
+      "updated_at": null,
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "RadarItemCreated",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2025-12-12T11:00:03.800Z",
+    "payload": {
+      "name": "Learn How To Learn",
+      "detect": "Are we learning enough? ",
+      "assess": "",
+      "respond": "",
+      "type": "Threat",
+      "category": "People & Knowledge",
+      "distance": "Detected",
+      "impact": "Low",
+      "tolerance": "Medium",
+      "zoom_in": null,
+      "id": "radar-4f5b295d-ead6-40dc-a4ca-4b3ecef95161-socraft",
+      "radarId": "team-socraft-cto",
+      "created_at": "2025-12-11T17:05:34.335Z",
+      "updated_at": null,
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "RadarItemCreated",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2025-12-12T11:00:03.900Z",
+    "payload": {
+      "name": "Flow Engineering",
+      "detect": "Simple and impactful Value Stream Mapping and can be used LPM too",
+      "assess": "",
+      "respond": "",
+      "type": "Threat",
+      "category": "Business",
+      "distance": "Detected",
+      "impact": "Low",
+      "tolerance": "Medium",
+      "zoom_in": null,
+      "id": "radar-d6dd4679-85b3-4481-98e5-e4c118f32fc1-socraft",
+      "radarId": "team-socraft-cto",
+      "created_at": "2025-12-11T17:06:26.227Z",
+      "updated_at": null,
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "RadarItemCreated",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2025-12-12T11:00:04.000Z",
+    "payload": {
+      "name": "LPM",
+      "detect": "LPM is easy - we have expertise",
+      "assess": "Should build an offer",
+      "respond": "",
+      "type": "Opportunity",
+      "category": "Business",
+      "distance": "Detected",
+      "impact": "Low",
+      "tolerance": "Medium",
+      "zoom_in": null,
+      "id": "radar-64b7c754-9efe-4ea9-ad3b-8f24bfbb0f35-socraft",
+      "radarId": "team-socraft-cto",
+      "created_at": "2025-12-11T17:07:06.775Z",
+      "updated_at": null,
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "RadarItemCreated",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2025-12-12T11:00:04.100Z",
+    "payload": {
+      "name": "Event Modeling",
+      "detect": "Modelling Technique we should use for projects",
+      "assess": "We are using specifications, user stories but that kills communication, creating or reinforcing silos",
+      "respond": "Go ahead with a pilot project, train people",
+      "type": "Opportunity",
+      "category": "Operating Model",
+      "distance": "Responding",
+      "impact": "High",
+      "tolerance": "Medium",
+      "id": "radar-1bb8157f-4a36-4681-a92e-ec1ef12c8533-socraft",
+      "radarId": "team-socraft-cto",
+      "created_at": "2025-12-11T17:07:33.761Z",
+      "updated_at": null,
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "TeamCreated",
+    "entity": "team",
+    "aggregateId": "team-375f4fdf-8710-4bcb-9994-284b02a172be",
+    "timestamp": "2025-12-12T16:03:17.555Z",
+    "payload": {
+      "id": "team-375f4fdf-8710-4bcb-9994-284b02a172be",
+      "companyId": "company-socraft",
+      "name": "Delivery",
+      "purpose": "",
+      "context": "",
+      "level": 2
+    }
+  },
+  {
+    "type": "TeamCreated",
+    "entity": "team",
+    "aggregateId": "team-b662b727-f985-48b0-8740-fbcb9448e069",
+    "timestamp": "2025-12-12T16:03:27.849Z",
+    "payload": {
+      "id": "team-b662b727-f985-48b0-8740-fbcb9448e069",
+      "companyId": "company-socraft",
+      "name": "Innovation",
+      "purpose": "",
+      "context": "",
+      "level": 0
+    }
+  },
+  {
+    "type": "TeamUpdated",
+    "entity": "team",
+    "aggregateId": "team-b662b727-f985-48b0-8740-fbcb9448e069",
+    "timestamp": "2025-12-12T16:05:27.249Z",
+    "payload": {
+      "name": "Innovation",
+      "purpose": "To kill inertia & bring accelerators",
+      "context": "We can be easily in the day-to-day operation mode. Rejecting new ideas. \nInnovation is not about inventing; this about doing things smarter: less effort for more value",
+      "level": 3
+    }
+  },
+  {
+    "type": "InitiativeItemAdded",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2025-12-12T16:08:59.902Z",
+    "payload": {
+      "stepKey": "diagnostic",
+      "item": {
+        "text": "Customers mention modeling (and lack of modeling)"
+      }
+    },
+    "metadata": {
+      "initiativeId": "init-socraft-77bef4ff-0d2a-451b-b63f-d5ede7d79eba",
+      "itemId": "item-7ed95361-9d54-46e0-8fc5-ea374c85d0d5",
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "ElementAddedToKanban",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2025-12-12T16:08:59.908Z",
+    "payload": {
+      "elementId": "item-item-7ed95361-9d54-46e0-8fc5-ea374c85d0d5",
+      "elementType": "initiative-item",
+      "initialStatus": "NEW",
+      "boardId": "team-socraft-cto"
+    },
+    "metadata": {
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "InitiativeItemUpdated",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2025-12-12T16:09:24.373Z",
+    "payload": {
+      "text": "BAs are not probing... Just listening and projecting. Projection w/o mining knowledge is hope before failure"
+    },
+    "metadata": {
+      "initiativeId": "init-socraft-77bef4ff-0d2a-451b-b63f-d5ede7d79eba",
+      "itemId": "item-socraft-a6fa720a-e789-40c2-88fc-e23ee9d89f08",
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "TagAdded",
+    "entity": "initiative",
+    "aggregateId": "init-socraft-77bef4ff-0d2a-451b-b63f-d5ede7d79eba",
+    "timestamp": "2025-12-12T16:18:10.643Z",
+    "payload": {
+      "radarItemId": "radar-1699d0ea-2815-4f06-b357-e00c6ad1cc04-socraft",
+      "radarName": ""
+    }
+  },
+  {
+    "type": "TagAdded",
+    "entity": "initiative",
+    "aggregateId": "init-socraft-77bef4ff-0d2a-451b-b63f-d5ede7d79eba",
+    "timestamp": "2025-12-12T16:18:10.834Z",
+    "payload": {
+      "radarItemId": "radar-item-event-modeling-socraft",
+      "radarName": ""
+    }
+  },
+  {
+    "type": "TagAdded",
+    "entity": "initiative",
+    "aggregateId": "init-socraft-77bef4ff-0d2a-451b-b63f-d5ede7d79eba",
+    "timestamp": "2025-12-12T16:18:11.007Z",
+    "payload": {
+      "radarItemId": "radar-item-event-sourcing-socraft",
+      "radarName": ""
+    }
+  },
+  {
+    "type": "TagAdded",
+    "entity": "initiative",
+    "aggregateId": "init-socraft-77bef4ff-0d2a-451b-b63f-d5ede7d79eba",
+    "timestamp": "2025-12-12T16:18:11.141Z",
+    "payload": {
+      "radarItemId": "radar-item-slice-architecture-socraft",
+      "radarName": ""
+    }
+  },
+  {
+    "type": "InitiativeItemAdded",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2025-12-12T16:18:38.196Z",
+    "payload": {
+      "stepKey": "overallApproach",
+      "item": {
+        "text": "Be first, be experience"
+      }
+    },
+    "metadata": {
+      "initiativeId": "init-socraft-77bef4ff-0d2a-451b-b63f-d5ede7d79eba",
+      "itemId": "item-72f54e86-d871-4100-befb-d7499b66c4e2",
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "ElementAddedToKanban",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2025-12-12T16:18:38.197Z",
+    "payload": {
+      "elementId": "item-item-72f54e86-d871-4100-befb-d7499b66c4e2",
+      "elementType": "initiative-item",
+      "initialStatus": "NEW",
+      "boardId": "team-socraft-cto"
+    },
+    "metadata": {
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "InitiativeItemAdded",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2025-12-12T16:19:00.958Z",
+    "payload": {
+      "stepKey": "proximateObjectives",
+      "item": {
+        "text": "Session avec Swiss Chalet"
+      }
+    },
+    "metadata": {
+      "initiativeId": "init-socraft-77bef4ff-0d2a-451b-b63f-d5ede7d79eba",
+      "itemId": "item-97edc162-97d2-46bd-af13-9c1a4bbbf07b",
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "ElementAddedToKanban",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2025-12-12T16:19:00.960Z",
+    "payload": {
+      "elementId": "item-item-97edc162-97d2-46bd-af13-9c1a4bbbf07b",
+      "elementType": "initiative-item",
+      "initialStatus": "NEW",
+      "boardId": "team-socraft-cto"
+    },
+    "metadata": {
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "InitiativeItemAdded",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2025-12-12T16:19:13.878Z",
+    "payload": {
+      "stepKey": "proximateObjectives",
+      "item": {
+        "text": "Session avec Socraft"
+      }
+    },
+    "metadata": {
+      "initiativeId": "init-socraft-77bef4ff-0d2a-451b-b63f-d5ede7d79eba",
+      "itemId": "item-ba5b19df-f79a-4058-b94f-1a106ac4f300",
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "ElementAddedToKanban",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2025-12-12T16:19:13.879Z",
+    "payload": {
+      "elementId": "item-item-ba5b19df-f79a-4058-b94f-1a106ac4f300",
+      "elementType": "initiative-item",
+      "initialStatus": "NEW",
+      "boardId": "team-socraft-cto"
+    },
+    "metadata": {
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "InitiativeItemAdded",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2025-12-12T16:19:30.389Z",
+    "payload": {
+      "stepKey": "proximateObjectives",
+      "item": {
+        "text": "Hackatlon EM/ES"
+      }
+    },
+    "metadata": {
+      "initiativeId": "init-socraft-77bef4ff-0d2a-451b-b63f-d5ede7d79eba",
+      "itemId": "item-f88dd63b-9075-4627-9adf-62ac6f6dc785",
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "ElementAddedToKanban",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2025-12-12T16:19:30.390Z",
+    "payload": {
+      "elementId": "item-item-f88dd63b-9075-4627-9adf-62ac6f6dc785",
+      "elementType": "initiative-item",
+      "initialStatus": "NEW",
+      "boardId": "team-socraft-cto"
+    },
+    "metadata": {
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "InitiativeItemAdded",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2025-12-12T16:19:37.951Z",
+    "payload": {
+      "stepKey": "proximateObjectives",
+      "item": {
+        "text": "Session EM/ES avec Socraft"
+      }
+    },
+    "metadata": {
+      "initiativeId": "init-socraft-77bef4ff-0d2a-451b-b63f-d5ede7d79eba",
+      "itemId": "item-251033d7-5dba-435a-bc6a-d4cfbc52693d",
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "ElementAddedToKanban",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2025-12-12T16:19:37.952Z",
+    "payload": {
+      "elementId": "item-item-251033d7-5dba-435a-bc6a-d4cfbc52693d",
+      "elementType": "initiative-item",
+      "initialStatus": "NEW",
+      "boardId": "team-socraft-cto"
+    },
+    "metadata": {
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "InitiativeItemAdded",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2025-12-12T16:19:44.794Z",
+    "payload": {
+      "stepKey": "proximateObjectives",
+      "item": {
+        "text": "Session EM/ES avec Swiss Chalet"
+      }
+    },
+    "metadata": {
+      "initiativeId": "init-socraft-77bef4ff-0d2a-451b-b63f-d5ede7d79eba",
+      "itemId": "item-4bc30957-0949-43cf-b20a-9477a89e04f2",
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "ElementAddedToKanban",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2025-12-12T16:19:44.795Z",
+    "payload": {
+      "elementId": "item-item-4bc30957-0949-43cf-b20a-9477a89e04f2",
+      "elementType": "initiative-item",
+      "initialStatus": "NEW",
+      "boardId": "team-socraft-cto"
+    },
+    "metadata": {
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "InitiativeItemAdded",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2025-12-12T16:20:19.816Z",
+    "payload": {
+      "stepKey": "actions",
+      "item": {
+        "text": "To promote the approach thought customers, communication & partners"
+      }
+    },
+    "metadata": {
+      "initiativeId": "init-socraft-77bef4ff-0d2a-451b-b63f-d5ede7d79eba",
+      "itemId": "item-659b81b6-fec7-4ac4-a2a4-4d1f64123993",
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "ElementAddedToKanban",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2025-12-12T16:20:19.817Z",
+    "payload": {
+      "elementId": "item-item-659b81b6-fec7-4ac4-a2a4-4d1f64123993",
+      "elementType": "initiative-item",
+      "initialStatus": "NEW",
+      "boardId": "team-socraft-cto"
+    },
+    "metadata": {
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "InitiativeItemAdded",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2025-12-12T16:20:38.850Z",
+    "payload": {
+      "stepKey": "actions",
+      "item": {
+        "text": "Experiment internal projects"
+      }
+    },
+    "metadata": {
+      "initiativeId": "init-socraft-77bef4ff-0d2a-451b-b63f-d5ede7d79eba",
+      "itemId": "item-9b33e547-790a-4cf6-8b43-a4e68df289eb",
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "ElementAddedToKanban",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2025-12-12T16:20:38.851Z",
+    "payload": {
+      "elementId": "item-item-9b33e547-790a-4cf6-8b43-a4e68df289eb",
+      "elementType": "initiative-item",
+      "initialStatus": "NEW",
+      "boardId": "team-socraft-cto"
+    },
+    "metadata": {
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "InitiativeItemAdded",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2025-12-12T16:20:58.734Z",
+    "payload": {
+      "stepKey": "actions",
+      "item": {
+        "text": "Work with startups who need to try new ideas quickly"
+      }
+    },
+    "metadata": {
+      "initiativeId": "init-socraft-77bef4ff-0d2a-451b-b63f-d5ede7d79eba",
+      "itemId": "item-42a550bf-5241-4167-8748-a0609e1cc11e",
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "ElementAddedToKanban",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2025-12-12T16:20:58.735Z",
+    "payload": {
+      "elementId": "item-item-42a550bf-5241-4167-8748-a0609e1cc11e",
+      "elementType": "initiative-item",
+      "initialStatus": "NEW",
+      "boardId": "team-socraft-cto"
+    },
+    "metadata": {
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "InitiativeItemAdded",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2025-12-12T16:21:12.021Z",
+    "payload": {
+      "stepKey": "proximateObjectives",
+      "item": {
+        "text": "Session EM/ES avec Swiss Chalet (26Q1)"
+      }
+    },
+    "metadata": {
+      "initiativeId": "init-socraft-77bef4ff-0d2a-451b-b63f-d5ede7d79eba",
+      "itemId": "item-9b235d90-1749-4fae-b70a-b66f08f24c1a",
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "ElementAddedToKanban",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2025-12-12T16:21:12.022Z",
+    "payload": {
+      "elementId": "item-item-9b235d90-1749-4fae-b70a-b66f08f24c1a",
+      "elementType": "initiative-item",
+      "initialStatus": "NEW",
+      "boardId": "team-socraft-cto"
+    },
+    "metadata": {
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "InitiativeItemAdded",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2025-12-12T16:21:19.926Z",
+    "payload": {
+      "stepKey": "proximateObjectives",
+      "item": {
+        "text": "Session EM/ES avec Socraft (26A1)"
+      }
+    },
+    "metadata": {
+      "initiativeId": "init-socraft-77bef4ff-0d2a-451b-b63f-d5ede7d79eba",
+      "itemId": "item-002872d5-ff8b-4942-8a6d-93561bb20446",
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "ElementAddedToKanban",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2025-12-12T16:21:19.927Z",
+    "payload": {
+      "elementId": "item-item-002872d5-ff8b-4942-8a6d-93561bb20446",
+      "elementType": "initiative-item",
+      "initialStatus": "NEW",
+      "boardId": "team-socraft-cto"
+    },
+    "metadata": {
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "InitiativeItemAdded",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2025-12-12T16:21:27.825Z",
+    "payload": {
+      "stepKey": "proximateObjectives",
+      "item": {
+        "text": "Hackatlon EM/ES (26Q1)"
+      }
+    },
+    "metadata": {
+      "initiativeId": "init-socraft-77bef4ff-0d2a-451b-b63f-d5ede7d79eba",
+      "itemId": "item-57c0c681-b089-4d49-872d-e72cb36db2ca",
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "ElementAddedToKanban",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2025-12-12T16:21:27.826Z",
+    "payload": {
+      "elementId": "item-item-57c0c681-b089-4d49-872d-e72cb36db2ca",
+      "elementType": "initiative-item",
+      "initialStatus": "NEW",
+      "boardId": "team-socraft-cto"
+    },
+    "metadata": {
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "InitiativeItemAdded",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2025-12-12T16:21:43.118Z",
+    "payload": {
+      "stepKey": "actions",
+      "item": {
+        "text": "Create and run a working group (CoP)"
+      }
+    },
+    "metadata": {
+      "initiativeId": "init-socraft-77bef4ff-0d2a-451b-b63f-d5ede7d79eba",
+      "itemId": "item-1f31f9a7-981b-42bb-b56e-db3d272ffc30",
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "ElementAddedToKanban",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2025-12-12T16:21:43.121Z",
+    "payload": {
+      "elementId": "item-item-1f31f9a7-981b-42bb-b56e-db3d272ffc30",
+      "elementType": "initiative-item",
+      "initialStatus": "NEW",
+      "boardId": "team-socraft-cto"
+    },
+    "metadata": {
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "InitiativeItemAdded",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2025-12-12T16:22:14.299Z",
+    "payload": {
+      "stepKey": "proximateObjectives",
+      "item": {
+        "text": "Training (26Q2)"
+      }
+    },
+    "metadata": {
+      "initiativeId": "init-socraft-77bef4ff-0d2a-451b-b63f-d5ede7d79eba",
+      "itemId": "item-8562bd62-00f5-4f94-b3fd-f7c1ea9b78d3",
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "ElementAddedToKanban",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2025-12-12T16:22:14.300Z",
+    "payload": {
+      "elementId": "item-item-8562bd62-00f5-4f94-b3fd-f7c1ea9b78d3",
+      "elementType": "initiative-item",
+      "initialStatus": "NEW",
+      "boardId": "team-socraft-cto"
+    },
+    "metadata": {
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "InitiativeItemAdded",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2025-12-12T16:22:25.598Z",
+    "payload": {
+      "stepKey": "proximateObjectives",
+      "item": {
+        "text": "Build formal training (26Q2)"
+      }
+    },
+    "metadata": {
+      "initiativeId": "init-socraft-77bef4ff-0d2a-451b-b63f-d5ede7d79eba",
+      "itemId": "item-d1dd6069-e9f3-4a16-b568-a75dc12873e7",
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "ElementAddedToKanban",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2025-12-12T16:22:25.598Z",
+    "payload": {
+      "elementId": "item-item-d1dd6069-e9f3-4a16-b568-a75dc12873e7",
+      "elementType": "initiative-item",
+      "initialStatus": "NEW",
+      "boardId": "team-socraft-cto"
+    },
+    "metadata": {
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "InitiativeItemAdded",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2025-12-12T16:23:19.919Z",
+    "payload": {
+      "stepKey": "diagnostic",
+      "item": {
+        "text": "Projects are still failing (70%?). Customers are given alternatives to build products differently"
+      }
+    },
+    "metadata": {
+      "initiativeId": "init-socraft-77bef4ff-0d2a-451b-b63f-d5ede7d79eba",
+      "itemId": "item-ba7b80e2-565e-4185-9c19-e37a42e93b19",
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "ElementAddedToKanban",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2025-12-12T16:23:19.920Z",
+    "payload": {
+      "elementId": "item-item-ba7b80e2-565e-4185-9c19-e37a42e93b19",
+      "elementType": "initiative-item",
+      "initialStatus": "NEW",
+      "boardId": "team-socraft-cto"
+    },
+    "metadata": {
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "ElementMoved",
+    "entity": "initiative",
+    "aggregateId": "initiative-init-socraft-77bef4ff-0d2a-451b-b63f-d5ede7d79eba",
+    "timestamp": "2025-12-12T11:01:02.100Z",
+    "payload": {
+      "elementId": "initiative-init-socraft-77bef4ff-0d2a-451b-b63f-d5ede7d79eba",
+      "elementType": "initiative",
+      "toStatus": "Diagnosis",
+      "tags": [
+        "kanban"
+      ]
+    },
+    "metadata": {}
   }
 ]

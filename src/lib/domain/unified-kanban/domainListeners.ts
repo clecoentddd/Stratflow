@@ -1,11 +1,12 @@
 import { registerProjectionHandler } from '@/lib/db/event-store';
 import { saveEvents } from '@/lib/db/event-store';
-import type { ElementAddedToKanbanEvent } from './events';
+import type { InitiativeAddedToKanbanEvent, InitiativeItemAddedToKanbanEvent } from './events';
 
 // Domain listeners that add elements to kanban projection when they are created
 
 // Listen for initiative creation and add to kanban
-registerProjectionHandler('InitiativeCreated', async (event: any) => {
+registerProjectionHandler('InitiativeCreated', async (event: any, isReplay?: boolean) => {
+  if (isReplay) return;
   if (event.type !== 'InitiativeCreated') return;
 
   console.log('[KANBAN LISTENER] Processing InitiativeCreated event:', event);
@@ -19,14 +20,13 @@ registerProjectionHandler('InitiativeCreated', async (event: any) => {
   }
 
   // Add initiative to kanban projection with "NEW" status
-  const kanbanEvent: ElementAddedToKanbanEvent = {
-    type: 'ElementAddedToKanban',
+  const kanbanEvent: InitiativeAddedToKanbanEvent = {
+    type: 'InitiativeAddedToKanban',
     entity: 'team',
     aggregateId: teamId,
     timestamp: new Date().toISOString(),
     payload: {
-      elementId: `initiative-${initiativeId}`,
-      elementType: 'initiative',
+      initiativeId,
       initialStatus: 'NEW',
       boardId: teamId, // Use teamId as board identifier
     },
@@ -40,7 +40,8 @@ registerProjectionHandler('InitiativeCreated', async (event: any) => {
 });
 
 // Listen for initiative item creation and add to kanban
-registerProjectionHandler('InitiativeItemAdded', async (event: any) => {
+registerProjectionHandler('InitiativeItemAdded', async (event: any, isReplay?: boolean) => {
+  if (isReplay) return;
   if (event.type !== 'InitiativeItemAdded') return;
 
   console.log('[KANBAN LISTENER] Processing InitiativeItemAdded event:', event);
@@ -54,14 +55,14 @@ registerProjectionHandler('InitiativeItemAdded', async (event: any) => {
   }
 
   // Add item to kanban projection with "NEW" status
-  const kanbanEvent: ElementAddedToKanbanEvent = {
-    type: 'ElementAddedToKanban',
+  const kanbanEvent: InitiativeItemAddedToKanbanEvent = {
+    type: 'InitiativeItemAddedToKanban',
     entity: 'team',
     aggregateId: teamId,
     timestamp: new Date().toISOString(),
     payload: {
-      elementId: `item-${itemId}`,
-      elementType: 'initiative-item',
+      itemId,
+      initiativeId: event.metadata?.initiativeId,
       initialStatus: 'NEW',
       boardId: teamId, // Use teamId as board identifier
     },
