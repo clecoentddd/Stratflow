@@ -39,34 +39,34 @@ export const radarConfig = {
     'Responding': { ringIndex: 0, radiusMultiplier: 0.25 }
   },
 
-  // Impact styling
+  // Impact sizing
   impacts: {
-    'Low': {
-      color: '#77DD77',
-      opportunityClass: 'opportunityLow'
-    },
-    'Medium': {
-      color: '#FFD580',
-      opportunityClass: 'opportunityMedium'
-    },
-    'High': {
-      color: '#FF6961',
-      opportunityClass: 'opportunityHigh'
-    }
+    'Low': { radius: 7 },
+    'Medium': { radius: 10 },
+    'High': { radius: 14 }
   },
 
-  // Tolerance sizing
-  tolerances: {
-    'High': { radius: 14 },
-    'Medium': { radius: 10 },
-    'Low': { radius: 7 }
+  // Risk styling
+  risks: {
+    'Low': {
+      color: '#16a34a',
+      riskClass: 'riskLow'
+    },
+    'Medium': {
+      color: '#f97316',
+      riskClass: 'riskMedium'
+    },
+    'High': {
+      color: '#ef4444',
+      riskClass: 'riskHigh'
+    }
   },
 
   // Default values
   defaults: {
     impact: 'Medium',
-    tolerance: 'Medium',
-    color: '#00cc88',
+    risk: 'Medium',
+    color: '#ef4444',
     size: 10
   }
 };

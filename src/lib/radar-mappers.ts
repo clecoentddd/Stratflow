@@ -1,4 +1,4 @@
-import type { RadarItem, RadarCategory, RadarDistance, RadarItemType, RadarImpact, RadarTolerance } from './types';
+import type { RadarItem, RadarCategory, RadarDistance, RadarItemType, RadarImpact, RadarRisk } from './types';
 
 // --- Translation Layer ---
 
@@ -60,11 +60,11 @@ const impactToSize: Record<RadarImpact, number> = {
     'High': 16,
 };
 
-// Color (from Tolerance)
-const toleranceToColor: Record<RadarTolerance, string> = {
-    'High': '#16a34a',   // Green
-    'Medium': '#9B51E0', // Purpose (purple)
-    'Low': '#ef4444',    // Red
+// Color (from Risk)
+const riskToColor: Record<RadarRisk, string> = {
+    'High': '#ef4444',    // Red
+    'Medium': '#f97316',  // Amber
+    'Low': '#16a34a',     // Green
 };
 
 
@@ -79,7 +79,7 @@ export interface MappedRadarItem {
     color: string;
     // For tooltip display
     impactName: RadarImpact;
-    toleranceName: RadarTolerance;
+    riskLevel: RadarRisk;
 }
 
 
@@ -99,9 +99,9 @@ export function mapRadarItems(items: RadarItem[]): MappedRadarItem[] {
                 ring: ringId,
                 shape: typeToShape[item.type],
                 size: impactToSize[item.impact],
-                color: toleranceToColor[item.tolerance],
+                color: riskToColor[item.risk],
                 impactName: item.impact,
-                toleranceName: item.tolerance,
+                riskLevel: item.risk,
             };
         })
         .filter((item): item is MappedRadarItem => item !== null);

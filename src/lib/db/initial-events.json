@@ -144,7 +144,7 @@
       "category": "Capabilities",
       "distance": "Responding",
       "impact": "High",
-      "tolerance": "Medium"
+      "risk": "Medium"
     }
   },
   {
@@ -162,7 +162,7 @@
       "category": "Business",
       "distance": "Assessed",
       "impact": "High",
-      "tolerance": "Low"
+      "risk": "Low"
     }
   },
   {
@@ -180,7 +180,7 @@
       "category": "Capabilities",
       "distance": "Assessed",
       "impact": "Medium",
-      "tolerance": "Medium"
+      "risk": "Medium"
     }
   },
   {
@@ -198,7 +198,7 @@
       "category": "Capabilities",
       "distance": "Assessed",
       "impact": "High",
-      "tolerance": "Low"
+      "risk": "Low"
     }
   },
   {
@@ -216,7 +216,7 @@
       "category": "Business",
       "distance": "Detected",
       "impact": "Medium",
-      "tolerance": "Medium"
+      "risk": "Medium"
     }
   },
   {
@@ -234,7 +234,7 @@
       "category": "Operating Model",
       "distance": "Assessing",
       "impact": "Medium",
-      "tolerance": "Medium"
+      "risk": "Medium"
     }
   },
   {
@@ -252,7 +252,7 @@
       "category": "Capabilities",
       "distance": "Assessing",
       "impact": "High",
-      "tolerance": "Low"
+      "risk": "Low"
     }
   },
   {
@@ -270,7 +270,7 @@
       "category": "Business",
       "distance": "Assessed",
       "impact": "High",
-      "tolerance": "Medium"
+      "risk": "Medium"
     }
   },
   {
@@ -288,7 +288,7 @@
       "category": "Capabilities",
       "distance": "Assessing",
       "impact": "Medium",
-      "tolerance": "High"
+      "risk": "High"
     }
   },
   {
@@ -306,7 +306,7 @@
       "category": "People & Knowledge",
       "distance": "Assessing",
       "impact": "High",
-      "tolerance": "Medium"
+      "risk": "Medium"
     }
   },
   {
@@ -338,7 +338,7 @@
       "category": "Governance",
       "distance": "Detected",
       "impact": "High",
-      "tolerance": "Low"
+      "risk": "Low"
     }
   },
   {
@@ -356,7 +356,7 @@
       "category": "Governance",
       "distance": "Detected",
       "impact": "Medium",
-      "tolerance": "Medium"
+      "risk": "Medium"
     }
   },
   {
@@ -374,7 +374,7 @@
       "category": "Market",
       "distance": "Emerging",
       "impact": "Medium",
-      "tolerance": "Medium"
+      "risk": "Medium"
     }
   },
   {
@@ -969,7 +969,7 @@
       "category": "Business",
       "distance": "Assessing",
       "impact": "Medium",
-      "tolerance": "Medium",
+      "risk": "Medium",
       "zoom_in": null,
       "id": "radar-70030179-5368-4cce-b317-73ee75f4ef02",
       "radarId": "team-cto",
@@ -992,7 +992,7 @@
       "category": "Operating Model",
       "distance": "Detected",
       "impact": "Low",
-      "tolerance": "High",
+      "risk": "High",
       "zoom_in": null,
       "id": "radar-1699d0ea-2815-4f06-b357-e00c6ad1cc04",
       "radarId": "team-cto",
@@ -1015,7 +1015,7 @@
       "category": "People & Knowledge",
       "distance": "Detected",
       "impact": "Low",
-      "tolerance": "Medium",
+      "risk": "Medium",
       "zoom_in": null,
       "id": "radar-4f5b295d-ead6-40dc-a4ca-4b3ecef95161",
       "radarId": "team-cto",
@@ -1038,7 +1038,7 @@
       "category": "Business",
       "distance": "Detected",
       "impact": "Low",
-      "tolerance": "Medium",
+      "risk": "Medium",
       "zoom_in": null,
       "id": "radar-d6dd4679-85b3-4481-98e5-e4c118f32fc1",
       "radarId": "team-cto",
@@ -1061,7 +1061,7 @@
       "category": "Business",
       "distance": "Detected",
       "impact": "Low",
-      "tolerance": "Medium",
+      "risk": "Medium",
       "zoom_in": null,
       "id": "radar-64b7c754-9efe-4ea9-ad3b-8f24bfbb0f35",
       "radarId": "team-cto",
@@ -1084,7 +1084,7 @@
       "category": "Operating Model",
       "distance": "Responding",
       "impact": "High",
-      "tolerance": "Medium",
+      "risk": "Medium",
       "id": "radar-1bb8157f-4a36-4681-a92e-ec1ef12c8533",
       "radarId": "team-cto",
       "created_at": "2025-12-11T17:07:33.761Z",
@@ -1174,7 +1174,7 @@
       "category": "Capabilities",
       "distance": "Responding",
       "impact": "High",
-      "tolerance": "Medium"
+      "risk": "Medium"
     }
   },
   {
@@ -1192,7 +1192,7 @@
       "category": "Business",
       "distance": "Assessed",
       "impact": "High",
-      "tolerance": "Low"
+      "risk": "Low"
     }
   },
   {
@@ -1210,7 +1210,7 @@
       "category": "Capabilities",
       "distance": "Assessed",
       "impact": "Medium",
-      "tolerance": "Medium"
+      "risk": "Medium"
     }
   },
   {
@@ -1228,7 +1228,7 @@
       "category": "Capabilities",
       "distance": "Assessed",
       "impact": "High",
-      "tolerance": "Low"
+      "risk": "Low"
     }
   },
   {
@@ -1246,7 +1246,7 @@
       "category": "Business",
       "distance": "Detected",
       "impact": "Medium",
-      "tolerance": "Medium"
+      "risk": "Medium"
     }
   },
   {
@@ -1264,7 +1264,7 @@
       "category": "Operating Model",
       "distance": "Assessing",
       "impact": "Medium",
-      "tolerance": "Medium"
+      "risk": "Medium"
     }
   },
   {
@@ -1282,7 +1282,7 @@
       "category": "Capabilities",
       "distance": "Assessing",
       "impact": "High",
-      "tolerance": "Low"
+      "risk": "Low"
     }
   },
   {
@@ -1300,7 +1300,7 @@
       "category": "Business",
       "distance": "Assessed",
       "impact": "High",
-      "tolerance": "Medium"
+      "risk": "Medium"
     }
   },
   {
@@ -1318,7 +1318,7 @@
       "category": "Capabilities",
       "distance": "Assessing",
       "impact": "Medium",
-      "tolerance": "High"
+      "risk": "High"
     }
   },
   {
@@ -1336,7 +1336,7 @@
       "category": "People & Knowledge",
       "distance": "Assessing",
       "impact": "High",
-      "tolerance": "Medium"
+      "risk": "Medium"
     }
   },
   {
@@ -1711,7 +1711,7 @@
       "category": "Business",
       "distance": "Assessing",
       "impact": "Medium",
-      "tolerance": "Medium",
+      "risk": "Medium",
       "zoom_in": null,
       "id": "radar-70030179-5368-4cce-b317-73ee75f4ef02-socraft",
       "radarId": "team-socraft-cto",
@@ -1734,7 +1734,7 @@
       "category": "Operating Model",
       "distance": "Detected",
       "impact": "Low",
-      "tolerance": "High",
+      "risk": "High",
       "zoom_in": null,
       "id": "radar-1699d0ea-2815-4f06-b357-e00c6ad1cc04-socraft",
       "radarId": "team-socraft-cto",
@@ -1757,7 +1757,7 @@
       "category": "People & Knowledge",
       "distance": "Detected",
       "impact": "Low",
-      "tolerance": "Medium",
+      "risk": "Medium",
       "zoom_in": null,
       "id": "radar-4f5b295d-ead6-40dc-a4ca-4b3ecef95161-socraft",
       "radarId": "team-socraft-cto",
@@ -1780,7 +1780,7 @@
       "category": "Business",
       "distance": "Detected",
       "impact": "Low",
-      "tolerance": "Medium",
+      "risk": "Medium",
       "zoom_in": null,
       "id": "radar-d6dd4679-85b3-4481-98e5-e4c118f32fc1-socraft",
       "radarId": "team-socraft-cto",
@@ -1803,7 +1803,7 @@
       "category": "Business",
       "distance": "Detected",
       "impact": "Low",
-      "tolerance": "Medium",
+      "risk": "Medium",
       "zoom_in": null,
       "id": "radar-64b7c754-9efe-4ea9-ad3b-8f24bfbb0f35-socraft",
       "radarId": "team-socraft-cto",
@@ -1826,7 +1826,7 @@
       "category": "Operating Model",
       "distance": "Responding",
       "impact": "High",
-      "tolerance": "Medium",
+      "risk": "Medium",
       "id": "radar-1bb8157f-4a36-4681-a92e-ec1ef12c8533-socraft",
       "radarId": "team-socraft-cto",
       "created_at": "2025-12-11T17:07:33.761Z",

@@ -510,7 +510,7 @@ const RadarChart: React.FC<{
                             <div className={styles.row}><span className={styles.label}>Category:</span><span className={styles.value}>{tooltipData.item.raw.category}</span></div>
                             <div className={styles.row}><span className={styles.label}>Distance:</span><span className={styles.value}>{tooltipData.item.raw.distance}</span></div>
                             <div className={styles.row}><span className={styles.label}>Impact:</span><span className={styles.value}>{tooltipData.item.raw.impact}</span></div>
-                            <div className={styles.row}><span className={styles.label}>Tolerance:</span><span className={styles.value}>{tooltipData.item.raw.tolerance}</span></div>
+                            <div className={styles.row}><span className={styles.label}>Risk:</span><span className={styles.value}>{tooltipData.item.raw.risk}</span></div>
                             {tooltipData.item.zoom_in && (
                                 <div className={styles.row}>
                                     <span className={styles.label}>Zoom to:</span>

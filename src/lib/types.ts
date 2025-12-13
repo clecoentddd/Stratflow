@@ -43,7 +43,7 @@ export type RadarItemType = 'Threat' | 'Opportunity';
 export type RadarCategory = 'Business' | 'Operating Model' | 'Capabilities' | 'People & Knowledge';
 export type RadarDistance = 'Detected' | 'Assessing' | 'Assessed' | 'Responding' | 'Responded';
 export type RadarImpact = 'Low' | 'Medium' | 'High';
-export type RadarTolerance = 'High' | 'Medium' | 'Low';
+export type RadarRisk = 'High' | 'Medium' | 'Low';
 
 export type RadarItem = {
   id: string;
@@ -56,7 +56,7 @@ export type RadarItem = {
   category: RadarCategory;
   distance: RadarDistance;
   impact: RadarImpact;
-  tolerance: RadarTolerance;
+  risk: RadarRisk;
   zoom_in: string | null;
   created_at: string;
   updated_at: string | null;

@@ -8,7 +8,7 @@ const RadarTooltip = ({ tooltipData, onEditClick }: { tooltipData: any, onEditCl
 
   const { item } = tooltipData;
   const { name, raw, type, zoom_in } = item;
-  const { category, impact, tolerance, distance } = raw;
+  const { category, impact, risk, distance } = raw;
 
   return (
     <div 
@@ -35,8 +35,8 @@ const RadarTooltip = ({ tooltipData, onEditClick }: { tooltipData: any, onEditCl
         <span className={styles.value}>{impact}</span>
       </div>
       <div className={styles.row}>
-        <span className={styles.label}>Tolerance:</span>
-        <span className={styles.value}>{tolerance}</span>
+        <span className={styles.label}>Risk:</span>
+        <span className={styles.value}>{risk}</span>
       </div>
 
       {zoom_in ? (

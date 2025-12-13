@@ -23,16 +23,16 @@ const normalizeItem = (rawItem: RadarItem) => {
   const category = (radarConfig.categories as any)[categoryKey];
   const distance = (radarConfig.distances as any)[rawItem.distance];
   const impact = (radarConfig.impacts as any)[rawItem.impact] || (radarConfig.impacts as any)[radarConfig.defaults.impact];
-  const tolerance = (radarConfig.tolerances as any)[rawItem.tolerance] || (radarConfig.tolerances as any)[radarConfig.defaults.tolerance];
+  const risk = (radarConfig.risks as any)[rawItem.risk] || (radarConfig.risks as any)[radarConfig.defaults.risk];
 
   if (!category) console.warn(`[RadarParser] Unknown category: "${rawItem.category}" for item ${rawItem.name}`);
   if (!distance) console.warn(`[RadarParser] Unknown distance: "${rawItem.distance}" for item ${rawItem.name}`);
 
-  let opportunityClass = styles.opportunityLow;
-  switch (impact.opportunityClass) {
-    case 'opportunityLow': opportunityClass = styles.opportunityLow; break;
-    case 'opportunityMedium': opportunityClass = styles.opportunityMedium; break;
-    case 'opportunityHigh': opportunityClass = styles.opportunityHigh; break;
+  let riskClass = styles.riskLow;
+  switch (risk?.riskClass) {
+    case 'riskLow': riskClass = styles.riskLow; break;
+    case 'riskMedium': riskClass = styles.riskMedium; break;
+    case 'riskHigh': riskClass = styles.riskHigh; break;
   }
 
   // Map category to quadrant index
@@ -47,9 +47,9 @@ const normalizeItem = (rawItem: RadarItem) => {
     quadrantIndex,            
     radiusMultiplier: distance?.radiusMultiplier ?? 1.0,
 
-    color: impact.color || radarConfig.defaults.color,
-    size: tolerance.radius,
-    opportunityClass,
+    color: risk.color || radarConfig.defaults.color,
+    size: impact.radius,
+    opportunityClass: riskClass,
 
     raw: {
       ...rawItem

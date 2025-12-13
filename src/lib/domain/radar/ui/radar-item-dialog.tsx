@@ -15,7 +15,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { ZoomInDialog } from "./zoom-in-dialog";
-import type { RadarItem, RadarItemType, RadarCategory, RadarDistance, RadarImpact, RadarTolerance, Team } from "@/lib/types";
+import type { RadarItem, RadarItemType, RadarCategory, RadarDistance, RadarImpact, RadarRisk, Team } from "@/lib/types";
 import { radarAttributes } from "../constants";
 import { cn } from "@/lib/utils";
 import styles from './radar-item-dialog.module.css';
@@ -41,7 +41,7 @@ const defaultFormData: FormData = {
   category: "Business",
   distance: "Detected",
   impact: "Low",
-  tolerance: "Medium",
+  risk: "Medium",
   zoom_in: null,
 };
 
@@ -170,13 +170,13 @@ export function RadarItemDialog({ isOpen, onOpenChange, onSave, item, teams, cur
                   </RadioGroup>
                 </div>
                  <div className={styles.spaceY2}>
-                  <Label>Tolerance</Label>
-                  <RadioGroup value={formData.tolerance} onValueChange={(v) => handleRadioChange('tolerance', v as RadarTolerance)} className={styles.flexWrapGap2}>
-                      {radarAttributes.tolerances.map(t => (
-                          <RadioGroupItem key={t} value={t} id={`tol-${t}`} className={styles.srOnly} />
+                    <Label>Risk</Label>
+                    <RadioGroup value={formData.risk} onValueChange={(v) => handleRadioChange('risk', v as RadarRisk)} className={styles.flexWrapGap2}>
+                      {radarAttributes.risks.map(f => (
+                        <RadioGroupItem key={f} value={f} id={`risk-${f}`} className={styles.srOnly} />
                       ))}
-                      {radarAttributes.tolerances.map(t => (
-                           <Label key={t} htmlFor={`tol-${t}`} className={cn(styles.radioLabelBase, formData.tolerance === t ? styles.radioLabelSelected : undefined)}>{t}</Label>
+                      {radarAttributes.risks.map(f => (
+                         <Label key={f} htmlFor={`risk-${f}`} className={cn(styles.radioLabelBase, formData.risk === f ? styles.radioLabelSelected : undefined)}>{f}</Label>
                       ))}
                   </RadioGroup>
                 </div>

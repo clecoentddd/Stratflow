@@ -15,7 +15,7 @@ export type FringeItem = {
   category: string;
   distance: string;
   impact: string;
-  tolerance: string;
+  risk: string;
   zoom_in: string | null;
 };
 
@@ -74,7 +74,7 @@ export async function getFringeOfTheHorizonProjection(limit = 20): Promise<Fring
             category: p.category,
             distance: p.distance,
             impact: p.impact,
-            tolerance: p.tolerance,
+            risk: p.risk,
             zoom_in: p.zoom_in ?? null,
           });
           break;
@@ -93,7 +93,7 @@ export async function getFringeOfTheHorizonProjection(limit = 20): Promise<Fring
               category: p.category ?? existing.category,
               distance: p.distance ?? existing.distance,
               impact: p.impact ?? existing.impact,
-              tolerance: p.tolerance ?? existing.tolerance,
+              risk: p.risk ?? existing.risk,
               zoom_in: p.zoom_in ?? existing.zoom_in,
             });
           }

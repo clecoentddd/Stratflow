@@ -54,7 +54,7 @@ export default function HorizonList({ items }: { items: FringeItem[] }) {
                   <span className={`${styles.badge} ${i.type === 'Opportunity' ? styles.typeOpportunity : styles.typeThreat}`}>{i.type}</span>
                   <span className={`${styles.badge} ${styles.pill}`}>{i.distance}</span>
                   <span className={`${styles.badge} ${styles.pill}`}>{i.impact}</span>
-                  <span className={`${styles.badge} ${styles.pill}`}>{i.tolerance}</span>
+                  <span className={`${styles.badge} ${styles.pill}`}>{i.risk}</span>
                 </div>
               </details>
             </article>

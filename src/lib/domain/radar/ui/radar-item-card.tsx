@@ -38,7 +38,7 @@ export function RadarItemCard({ item, onEdit, onDelete }: RadarItemCardProps) {
                     <Badge variant="secondary">{item.category}</Badge>
                     <Badge variant="secondary">{item.distance}</Badge>
                     <Badge variant="secondary">Impact: {item.impact}</Badge>
-                    <Badge variant="secondary">Tolerance: {item.tolerance}</Badge>
+                    <Badge variant="secondary">Risk: {item.risk}</Badge>
                 </div>
             </div>
             <div className="flex gap-2">

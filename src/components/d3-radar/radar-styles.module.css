@@ -262,20 +262,20 @@
   fill: var(--radar-primary); 
 }
 
-/* Opportunity ring styles */
-.opportunityLow { 
+/* Risk ring styles */
+.riskLow { 
   fill: none; 
   stroke: var(--radar-success); 
   stroke-width: 3; 
 }
 
-.opportunityMedium { 
+.riskMedium { 
   fill: none; 
   stroke: var(--radar-accent); 
   stroke-width: 3; 
 }
 
-.opportunityHigh { 
+.riskHigh { 
   fill: none; 
   stroke: var(--radar-danger); 
   stroke-width: 3; 
