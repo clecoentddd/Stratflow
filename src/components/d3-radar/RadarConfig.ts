@@ -1,3 +1,4 @@
+import { getRiskColor, RADAR_DEFAULT_RISK, radarRiskPalette } from '@/lib/radar/viewModel';
 
 // radarConfig.js
 // Central configuration for the radar chart
@@ -49,15 +50,15 @@ export const radarConfig = {
   // Risk styling
   risks: {
     'Low': {
-      color: '#16a34a',
+      color: radarRiskPalette.Low.color,
       riskClass: 'riskLow'
     },
     'Medium': {
-      color: '#f97316',
+      color: radarRiskPalette.Medium.color,
       riskClass: 'riskMedium'
     },
     'High': {
-      color: '#ef4444',
+      color: radarRiskPalette.High.color,
       riskClass: 'riskHigh'
     }
   },
@@ -65,8 +66,8 @@ export const radarConfig = {
   // Default values
   defaults: {
     impact: 'Medium',
-    risk: 'Medium',
-    color: '#ef4444',
+    risk: RADAR_DEFAULT_RISK,
+    color: getRiskColor(RADAR_DEFAULT_RISK),
     size: 10
   }
 };

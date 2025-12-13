@@ -1,6 +1,7 @@
 import React from 'react';
 import styles from './HorizonList.module.css';
 import type { FringeItem } from '@/lib/domain/fringe-of-the-horizon/projection';
+import { radarLabels } from '@/lib/radar/viewModel';
 
 export default function HorizonList({ items }: { items: FringeItem[] }) {
   return (
@@ -54,7 +55,13 @@ export default function HorizonList({ items }: { items: FringeItem[] }) {
                   <span className={`${styles.badge} ${i.type === 'Opportunity' ? styles.typeOpportunity : styles.typeThreat}`}>{i.type}</span>
                   <span className={`${styles.badge} ${styles.pill}`}>{i.distance}</span>
                   <span className={`${styles.badge} ${styles.pill}`}>{i.impact}</span>
-                  <span className={`${styles.badge} ${styles.pill}`}>{i.risk}</span>
+                  <span
+                    className={`${styles.badge} ${styles.pill}`}
+                    aria-label={`${radarLabels.risk}: ${i.risk}`}
+                    title={`${radarLabels.risk}: ${i.risk}`}
+                  >
+                    {i.risk}
+                  </span>
                 </div>
               </details>
             </article>

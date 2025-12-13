@@ -1,4 +1,5 @@
 import type { RadarItem, RadarCategory, RadarDistance, RadarItemType, RadarImpact, RadarRisk } from './types';
+import { getRiskColor } from '@/lib/radar/viewModel';
 
 // --- Translation Layer ---
 
@@ -60,14 +61,6 @@ const impactToSize: Record<RadarImpact, number> = {
     'High': 16,
 };
 
-// Color (from Risk)
-const riskToColor: Record<RadarRisk, string> = {
-    'High': '#ef4444',    // Red
-    'Medium': '#f97316',  // Amber
-    'Low': '#16a34a',     // Green
-};
-
-
 // --- Mapped Item Type ---
 export interface MappedRadarItem {
     id: string;
@@ -99,7 +92,7 @@ export function mapRadarItems(items: RadarItem[]): MappedRadarItem[] {
                 ring: ringId,
                 shape: typeToShape[item.type],
                 size: impactToSize[item.impact],
-                color: riskToColor[item.risk],
+                color: getRiskColor(item.risk),
                 impactName: item.impact,
                 riskLevel: item.risk,
             };

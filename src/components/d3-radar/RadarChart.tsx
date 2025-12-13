@@ -12,6 +12,7 @@ import {
     groupItemsForPositioning, 
     calculateItemPosition,
 } from './radarDataParser';
+import { radarTooltipCopy, radarTooltipLabels } from '@/lib/radar/viewModel';
 
 const RadarChart: React.FC<{ 
   items: any[], 
@@ -505,15 +506,15 @@ const RadarChart: React.FC<{
                 >
                     {tooltipData.visible && tooltipData.item ? (
                         <div ref={tooltipRef} className={styles.tooltip}>
-                            <div className={styles.row}><span className={styles.label}>Name:</span><span className={styles.value}>{tooltipData.item.name}</span></div>
-                            <div className={styles.row}><span className={styles.label}>Type:</span><span className={styles.value}>{tooltipData.item.type}</span></div>
-                            <div className={styles.row}><span className={styles.label}>Category:</span><span className={styles.value}>{tooltipData.item.raw.category}</span></div>
-                            <div className={styles.row}><span className={styles.label}>Distance:</span><span className={styles.value}>{tooltipData.item.raw.distance}</span></div>
-                            <div className={styles.row}><span className={styles.label}>Impact:</span><span className={styles.value}>{tooltipData.item.raw.impact}</span></div>
-                            <div className={styles.row}><span className={styles.label}>Risk:</span><span className={styles.value}>{tooltipData.item.raw.risk}</span></div>
+                            <div className={styles.row}><span className={styles.label}>{radarTooltipLabels.title}</span><span className={styles.value}>{tooltipData.item.name}</span></div>
+                            <div className={styles.row}><span className={styles.label}>{radarTooltipLabels.type}</span><span className={styles.value}>{tooltipData.item.type}</span></div>
+                            <div className={styles.row}><span className={styles.label}>{radarTooltipLabels.category}</span><span className={styles.value}>{tooltipData.item.raw.category}</span></div>
+                            <div className={styles.row}><span className={styles.label}>{radarTooltipLabels.distance}</span><span className={styles.value}>{tooltipData.item.raw.distance}</span></div>
+                            <div className={styles.row}><span className={styles.label}>{radarTooltipLabels.impact}</span><span className={styles.value}>{tooltipData.item.raw.impact}</span></div>
+                            <div className={styles.row}><span className={styles.label}>{radarTooltipLabels.risk}</span><span className={styles.value}>{tooltipData.item.raw.risk}</span></div>
                             {tooltipData.item.zoom_in && (
                                 <div className={styles.row}>
-                                    <span className={styles.label}>Zoom to:</span>
+                                    <span className={styles.label}>{radarTooltipLabels.zoom}</span>
                                     <span 
                                         className={styles.link} 
                                         onClick={() => handleZoomInClick(tooltipData.item.zoom_in.id)}
@@ -529,7 +530,7 @@ const RadarChart: React.FC<{
                             )}
                         </div>
                     ) : (
-                        <div className={styles.tooltipPlaceholder}>Hover over items to see details</div>
+                        <div className={styles.tooltipPlaceholder}>{radarTooltipCopy.placeholder}</div>
                     )}
                 </div>
             </div>

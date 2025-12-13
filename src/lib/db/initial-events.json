@@ -1105,10 +1105,10 @@
   {
     "type": "TeamCreated",
     "entity": "team",
-    "aggregateId": "team-socraft-hq",
+    "aggregateId": "team-socraft-ceo-123-id",
     "timestamp": "2025-12-12T10:00:01.000Z",
     "payload": {
-      "id": "team-socraft-hq",
+      "id": "team-socraft-ceo-123-id",
       "companyId": "company-socraft",
       "name": "CEO",
       "purpose": "Act differently: be the best for our customers",
@@ -1126,7 +1126,7 @@
       "username": "Chris",
       "companyId": "company-socraft",
       "teamIds": [
-        "team-socraft-hq",
+        "team-socraft-ceo-123-id",
         "team-socraft-cto"
       ]
     }
@@ -2486,5 +2486,74 @@
       ]
     },
     "metadata": {}
+  },
+  {
+    "type": "RadarItemCreated",
+    "entity": "team",
+    "aggregateId": "team-socraft-ceo-123-id",
+    "timestamp": "2025-12-13T11:59:52.075Z",
+    "payload": {
+      "name": "Leading the change",
+      "detect": "Inertia of IT consulting companies is our strength. Everything evolves. ",
+      "assess": "",
+      "respond": "",
+      "type": "Opportunity",
+      "category": "Business",
+      "distance": "Detected",
+      "impact": "Medium",
+      "risk": "Medium",
+      "zoom_in": null,
+      "id": "radar-bfdcffbe-f9d9-475c-9de3-6d2f611141a3",
+      "radarId": "team-socraft-ceo-123-id",
+      "created_at": "2025-12-13T11:59:52.077Z",
+      "updated_at": null,
+      "teamId": "team-socraft-ceo-123-id"
+    }
+  },
+  {
+    "type": "RadarItemCreated",
+    "entity": "team",
+    "aggregateId": "team-socraft-ceo-123-id",
+    "timestamp": "2025-12-13T11:59:52.075Z",
+    "payload": {
+      "name": "Internal Synergy",
+      "detect": "To promote collaboration and opportunities of learning for members",
+      "assess": "Use events as training; hackatlons; promote group work",
+      "respond": "",
+      "type": "Opportunity",
+      "category": "People & Knowledge",
+      "distance": "Detected",
+      "impact": "High",
+      "risk": "Low",
+      "zoom_in": null,
+      "id": "radar-bfdcffbe-f9d9-475c-9de3-6d2f611141r3",
+      "radarId": "team-socraft-ceo-123-id",
+      "created_at": "2025-12-13T11:59:53.077Z",
+      "updated_at": null,
+      "teamId": "team-socraft-ceo-123-id"
+    }
+  },
+  {
+    "type": "RadarItemCreated",
+    "entity": "team",
+    "aggregateId": "team-b662b727-f985-48b0-8740-fbcb9448e069",
+    "timestamp": "2025-12-13T12:09:18.506Z",
+    "payload": {
+      "name": "noSQL + ES",
+      "detect": "Many administration works on a yearly cycle with documents such as taxation decision,  payment calculation, invoices... These are documents, not agregates so noSQL must be an option",
+      "assess": "Taxation, welfare systems, great opportunities for new systems and modernization! Simpifying architecture, closer to the business (Did I receive my invoice aggregat or my invoice document?)",
+      "respond": "",
+      "type": "Opportunity",
+      "category": "Capabilities",
+      "distance": "Assessing",
+      "impact": "High",
+      "risk": "Low",
+      "zoom_in": null,
+      "id": "radar-f252b247-b5b7-407b-9ce4-f1b2c87ff89a",
+      "radarId": "team-b662b727-f985-48b0-8740-fbcb9448e069",
+      "created_at": "2025-12-13T12:09:18.507Z",
+      "updated_at": null,
+      "teamId": "team-b662b727-f985-48b0-8740-fbcb9448e069"
+    }
   }
 ]
