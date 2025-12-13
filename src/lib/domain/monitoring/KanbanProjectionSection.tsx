@@ -1,22 +1,36 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { KanbanProjectionDisplay } from './KanbanProjectionDisplay';
 
-export function KanbanProjectionSection({ styles }: { styles: any }) {
+type KanbanProjectionSectionProps = {
+  styles: any;
+  title?: string;
+  typePreset?: 'initiatives' | 'items';
+  companyId?: string;
+};
+
+export function KanbanProjectionSection({ styles, title = 'Kanban Projection (Live)', typePreset, companyId }: KanbanProjectionSectionProps) {
+  const initialType = typePreset ?? 'items';
   const [projection, setProjection] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [type, setType] = useState<'initiatives' | 'items'>('items');
+  const [type, setType] = useState<'initiatives' | 'items'>(initialType);
   const [rebuilding, setRebuilding] = useState<'initiatives' | 'items' | null>(null);
 
+  const effectiveType = typePreset ?? type;
+
   // Fetch board data function
-  const fetchBoardData = async () => {
+  const fetchBoardData = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      console.log('[KANBAN PROJECTION SECTION] Fetching projection', type);
-      const res = await fetch(`/monitoring/projection?type=${type}`);
+      console.log('[KANBAN PROJECTION SECTION] Fetching projection', effectiveType);
+      const params = new URLSearchParams({ type: effectiveType });
+      if (companyId) {
+        params.append('companyId', companyId);
+      }
+      const res = await fetch(`/monitoring/projection?${params.toString()}`);
       if (!res.ok) throw new Error('Failed to fetch kanban board data');
       const data = await res.json();
       console.log('[KANBAN PROJECTION SECTION] Projection loaded', {
@@ -29,19 +43,24 @@ export function KanbanProjectionSection({ styles }: { styles: any }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [companyId, effectiveType]);
 
   useEffect(() => {
     fetchBoardData();
-  }, [type]);
+  }, [fetchBoardData]);
 
-  const rebuildProjection = async (target: 'initiatives' | 'items') => {
-    setRebuilding(target);
+  const rebuildProjection = async (target?: 'initiatives' | 'items') => {
+    const requested = target ?? effectiveType;
+    setRebuilding(requested);
     setError(null);
     try {
-      console.log('[KANBAN PROJECTION SECTION] Rebuilding projection', target);
-      const res = await fetch(`/monitoring/projection?type=${target}`, { method: 'POST' });
-      if (!res.ok) throw new Error(`Failed to rebuild ${target} projection`);
+      console.log('[KANBAN PROJECTION SECTION] Rebuilding projection', requested);
+      const params = new URLSearchParams({ type: requested });
+      if (companyId) {
+        params.append('companyId', companyId);
+      }
+      const res = await fetch(`/monitoring/projection?${params.toString()}`, { method: 'POST' });
+      if (!res.ok) throw new Error(`Failed to rebuild ${requested} projection`);
       const payload = await res.json();
       console.log('[KANBAN PROJECTION SECTION] Rebuild complete', payload);
       await fetchBoardData();
@@ -54,29 +73,42 @@ export function KanbanProjectionSection({ styles }: { styles: any }) {
 
   return (
     <>
-      <h1 className={styles.heading}>Kanban Projection (Live)</h1>
-      <div style={{ marginBottom: 12, display: 'flex', gap: '10px' }}>
+      <h1 className={styles.heading}>{title}</h1>
+      <div style={{ marginBottom: 12, display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
         <button onClick={fetchBoardData}>Refresh</button>
-        <button
-          onClick={() => rebuildProjection('initiatives')}
-          disabled={rebuilding === 'initiatives'}
-        >
-          {rebuilding === 'initiatives' ? 'Rebuilding Initiatives…' : 'Rebuild Initiatives'}
-        </button>
-        <button
-          onClick={() => rebuildProjection('items')}
-          disabled={rebuilding === 'items'}
-        >
-          {rebuilding === 'items' ? 'Rebuilding Items…' : 'Rebuild Items'}
-        </button>
-        <select 
-            value={type} 
-            onChange={(e) => setType(e.target.value as 'initiatives' | 'items')}
+        {typePreset ? (
+          <button
+            onClick={() => rebuildProjection(typePreset)}
+            disabled={rebuilding === typePreset}
+          >
+            {rebuilding === typePreset ? 'Rebuilding…' : `Rebuild ${typePreset === 'initiatives' ? 'Initiatives' : 'Items'}`}
+          </button>
+        ) : (
+          <>
+            <button
+              onClick={() => rebuildProjection('initiatives')}
+              disabled={rebuilding === 'initiatives'}
+            >
+              {rebuilding === 'initiatives' ? 'Rebuilding Initiatives…' : 'Rebuild Initiatives'}
+            </button>
+            <button
+              onClick={() => rebuildProjection('items')}
+              disabled={rebuilding === 'items'}
+            >
+              {rebuilding === 'items' ? 'Rebuilding Items…' : 'Rebuild Items'}
+            </button>
+          </>
+        )}
+        {!typePreset ? (
+          <select
+            value={type}
+            onChange={event => setType(event.target.value as 'initiatives' | 'items')}
             style={{ padding: '4px' }}
-        >
+          >
             <option value="initiatives">Initiatives</option>
             <option value="items">Initiative Items</option>
-        </select>
+          </select>
+        ) : null}
       </div>
       {loading && <div>Loading projection...</div>}
       {error && <div style={{ color: 'red' }}>Error: {error}</div>}
