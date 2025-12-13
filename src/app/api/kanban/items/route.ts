@@ -10,6 +10,11 @@ export async function GET(request: NextRequest) {
 
   const companyId = await resolveCompanyId(request.nextUrl.searchParams);
   const board = queryInitiativeItemsKanbanBoard({ companyId });
+  console.log('DEBUG_KNB api/kanban/items', {
+    companyId,
+    elements: board.elements.length,
+    columns: board.columns.length,
+  });
 
   return NextResponse.json(board);
 }

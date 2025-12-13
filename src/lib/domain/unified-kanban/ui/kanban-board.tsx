@@ -1,9 +1,15 @@
 "use client";
 
 import React, { useCallback } from 'react';
-import type { KanbanBoardData, EnrichedKanbanElement, KanbanColumnDefinition } from '../types';
+import type {
+  KanbanBoardData,
+  EnrichedKanbanElement,
+  KanbanColumnDefinition,
+  KanbanSwimlaneDefinition,
+} from '../types';
 import { startDrag, setDragOverColumn, endDrag, getDragState } from '../drag-state';
 import styles from './kanban-board.module.css';
+import { Clock3 } from 'lucide-react';
 
 
 export function KanbanBoard({ data, onMoveElement, onElementClick, className = '' }: {
@@ -48,7 +54,7 @@ export function KanbanBoard({ data, onMoveElement, onElementClick, className = '
   }, [onMoveElement]);
 
   // Group teams by level
-  const teamsMap: Record<string, { teamId: string; teamName: string; teamLevel: number; elements: EnrichedKanbanElement[]; swimlanes: any[] }> = {};
+  const teamsMap: Record<string, { teamId: string; teamName: string; teamLevel: number; elements: EnrichedKanbanElement[]; swimlanes: KanbanSwimlaneDefinition[] }> = {};
 
   const ensureTeam = (id: string, name?: string, level?: number) => {
     if (!teamsMap[id]) {
@@ -96,53 +102,97 @@ export function KanbanBoard({ data, onMoveElement, onElementClick, className = '
   interface StrategyGroup {
     id: string;
     title: string;
-    state: string;
-    elements: EnrichedKanbanElement[];
+    state?: string;
+    lanes: Array<{
+      id: string;
+      title: string;
+      state?: string;
+      elements: EnrichedKanbanElement[];
+    }>;
   }
 
-  // Helper to group by strategy
   const groupElementsByStrategy = (team: typeof teamsMap[string]) => {
-    const groups: StrategyGroup[] = [];
-    const processedElementIds = new Set<string>();
+    const laneLookup = new Map<string, KanbanSwimlaneDefinition>();
+    team.swimlanes.forEach(sl => laneLookup.set(sl.id, sl));
 
-    // 1. Create groups for defined swimlanes
+    const strategyMap = new Map<string, StrategyGroup>();
+
+    const getOrCreateGroup = (strategyId: string, fallback?: { title?: string; state?: string }) => {
+      if (!strategyMap.has(strategyId)) {
+        const swimlane = laneLookup.get(strategyId);
+        strategyMap.set(strategyId, {
+          id: strategyId,
+          title: swimlane?.parentTitle || swimlane?.title || fallback?.title || 'Unassigned Strategy',
+          state: swimlane?.parentState || swimlane?.state || fallback?.state,
+          lanes: [],
+        });
+      } else {
+        const group = strategyMap.get(strategyId)!;
+        if (!group.title && fallback?.title) {
+          group.title = fallback.title;
+        }
+        if (!group.state && fallback?.state) {
+          group.state = fallback.state;
+        }
+      }
+      return strategyMap.get(strategyId)!;
+    };
+
+    const attachLaneToGroup = (group: StrategyGroup, lane: KanbanSwimlaneDefinition) => {
+      if (!group.lanes.some(existing => existing.id === lane.id)) {
+        group.lanes.push({
+          id: lane.id,
+          title: lane.title,
+          state: lane.state,
+          elements: [],
+        });
+      }
+    };
+
+    // Initialize groups from swimlanes (where available)
     team.swimlanes.forEach(sl => {
-       const elements = team.elements.filter(e => e.metadata?.strategyId === sl.id);
-       elements.forEach(e => processedElementIds.add(e.id));
-       groups.push({
-          id: sl.id,
-          title: sl.title,
-          state: sl.state,
-          elements
-       });
+      const strategyId = sl.parentId || sl.id || 'default';
+      const group = getOrCreateGroup(strategyId, {
+        title: sl.parentTitle || sl.title,
+        state: sl.parentState || sl.state,
+      });
+      attachLaneToGroup(group, sl);
     });
 
-    // 2. Find uncategorized elements
-    const uncategorized = team.elements.filter(e => !processedElementIds.has(e.id));
-    if (uncategorized.length > 0) {
-       const otherGroups: Record<string, StrategyGroup> = {};
-       uncategorized.forEach(e => {
-          const sId = e.metadata?.strategyId || 'default';
-          if (!otherGroups[sId]) {
-             otherGroups[sId] = {
-                id: sId,
-                title: e.metadata?.strategyName || 'Uncategorized',
-                state: e.metadata?.strategyState || '',
-                elements: []
-              };
-          }
-          otherGroups[sId].elements.push(e);
-       });
-       groups.push(...Object.values(otherGroups));
-    }
+    // Place elements into corresponding lanes
+    team.elements.forEach(element => {
+      const strategyId = element.metadata?.strategyId || 'default';
+      const group = getOrCreateGroup(strategyId, {
+        title: element.metadata?.strategyName,
+        state: element.metadata?.strategyState,
+      });
 
-    return groups.sort((a, b) => {
-      // Active first
+      const laneId = element.swimlaneId || strategyId;
+      let lane = group.lanes.find(l => l.id === laneId);
+      if (!lane) {
+        const laneMeta = laneLookup.get(laneId);
+        lane = {
+          id: laneId,
+          title: laneMeta?.title || element.metadata?.initiativeName || element.title,
+          state: laneMeta?.state,
+          elements: [],
+        };
+        group.lanes.push(lane);
+      }
+      lane.elements.push(element);
+    });
+
+    const sortedGroups = Array.from(strategyMap.values()).sort((a, b) => {
       if (a.state === 'Active' && b.state !== 'Active') return -1;
       if (a.state !== 'Active' && b.state === 'Active') return 1;
-      // Then by title
       return a.title.localeCompare(b.title);
     });
+
+    sortedGroups.forEach(group => {
+      group.lanes.sort((a, b) => a.title.localeCompare(b.title));
+    });
+
+    return sortedGroups;
   };
 
   // Set CSS variable for column count
@@ -178,49 +228,101 @@ export function KanbanBoard({ data, onMoveElement, onElementClick, className = '
                   </div>
                   
                   {strategyGroups.map(group => (
-                    <div key={group.id} className={styles.swimlane} style={{ marginBottom: 16, borderLeft: '4px solid #3b82f6', borderRadius: 6, background: '#f9fafb' }}>
+                    <div key={group.id} style={{ marginBottom: 16 }}>
                       {group.id !== 'default' && (
-                        <div className={styles.swimlaneHeaderRow} style={{ 
-                          fontWeight: 600, 
-                          fontSize: 14, 
-                          color: '#0f172a', 
-                          background: '#e0e7ef', 
-                          padding: '6px 12px', 
-                          borderRadius: '6px 6px 0 0',
+                        <div className={styles.swimlaneHeaderRow} style={{
+                          fontWeight: 600,
+                          fontSize: 14,
+                          color: '#0f172a',
+                          background: '#dbeafe',
+                          padding: '8px 12px',
+                          borderRadius: 6,
                           display: 'flex',
                           alignItems: 'center',
-                          gap: '8px'
+                          gap: '8px',
+                          marginBottom: 8,
                         }}>
                           <span>{group.title}</span>
                           {group.state && (
-                            <span style={{ 
-                              fontSize: '11px', 
-                              padding: '2px 8px', 
+                            <span style={{
+                              fontSize: '11px',
+                              padding: '2px 8px',
                               borderRadius: '12px',
                               backgroundColor: group.state === 'Active' ? '#dcfce7' : '#f1f5f9',
                               color: group.state === 'Active' ? '#166534' : '#64748b',
-                              fontWeight: 500
+                              fontWeight: 500,
                             }}>
                               {group.state}
                             </span>
                           )}
                         </div>
                       )}
-                      <div className={styles.columns}>
-                        {data.columns.map((column: KanbanColumnDefinition) => (
-                          <KanbanColumn
-                            key={column.id}
-                            column={column}
-                            elements={group.elements.filter(e => e.status === column.status)}
-                            isDragOver={dragState.dragOverColumn === column.status}
-                            onDragStart={handleDragStart}
-                            onDragOver={(e) => handleDragOver(e, column.status)}
-                            onDragLeave={handleDragLeave}
-                            onDrop={(e) => handleDrop(e, column.status)}
-                            onElementClick={onElementClick}
-                          />
-                        ))}
-                      </div>
+
+                      {group.lanes.map(lane => {
+                        const showLaneHeader = group.lanes.length > 1 || lane.title !== group.title;
+                        return (
+                          <div
+                            key={lane.id}
+                            className={styles.swimlane}
+                            style={{
+                              marginBottom: 16,
+                              borderLeft: '4px solid #3b82f6',
+                              borderRadius: 6,
+                              background: '#f9fafb',
+                            }}
+                          >
+                            {showLaneHeader && (
+                              <div
+                                className={styles.swimlaneHeaderRow}
+                                style={{
+                                  fontWeight: 600,
+                                  fontSize: 13,
+                                  color: '#0f172a',
+                                  background: '#e0e7ef',
+                                  padding: '6px 12px',
+                                  borderRadius: '6px 6px 0 0',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: '8px',
+                                }}
+                              >
+                                <span>{lane.title}</span>
+                                {lane.state && (
+                                  <span
+                                    style={{
+                                      fontSize: '11px',
+                                      padding: '2px 8px',
+                                      borderRadius: '12px',
+                                      backgroundColor: lane.state === 'Active' ? '#dcfce7' : '#f1f5f9',
+                                      color: lane.state === 'Active' ? '#166534' : '#64748b',
+                                      fontWeight: 500,
+                                    }}
+                                  >
+                                    {lane.state}
+                                  </span>
+                                )}
+                              </div>
+                            )}
+                            <div className={styles.columns}
+                              style={showLaneHeader ? undefined : { borderRadius: '6px 6px 6px 6px' }}
+                            >
+                              {data.columns.map((column: KanbanColumnDefinition) => (
+                                <KanbanColumn
+                                  key={column.id}
+                                  column={column}
+                                  elements={lane.elements.filter(e => e.status === column.status)}
+                                  isDragOver={dragState.dragOverColumn === column.status}
+                                  onDragStart={handleDragStart}
+                                  onDragOver={(e) => handleDragOver(e, column.status)}
+                                  onDragLeave={handleDragLeave}
+                                  onDrop={(e) => handleDrop(e, column.status)}
+                                  onElementClick={onElementClick}
+                                />
+                              ))}
+                            </div>
+                          </div>
+                        );
+                      })}
                     </div>
                   ))}
                 </div>
@@ -290,9 +392,23 @@ interface KanbanElementProps {
 }
 
 export function KanbanElement({ element, onDragStart, onClick }: KanbanElementProps) {
+  const normalizedStepKey = (element.metadata?.stepKey || '')
+    .toString()
+    .toLowerCase()
+    .replace(/[^a-z]/g, '');
+  const isAction = normalizedStepKey === 'actions';
+  const isProximate = normalizedStepKey === 'proximateobjectives';
+  const elementClassName = [
+    styles.element,
+    isAction ? styles.elementAction : '',
+    isProximate ? styles.elementProximate : '',
+  ]
+    .filter(Boolean)
+    .join(' ');
+
   return (
     <div
-      className={styles.element}
+      className={elementClassName}
       draggable
       onDragStart={onDragStart}
       onClick={onClick}
@@ -305,9 +421,23 @@ export function KanbanElement({ element, onDragStart, onClick }: KanbanElementPr
         )}
         {element.tags && element.tags.length > 0 && (
           <div className={styles.elementTags}>
-            {element.tags.map(tag => (
-              <span key={tag} className={styles.tag}>{tag}</span>
-            ))}
+            {element.tags.map(tag => {
+              const lowerTag = tag.toLowerCase();
+              const tagClassName = [
+                styles.tag,
+                lowerTag === 'action' ? styles.tagAction : '',
+                lowerTag === 'proximate objective' ? styles.tagProximate : '',
+              ]
+                .filter(Boolean)
+                .join(' ');
+
+              return (
+                <span key={tag} className={tagClassName}>
+                  {lowerTag === 'proximate objective' && <Clock3 size={12} style={{ marginRight: 4 }} />}
+                  {tag}
+                </span>
+              );
+            })}
           </div>
         )}
         <div className={styles.elementType}>{element.type}</div>

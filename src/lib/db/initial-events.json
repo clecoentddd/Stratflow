@@ -558,7 +558,7 @@
     "aggregateId": "team-cto",
     "timestamp": "2025-12-11T13:39:27.972Z",
     "payload": {
-      "stepKey": "diagnostic",
+      "stepKey": "diagnosis",
       "item": {
         "text": "BAs are not probing... Just listening and projecting. Projection w/o mining is hope at most"
       }
@@ -590,7 +590,7 @@
     "aggregateId": "team-cto",
     "timestamp": "2025-12-11T13:39:56.642Z",
     "payload": {
-      "stepKey": "diagnostic",
+      "stepKey": "diagnosis",
       "item": {
         "text": "Business people think flows and events. We are forcing them to think data model."
       }
@@ -801,7 +801,7 @@
     "aggregateId": "team-cto",
     "timestamp": "2025-12-11T17:00:24.669Z",
     "payload": {
-      "stepKey": "diagnostic",
+      "stepKey": "diagnosis",
       "item": {
         "text": "Doing Agile changes Thinking: to change culture, we need to do things differently"
       }
@@ -833,7 +833,7 @@
     "aggregateId": "team-cto",
     "timestamp": "2025-12-11T17:00:44.849Z",
     "payload": {
-      "stepKey": "diagnostic",
+      "stepKey": "diagnosis",
       "item": {
         "text": "Customers do not want agile coaches: not value for money."
       }
@@ -865,7 +865,7 @@
     "aggregateId": "team-cto",
     "timestamp": "2025-12-11T17:01:13.754Z",
     "payload": {
-      "stepKey": "diagnostic",
+      "stepKey": "diagnosis",
       "item": {
         "text": "SAFe has limits; we see customers moving away from SAFe: too expensive."
       }
@@ -897,7 +897,7 @@
     "aggregateId": "team-cto",
     "timestamp": "2025-12-11T17:01:45.736Z",
     "payload": {
-      "stepKey": "diagnostic",
+      "stepKey": "diagnosis",
       "item": {
         "text": "Flight Levels is an option with a Lean approach, easy to implement"
       }
@@ -929,7 +929,7 @@
     "aggregateId": "team-cto",
     "timestamp": "2025-12-11T17:02:02.913Z",
     "payload": {
-      "stepKey": "diagnostic",
+      "stepKey": "diagnosis",
       "item": {
         "text": "Flow Engineering is easy, impactful"
       }
@@ -1385,7 +1385,7 @@
     "aggregateId": "team-socraft-cto",
     "timestamp": "2025-12-12T11:00:01.500Z",
     "payload": {
-      "stepKey": "diagnostic",
+      "stepKey": "diagnosis",
       "item": {
         "text": "BAs are not probing... Just listening and projecting. Projection w/o mining is hope at most"
       }
@@ -1417,7 +1417,7 @@
     "aggregateId": "team-socraft-cto",
     "timestamp": "2025-12-12T11:00:01.700Z",
     "payload": {
-      "stepKey": "diagnostic",
+      "stepKey": "diagnosis",
       "item": {
         "text": "Business people think flows and events. We are forcing them to think data model."
       }
@@ -1543,7 +1543,7 @@
     "aggregateId": "team-socraft-cto",
     "timestamp": "2025-12-12T11:00:02.600Z",
     "payload": {
-      "stepKey": "diagnostic",
+      "stepKey": "diagnosis",
       "item": {
         "text": "Doing Agile changes Thinking: to change culture, we need to do things differently"
       }
@@ -1575,7 +1575,7 @@
     "aggregateId": "team-socraft-cto",
     "timestamp": "2025-12-12T11:00:02.800Z",
     "payload": {
-      "stepKey": "diagnostic",
+      "stepKey": "diagnosis",
       "item": {
         "text": "Customers do not want agile coaches: not value for money."
       }
@@ -1607,7 +1607,7 @@
     "aggregateId": "team-socraft-cto",
     "timestamp": "2025-12-12T11:00:03.000Z",
     "payload": {
-      "stepKey": "diagnostic",
+      "stepKey": "diagnosis",
       "item": {
         "text": "SAFe has limits; we see customers moving away from SAFe: too expensive."
       }
@@ -1639,7 +1639,7 @@
     "aggregateId": "team-socraft-cto",
     "timestamp": "2025-12-12T11:00:03.200Z",
     "payload": {
-      "stepKey": "diagnostic",
+      "stepKey": "diagnosis",
       "item": {
         "text": "Flight Levels is an option with a Lean approach, easy to implement"
       }
@@ -1671,7 +1671,7 @@
     "aggregateId": "team-socraft-cto",
     "timestamp": "2025-12-12T11:00:03.400Z",
     "payload": {
-      "stepKey": "diagnostic",
+      "stepKey": "diagnosis",
       "item": {
         "text": "Flow Engineering is easy, impactful"
       }
@@ -1880,7 +1880,7 @@
     "aggregateId": "team-socraft-cto",
     "timestamp": "2025-12-12T16:08:59.902Z",
     "payload": {
-      "stepKey": "diagnostic",
+      "stepKey": "diagnosis",
       "item": {
         "text": "Customers mention modeling (and lack of modeling)"
       }
@@ -2446,7 +2446,7 @@
     "aggregateId": "team-socraft-cto",
     "timestamp": "2025-12-12T16:23:19.919Z",
     "payload": {
-      "stepKey": "diagnostic",
+      "stepKey": "diagnosis",
       "item": {
         "text": "Projects are still failing (70%?). Customers are given alternatives to build products differently"
       }
@@ -2552,6 +2552,29 @@
       "id": "radar-f252b247-b5b7-407b-9ce4-f1b2c87ff89a",
       "radarId": "team-b662b727-f985-48b0-8740-fbcb9448e069",
       "created_at": "2025-12-13T12:09:18.507Z",
+      "updated_at": null,
+      "teamId": "team-b662b727-f985-48b0-8740-fbcb9448e069"
+    }
+  },
+  {
+    "type": "RadarItemCreated",
+    "entity": "team",
+    "aggregateId": "team-b662b727-f985-48b0-8740-fbcb9448e069",
+    "timestamp": "2025-12-13T13:11:45.321Z",
+    "payload": {
+      "name": "Eventz",
+      "detect": "Simple, easier than event sourcing? ",
+      "assess": "",
+      "respond": "",
+      "type": "Opportunity",
+      "category": "Capabilities",
+      "distance": "Assessing",
+      "impact": "Medium",
+      "risk": "Medium",
+      "zoom_in": null,
+      "id": "radar-8e39b90d-f8c1-4664-b515-a33244903bb3",
+      "radarId": "team-b662b727-f985-48b0-8740-fbcb9448e069",
+      "created_at": "2025-12-13T13:11:45.322Z",
       "updated_at": null,
       "teamId": "team-b662b727-f985-48b0-8740-fbcb9448e069"
     }

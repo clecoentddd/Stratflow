@@ -20,6 +20,7 @@ interface InitiativeItemViewProps {
 function InitiativeItemView({ item, onSave, onDelete }: InitiativeItemViewProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editText, setEditText] = useState(item.text);
+  const [skipNextBlurSave, setSkipNextBlurSave] = useState(false);
 
   useEffect(() => {
     if (item.text === "" && item.id.startsWith('temp-')) {
@@ -30,6 +31,19 @@ function InitiativeItemView({ item, onSave, onDelete }: InitiativeItemViewProps)
   const handleSave = () => {
     onSave(item.id, editText);
     setIsEditing(false);
+  };
+
+  const handleBlur = () => {
+    if (skipNextBlurSave) {
+      setSkipNextBlurSave(false);
+      return;
+    }
+    handleSave();
+  };
+
+  const handleDelete = () => {
+    setSkipNextBlurSave(true);
+    onDelete(item.id);
   };
   
   const handleCancel = () => {
@@ -58,11 +72,17 @@ function InitiativeItemView({ item, onSave, onDelete }: InitiativeItemViewProps)
           autoFocus
           rows={3}
           className={itemStyles.textarea}
-          onBlur={handleSave}
+          onBlur={handleBlur}
           onKeyDown={handleKeyDown}
         />
          <div className={itemStyles.actions}>
-            <Button size="icon" variant="ghost" className={itemStyles.deleteBtn} onClick={() => onDelete(item.id)}>
+            <Button
+              size="icon"
+              variant="ghost"
+              className={itemStyles.deleteBtn}
+              onMouseDown={() => setSkipNextBlurSave(true)}
+              onClick={handleDelete}
+            >
                 <Trash2 className={itemStyles.iconSmall} />
             </Button>
             <div className={itemStyles.actionsRight}>

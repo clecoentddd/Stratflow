@@ -10,14 +10,42 @@ import type {
   KanbanProjection,
   KanbanProjectionEntry,
 } from '../types';
-import {
-  ACTIVE_STRATEGY_STATES,
-  buildBoardMetadata,
-  buildStrategySwimlanes,
-} from './kanban-board-helpers';
+import { buildBoardMetadata } from './kanban-board-helpers';
+
+type ItemRecord = ReturnType<typeof queryItems>[number];
+type InitiativeRecord = ReturnType<typeof queryEligibleInitiatives>[number];
+type NormalizedItem = {
+  elementId: string;
+  item: ItemRecord;
+  initiative?: InitiativeRecord;
+  entry?: KanbanProjectionEntry;
+  normalizedStepKey: string;
+};
+
+function resolveTimestamp(value?: string | null): string {
+  if (value) return value;
+  return new Date(0).toISOString();
+}
 
 const initiativeItemProjection: KanbanProjection = {};
 const initiativeItemMoveTable: any[] = [];
+
+function populateItemMetadata(elementId: string) {
+  const entry = initiativeItemProjection[elementId];
+  if (!entry) return;
+
+  const normalizedId = elementId.startsWith('item-') ? elementId : `item-${elementId}`;
+  const items = queryItems();
+  const item = items.find(candidate => {
+    const candidateId = candidate.id?.startsWith?.('item-') ? candidate.id : `item-${candidate.id}`;
+    return candidateId === normalizedId;
+  });
+
+  if (item) {
+    if (!entry.name) entry.name = item.text || `Item ${normalizedId}`;
+    if (!entry.teamId && item.teamId) entry.teamId = item.teamId;
+  }
+}
 
 const ITEM_COLUMNS: KanbanColumnDefinition[] = [
   { id: 'new', status: 'NEW', title: 'New', description: 'Recently created' },
@@ -49,6 +77,7 @@ registerProjectionHandler('ElementMoved', (event: any) => {
     const prevStatus = existing.status;
     initiativeItemProjection[elementId].status = toStatus;
     initiativeItemProjection[elementId].updatedAt = event.timestamp;
+    if (!initiativeItemProjection[elementId].name) populateItemMetadata(elementId);
     console.log('[KANBAN ITEMS PROJECTION] Updated element status:', { elementId, prevStatus, toStatus });
     console.log('[KANBAN ITEMS PROJECTION] Projection after move:', JSON.stringify(initiativeItemProjection[elementId], null, 2));
 
@@ -70,32 +99,9 @@ registerProjectionHandler('ElementMoved', (event: any) => {
       addedAt: event.metadata?.addedAt || event.timestamp,
       updatedAt: event.timestamp,
     };
+    populateItemMetadata(elementId);
     console.log('[KANBAN ITEMS PROJECTION] Fallback entry created:', JSON.stringify(initiativeItemProjection[elementId], null, 2));
   }
-});
-
-registerProjectionHandler('InitiativeItemAddedToKanban', (event: any) => {
-  if (event.type !== 'InitiativeItemAddedToKanban') return;
-
-  const { itemId, initiativeId, initialStatus, boardId } = event.payload ?? {};
-  if (!itemId) {
-    console.warn('[KANBAN ITEMS PROJECTION] Missing itemId in event payload');
-    return;
-  }
-
-  const teamId = event.metadata?.teamId;
-  const elementId = itemId.startsWith('item-') ? itemId : `item-${itemId}`;
-
-  initiativeItemProjection[elementId] = {
-    type: 'initiative-item',
-    status: initialStatus,
-    boardId,
-    addedAt: event.timestamp,
-    updatedAt: event.timestamp,
-    teamId,
-  };
-
-  console.log('[KANBAN ITEMS PROJECTION] Added element to projection:', { elementId, itemId, initiativeId, initialStatus, teamId });
 });
 
 export function queryInitiativeItemsKanbanBoard(params: { companyId?: string }): KanbanBoardData {
@@ -103,41 +109,111 @@ export function queryInitiativeItemsKanbanBoard(params: { companyId?: string }):
   const metadata = buildBoardMetadata('Initiative Items');
   const { companyId } = params;
 
+  console.log('DEBUG_KNB queryInitiativeItemsKanbanBoard:start', {
+    companyId,
+  });
+
   if (!companyId) {
+    console.log('DEBUG_KNB queryInitiativeItemsKanbanBoard:missingCompany', {
+      companyId,
+    });
     return { columns, swimlanes: [], elements: [], metadata };
   }
 
-  const swimlanes = buildStrategySwimlanes(companyId);
   const projection = getKanbanInitiativeItemProjection();
+  const rawItems = queryItems({ companyId });
   const initiatives = queryEligibleInitiatives({ companyId });
-  const initiativeLookup = new Map(initiatives.map(initiative => [initiative.id, initiative]));
-  const items = queryItems({ strategyStates: ACTIVE_STRATEGY_STATES, companyId });
+  const initiativeLookup = new Map<string, InitiativeRecord>(initiatives.map(initiative => [initiative.id, initiative]));
 
-  const elements: EnrichedKanbanElement[] = items.map(item => {
+  const normalizedItems = rawItems.reduce<NormalizedItem[]>((acc, item) => {
     const elementId = item.id?.startsWith?.('item-') ? item.id : `item-${item.id}`;
-    const projectionEntry = projection[elementId] || projection[item.id];
+    if (!elementId) return acc;
+
+    const projectionEntry = projection[elementId] || (item.id ? projection[item.id] : undefined);
     const initiative = item.initiativeId ? initiativeLookup.get(item.initiativeId) : undefined;
+
+    acc.push({
+      elementId,
+      item,
+      initiative,
+      entry: projectionEntry,
+      normalizedStepKey: (item.stepKey || '')
+        .toString()
+        .toLowerCase()
+        .replace(/[^a-z]/g, ''),
+    });
+    return acc;
+  }, []);
+
+  const sortedEntries = [...normalizedItems].sort((a, b) => {
+    if (a.normalizedStepKey === b.normalizedStepKey) {
+      return (a.item.text || '').localeCompare(b.item.text || '');
+    }
+    if (!a.normalizedStepKey) return 1;
+    if (!b.normalizedStepKey) return -1;
+    return a.normalizedStepKey.localeCompare(b.normalizedStepKey);
+  });
+
+  const swimlaneInitiativeIds = new Set(sortedEntries.map(entry => entry.item.initiativeId).filter(Boolean));
+  const swimlanes = Array.from(swimlaneInitiativeIds)
+    .map(id => (id ? initiativeLookup.get(id) : undefined))
+    .filter((initiative): initiative is any => Boolean(initiative))
+    .sort((a, b) => (a.name || '').localeCompare(b.name || ''))
+    .map(initiative => ({
+      id: initiative.id,
+      title: initiative.name || 'Untitled Initiative',
+      color: '#e2e8f0',
+      teamId: initiative.teamId,
+      teamName: initiative.teamName,
+      teamLevel: initiative.teamLevel,
+      state: initiative.status,
+      parentId: initiative.strategyId,
+      parentTitle: initiative.strategyName,
+      parentState: initiative.strategyState,
+    }));
+
+  const elements: EnrichedKanbanElement[] = sortedEntries.map(({ elementId, entry, item, initiative, normalizedStepKey }) => {
+    const tags = normalizedStepKey ? [normalizedStepKey] : [];
+    const status = entry?.status ?? 'NEW';
 
     return {
       id: elementId,
       type: 'initiative-item',
-      status: projectionEntry?.status || mapItemStatusToColumn(item.status),
-      title: item.text,
-      swimlaneId: item.strategyId,
+      status,
+      title: item.text || entry?.name || 'Untitled Item',
+      swimlaneId: item.initiativeId,
       description: initiative?.name,
-      tags: [] as string[],
+      tags,
       metadata: {
-        itemId: item.id,
         initiativeId: item.initiativeId,
+        initiativeName: initiative?.name,
         strategyId: item.strategyId,
-        stepKey: item.stepKey,
-        teamId: projectionEntry?.teamId || item.teamId,
-        teamName: initiative?.teamName,
-        teamLevel: initiative?.teamLevel,
         strategyName: initiative?.strategyName,
         strategyState: initiative?.strategyState,
+        itemId: item.id,
+        stepKey: item.stepKey,
+        teamId: entry?.teamId || item.teamId || initiative?.teamId,
+        teamName: initiative?.teamName,
+        teamLevel: initiative?.teamLevel,
+        createdAt: entry?.addedAt ?? resolveTimestamp((item as any)?.createdAt),
+        updatedAt: entry?.updatedAt ?? resolveTimestamp((item as any)?.updatedAt),
       },
     } satisfies EnrichedKanbanElement;
+  });
+
+  console.log('DEBUG_KNB queryInitiativeItemsKanbanBoard:data', {
+    companyId,
+    projectionSize: Object.keys(projection).length,
+    matchedEntries: sortedEntries.length,
+    catalogItems: rawItems.length,
+    catalogInitiatives: initiatives.length,
+    swimlanes: swimlanes.length,
+  });
+
+  console.log('DEBUG_KNB queryInitiativeItemsKanbanBoard:result', {
+    companyId,
+    elements: elements.length,
+    projectionSize: Object.keys(projection).length,
   });
 
   return {
@@ -147,7 +223,6 @@ export function queryInitiativeItemsKanbanBoard(params: { companyId?: string }):
     metadata,
   };
 }
-
 export function getKanbanInitiativeItemProjection(): KanbanProjection {
   return { ...initiativeItemProjection };
 }
@@ -188,30 +263,13 @@ export async function rebuildKanbanInitiativeItemProjection(): Promise<void> {
 
   console.log('[KANBAN ITEMS PROJECTION] Replaying events:', allEvents.length);
   for (const event of allEvents) {
-    if (event.type === 'InitiativeItemAddedToKanban') {
-      const { itemId, initiativeId, initialStatus, boardId } = event.payload ?? {};
-      if (!itemId) {
-        console.warn('[KANBAN ITEMS PROJECTION] [REPLAY] Missing itemId in event payload');
-        continue;
-      }
-      const teamId = event.metadata?.teamId;
-      const elementId = itemId.startsWith('item-') ? itemId : `item-${itemId}`;
-      initiativeItemProjection[elementId] = {
-        type: 'initiative-item',
-        status: initialStatus,
-        boardId,
-        teamId,
-        addedAt: event.timestamp,
-        updatedAt: event.timestamp,
-      };
-      console.log('[KANBAN ITEMS PROJECTION] [REPLAY] Added element:', elementId, initialStatus, 'initiativeId:', initiativeId);
-    }
     if (event.type === 'ElementMoved' && event.payload?.elementType === 'initiative-item') {
       const { elementId, toStatus } = event.payload;
       if (elementId && toStatus && initiativeItemProjection[elementId]) {
         const prevStatus = initiativeItemProjection[elementId].status;
         initiativeItemProjection[elementId].status = toStatus;
         initiativeItemProjection[elementId].updatedAt = event.timestamp;
+        if (!initiativeItemProjection[elementId].name) populateItemMetadata(elementId);
         console.log('[KANBAN ITEMS PROJECTION] [REPLAY] Moved element:', elementId, prevStatus, '->', toStatus);
       } else {
         console.warn('[KANBAN ITEMS PROJECTION] [REPLAY] Missing element for move:', elementId);
@@ -220,18 +278,4 @@ export async function rebuildKanbanInitiativeItemProjection(): Promise<void> {
   }
 
   console.log('[KANBAN ITEMS PROJECTION] Rebuild complete. Entries:', Object.keys(initiativeItemProjection).length);
-}
-
-function mapItemStatusToColumn(status: string): string {
-  const normalized = (status || '').toLowerCase();
-  switch (normalized) {
-    case 'todo':
-      return 'NEW';
-    case 'doing':
-      return 'IN_PROGRESS';
-    case 'done':
-      return 'DONE';
-    default:
-      return status ? status.toUpperCase() : 'NEW';
-  }
 }

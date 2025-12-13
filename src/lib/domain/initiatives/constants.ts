@@ -1,11 +1,11 @@
 import type { Initiative, InitiativeStep } from '@/lib/types';
 
 const initiativeStepsTemplate: {
-  key: 'diagnostic' | 'overallApproach' | 'actions' | 'proximateObjectives';
+  key: 'diagnosis' | 'overallApproach' | 'actions' | 'proximateObjectives';
   title: string;
   iconName: string;
 }[] = [
-  { key: 'diagnostic', title: 'Diagnostic', iconName: 'Search' },
+  { key: 'diagnosis', title: 'diagnosis', iconName: 'Search' },
   { key: 'overallApproach', title: 'Overall Approach', iconName: 'Milestone' },
   { key: 'actions', title: 'Actions', iconName: 'ListChecks' },
   { key: 'proximateObjectives', title: 'Proximate Objectives', iconName: 'Target' },

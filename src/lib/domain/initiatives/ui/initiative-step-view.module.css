@@ -16,7 +16,7 @@
 }
 
 /* Step-specific background colors - blue-grey progression (light to strong) */
-.stepCard[data-step='diagnostic'] { background-color: #f8f9fa; }        /* lightest blue-grey */
+.stepCard[data-step='diagnosis'] { background-color: #f8f9fa; }        /* lightest blue-grey */
 .stepCard[data-step='overallApproach'] { background-color: #f0f2f5; }   /* light blue-grey */
 .stepCard[data-step='actions'] { background-color: #e8eaef; }           /* medium blue-grey */
 .stepCard[data-step='proximateObjectives'] { background-color: #e0e3e9; } /* stronger blue-grey */

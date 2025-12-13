@@ -4,7 +4,7 @@
 
 - Stream Creation: Allow users to create a stream by providing a name and an ID.
 - Strategy Creation: Enable users to create strategies (Draft, Open, Closed, Obsolete, Deleted) with a description and timeframe.
-- Initiative Creation: Allow users to create initiatives for each strategy, consisting of 'Diagnostic', 'Overall Approach', 'Actions', and 'Proximate Objectives'.
+- Initiative Creation: Allow users to create initiatives for each strategy, consisting of 'diagnosis', 'Overall Approach', 'Actions', and 'Proximate Objectives'.
 - Item Management: Enable users to add, update, and delete items within each step of an initiative.
 - Initiative Progression Tracking: Allow users to set an overall progression for each initiative.
 - Strategy Progression Calculation: Calculate and display the average progression of all initiatives within a strategy.

@@ -61,7 +61,7 @@ export class InitiativesCommandHandlers {
       name: command.name,
       progression: 0,
       steps: [
-        { key: 'diagnostic', title: 'Diagnostic', iconName: 'Search', items: [] },
+        { key: 'diagnosis', title: 'diagnosis', iconName: 'Search', items: [] },
         { key: 'overallApproach', title: 'Overall Approach', iconName: 'Milestone', items: [] },
         { key: 'actions', title: 'Actions', iconName: 'ListChecks', items: [] },
         { key: 'proximateObjectives', title: 'Proximate Objectives', iconName: 'Target', items: [] },

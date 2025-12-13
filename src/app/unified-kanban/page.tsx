@@ -125,6 +125,15 @@ export default function UnifiedKanbanPage({ searchParams }: UnifiedKanbanPagePro
           const message = typeof payload?.error === 'string' ? payload.error : `Failed to load board (${res.status})`;
           throw new Error(message);
         }
+        if (payload?.elements && Array.isArray(payload.elements)) {
+          payload.elements = payload.elements.filter((element: any) => {
+            const normalizedStepKey = (element?.metadata?.stepKey || '')
+              .toString()
+              .toLowerCase()
+              .replace(/[^a-z]/g, '');
+            return normalizedStepKey !== 'diagnosis' && normalizedStepKey !== 'overallapproach';
+          });
+        }
         setBoardData(payload);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Unknown error');

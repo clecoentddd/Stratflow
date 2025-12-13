@@ -7,7 +7,7 @@ export type InitiativeItem = {
   status?: 'todo' | 'doing' | 'done'; // Kanban status
 };
 
-export type InitiativeStepKey = 'diagnostic' | 'overallApproach' | 'actions' | 'proximateObjectives';
+export type InitiativeStepKey = 'diagnosis' | 'overallApproach' | 'actions' | 'proximateObjectives';
 
 export type InitiativeStep = {
   key: InitiativeStepKey;

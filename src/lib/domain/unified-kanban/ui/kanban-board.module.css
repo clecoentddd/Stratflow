@@ -170,6 +170,28 @@
   padding: 0.125rem 0.375rem;
   border-radius: 10px;
   font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+}
+
+.tagAction {
+  color: #334155;
+  background: #ffffff;
+}
+
+.tagProximate {
+  color: #0369a1;
+  background: #dbeafe;
+}
+
+.elementAction {
+  border-color: #e2e8f0;
+  background: #ffffff;
+}
+
+.elementProximate {
+  border-color: #38bdf8;
+  background: #eff6ff;
 }
 
 .elementType {

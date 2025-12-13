@@ -18,6 +18,7 @@ export type KanbanProjectionEntry = {
   status: string;
   boardId?: string; // for filtering different kanban boards
   teamId?: string; // for team lookup and enrichment
+  name?: string;
   addedAt: string;
   updatedAt: string;
 };
@@ -45,6 +46,7 @@ export type EnrichedKanbanElement = {
 
     // Initiative-specific
     initiativeId?: string;
+    initiativeName?: string;
     strategyId?: string;
     strategyName?: string;
     strategyState?: string;
@@ -64,6 +66,9 @@ export type KanbanSwimlaneDefinition = {
   teamName?: string;
   teamLevel?: number;
   state?: string;
+  parentId?: string;
+  parentTitle?: string;
+  parentState?: string;
 };
 
 export type KanbanBoardData = {
