@@ -14,99 +14,126 @@ import {
 } from './radarDataParser';
 import { radarTooltipCopy, radarTooltipLabels } from '@/lib/radar/viewModel';
 
-const RadarChart: React.FC<{ 
-  items: any[], 
-  radius: number, 
-  onEditClick: (item: any) => void,
-  theme?: 'dark' | 'light' | 'cyberpunk' | 'ocean' | 'sunset'
-}> = ({ items, radius, onEditClick, theme = 'dark' }) => {
+type ThemeTokens = {
+    primary: string;
+    secondary: string;
+    gridPrimary: string;
+    gridSecondary: string;
+    quadrantDark: string;
+    quadrantLight: string;
+    textSecondary: string;
+    textMuted: string;
+    quadrantPalette: string[];
+};
+
+const defaultThemeTokens: ThemeTokens = {
+    primary: '#10b981',
+    secondary: '#34d399',
+    gridPrimary: '#10b981',
+    gridSecondary: '#6ee7b7',
+    quadrantDark: '#064e3b',
+    quadrantLight: '#065f46',
+    textSecondary: '#a7f3d0',
+    textMuted: '#9ca3af',
+    quadrantPalette: ['', '', '', ''],
+};
+
+type ThemeOption = {
+    key: string;
+    label: string;
+    emoji: string;
+};
+
+const sanitizeCssVar = (raw: string, fallback: string): string => {
+    const trimmed = raw.trim();
+    if (!trimmed) return fallback;
+    const isQuoted = (trimmed.startsWith('"') && trimmed.endsWith('"')) || (trimmed.startsWith("'") && trimmed.endsWith("'"));
+    if (isQuoted) {
+        const unquoted = trimmed.slice(1, -1).trim();
+        return unquoted || fallback;
+    }
+    return trimmed;
+};
+
+const readCssVar = (computed: CSSStyleDeclaration, name: string, fallback: string): string => {
+    const raw = computed.getPropertyValue(name);
+    return raw ? sanitizeCssVar(raw, fallback) : fallback;
+};
+
+const resolveThemeTokens = (element: HTMLElement | null): ThemeTokens => {
+    if (!element) return defaultThemeTokens;
+    const computed = getComputedStyle(element);
+    return {
+        primary: readCssVar(computed, '--radar-primary', defaultThemeTokens.primary),
+        secondary: readCssVar(computed, '--radar-secondary', defaultThemeTokens.secondary),
+        gridPrimary: readCssVar(computed, '--radar-grid-primary', defaultThemeTokens.gridPrimary),
+        gridSecondary: readCssVar(
+            computed,
+            '--radar-grid-secondary',
+            readCssVar(computed, '--radar-grid-primary', defaultThemeTokens.gridPrimary)
+        ),
+        quadrantDark: readCssVar(computed, '--radar-quadrant-dark', defaultThemeTokens.quadrantDark),
+        quadrantLight: readCssVar(computed, '--radar-quadrant-light', defaultThemeTokens.quadrantLight),
+        textSecondary: readCssVar(computed, '--radar-text-secondary', defaultThemeTokens.textSecondary),
+        textMuted: readCssVar(computed, '--radar-text-muted', defaultThemeTokens.textMuted),
+        quadrantPalette: [0, 1, 2, 3].map(idx => readCssVar(computed, `--radar-quadrant-${idx}`, '')),
+    };
+};
+
+const readThemeRegistry = (element: HTMLElement | null): ThemeOption[] => {
+    if (!element) return [];
+    const computed = getComputedStyle(element);
+    const rawKeys = readCssVar(computed, '--radar-theme-keys', '');
+    if (!rawKeys) return [];
+    const keys = rawKeys.split(',').map(key => key.trim()).filter(Boolean);
+    return keys.map((key) => ({
+        key,
+        label: readCssVar(computed, `--radar-theme-${key}-label`, key),
+        emoji: readCssVar(computed, `--radar-theme-${key}-emoji`, '🎨'),
+    }));
+};
+
+type RadarChartProps = {
+    items: any[];
+    radius: number;
+    onEditClick: (item: any) => void;
+    theme?: string;
+};
+
+const DEFAULT_THEME_KEY = 'dark';
+
+const RadarChart: React.FC<RadarChartProps> = ({ items, radius, onEditClick, theme = DEFAULT_THEME_KEY }) => {
     const svgRef = useRef<SVGSVGElement>(null);
     const tooltipRef = useRef<HTMLDivElement>(null);
+    const themeRootRef = useRef<HTMLDivElement>(null);
     const [tooltipData, setTooltipData] = useState({ visible: false, item: null as any | null });
     const [activeQuadrant, setActiveQuadrant] = useState<number | null>(null);
-    const [currentTheme, setCurrentTheme] = useState<'dark' | 'light' | 'cyberpunk' | 'ocean' | 'sunset'>(theme);
+    const [currentTheme, setCurrentTheme] = useState<string>(theme);
+    const [availableThemes, setAvailableThemes] = useState<ThemeOption[]>([]);
     const router = useRouter();
 
     // Dynamic theme switching
     const getThemeClass = () => {
-        switch(currentTheme) {
-            case 'cyberpunk': return styles.cyberpunkTheme;
-            case 'light': return styles.lightTheme;
-            case 'ocean': return styles.oceanTheme;
-            case 'sunset': return styles.sunsetTheme;
-            case 'dark': 
-            default: return styles.darkTheme;
-        }
+        const themeStyles = styles as Record<string, string>;
+        return themeStyles[`${currentTheme}Theme`] ?? themeStyles[`${DEFAULT_THEME_KEY}Theme`];
     };
 
-    // Get current theme colors based on selected theme - improved color harmony
-    const getCurrentThemeColors = () => {
-        switch(currentTheme) {
-            case 'cyberpunk':
-                return {
-                    primary: '#00ff41',
-                    secondary: '#39ff14',
-                    gridPrimary: '#00ff41',
-                    gridSecondary: '#39ff14',
-                    quadrantDark: '#001100',
-                    quadrantLight: '#002200',
-                    textSecondary: '#39ff14'
-                };
-            case 'light':
-                return {
-                    primary: '#1d4ed8',
-                    secondary: '#2563eb',
-                    gridPrimary: '#374151',
-                    gridSecondary: '#6b7280',
-                    quadrant0: '#dcfce7',    // pastel green
-                    quadrant1: '#fecaca',    // pastel red  
-                    quadrant2: '#dbeafe',    // pastel blue
-                    quadrant3: '#fef3c7',    // pastel yellow
-                    quadrantDark: '#dbeafe',
-                    quadrantLight: '#fef3c7',
-                    textSecondary: '#1e40af'
-                };
-            case 'ocean':
-                return {
-                    primary: '#00d4ff',
-                    secondary: '#0ea5e9',
-                    gridPrimary: '#00d4ff',
-                    gridSecondary: '#0ea5e9',
-                    quadrantDark: '#001122',
-                    quadrantLight: '#002244',
-                    textSecondary: '#7dd3fc'
-                };
-            case 'sunset':
-                return {
-                    primary: '#a855f7',
-                    secondary: '#c084fc',
-                    gridPrimary: '#a855f7',
-                    gridSecondary: '#c084fc',
-                    quadrantDark: '#1e1b4b',
-                    quadrantLight: '#312e81',
-                    textSecondary: '#c4b5fd'
-                };
-            case 'dark':
-            default:
-                return {
-                    primary: '#10b981',
-                    secondary: '#34d399',
-                    gridPrimary: '#10b981',
-                    gridSecondary: '#6ee7b7',
-                    quadrantDark: '#064e3b',
-                    quadrantLight: '#065f46',
-                    textSecondary: '#a7f3d0'
-                };
-        }
-    };
+    useEffect(() => {
+        if (!themeRootRef.current) return;
+        const registry = readThemeRegistry(themeRootRef.current);
+        if (!registry.length) return;
 
-    const themes = [
-        { key: 'dark', label: '🌙 Dark', emoji: '🌙' },
-        { key: 'light', label: '☀️ Light', emoji: '☀️' },
-        { key: 'cyberpunk', label: '🎮 Cyberpunk', emoji: '🎮' },
-        { key: 'ocean', label: '🌊 Ocean', emoji: '🌊' },
-        { key: 'sunset', label: '🌅 Sunset', emoji: '🌅' }
-    ] as const;
+        setAvailableThemes(registry);
+
+        setCurrentTheme((prev) => {
+            if (theme && registry.some(option => option.key === theme)) return theme;
+            if (registry.some(option => option.key === prev)) return prev;
+            return registry[0]?.key ?? DEFAULT_THEME_KEY;
+        });
+    }, [theme]);
+
+    const activeThemeMeta = availableThemes.find(option => option.key === currentTheme);
+    const currentThemeLabel = activeThemeMeta?.label ?? currentTheme;
 
     const handleQuadrantZoom = (idx: number) => {
         setActiveQuadrant(activeQuadrant === idx ? null : idx);
@@ -127,16 +154,17 @@ const RadarChart: React.FC<{
         configIndex: category.quadrantIndex
     }));
 
-    const drawQuadrants = (g: d3.Selection<SVGGElement, unknown, null, undefined>, radius: number) => {
-        const themeColors = getCurrentThemeColors();
-        console.log('🎨 Theme colors for', currentTheme, ':', themeColors);
-        
-        // Create gradient definitions for radar-like appearance
+    const drawQuadrants = (
+        g: d3.Selection<SVGGElement, unknown, null, undefined>,
+        radius: number,
+        themeColors: ThemeTokens,
+        themeKey: string
+    ) => {
         const defs = g.append("defs");
-        
-        // Radial gradient for quadrants - more pronounced radar effect
+        const gradientId = `quadrant-gradient-${themeKey}`;
+
         const radialGradient = defs.append("radialGradient")
-            .attr("id", `quadrant-gradient-${currentTheme}`)
+            .attr("id", gradientId)
             .attr("cx", "50%")
             .attr("cy", "50%")
             .attr("r", "70%");
@@ -158,16 +186,11 @@ const RadarChart: React.FC<{
 
         // Individual quadrant colors for light theme, alternating pattern for others
         [0, 1, 2, 3].forEach((i) => {
-            let fillColor;
-            
-            if (currentTheme === 'light' && themeColors[`quadrant${i}` as keyof typeof themeColors]) {
-                // Use individual pastel colors for light theme
-                fillColor = themeColors[`quadrant${i}` as keyof typeof themeColors] as string;
-            } else {
-                // Use alternating pattern for other themes
-                const isLight = i % 2 === 0;
-                fillColor = isLight ? `url(#quadrant-gradient-${currentTheme})` : themeColors.quadrantDark;
-            }
+            const customQuadrant = themeColors.quadrantPalette[i];
+            const useCustom = Boolean(customQuadrant);
+            const isEven = i % 2 === 0;
+            const fillColor = useCustom ? customQuadrant : (isEven ? `url(#${gradientId})` : themeColors.quadrantDark);
+            const opacity = useCustom ? 0.65 : (isEven ? 0.8 : 0.4);
             
             g.append("path")
                 .attr("d", d3.arc()
@@ -177,7 +200,7 @@ const RadarChart: React.FC<{
                     .endAngle((Math.PI / 2) * (i + 1)) as any
                 )
                 .attr("fill", fillColor)
-                .attr("fill-opacity", currentTheme === 'light' ? 0.6 : (i % 2 === 0 ? 0.8 : 0.4))
+                .attr("fill-opacity", opacity)
                 .attr("stroke", themeColors.gridPrimary)
                 .attr("stroke-width", 1)
                 .attr("stroke-opacity", 0.6)
@@ -185,8 +208,11 @@ const RadarChart: React.FC<{
         });
     };
 
-    const drawCategoryLabels = (g: d3.Selection<SVGGElement, unknown, null, undefined>, radius: number) => {
-        const themeColors = getCurrentThemeColors();
+    const drawCategoryLabels = (
+        g: d3.Selection<SVGGElement, unknown, null, undefined>,
+        radius: number,
+        themeColors: ThemeTokens
+    ) => {
         const offset = radius * 1.05; // Place labels just outside the main circle
         const verticalPadding = 80;
     
@@ -216,9 +242,12 @@ const RadarChart: React.FC<{
         });
     };
 
-    const drawRadarGrid = (g: d3.Selection<SVGGElement, unknown, null, undefined>, radius: number) => {
-        const themeColors = getCurrentThemeColors();
-        
+    const drawRadarGrid = (
+        g: d3.Selection<SVGGElement, unknown, null, undefined>,
+        radius: number,
+        themeColors: ThemeTokens,
+        themeKey: string
+    ) => {
         // Draw concentric circles with gradient effects
         radarConfig.visual.distanceRings.forEach((multiplier, index) => {
             const isOuter = multiplier === 1;
@@ -240,8 +269,10 @@ const RadarChart: React.FC<{
             const y = radius * Math.sin(angle);
             
             // Create a linear gradient for each line
-            const lineGradient = g.select("defs").append("linearGradient")
-                .attr("id", `line-gradient-${currentTheme}-${i}`)
+            const existingDefs = g.select('defs');
+            const defs = existingDefs.empty() ? g.append('defs') : existingDefs;
+            const lineGradient = defs.append("linearGradient")
+                .attr("id", `line-gradient-${themeKey}-${i}`)
                 .attr("x1", "0%").attr("y1", "0%")
                 .attr("x2", "100%").attr("y2", "0%");
                 
@@ -260,22 +291,32 @@ const RadarChart: React.FC<{
                 .attr("y1", 0)
                 .attr("x2", x)
                 .attr("y2", y)
-                .attr("stroke", `url(#line-gradient-${currentTheme}-${i})`)
+                .attr("stroke", `url(#line-gradient-${themeKey}-${i})`)
                 .attr("stroke-width", 1)
                 .attr("opacity", 0.5);
         }
     };
     
-    const renderItems = (g: d3.Selection<SVGGElement, unknown, null, undefined>, groupedItems: { [key: string]: any[] }, radius: number) => {
+    const renderItems = (
+        g: d3.Selection<SVGGElement, unknown, null, undefined>,
+        groupedItems: { [key: string]: any[] },
+        radius: number,
+        themeColors: ThemeTokens
+    ) => {
         Object.entries(groupedItems).forEach(([categoryKey, items]) => {
             items.forEach((item, index) => {
                 const position = calculateItemPosition(item, index, items.length, radius);
-                renderSingleItem(g, item, position);
+                renderSingleItem(g, item, position, themeColors);
             });
         });
     };
 
-    const renderSingleItem = (g: d3.Selection<SVGGElement, unknown, null, undefined>, item: any, position: { x: number, y: number }) => {
+    const renderSingleItem = (
+        g: d3.Selection<SVGGElement, unknown, null, undefined>,
+        item: any,
+        position: { x: number, y: number },
+        themeColors: ThemeTokens
+    ) => {
         const { x, y } = position;
         const size = item.size;
         
@@ -299,10 +340,9 @@ const RadarChart: React.FC<{
                 d3.select(this).select('circle').attr('r', size);
             });
 
-        if (item.type === 'Opportunity') drawOpportunity(itemGroup, item, x, y, size);
-        else drawThreat(itemGroup, item, x, y, size);
+        if (item.type === 'Opportunity') drawOpportunity(itemGroup, item, x, y, size, themeColors);
+        else drawThreat(itemGroup, item, x, y, size, themeColors);
 
-        const themeColors = getCurrentThemeColors();
         itemGroup.append('text')
             .attr('x', x)
             .attr('y', y - size - 5)
@@ -333,8 +373,14 @@ const RadarChart: React.FC<{
         return `#${(0x1000000 + (R < 255 ? (R < 1 ? 0 : R) : 255) * 0x10000 + (G < 255 ? (G < 1 ? 0 : G) : 255) * 0x100 + (B < 255 ? (B < 1 ? 0 : B) : 255)).toString(16).slice(1)}`;
     };
 
-    const drawOpportunity = (group: d3.Selection<SVGGElement, unknown, null, undefined>, item: any, x: number, y: number, size: number) => {
-        const themeColors = getCurrentThemeColors();
+    const drawOpportunity = (
+        group: d3.Selection<SVGGElement, unknown, null, undefined>,
+        item: any,
+        x: number,
+        y: number,
+        size: number,
+        themeColors: ThemeTokens
+    ) => {
         const color = item.color || themeColors.primary;
         const impactClass = getImpactClass(item.raw?.impact);
         
@@ -345,8 +391,14 @@ const RadarChart: React.FC<{
         group.append('circle').attr('cx', x).attr('cy', y).attr('r', size * 0.7).attr('fill', color).attr('stroke', 'none').attr('class', impactClass || styles.defaultImpact);
     };
 
-    const drawThreat = (group: d3.Selection<SVGGElement, unknown, null, undefined>, item: any, x: number, y: number, size: number) => {
-        const themeColors = getCurrentThemeColors();
+    const drawThreat = (
+        group: d3.Selection<SVGGElement, unknown, null, undefined>,
+        item: any,
+        x: number,
+        y: number,
+        size: number,
+        themeColors: ThemeTokens
+    ) => {
         const color = item.color || themeColors.primary;
         group.append('circle').attr('cx', x).attr('cy', y).attr('r', size).attr('fill', color).attr('stroke', 'none');
         const triangleSize = size * 0.6;
@@ -356,6 +408,27 @@ const RadarChart: React.FC<{
             [x + triangleSize * 0.866, y + triangleSize * 0.5],
         ];
         group.append('polygon').attr('points', trianglePoints.map(p => p.join(',')).join(' ')).attr('fill', darkenColor(color, -20));
+    };
+
+    const drawLegends = (
+        g: d3.Selection<SVGGElement, unknown, null, undefined>,
+        radius: number,
+        themeColors: ThemeTokens
+    ) => {
+        const legends = [LEGEND1, LEGEND2, LEGEND3];
+        const legendColor = themeColors.textMuted || defaultThemeTokens.textMuted;
+
+        legends.forEach(l => {
+            g.append('text')
+                .attr('x', 0)
+                .attr('y', -radius * l.radiusPct)
+                .attr('text-anchor', 'middle')
+                .attr('dominant-baseline', 'middle')
+                .attr('fill', legendColor)
+                .attr('font-size', '12px')
+                .attr('font-family', 'Arial, sans-serif')
+                .text(l.label);
+        });
     };
 
 
@@ -392,50 +465,17 @@ const RadarChart: React.FC<{
             transformString = `translate(${totalWidth / 2}, ${svgSize / 2}) scale(${zoomFactor}) translate(${tX}, ${tY})`;
         }
         
-        drawQuadrants(g, radius);
-        drawCategoryLabels(g, radius);
-        drawRadarGrid(g, radius);
-            // Draw the legend labels above the center at configured radius percentages
-            const drawLegends = (g: d3.Selection<SVGGElement, unknown, null, undefined>, radius: number) => {
-                const themeColors = getCurrentThemeColors();
-                const legends = [LEGEND1, LEGEND2, LEGEND3];
-                
-                // Use more subtle legend colors based on theme
-                const getLegendColor = () => {
-                    switch(currentTheme) {
-                        case 'cyberpunk':
-                            return '#c0c0c0'; // light gray for cyberpunk
-                        case 'light':
-                            return '#4b5563'; // dark gray for light theme
-                        case 'ocean':
-                            return '#94a3b8'; // blue-gray for ocean
-                        case 'sunset':
-                            return '#e5e7eb'; // light gray for sunset
-                        case 'dark':
-                        default:
-                            return '#9ca3af'; // medium gray for dark theme
-                    }
-                };
-                
-                legends.forEach(l => {
-                    g.append('text')
-                        .attr('x', 0)
-                        .attr('y', -radius * l.radiusPct)
-                        .attr('text-anchor', 'middle')
-                        .attr('dominant-baseline', 'middle')
-                        .attr('fill', getLegendColor())
-                        .attr('font-size', '12px')
-                        .attr('font-family', 'Arial, sans-serif')
-                        .text(l.label);
-                });
-            };
+        const themeColors = resolveThemeTokens(themeRootRef.current);
 
-            drawLegends(g, radius);
+        drawQuadrants(g, radius, themeColors, currentTheme);
+        drawCategoryLabels(g, radius, themeColors);
+        drawRadarGrid(g, radius, themeColors, currentTheme);
+        drawLegends(g, radius, themeColors);
         
         if (items && items.length > 0) {
             const normalizedItems = parseRadarItems(items);
             const groupedItems = groupItemsForPositioning(normalizedItems);
-            renderItems(g, groupedItems, radius);
+            renderItems(g, groupedItems, radius, themeColors);
         }
 
         g.transition()
@@ -455,7 +495,7 @@ const RadarChart: React.FC<{
 
 
     return (
-        <div className={`${styles.centeringWrapper} ${getThemeClass()}`}>
+        <div ref={themeRootRef} className={`${styles.centeringWrapper} ${getThemeClass()}`}>
             <div className={styles.middlePanel}>
                 <svg ref={svgRef} className={styles.radarWrapper}></svg>
             </div>
@@ -463,8 +503,8 @@ const RadarChart: React.FC<{
                 <div className={styles.zoomBar}>
                     {/* Theme Selector */}
                     <div className={styles.zoomControls}>
-                        <span className={styles.zoomTitle}>🎨 Theme: {currentTheme}</span>
-                        {themes.map((themeOption) => (
+                        <span className={styles.zoomTitle}>🎨 Theme: {currentThemeLabel}</span>
+                        {availableThemes.map((themeOption) => (
                             <button
                                 key={themeOption.key}
                                 className={`${styles.themeButton} ${currentTheme === themeOption.key ? styles.active : ''}`}
@@ -474,7 +514,7 @@ const RadarChart: React.FC<{
                                 }}
                                 title={themeOption.label}
                             >
-                                {themeOption.emoji} {themeOption.key}
+                                {themeOption.emoji} {themeOption.label}
                             </button>
                         ))}
                     </div>

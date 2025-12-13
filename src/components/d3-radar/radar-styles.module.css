@@ -44,6 +44,19 @@
   --radar-grid-secondary: #00ffcc;
   --radar-quadrant-dark: #0a0f0f;
   --radar-quadrant-light: #131a1a;
+
+  /* Theme Registry (key,label,emoji) */
+  --radar-theme-keys: dark, light, pro, ocean, sunset;
+  --radar-theme-dark-label: Dark;
+  --radar-theme-dark-emoji: 🌙;
+  --radar-theme-light-label: Light;
+  --radar-theme-light-emoji: ☀️;
+  --radar-theme-pro-label: Pro;
+  --radar-theme-pro-emoji: 🏛️;
+  --radar-theme-ocean-label: Ocean;
+  --radar-theme-ocean-emoji: 🌊;
+  --radar-theme-sunset-label: Sunset;
+  --radar-theme-sunset-emoji: 🌅;
   
   /* Interactive States */
   --radar-hover-primary: #00ff9f;
@@ -605,167 +618,179 @@
   --radar-quadrant-light: #065f46;
 }
 
-/* Light theme variant - High-tech laboratory interface */
+/* Light theme variant - Aurora atelier */
 .lightTheme {
-  --radar-primary: #1d4ed8;            /* blue radar base */
-  --radar-secondary: #2563eb;
-  --radar-accent: #dc2626;             /* red highlights */
-  --radar-danger: #dc2626;
-  --radar-success: #16a34a;
+  --radar-primary: #2f7f6f;
+  --radar-secondary: #73d1c3;
+  --radar-accent: #f4a259;
+  --radar-danger: #e06a5c;
+  --radar-success: #5bb98c;
 
-  --radar-bg-main: 
-    linear-gradient(to top, #e2e8f0 0%, #f8fafc 100%),
-    linear-gradient(180deg, 
-      transparent 0%, 
-      transparent 60%,
-      rgba(29, 78, 216, 0.1) 70%,
-      rgba(29, 78, 216, 0.2) 80%,
-      rgba(29, 78, 216, 0.3) 90%,
-      rgba(29, 78, 216, 0.4) 95%,
-      rgba(29, 78, 216, 0.5) 100%
-    );
-  --radar-bg-panel: rgba(241, 245, 249, 0.9);
-  --radar-bg-tooltip: rgba(226, 232, 240, 0.95);
-  --radar-bg-button: rgba(29, 78, 216, 0.1);
+  --radar-bg-main:
+    radial-gradient(circle at 20% 20%, rgba(250, 230, 203, 0.55), transparent 55%),
+    radial-gradient(circle at 80% 10%, rgba(115, 209, 195, 0.35), transparent 60%),
+    linear-gradient(180deg, #fdfcf7 0%, #f4f7f9 45%, #e9f5f2 100%);
+  --radar-bg-panel: rgba(255, 255, 250, 0.9);
+  --radar-bg-tooltip: rgba(245, 248, 246, 0.94);
+  --radar-bg-button: rgba(47, 127, 111, 0.12);
 
-  --radar-text-primary: #0f172a;
-  --radar-text-secondary: #1e40af;
-  --radar-text-muted: #64748b;
-  --radar-text-label: #1d4ed8;
+  --radar-text-primary: #2f3437;
+  --radar-text-secondary: #2f7f6f;
+  --radar-text-muted: #7f8b8f;
+  --radar-text-label: #f1844d;
 
-  --radar-grid-primary: #374151;
-  --radar-grid-secondary: #6b7280;
-  --radar-quadrant-0: #dcfce7;         /* pastel green */
-  --radar-quadrant-1: #fecaca;         /* pastel red */
-  --radar-quadrant-2: #dbeafe;         /* pastel blue */
-  --radar-quadrant-3: #fef3c7;         /* pastel yellow */
+  --radar-grid-primary: rgba(47, 127, 111, 0.35);
+  --radar-grid-secondary: rgba(115, 209, 195, 0.28);
+  --radar-quadrant-dark: rgba(255, 247, 236, 0.5);
+  --radar-quadrant-light: rgba(233, 245, 242, 0.45);
+  --radar-quadrant-0: rgba(91, 185, 140, 0.18);
+  --radar-quadrant-1: rgba(240, 132, 93, 0.14);
+  --radar-quadrant-2: rgba(115, 209, 195, 0.16);
+  --radar-quadrant-3: rgba(194, 196, 241, 0.16);
 
-  --radar-hover-primary: #2563eb;
-  --radar-hover-accent: #fbbf24;
+  --radar-hover-primary: #3f9987;
+  --radar-hover-accent: #f7b273;
 
-  --radar-border-subtle: rgba(29, 78, 216, 0.2);
-  --radar-border-active: rgba(29, 78, 216, 0.5);
+  --radar-border-subtle: rgba(47, 127, 111, 0.15);
+  --radar-border-active: rgba(241, 132, 93, 0.4);
 }
 
 /* Optional enhancement: soft glow on hover */
 .lightTheme .radarItem:hover {
-  filter: drop-shadow(0 0 12px rgba(22, 163, 74, 0.6));
+  filter: drop-shadow(0 0 16px rgba(63, 153, 135, 0.45));
 }
 
-/* Cyberpunk theme variant - Matrix-style terminal interface */
-.cyberpunkTheme {
-  --radar-primary: #00ff41;
-  --radar-secondary: #39ff14;
-  --radar-accent: #ff1493;
-  --radar-danger: #ff073a;
-  --radar-success: #00ff00;
-  --radar-bg-main: 
-    linear-gradient(to top, #001100 0%, #000000 100%),
-    linear-gradient(180deg, 
-      transparent 0%, 
-      transparent 60%,
-      rgba(0, 255, 65, 0.1) 70%,
-      rgba(0, 255, 65, 0.2) 80%,
-      rgba(0, 255, 65, 0.3) 90%,
-      rgba(0, 255, 65, 0.4) 95%,
-      rgba(0, 255, 65, 0.6) 100%
-    );
-  --radar-text-primary: #f0f0f0;
-  --radar-text-secondary: #e0e0e0;
-  --radar-text-muted: #c0c0c0;
-  --radar-text-label: #ffffff;
-  --radar-bg-panel: rgba(0, 20, 0, 0.8);
-  --radar-bg-tooltip: rgba(0, 30, 0, 0.9);
-  --radar-quadrant-dark: #001100;
-  --radar-quadrant-light: #002200;
+.lightTheme .radarWrapper {
+  background:
+    linear-gradient(160deg, rgba(255, 255, 250, 0.92), rgba(242, 248, 245, 0.8)),
+    radial-gradient(circle at center, rgba(115, 209, 195, 0.16), transparent 70%);
+  border: 1px solid rgba(47, 127, 111, 0.22);
+  box-shadow:
+    0 26px 48px rgba(63, 153, 135, 0.18),
+    inset 0 0 28px rgba(255, 255, 255, 0.55);
 }
 
-/* Ocean theme variant - Deep sea sonar interface */
+/* Pro theme variant - Monochrome luxe */
+.proTheme {
+  --radar-primary: #d6b25e;
+  --radar-secondary: #f2d491;
+  --radar-accent: #ffffff;
+  --radar-danger: #e45858;
+  --radar-success: #6fc2a2;
+
+  --radar-bg-main:
+    linear-gradient(145deg, #0f1014 0%, #1c1d22 50%, #09090b 100%),
+    radial-gradient(circle at 20% 15%, rgba(214, 178, 94, 0.12), transparent 60%);
+  --radar-bg-panel: rgba(18, 19, 24, 0.9);
+  --radar-bg-tooltip: rgba(23, 24, 29, 0.92);
+  --radar-bg-button: rgba(214, 178, 94, 0.18);
+
+  --radar-text-primary: #f5f5f5;
+  --radar-text-secondary: #d6b25e;
+  --radar-text-muted: rgba(223, 223, 223, 0.6);
+  --radar-text-label: #f2d491;
+
+  --radar-grid-primary: rgba(214, 178, 94, 0.45);
+  --radar-grid-secondary: rgba(255, 255, 255, 0.25);
+  --radar-quadrant-dark: rgba(12, 12, 16, 0.82);
+  --radar-quadrant-light: rgba(32, 32, 40, 0.6);
+  --radar-quadrant-0: rgba(214, 178, 94, 0.2);
+  --radar-quadrant-1: rgba(108, 121, 134, 0.3);
+  --radar-quadrant-2: rgba(245, 245, 245, 0.12);
+  --radar-quadrant-3: rgba(111, 194, 162, 0.14);
+
+  --radar-hover-primary: #f2d491;
+  --radar-hover-accent: #ffffff;
+
+  --radar-border-subtle: rgba(255, 255, 255, 0.12);
+  --radar-border-active: rgba(214, 178, 94, 0.55);
+}
+
+/* Ocean theme variant - Abyssal bioluminescence */
 .oceanTheme {
-  --radar-primary: #00d4ff;           /* bright cyan */
-  --radar-secondary: #0ea5e9;
-  --radar-accent: #38bdf8;
-  --radar-danger: #f472b6;
-  --radar-success: #00f5ff;
+  --radar-primary: #3ddad7;
+  --radar-secondary: #6fe7dd;
+  --radar-accent: #f9ed69;
+  --radar-danger: #ff6b6b;
+  --radar-success: #96f7d2;
 
-  --radar-bg-main: 
-    linear-gradient(to top, #001122 0%, #000000 100%),
-    linear-gradient(180deg, 
-      transparent 0%, 
-      transparent 60%,
-      rgba(0, 212, 255, 0.1) 70%,
-      rgba(0, 212, 255, 0.2) 80%,
-      rgba(0, 212, 255, 0.3) 90%,
-      rgba(0, 212, 255, 0.4) 95%,
-      rgba(0, 212, 255, 0.6) 100%
-    );
-  --radar-bg-panel: rgba(0, 17, 34, 0.8);
-  --radar-bg-tooltip: rgba(0, 34, 68, 0.9);
-  --radar-bg-button: rgba(0, 212, 255, 0.1);
+  --radar-bg-main:
+    radial-gradient(circle at 30% 25%, rgba(111, 231, 221, 0.28), transparent 60%),
+    radial-gradient(circle at 75% 10%, rgba(61, 218, 215, 0.18), transparent 65%),
+    linear-gradient(185deg, #021730 0%, #041f3f 40%, #071d31 100%);
+  --radar-bg-panel: rgba(6, 30, 55, 0.82);
+  --radar-bg-tooltip: rgba(6, 24, 47, 0.9);
+  --radar-bg-button: rgba(61, 218, 215, 0.18);
 
-  --radar-text-primary: #e0f7ff;
-  --radar-text-secondary: #7dd3fc;
-  --radar-text-muted: #38bdf8;
-  --radar-text-label: #00d4ff;
+  --radar-text-primary: #e8fbff;
+  --radar-text-secondary: #6fe7dd;
+  --radar-text-muted: rgba(204, 232, 255, 0.65);
+  --radar-text-label: #f9ed69;
 
-  --radar-grid-primary: #00d4ff;
-  --radar-grid-secondary: #0ea5e9;
-  --radar-quadrant-dark: #001122;
-  --radar-quadrant-light: #002244;
+  --radar-grid-primary: rgba(111, 231, 221, 0.55);
+  --radar-grid-secondary: rgba(61, 218, 215, 0.35);
+  --radar-quadrant-dark: rgba(2, 18, 32, 0.78);
+  --radar-quadrant-light: rgba(6, 34, 53, 0.6);
+  --radar-quadrant-0: rgba(150, 247, 210, 0.25);
+  --radar-quadrant-1: rgba(111, 231, 221, 0.22);
+  --radar-quadrant-2: rgba(249, 237, 105, 0.16);
+  --radar-quadrant-3: rgba(255, 107, 107, 0.14);
+
+  --radar-hover-primary: #53f0eb;
+  --radar-hover-accent: #fdd55d;
+
+  --radar-border-subtle: rgba(111, 231, 221, 0.18);
+  --radar-border-active: rgba(249, 237, 105, 0.45);
 }
 
-/* Galaxy theme variant - Starship command bridge */
+/* Sunset theme variant - Warm twilight dashboard */
 .sunsetTheme {
-  --radar-primary: #a855f7;           /* cosmic purple */
-  --radar-secondary: #c084fc;
-  --radar-accent: #06b6d4;            /* cyan stars */
-  --radar-danger: #f472b6;
+  --radar-primary: #fb923c;
+  --radar-secondary: #f97316;
+  --radar-accent: #fcd34d;
+  --radar-danger: #f87171;
   --radar-success: #34d399;
 
-  --radar-bg-main: 
-    linear-gradient(to top, #1e1b4b 0%, #000000 100%),
-    linear-gradient(180deg, 
-      transparent 0%, 
-      transparent 60%,
-      rgba(168, 85, 247, 0.1) 70%,
-      rgba(168, 85, 247, 0.2) 80%,
-      rgba(168, 85, 247, 0.3) 90%,
-      rgba(168, 85, 247, 0.4) 95%,
-      rgba(168, 85, 247, 0.6) 100%
-    );
-  --radar-bg-panel: rgba(30, 27, 75, 0.8);
-  --radar-bg-tooltip: rgba(15, 15, 35, 0.9);
-  --radar-bg-button: rgba(168, 85, 247, 0.1);
+  --radar-bg-main:
+    radial-gradient(circle at top, rgba(251, 191, 36, 0.18), transparent 55%),
+    linear-gradient(160deg, #0f172a 0%, #1f2937 45%, #7c2d12 100%);
+  --radar-bg-panel: rgba(17, 24, 39, 0.85);
+  --radar-bg-tooltip: rgba(15, 23, 42, 0.92);
+  --radar-bg-button: rgba(251, 191, 36, 0.12);
 
-  --radar-text-primary: #e0e7ff;
-  --radar-text-secondary: #c4b5fd;
-  --radar-text-muted: #a78bfa;
-  --radar-text-label: #a855f7;
+  --radar-text-primary: #f8fafc;
+  --radar-text-secondary: #fde68a;
+  --radar-text-muted: #fbbf24;
+  --radar-text-label: #fb923c;
 
-  --radar-grid-primary: #a855f7;
-  --radar-grid-secondary: #c084fc;
-  --radar-quadrant-dark: #1e1b4b;
-  --radar-quadrant-light: #312e81;
+  --radar-grid-primary: #fbbf24;
+  --radar-grid-secondary: rgba(251, 191, 36, 0.4);
+  --radar-quadrant-dark: #111827;
+  --radar-quadrant-light: #1f2937;
 
-  --radar-hover-primary: #fbbf24;
+  --radar-hover-primary: #fef08a;
   --radar-hover-accent: #facc15;
 
-  --radar-border-subtle: rgba(251, 146, 60, 0.2);
-  --radar-border-active: rgba(251, 146, 60, 0.5);
+  --radar-border-subtle: rgba(251, 191, 36, 0.18);
+  --radar-border-active: rgba(251, 191, 36, 0.45);
 }
 
-/* Add a glowing heat shimmer effect */
+/* Subtle horizon glow */
 .sunsetTheme .radarWrapper {
-  background: radial-gradient(circle at center, rgba(251, 146, 60, 0.08), transparent 70%);
-  animation: sunsetPulse 8s ease-in-out infinite;
+  background:
+    radial-gradient(circle at center, rgba(251, 191, 36, 0.08), transparent 70%),
+    linear-gradient(200deg, rgba(124, 45, 18, 0.55), transparent 50%);
+  border: 1px solid rgba(251, 191, 36, 0.15);
+  box-shadow: 0 30px 60px rgba(15, 23, 42, 0.45), inset 0 0 40px rgba(15, 23, 42, 0.35);
+  animation: sunsetPulse 12s ease-in-out infinite;
 }
 
 @keyframes sunsetPulse {
-  0%, 100% { box-shadow: 0 0 30px rgba(251, 146, 60, 0.1); }
-  50% { box-shadow: 0 0 60px rgba(251, 146, 60, 0.25); }
+  0%, 100% { box-shadow: 0 0 28px rgba(251, 191, 36, 0.05); }
+  50% { box-shadow: 0 0 42px rgba(251, 191, 36, 0.18); }
 }
 
 /* Hover glow for high impact */
 .sunsetTheme .itemCircleHighImpact:hover {
-  filter: drop-shadow(0 0 16px rgba(239, 68, 68, 0.9));
+  filter: drop-shadow(0 0 16px rgba(239, 68, 68, 0.75));
 }

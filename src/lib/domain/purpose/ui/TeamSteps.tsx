@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Compass, Radar, TrendingUp, Layout } from 'lucide-react';
+import { Compass, Radar, TrendingUp, SquareKanban } from 'lucide-react';
 import styles from './team-steps.module.css';
 
 type StepKey = 'purpose' | 'radar' | 'dashboard' | 'kanban';
@@ -23,7 +23,7 @@ export default function TeamSteps({ teamId, teamName, companyId = '', active }: 
     purpose: { icon: Compass, title: 'Purpose', subtitle: 'Define & Align', color: '#9B51E0' },
     radar: { icon: Radar, title: 'Radar', subtitle: 'Detect, Assess & Respond', color: '#00cc88' },
     dashboard: { icon: TrendingUp, title: 'Strategy', subtitle: 'Plan & Execute', color: '#388cfa' },
-    kanban: { icon: Layout, title: 'Kanban', subtitle: 'Track & Deliver', color: '#F5A623' }
+    kanban: { icon: SquareKanban, title: 'Kanban', subtitle: 'Track & Deliver', color: '#F5A623' }
   };
 
   const currentTitle = stepConfig[active].title;

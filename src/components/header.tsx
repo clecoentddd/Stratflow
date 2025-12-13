@@ -81,7 +81,7 @@ export function AppHeader({ companyName }: AppHeaderProps) {
     <header className="sticky top-0 z-10 flex h-16 items-center justify-between border-b bg-card/80 px-4 backdrop-blur-sm sm:px-6">
       <div className="flex items-center gap-4">
         <Link href="/" className="flex items-center gap-2">
-            <StradarLogo className="w-8 h-8 text-primary" />
+          <StradarLogo size={32} />
             <h1 className="text-2xl font-headline font-semibold hidden sm:block">Stradar</h1>
         </Link>
         {companyName && (
