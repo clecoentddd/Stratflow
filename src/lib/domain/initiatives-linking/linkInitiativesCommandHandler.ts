@@ -24,9 +24,10 @@ export async function linkInitiativesCommandHandler(cmd: LinkInitiativesCommand)
     if (teamCreated && teamCreated.payload && typeof teamCreated.payload === 'object' && 'level' in teamCreated.payload) {
       teamLevel = (teamCreated.payload as any).level;
     }
+    const tenantId = (teamCreated?.payload as any)?.companyId || (created as any).tenantId;
     const strategyId = (created.payload as any).strategyId;
     const strategyState = 'Draft'; // Default, unless you want to replay StrategyUpdated
-    return { teamId, teamLevel, strategyId, strategyState };
+    return { teamId, teamLevel, strategyId, strategyState, tenantId };
   }
 
   // Existence check (event-store driven)
@@ -47,11 +48,18 @@ export async function linkInitiativesCommandHandler(cmd: LinkInitiativesCommand)
     const toCtx = getInitiativeContext(toId);
     if (!toCtx) continue;
     // Optionally, add more business rules here using only event log replay
+    const tenantId = fromCtx.tenantId || toCtx.tenantId;
+    if (!tenantId) {
+      errors.push(`Unable to resolve tenant for initiative linking ${cmd.fromInitiativeId} -> ${toId}`);
+      continue;
+    }
+
     const ev: InitiativeLinkedEvent = {
       type: 'InitiativeLinked',
       entity: 'team',
       aggregateId: fromCtx.teamId,
       timestamp: new Date().toISOString(),
+      tenantId,
       payload: {
         fromInitiativeId: cmd.fromInitiativeId,
         toInitiativeId: toId,

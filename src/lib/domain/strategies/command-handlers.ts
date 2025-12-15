@@ -3,6 +3,7 @@ import type { StrategyState } from '@/lib/types';
 import type { CreateStrategyCommand, UpdateStrategyCommand } from './commands';
 import type { StrategyEvent, StrategyCreatedEvent, StrategyUpdatedEvent } from './events';
 import type { TeamEvent } from '@/lib/domain/teams/events';
+import { resolveTeamContext } from '@/lib/domain/tenant/tenant-context';
 
 type CommandHandlerResult<T> = { success: boolean; error?: string; event?: T };
 
@@ -24,9 +25,14 @@ export class StrategyCommandHandlers {
       throw new Error('Description and timeframe are required');
     }
 
+    const teamContext = await resolveTeamContext(teamId);
+    if (!teamContext) {
+      throw new Error('Team not found');
+    }
+
     // 2. Get events and handle command
     const events = await getEventsForTeam(teamId);
-    const result = this.handleCreateStrategy(teamId, command, events);
+    const result = this.handleCreateStrategy(teamId, teamContext.tenantId, command, events);
     
     if (!result.success || !result.event) {
       throw new Error(result.error || 'Failed to create strategy');
@@ -54,9 +60,14 @@ export class StrategyCommandHandlers {
       throw new Error('No updateable fields provided');
     }
 
+    const teamContext = await resolveTeamContext(teamId);
+    if (!teamContext) {
+      throw new Error('Team not found');
+    }
+
     // 2. Get events and handle command
     const events = await getEventsForTeam(teamId);
-    const result = this.handleUpdateStrategy(teamId, command, events);
+    const result = this.handleUpdateStrategy(teamId, teamContext.tenantId, command, events);
     
     if (!result.success || !result.event) {
       throw new Error(result.error || 'Failed to update strategy');
@@ -107,6 +118,7 @@ export class StrategyCommandHandlers {
 
   static handleCreateStrategy(
     teamId: string,
+    tenantId: string,
     command: CreateStrategyCommand,
     events: TeamEvent[] | StrategyEvent[]
   ): CommandHandlerResult<StrategyCreatedEvent> {
@@ -127,6 +139,7 @@ export class StrategyCommandHandlers {
         entity: 'team',
         aggregateId: teamId,
         timestamp: new Date().toISOString(),
+        tenantId,
         payload: {
           strategyId: `strat-${crypto.randomUUID()}`,
           description: command.description,
@@ -138,6 +151,7 @@ export class StrategyCommandHandlers {
 
   static handleUpdateStrategy(
     teamId: string,
+    tenantId: string,
     command: UpdateStrategyCommand,
     events: TeamEvent[] | StrategyEvent[]
   ): CommandHandlerResult<StrategyUpdatedEvent> {
@@ -150,6 +164,7 @@ export class StrategyCommandHandlers {
           entity: 'team',
           aggregateId: teamId,
           timestamp: new Date().toISOString(),
+          tenantId,
           payload: command
         }
       };
@@ -172,6 +187,7 @@ export class StrategyCommandHandlers {
         entity: 'team',
         aggregateId: teamId,
         timestamp: new Date().toISOString(),
+        tenantId,
         payload: command
       }
     };

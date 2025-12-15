@@ -19,6 +19,7 @@ export class TeamsCommandHandlers {
       entity: 'team',
       aggregateId: newTeamId,
       timestamp: new Date().toISOString(),
+      tenantId: command.companyId,
       payload: {
         id: newTeamId,
         companyId: command.companyId,
@@ -45,12 +46,18 @@ export class TeamsCommandHandlers {
       throw new Error('Invalid update command: team ID is required');
     }
 
+    const current = await getTeamByIdProjection(command.id);
+    if (!current) {
+      throw new Error('Team not found');
+    }
+
     // 2. Create Event
     const event: TeamUpdatedEvent = {
       type: 'TeamUpdated',
       entity: 'team',
       aggregateId: command.id,
       timestamp: new Date().toISOString(),
+      tenantId: current.companyId,
       payload: {
         name: command.name,
         purpose: command.purpose,

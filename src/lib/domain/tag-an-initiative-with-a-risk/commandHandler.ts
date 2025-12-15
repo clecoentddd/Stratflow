@@ -1,9 +1,15 @@
 import type { TagInitiativeWithRiskCommand, RemoveTagFromInitiativeCommand } from './command';
 import type { TagAddedEvent, TagRemovedEvent } from './events';
 import { saveEvents } from '../../db/event-store';
+import { resolveInitiativeContext } from '@/lib/domain/tenant/tenant-context';
 
 export class TagAnInitiativeWithARiskCommandHandler {
   static async handleTagInitiativeWithRisk(command: TagInitiativeWithRiskCommand): Promise<TagAddedEvent> {
+    const initiativeContext = await resolveInitiativeContext(command.initiativeId);
+    if (!initiativeContext) {
+      throw new Error('Unable to resolve initiative context for tagging');
+    }
+
     // Look up radar name for event
     let radarName = '';
     try {
@@ -19,6 +25,7 @@ export class TagAnInitiativeWithARiskCommandHandler {
       entity: 'initiative',
       aggregateId: command.initiativeId,
       timestamp: new Date().toISOString(),
+      tenantId: initiativeContext.tenantId,
       payload: {
         radarItemId: command.radarItemId,
         radarName,
@@ -30,11 +37,17 @@ export class TagAnInitiativeWithARiskCommandHandler {
   }
 
   static async handleRemoveTagFromInitiative(command: RemoveTagFromInitiativeCommand): Promise<TagRemovedEvent> {
+    const initiativeContext = await resolveInitiativeContext(command.initiativeId);
+    if (!initiativeContext) {
+      throw new Error('Unable to resolve initiative context for untagging');
+    }
+
     const event: TagRemovedEvent = {
       type: 'TagRemoved',
       entity: 'initiative',
       aggregateId: command.initiativeId,
       timestamp: new Date().toISOString(),
+      tenantId: initiativeContext.tenantId,
       payload: {
         radarItemId: command.radarItemId,
       },

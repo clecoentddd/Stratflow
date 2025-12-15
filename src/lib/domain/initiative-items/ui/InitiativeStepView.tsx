@@ -21,12 +21,13 @@ function InitiativeItemView({ item, onSave, onDelete }: InitiativeItemViewProps)
   const [isEditing, setIsEditing] = useState(false);
   const [editText, setEditText] = useState(item.text);
   const [skipNextBlurSave, setSkipNextBlurSave] = useState(false);
+  const isNewItem = item.id.startsWith('temp-');
 
   useEffect(() => {
-    if (item.text === "" && item.id.startsWith('temp-')) {
+    if (item.text === "" && isNewItem) {
       setIsEditing(true);
     }
-  }, [item]);
+  }, [item, isNewItem]);
 
   const handleSave = () => {
     onSave(item.id, editText);
@@ -47,7 +48,7 @@ function InitiativeItemView({ item, onSave, onDelete }: InitiativeItemViewProps)
   };
   
   const handleCancel = () => {
-    if (item.text === "" && item.id.startsWith('temp-')) {
+    if (item.text === "" && isNewItem) {
         onDelete(item.id);
     } else {
         setEditText(item.text);
@@ -90,7 +91,7 @@ function InitiativeItemView({ item, onSave, onDelete }: InitiativeItemViewProps)
                     Cancel
                 </Button>
                 <Button size="sm" onClick={handleSave}>
-                    Save
+                  {isNewItem ? "Create" : "Save"}
                 </Button>
             </div>
         </div>

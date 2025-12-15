@@ -201,8 +201,8 @@ export const applyEventsToTeam = (
           };
 
       // --- Initiative Item Events ---
-    case 'InitiativeItemAdded':
-    console.log('[PROJECTION] InitiativeItemAdded: initiativeId', event.metadata?.initiativeId, 'itemId', event.metadata?.itemId, 'stepKey', event.payload.stepKey);
+    case 'InitiativeItemCreated':
+    console.log('[PROJECTION] InitiativeItemCreated: initiativeId', event.payload.initiativeId, 'itemId', event.payload.itemId, 'stepKey', event.payload.stepKey);
     const foundStrategyIds = team.dashboard.strategies.map(s => s.id);
     const foundInitiativeIds = team.dashboard.strategies.flatMap(s => s.initiatives.map(i => i.id));
     console.log('[PROJECTION] Current strategyIds:', foundStrategyIds);
@@ -214,18 +214,21 @@ export const applyEventsToTeam = (
         strategies: team.dashboard.strategies.map(s => ({
           ...s,
           initiatives: s.initiatives.map(i => {
-            if (i.id !== event.metadata?.initiativeId) return i;
+            if (i.id !== event.payload.initiativeId) return i;
             console.log('[PROJECTION] Adding item to initiative:', i.id, 'stepKey:', event.payload.stepKey);
+            const newItem: InitiativeItem = {
+              id: event.payload.itemId,
+              text: event.payload.text,
+              status: event.payload.status ?? 'todo',
+            };
+
             return {
               ...i,
               steps: i.steps.map(step => 
                 step.key === event.payload.stepKey 
                   ? { 
                     ...step, 
-                    items: [...step.items, { 
-                      id: event.metadata!.itemId, 
-                      ...event.payload.item 
-                    }] 
+                    items: [...step.items, newItem] 
                     } 
                   : step
               )

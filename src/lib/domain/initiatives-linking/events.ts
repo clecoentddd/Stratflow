@@ -7,6 +7,7 @@ export type BaseEvent<TType extends string, TEntity extends string, TPayload> = 
   aggregateId: string; // team id (we aggregate linking events under the team)
   timestamp: string;
   payload: TPayload;
+  tenantId: string;
 };
 
 export type InitiativeLinkedEvent = BaseEvent<'InitiativeLinked', 'team', {

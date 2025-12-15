@@ -5,7 +5,7 @@ import { saveEvents, ensureProjectionHandlersLoaded } from '@/lib/db/event-store
 import { getTeamByIdProjection } from '@/lib/db/projections';
 import { getUsersProjection } from '@/lib/domain/userManagement/user-projection';
 import type { AddInitiativeItemCommand } from '@/lib/domain/initiative-items/commands';
-import type { InitiativeItemAddedEvent } from '@/lib/domain/initiative-items/events';
+import type { InitiativeItemCreatedEvent } from '@/lib/domain/initiative-items/events';
 import type { InitiativeItem } from '@/lib/types';
 
 // --- Vertical Slice: Add Initiative Item ---
@@ -60,19 +60,17 @@ export async function POST(request: NextRequest) {
         text: command.item.text // Use the text from the command
     };
 
-    const event: InitiativeItemAddedEvent = {
-      type: 'InitiativeItemAdded',
+    const event: InitiativeItemCreatedEvent = {
+      type: 'InitiativeItemCreated',
       entity: 'team',
       aggregateId: teamId,
       timestamp: new Date().toISOString(),
+      tenantId: team.companyId,
       payload: {
+        initiativeId: initiative.id,
+        itemId,
         stepKey: command.stepKey,
-        item: { text: command.item.text }, // Only business data in payload
-      },
-      metadata: {
-        initiativeId: initiative.id, // Use the real ID for the event
-        itemId: itemId,
-        teamId: teamId,
+        text: command.item.text,
       },
     };
 

@@ -1,16 +1,13 @@
 import type { Event } from '@/lib/domain/teams/events';
-import type { InitiativeItem } from '@/lib/types';
 
-export type InitiativeItemAddedEvent = Event<
-  'InitiativeItemAdded',
-  {
-    stepKey: string;
-    item: Omit<InitiativeItem, 'id'>;
-  },
+export type InitiativeItemCreatedEvent = Event<
+  'InitiativeItemCreated',
   {
     initiativeId: string;
     itemId: string;
-    teamId: string;
+    stepKey: string;
+    text: string;
+    status?: 'todo' | 'doing' | 'done';
   }
 >;
 

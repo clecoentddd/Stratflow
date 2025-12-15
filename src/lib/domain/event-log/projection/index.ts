@@ -166,7 +166,7 @@ registerProjectionHandler('InitiativeCreated', onAnyEvent);
 registerProjectionHandler('InitiativeUpdated', onAnyEvent);
 registerProjectionHandler('InitiativeProgressUpdated', onAnyEvent);
 registerProjectionHandler('InitiativeDeleted', onAnyEvent);
-registerProjectionHandler('InitiativeItemAdded', onAnyEvent);
+registerProjectionHandler('InitiativeItemCreated', onAnyEvent);
 registerProjectionHandler('InitiativeItemUpdated', onAnyEvent);
 registerProjectionHandler('InitiativeItemDeleted', onAnyEvent);
 

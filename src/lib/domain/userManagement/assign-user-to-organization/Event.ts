@@ -7,4 +7,5 @@ export interface Event {
     teamId?: string; // Optional initial team assignment
     timestamp: string;
   };
+  tenantId: string;
 }

@@ -18,6 +18,7 @@ export async function handleAddUserCommand(cmd: Command): Promise<Event> {
       teamIds: cmd.teamIds,
       timestamp: new Date().toISOString(),
     },
+    tenantId: cmd.company,
   };
   // Patch: event store expects AllEvents with aggregateId, entity, timestamp at top level
   const storeEvent = {
@@ -25,6 +26,7 @@ export async function handleAddUserCommand(cmd: Command): Promise<Event> {
     aggregateId: userId,
     entity: "user" as const,
     timestamp: event.payload.timestamp,
+    tenantId: cmd.company,
   };
   await saveEvents([storeEvent]);
   return event;

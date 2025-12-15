@@ -7,13 +7,13 @@ import { linkInitiativesCommandHandler } from '@/lib/domain/initiatives-linking/
 import type { LinkInitiativesCommand } from '@/lib/domain/initiatives-linking/LinkInitiativesCommand';
 import type { Strategy, Team } from '@/lib/types';
 
-function findInitiativeContext(initiativeId: string, teams: Team | Team[]): { teamId: string; teamLevel: number; strategyId: string; strategyState: string } | null {
+function findInitiativeContext(initiativeId: string, teams: Team | Team[]): { teamId: string; teamLevel: number; strategyId: string; strategyState: string; tenantId: string } | null {
   const list = Array.isArray(teams) ? teams : [teams];
   for (const team of list) {
     for (const s of team.dashboard.strategies) {
       for (const i of s.initiatives) {
         if (i.id === initiativeId) {
-          return { teamId: team.id, teamLevel: team.level, strategyId: s.id, strategyState: s.state };
+          return { teamId: team.id, teamLevel: team.level, strategyId: s.id, strategyState: s.state, tenantId: team.companyId };
         }
       }
     }
@@ -40,10 +40,10 @@ function findInitiativeContext(initiativeId: string, teams: Team | Team[]): { te
   return null;
 }
 
-export async function GET(_req: NextRequest, ctx: { params: Promise<{ initiativeId: string }> }) {
+export async function GET(_req: NextRequest, { params }: { params: { initiativeId: string } }) {
   try {
     console.log('[API][links][GET] called');
-    const { initiativeId } = await ctx.params;
+    const { initiativeId } = params;
     console.log('[API][links][GET] initiativeId:', initiativeId);
     const { queryLinksFrom } = await import('@/lib/domain/initiatives-linking/projection');
     const rows = queryLinksFrom(initiativeId);
@@ -76,10 +76,10 @@ export async function GET(_req: NextRequest, ctx: { params: Promise<{ initiative
   }
 }
 
-export async function POST(req: NextRequest, ctx: { params: Promise<{ initiativeId: string }> }) {
+export async function POST(req: NextRequest, { params }: { params: { initiativeId: string } }) {
   try {
     console.log('[API][links][POST] called');
-    const { initiativeId } = await ctx.params;
+    const { initiativeId } = params;
     console.log('[API][links][POST] initiativeId:', initiativeId);
     const body = await req.json();
     console.log('[API][links][POST] body:', body);
@@ -108,10 +108,10 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ initiative
   }
 }
 
-export async function DELETE(req: NextRequest, ctx: { params: Promise<{ initiativeId: string }> }) {
+export async function DELETE(req: NextRequest, { params }: { params: { initiativeId: string } }) {
   try {
     console.log('[API][links][DELETE] called');
-    const { initiativeId } = await ctx.params;
+    const { initiativeId } = params;
     console.log('[API][links][DELETE] initiativeId:', initiativeId);
     const body = await req.json();
     console.log('[API][links][DELETE] body:', body);
@@ -121,11 +121,19 @@ export async function DELETE(req: NextRequest, ctx: { params: Promise<{ initiati
       return NextResponse.json({ ok: false, message: 'toInitiativeId required' }, { status: 400 });
     }
 
+    const teams = await getTeamsProjection();
+    const initiativeCtx = findInitiativeContext(initiativeId, teams);
+    if (!initiativeCtx) {
+      console.warn('[API][links][DELETE] Unable to resolve initiative context for tenant');
+      return NextResponse.json({ ok: false, message: 'Initiative context not found' }, { status: 404 });
+    }
+
     const ev: InitiativeUnlinkedEvent = {
       type: 'InitiativeUnlinked',
       entity: 'team',
-      aggregateId: initiativeId,
+      aggregateId: initiativeCtx.teamId,
       timestamp: new Date().toISOString(),
+      tenantId: initiativeCtx.tenantId,
       payload: { fromInitiativeId: initiativeId, toInitiativeId: toId },
     };
     await saveEvents([ev]);

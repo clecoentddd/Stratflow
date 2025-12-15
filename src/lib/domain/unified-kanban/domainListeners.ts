@@ -1,5 +1,6 @@
 import { registerProjectionHandler } from '@/lib/db/event-store';
 import { saveEvents } from '@/lib/db/event-store';
+import { resolveTenantForTeam } from '@/lib/domain/tenant/tenant-context';
 import type { InitiativeAddedToKanbanEvent, InitiativeItemAddedToKanbanEvent } from './events';
 
 // Domain listeners that add elements to kanban projection when they are created
@@ -19,12 +20,19 @@ registerProjectionHandler('InitiativeCreated', async (event: any, isReplay?: boo
     return;
   }
 
+  const tenantId = await resolveTenantForTeam(teamId);
+  if (!tenantId) {
+    console.warn('[KANBAN LISTENER] Unable to resolve tenant for team', teamId);
+    return;
+  }
+
   // Add initiative to kanban projection with "NEW" status
   const kanbanEvent: InitiativeAddedToKanbanEvent = {
     type: 'InitiativeAddedToKanban',
     entity: 'team',
     aggregateId: teamId,
     timestamp: new Date().toISOString(),
+    tenantId,
     payload: {
       initiativeId,
       initialStatus: 'NEW',
@@ -40,17 +48,24 @@ registerProjectionHandler('InitiativeCreated', async (event: any, isReplay?: boo
 });
 
 // Listen for initiative item creation and add to kanban
-registerProjectionHandler('InitiativeItemAdded', async (event: any, isReplay?: boolean) => {
+registerProjectionHandler('InitiativeItemCreated', async (event: any, isReplay?: boolean) => {
   if (isReplay) return;
-  if (event.type !== 'InitiativeItemAdded') return;
+  if (event.type !== 'InitiativeItemCreated') return;
 
-  console.log('[KANBAN LISTENER] Processing InitiativeItemAdded event:', event);
+  console.log('[KANBAN LISTENER] Processing InitiativeItemCreated event:', event);
 
-  const itemId = event.metadata?.itemId;
+  const itemId = event.payload?.itemId;
+  const initiativeId = event.payload?.initiativeId;
   const teamId = event.aggregateId;
 
-  if (!itemId || !teamId) {
-    console.warn('[KANBAN LISTENER] Missing itemId or teamId in InitiativeItemAdded event');
+  if (!itemId || !teamId || !initiativeId) {
+    console.warn('[KANBAN LISTENER] Missing itemId, initiativeId, or teamId in InitiativeItemCreated event');
+    return;
+  }
+
+  const tenantId = await resolveTenantForTeam(teamId);
+  if (!tenantId) {
+    console.warn('[KANBAN LISTENER] Unable to resolve tenant for team', teamId);
     return;
   }
 
@@ -60,9 +75,10 @@ registerProjectionHandler('InitiativeItemAdded', async (event: any, isReplay?: b
     entity: 'team',
     aggregateId: teamId,
     timestamp: new Date().toISOString(),
+    tenantId,
     payload: {
       itemId,
-      initiativeId: event.metadata?.initiativeId,
+      initiativeId,
       initialStatus: 'NEW',
       boardId: teamId, // Use teamId as board identifier
     },

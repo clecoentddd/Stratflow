@@ -252,13 +252,14 @@ function onTeamUpdated(e: any) {
   }
 }
 
-function onInitiativeItemAdded(e: any) {
+function onInitiativeItemCreated(e: any) {
   const table = getItemTable();
-  const id = e.metadata?.itemId;
+  const id = e.payload?.itemId;
   if (!id) return;
   
-  const initiativeId = e.metadata?.initiativeId;
-  const teamId = e.metadata?.teamId || e.aggregateId;
+  const initiativeId = e.payload?.initiativeId;
+  const teamId = e.aggregateId;
+  if (!initiativeId || !teamId) return;
   
   const initiativeTable = getTable();
   const initiative = initiativeTable.get(initiativeId);
@@ -266,11 +267,11 @@ function onInitiativeItemAdded(e: any) {
   
   const row: InitiativeItemRow = {
     id,
-    text: e.payload?.item?.text || 'New Item',
+    text: e.payload?.text || 'New Item',
     initiativeId,
     strategyId,
     teamId,
-    status: e.payload?.item?.status || 'todo',
+    status: e.payload?.status || 'todo',
     stepKey: e.payload?.stepKey
   };
   table.set(id, row);
@@ -329,7 +330,7 @@ function onElementMoved(e: any) {
 registerProjectionHandler('InitiativeCreated', onInitiativeCreated);
 registerProjectionHandler('InitiativeUpdated', onInitiativeUpdated);
 registerProjectionHandler('InitiativeDeleted', onInitiativeDeleted);
-registerProjectionHandler('InitiativeItemAdded', onInitiativeItemAdded);
+registerProjectionHandler('InitiativeItemCreated', onInitiativeItemCreated);
 registerProjectionHandler('InitiativeItemUpdated', onInitiativeItemUpdated);
 registerProjectionHandler('InitiativeItemDeleted', onInitiativeItemDeleted);
 registerProjectionHandler('StrategyCreated', onStrategyCreated);

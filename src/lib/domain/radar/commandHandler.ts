@@ -30,6 +30,7 @@ export class RadarCommandHandlers {
       entity: 'team',
       aggregateId: teamId,
       timestamp: new Date().toISOString(),
+      tenantId: team.companyId,
       payload: {
         ...command,
         id: `radar-${uuidv4()}`,
@@ -69,6 +70,7 @@ export class RadarCommandHandlers {
       entity: 'team',  
       aggregateId: teamId,
       timestamp: new Date().toISOString(),
+      tenantId: team.companyId,
       payload: {
         ...command,
         updated_at: new Date().toISOString(),
@@ -105,6 +107,7 @@ export class RadarCommandHandlers {
       entity: 'team',
       aggregateId: teamId,
       timestamp: new Date().toISOString(),
+      tenantId: team.companyId,
       payload: {
         id: itemId,
       }

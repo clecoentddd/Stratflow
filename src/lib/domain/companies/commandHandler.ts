@@ -18,6 +18,7 @@ export class CompaniesCommandHandlers {
       entity: 'company',
       aggregateId: newCompanyId,
       timestamp: new Date().toISOString(),
+      tenantId: newCompanyId,
       payload: {
         id: newCompanyId,
         name: command.name,

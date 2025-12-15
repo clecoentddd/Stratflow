@@ -32,13 +32,14 @@ interface InitiativeItemViewProps {
 function InitiativeItemView({ item, onSave, onDelete }: InitiativeItemViewProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editText, setEditText] = useState(item.text);
+  const isNewItem = item.id.startsWith('temp-');
 
   useEffect(() => {
     // Automatically enter edit mode for new, empty items.
-    if (item.text === "" && item.id.startsWith('temp-')) {
+    if (item.text === "" && isNewItem) {
       setIsEditing(true);
     }
-  }, [item]);
+  }, [item, isNewItem]);
 
   const handleSave = () => {
     onSave(item.id, editText);
@@ -47,7 +48,7 @@ function InitiativeItemView({ item, onSave, onDelete }: InitiativeItemViewProps)
 
   const handleCancel = () => {
     // If it was a new temporary item, just delete it on cancel.
-    if (item.text === "" && item.id.startsWith('temp-')) {
+    if (item.text === "" && isNewItem) {
         onDelete(item.id);
     } else {
         setEditText(item.text);
@@ -85,7 +86,7 @@ function InitiativeItemView({ item, onSave, onDelete }: InitiativeItemViewProps)
               Cancel
             </button>
             <button className="editButton" onClick={handleSave}>
-              Save
+              {isNewItem ? 'Create' : 'Save'}
             </button>
           </div>
         </div>
@@ -205,7 +206,7 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
       stepKey,
       item: { text: newText }, 
     };
-    console.log('[UI] Sending addInitiativeItem command:', { orgId, command });
+    console.log('[UI] addInitiativeItem fired (create path):', { orgId, itemId, stepKey });
     const optimisticInitiative = { ...initiative };
     const step = optimisticInitiative.steps.find(s => s.key === stepKey);
     if(step) {
@@ -223,6 +224,18 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
       return res.json();
     })
     .then((savedItem: InitiativeItemType) => {
+      setInitiative(prev => {
+        const next = JSON.parse(JSON.stringify(prev));
+        for (const step of next.steps) {
+          const item = step.items.find((i: InitiativeItemType) => i.id === itemId);
+          if (item) {
+            item.id = savedItem.id;
+            item.text = savedItem.text;
+            break;
+          }
+        }
+        return next;
+      });
       console.log('[UI] Initiative item created on server:', savedItem);
       toast({ 
         title: "Success", 
@@ -239,6 +252,7 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
     } else {
         // UPDATE (PUT)
         const command: UpdateInitiativeItemCommand = { initiativeId: initiative.id, itemId, text: newText };
+        console.log('[UI] updateInitiativeItem fired (update path):', { orgId, itemId, stepKey });
         
         setInitiative(prev => {
             const newInitiative = JSON.parse(JSON.stringify(prev));

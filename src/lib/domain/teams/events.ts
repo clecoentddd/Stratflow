@@ -2,7 +2,7 @@ import type { RadarEvent } from '../radar/events';
 import type { StrategyEvent } from '../strategies/events';
 import type { InitiativeEvent } from '../initiatives/events';
 import type {
-  InitiativeItemAddedEvent,
+  InitiativeItemCreatedEvent,
   InitiativeItemUpdatedEvent,
   InitiativeItemDeletedEvent,
 } from '../initiative-items/events';
@@ -15,6 +15,7 @@ export type Event<T extends string, P, M = {}> = {
   timestamp: string;
   aggregateId: string; // The ID of the entity the event belongs to (e.g., Team ID)
   entity: string; // The type of entity (e.g., 'team')
+  tenantId: string; // Multi-tenant context identifier
 };
 
 export type TeamCreatedEvent = Event<
@@ -47,6 +48,6 @@ export type TeamEvent =
   | RadarEvent
   | StrategyEvent
   | InitiativeEvent
-  | InitiativeItemAddedEvent
+  | InitiativeItemCreatedEvent
   | InitiativeItemUpdatedEvent
   | InitiativeItemDeletedEvent;

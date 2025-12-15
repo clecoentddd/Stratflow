@@ -37,6 +37,7 @@ export class InitiativesCommandHandlers {
       entity: 'team',
       aggregateId: teamId,
       timestamp: new Date().toISOString(),
+      tenantId: team.companyId,
       payload: {
         strategyId: command.strategyId,
         strategyName: strategy.description, // Include strategy name
@@ -118,6 +119,7 @@ export class InitiativesCommandHandlers {
         entity: 'team' as const,
         aggregateId: teamId,
         timestamp: new Date().toISOString(),
+        tenantId: team.companyId,
         payload: {
           progression: command.progression,
         },
@@ -132,6 +134,7 @@ export class InitiativesCommandHandlers {
         entity: 'team' as const,
         aggregateId: teamId,
         timestamp: new Date().toISOString(),
+        tenantId: team.companyId,
         payload: {
           initiativeId: command.initiativeId,
           name: command.name || foundInitiative.name,
@@ -184,6 +187,7 @@ export class InitiativesCommandHandlers {
       entity: 'team',
       aggregateId: teamId,
       timestamp: new Date().toISOString(),
+      tenantId: team.companyId,
       payload: {
         initiativeId: command.initiativeId,
         strategyId: command.strategyId,

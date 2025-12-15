@@ -8,4 +8,5 @@ export interface Event {
     teamIds: string[];
     timestamp: string;
   };
+  tenantId: string;
 }
