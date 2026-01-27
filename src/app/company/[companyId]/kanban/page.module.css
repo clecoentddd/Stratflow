@@ -1,0 +1,18 @@
+.pageContainer {
+    width: 100%;
+}
+
+.pageContainer[data-type="initiatives"] {
+    zoom: 0.75;
+    min-width: 133.33%;
+}
+
+.pageContainer[data-type="items"] {
+    zoom: 1;
+    min-width: 100%;
+}
+
+.addInitiativeButton {
+    margin-top: 1rem;
+    margin-right: 1rem;
+}

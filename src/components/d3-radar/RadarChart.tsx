@@ -7,11 +7,19 @@ import * as d3 from 'd3';
 import { GetRadarName } from './GetRadarData';
 import styles from './radar-styles.module.css';
 import { radarConfig, LEGEND1, LEGEND2, LEGEND3 } from './RadarConfig';
-import { 
-    parseRadarItems, 
-    groupItemsForPositioning, 
+import {
+    parseRadarItems,
+    groupItemsForPositioning,
     calculateItemPosition,
 } from './radarDataParser';
+import { Palette } from 'lucide-react';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from '@/components/ui/button';
 import { radarTooltipCopy, radarTooltipLabels } from '@/lib/radar/viewModel';
 
 type ThemeTokens = {
@@ -110,6 +118,7 @@ const RadarChart: React.FC<RadarChartProps> = ({ items, radius, onEditClick, the
     const [activeQuadrant, setActiveQuadrant] = useState<number | null>(null);
     const [currentTheme, setCurrentTheme] = useState<string>(theme);
     const [availableThemes, setAvailableThemes] = useState<ThemeOption[]>([]);
+    const [showThemeSelector, setShowThemeSelector] = useState(false);
     const router = useRouter();
 
     // Dynamic theme switching
@@ -140,7 +149,7 @@ const RadarChart: React.FC<RadarChartProps> = ({ items, radius, onEditClick, the
     };
 
     const handleReset = () => setActiveQuadrant(null);
-    
+
     const handleZoomInClick = (url: string) => {
         if (url) {
             router.push(url);
@@ -148,11 +157,11 @@ const RadarChart: React.FC<RadarChartProps> = ({ items, radius, onEditClick, the
     };
 
     const quadrantLabels = Object.values(radarConfig.categories)
-    .sort((a, b) => a.label.localeCompare(b.label)) 
-    .map(category => ({
-        label: category.label,
-        configIndex: category.quadrantIndex
-    }));
+        .sort((a, b) => a.label.localeCompare(b.label))
+        .map(category => ({
+            label: category.label,
+            configIndex: category.quadrantIndex
+        }));
 
     const drawQuadrants = (
         g: d3.Selection<SVGGElement, unknown, null, undefined>,
@@ -168,17 +177,17 @@ const RadarChart: React.FC<RadarChartProps> = ({ items, radius, onEditClick, the
             .attr("cx", "50%")
             .attr("cy", "50%")
             .attr("r", "70%");
-            
+
         radialGradient.append("stop")
             .attr("offset", "0%")
             .attr("stop-color", themeColors.quadrantLight)
             .attr("stop-opacity", 0.6);
-            
+
         radialGradient.append("stop")
             .attr("offset", "50%")
             .attr("stop-color", themeColors.quadrantDark)
             .attr("stop-opacity", 0.3);
-            
+
         radialGradient.append("stop")
             .attr("offset", "100%")
             .attr("stop-color", themeColors.quadrantDark)
@@ -191,7 +200,7 @@ const RadarChart: React.FC<RadarChartProps> = ({ items, radius, onEditClick, the
             const isEven = i % 2 === 0;
             const fillColor = useCustom ? customQuadrant : (isEven ? `url(#${gradientId})` : themeColors.quadrantDark);
             const opacity = useCustom ? 0.65 : (isEven ? 0.8 : 0.4);
-            
+
             g.append("path")
                 .attr("d", d3.arc()
                     .innerRadius(0)
@@ -204,7 +213,7 @@ const RadarChart: React.FC<RadarChartProps> = ({ items, radius, onEditClick, the
                 .attr("stroke", themeColors.gridPrimary)
                 .attr("stroke-width", 1)
                 .attr("stroke-opacity", 0.6)
-                .attr("data-quadrant", i); 
+                .attr("data-quadrant", i);
         });
     };
 
@@ -215,21 +224,21 @@ const RadarChart: React.FC<RadarChartProps> = ({ items, radius, onEditClick, the
     ) => {
         const offset = radius * 1.05; // Place labels just outside the main circle
         const verticalPadding = 80;
-    
+
         Object.values(radarConfig.categories).forEach(cat => {
             const angle = ((Math.PI / 2) * cat.quadrantIndex) + (Math.PI / 4); // Center angle of the quadrant
             const x = offset * Math.cos(angle);
             let y = offset * Math.sin(angle);
-    
+
             // Adjust y position: move up for top quadrants, down for bottom quadrants
             if (cat.quadrantIndex === 2 || cat.quadrantIndex === 3) {
                 y -= verticalPadding; // Move up
             } else {
                 y += verticalPadding; // Move down
             }
-            
+
             g.append("text")
-                .attr("x", x) 
+                .attr("x", x)
                 .attr("y", y)
                 .attr("text-anchor", "middle")
                 .attr("dominant-baseline", "middle")
@@ -252,7 +261,7 @@ const RadarChart: React.FC<RadarChartProps> = ({ items, radius, onEditClick, the
         radarConfig.visual.distanceRings.forEach((multiplier, index) => {
             const isOuter = multiplier === 1;
             const opacity = isOuter ? 0.8 : 0.4 - (index * 0.1);
-            
+
             g.append("circle")
                 .attr("r", radius * multiplier)
                 .attr("fill", "none")
@@ -261,13 +270,13 @@ const RadarChart: React.FC<RadarChartProps> = ({ items, radius, onEditClick, the
                 .attr("stroke-opacity", opacity)
                 .attr("filter", isOuter ? `drop-shadow(0 0 8px ${themeColors.gridPrimary}40)` : "none");
         });
-        
+
         // Draw radial lines with gradient effect
         for (let i = 0; i < radarConfig.visual.numberOfRadialLines; i++) {
             const angle = (Math.PI * 2 / radarConfig.visual.numberOfRadialLines) * i;
             const x = radius * Math.cos(angle);
             const y = radius * Math.sin(angle);
-            
+
             // Create a linear gradient for each line
             const existingDefs = g.select('defs');
             const defs = existingDefs.empty() ? g.append('defs') : existingDefs;
@@ -275,17 +284,17 @@ const RadarChart: React.FC<RadarChartProps> = ({ items, radius, onEditClick, the
                 .attr("id", `line-gradient-${themeKey}-${i}`)
                 .attr("x1", "0%").attr("y1", "0%")
                 .attr("x2", "100%").attr("y2", "0%");
-                
+
             lineGradient.append("stop")
                 .attr("offset", "0%")
                 .attr("stop-color", themeColors.gridPrimary)
                 .attr("stop-opacity", 0.8);
-                
+
             lineGradient.append("stop")
                 .attr("offset", "100%")
                 .attr("stop-color", themeColors.gridSecondary)
                 .attr("stop-opacity", 0.2);
-            
+
             g.append("line")
                 .attr("x1", 0)
                 .attr("y1", 0)
@@ -296,7 +305,7 @@ const RadarChart: React.FC<RadarChartProps> = ({ items, radius, onEditClick, the
                 .attr("opacity", 0.5);
         }
     };
-    
+
     const renderItems = (
         g: d3.Selection<SVGGElement, unknown, null, undefined>,
         groupedItems: { [key: string]: any[] },
@@ -319,11 +328,11 @@ const RadarChart: React.FC<RadarChartProps> = ({ items, radius, onEditClick, the
     ) => {
         const { x, y } = position;
         const size = item.size;
-        
+
         const itemGroup = g.append('g')
-                            .classed(styles.itemGroup, true)
-                            .attr("data-quadrant", item.quadrantIndex);
-        
+            .classed(styles.itemGroup, true)
+            .attr("data-quadrant", item.quadrantIndex);
+
         itemGroup
             .on('mouseover', async function () {
                 d3.select(this).select('circle').attr('r', size * 2);
@@ -352,9 +361,9 @@ const RadarChart: React.FC<RadarChartProps> = ({ items, radius, onEditClick, the
             .attr('font-family', 'Arial, sans-serif')
             .attr('text-anchor', 'middle');
     };
-    
+
     const fetchRadarName = async (orgId: string) => await GetRadarName(orgId);
-    
+
     const getImpactClass = (impact: string) => {
         switch (impact) {
             case 'Low': return styles.lowImpact;
@@ -383,10 +392,10 @@ const RadarChart: React.FC<RadarChartProps> = ({ items, radius, onEditClick, the
     ) => {
         const color = item.color || themeColors.primary;
         const impactClass = getImpactClass(item.raw?.impact);
-        
+
         // Visible ring
         group.append('circle').attr('cx', x).attr('cy', y).attr('r', size).attr('fill', 'none').attr('stroke', color).attr('stroke-width', 2).attr('class', impactClass || styles.defaultImpact);
-        
+
         // Center dot
         group.append('circle').attr('cx', x).attr('cy', y).attr('r', size * 0.7).attr('fill', color).attr('stroke', 'none').attr('class', impactClass || styles.defaultImpact);
     };
@@ -438,7 +447,7 @@ const RadarChart: React.FC<RadarChartProps> = ({ items, radius, onEditClick, the
         const svgSize = radius * 2 + 120; // Added padding for labels
         const totalWidth = svgSize + padding * 2;
         const zoomFactor = 2;
-        
+
         const shiftFactor = 0.5;
 
         const svg = d3.select(svgRef.current)
@@ -446,32 +455,34 @@ const RadarChart: React.FC<RadarChartProps> = ({ items, radius, onEditClick, the
             .attr('height', svgSize);
 
         svg.selectAll('*').remove();
-        
-        const g = svg.append('g').attr('class', 'main-radar-group');
-        
+
+        const g = svg.append('g')
+            .attr('class', 'main-radar-group')
+            .attr('transform', `translate(${totalWidth / 2}, ${svgSize / 2})`);
+
         let transformString = `translate(${totalWidth / 2}, ${svgSize / 2})`;
 
         if (activeQuadrant !== null) {
             let tX = 0, tY = 0;
             const translationValue = radius * shiftFactor;
-            
+
             switch (activeQuadrant) {
-                case 0: tX = -translationValue; tY = -translationValue; break; 
-                case 1: tX = translationValue;  tY = -translationValue; break; 
-                case 2: tX = translationValue;  tY = translationValue; break;  
-                case 3: tX = -translationValue; tY = translationValue; break;  
+                case 0: tX = -translationValue; tY = -translationValue; break;
+                case 1: tX = translationValue; tY = -translationValue; break;
+                case 2: tX = translationValue; tY = translationValue; break;
+                case 3: tX = -translationValue; tY = translationValue; break;
             }
 
             transformString = `translate(${totalWidth / 2}, ${svgSize / 2}) scale(${zoomFactor}) translate(${tX}, ${tY})`;
         }
-        
+
         const themeColors = resolveThemeTokens(themeRootRef.current);
 
         drawQuadrants(g, radius, themeColors, currentTheme);
         drawCategoryLabels(g, radius, themeColors);
         drawRadarGrid(g, radius, themeColors, currentTheme);
         drawLegends(g, radius, themeColors);
-        
+
         if (items && items.length > 0) {
             const normalizedItems = parseRadarItems(items);
             const groupedItems = groupItemsForPositioning(normalizedItems);
@@ -481,7 +492,7 @@ const RadarChart: React.FC<RadarChartProps> = ({ items, radius, onEditClick, the
         g.transition()
             .duration(750)
             .attr('transform', transformString);
-            
+
     }, [items, radius, activeQuadrant, currentTheme]);
 
     useEffect(() => {
@@ -495,53 +506,66 @@ const RadarChart: React.FC<RadarChartProps> = ({ items, radius, onEditClick, the
 
 
     return (
-        <div ref={themeRootRef} className={`${styles.centeringWrapper} ${getThemeClass()}`}>
+        <div ref={themeRootRef} className={`${styles.centeringWrapper} ${getThemeClass()} relative`}>
+            {/* Theme Selector (Top-Left of Playground) */}
+            <div className="absolute top-4 left-4 z-50">
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button
+                            variant="outline"
+                            size="icon"
+                            className="h-9 w-9 rounded-full bg-background/40 backdrop-blur-md border-radar-border-subtle hover:bg-background/60 shadow-lg group transition-all"
+                            title="Change Theme"
+                        >
+                            <Palette className="h-5 w-5 text-radar-primary group-hover:scale-110 transition-transform" />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="start" className="bg-background/95 backdrop-blur-lg border-radar-border-subtle min-w-[140px] shadow-2xl z-50">
+                        {availableThemes.map((themeOption) => (
+                            <DropdownMenuItem
+                                key={themeOption.key}
+                                onClick={() => setCurrentTheme(themeOption.key)}
+                                className={`flex items-center gap-3 cursor-pointer py-2.5 px-3 transition-colors ${currentTheme === themeOption.key ? 'bg-radar-primary/20 text-radar-primary font-bold' : 'hover:bg-accent/50'}`}
+                            >
+                                <span className="text-xl leading-none">{themeOption.emoji}</span>
+                                <span className="text-sm font-medium">{themeOption.label}</span>
+                            </DropdownMenuItem>
+                        ))}
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            </div>
+
             <div className={styles.middlePanel}>
                 <svg ref={svgRef} className={styles.radarWrapper}></svg>
             </div>
             <div className={styles.leftPanel}>
                 <div className={styles.zoomBar}>
-                    {/* Theme Selector */}
                     <div className={styles.zoomControls}>
-                        <span className={styles.zoomTitle}>🎨 Theme: {currentThemeLabel}</span>
-                        {availableThemes.map((themeOption) => (
-                            <button
-                                key={themeOption.key}
-                                className={`${styles.themeButton} ${currentTheme === themeOption.key ? styles.active : ''}`}
-                                onClick={() => {
-                                    console.log('🎨 Switching theme to:', themeOption.key);
-                                    setCurrentTheme(themeOption.key);
-                                }}
-                                title={themeOption.label}
-                            >
-                                {themeOption.emoji} {themeOption.label}
-                            </button>
-                        ))}
-                    </div>
+                        <div className="flex items-center justify-between w-full mb-2">
+                            <span className={styles.zoomTitle}>
+                                Zoom into a quadrant:
+                            </span>
+                        </div>
 
-                    {/* Zoom Controls */}
-                    <div className={styles.zoomControls}>
-                    <span className={styles.zoomTitle}>Zoom into a quadrant:</span>
-                    
-                    {quadrantLabels.map((category, idx) => ( 
-                            <button 
-                                key={idx} 
-                                className={`${styles.zoomButton} ${activeQuadrant === category.configIndex ? styles.active : ''}`} 
-                                onClick={() => handleQuadrantZoom(category.configIndex)} 
+                        {quadrantLabels.map((category, idx) => (
+                            <button
+                                key={idx}
+                                className={`${styles.zoomButton} ${activeQuadrant === category.configIndex ? styles.active : ''}`}
+                                onClick={() => handleQuadrantZoom(category.configIndex)}
                             >
                                 {category.label}
                             </button>
                         ))}
 
-                    {activeQuadrant !== null && (
-                        <button className={`${styles.zoomButton} ${styles.resetButton}`} onClick={handleReset}>
-                            ↺ Show All
-                        </button>
-                    )}
+                        {activeQuadrant !== null && (
+                            <button className={`${styles.zoomButton} ${styles.resetButton}`} onClick={handleReset}>
+                                ↺ Show All
+                            </button>
+                        )}
                     </div>
                 </div>
-                <div className={styles.tooltipPanel} 
-                    onMouseEnter={() => {}}
+                <div className={styles.tooltipPanel}
+                    onMouseEnter={() => { }}
                     onMouseLeave={() => setTooltipData({ visible: false, item: null })}
                 >
                     {tooltipData.visible && tooltipData.item ? (
@@ -555,8 +579,8 @@ const RadarChart: React.FC<RadarChartProps> = ({ items, radius, onEditClick, the
                             {tooltipData.item.zoom_in && (
                                 <div className={styles.row}>
                                     <span className={styles.label}>{radarTooltipLabels.zoom}</span>
-                                    <span 
-                                        className={styles.link} 
+                                    <span
+                                        className={styles.link}
                                         onClick={() => handleZoomInClick(tooltipData.item.zoom_in.id)}
                                     >
                                         {tooltipData.item.zoom_in.name}
@@ -580,12 +604,12 @@ const RadarChart: React.FC<RadarChartProps> = ({ items, radius, onEditClick, the
 
 export default RadarChart;
 
-    
 
 
 
-    
 
-    
+
+
+
 
 

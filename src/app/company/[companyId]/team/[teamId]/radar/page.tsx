@@ -29,7 +29,7 @@ export default function RadarPage() {
     try {
       // Fetch the specific team for the radar
       const orgResponse = await fetch(`/api/teams/${teamId}`);
-       if (orgResponse.status === 404) {
+      if (orgResponse.status === 404) {
         notFound();
         return;
       }
@@ -37,7 +37,7 @@ export default function RadarPage() {
         throw new Error("Failed to fetch team data");
       }
       const orgData = await orgResponse.json();
-      
+
       if (!orgData) {
         notFound();
         return;
@@ -65,7 +65,7 @@ export default function RadarPage() {
   const handleUpsertRadarItem = async (itemToUpsert: RadarItem) => {
     const isUpdating = !!itemToUpsert.created_at;
     const method = isUpdating ? 'PUT' : 'POST';
-    
+
     const command: UpsertRadarItemCommand = itemToUpsert;
 
     // Keep a copy of the current team state for rollback
@@ -99,7 +99,7 @@ export default function RadarPage() {
       const updatedTeam = await response.json();
       // Independent API returns the full updated team state
       setTeam(updatedTeam);
-      
+
       toast({
         title: isUpdating ? "Radar Item Updated" : "Radar Item Created",
         description: `"${itemToUpsert.name}" has been saved.`,
@@ -108,7 +108,7 @@ export default function RadarPage() {
     } catch (error) {
       // Revert to previous state on error
       setTeam(previousTeam);
-      
+
       console.error(error);
       toast({
         title: "Error",
@@ -135,36 +135,36 @@ export default function RadarPage() {
     });
 
     try {
-        const response = await fetch(`/api/radar?teamId=${teamId}`, {
-            method: 'DELETE',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id: itemId }),
-        });
+      const response = await fetch(`/api/radar?teamId=${teamId}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: itemId }),
+      });
 
-        if (!response.ok) {
-            throw new Error('Failed to delete radar item');
-        }
+      if (!response.ok) {
+        throw new Error('Failed to delete radar item');
+      }
 
-        const updatedTeam = await response.json();
-        // Independent API returns the full updated team state
-        setTeam(updatedTeam);
+      const updatedTeam = await response.json();
+      // Independent API returns the full updated team state
+      setTeam(updatedTeam);
 
-        toast({ 
-            title: "Radar Item Deleted", 
-            description: `"${itemToDelete.name}" has been deleted.`, 
-            variant: "destructive" 
-        });
+      toast({
+        title: "Radar Item Deleted",
+        description: `"${itemToDelete.name}" has been deleted.`,
+        variant: "destructive"
+      });
 
     } catch (error) {
-        // Revert to previous state on error
-        setTeam(previousTeam);
-        
-        console.error(error);
-        toast({
-            title: "Error",
-            description: "Could not delete the item. Please try again.",
-            variant: "destructive",
-        });
+      // Revert to previous state on error
+      setTeam(previousTeam);
+
+      console.error(error);
+      toast({
+        title: "Error",
+        description: "Could not delete the item. Please try again.",
+        variant: "destructive",
+      });
     }
   }
 
@@ -184,21 +184,21 @@ export default function RadarPage() {
   }
 
   if (!team) {
-     return (
-       <div className="flex flex-col min-h-screen">
+    return (
+      <div className="flex flex-col min-h-screen">
         <main className="p-4 md:p-6 flex-1 flex items-center justify-center">
-            <div className="text-center">
-                <h1 className="text-2xl font-bold">Team Not Found</h1>
-                <p className="text-muted-foreground">The team you are looking for does not exist.</p>
-                <Link href="/" className="mt-4 inline-block">
-                    <Button>Back to Companies</Button>
-                </Link>
-            </div>
+          <div className="text-center">
+            <h1 className="text-2xl font-bold">Team Not Found</h1>
+            <p className="text-muted-foreground">The team you are looking for does not exist.</p>
+            <Link href="/" className="mt-4 inline-block">
+              <Button>Back to Companies</Button>
+            </Link>
+          </div>
         </main>
       </div>
     )
   }
-  
+
   return (
     <div className="flex flex-col min-h-screen">
       <main className="p-4 md:p-6 flex-1">
@@ -224,6 +224,7 @@ export default function RadarPage() {
         item={editingItem}
         teams={teams}
         currentTeamId={team.id}
+        companyId={team.companyId}
       />
     </div>
   );

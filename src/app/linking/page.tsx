@@ -6,6 +6,12 @@ export default async function LinkingRootRedirect({ searchParams }: { searchPara
   Object.entries(params).forEach(([k, v]) => {
     if (typeof v === 'string' && v.length > 0) sp.set(k, v);
   });
+  const companyId = sp.get('companyId');
+  if (companyId) {
+    sp.delete('companyId');
+    const qs = sp.toString();
+    redirect(`/company/${companyId}/strategic-view${qs ? `?${qs}` : ''}`);
+  }
   const qs = sp.toString();
-  redirect(qs ? `/strategic-view?${qs}` : '/strategic-view');
+  redirect(qs ? `/strategic-view?${qs}` : '/strategic-view'); // Fallback for legacy calls? Or error?
 }

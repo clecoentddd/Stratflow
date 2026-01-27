@@ -27,6 +27,7 @@ interface RadarItemDialogProps {
   item: RadarItem | null;
   teams: Team[];
   currentTeamId: string;
+  companyId: string;
 }
 
 // Represents the fields a user can edit or create
@@ -46,7 +47,7 @@ const defaultFormData: FormData = {
 };
 
 
-export function RadarItemDialog({ isOpen, onOpenChange, onSave, item, teams, currentTeamId }: RadarItemDialogProps) {
+export function RadarItemDialog({ isOpen, onOpenChange, onSave, item, teams, currentTeamId, companyId }: RadarItemDialogProps) {
   const [formData, setFormData] = useState<FormData>(defaultFormData);
   const [isZoomInOpen, setZoomInOpen] = useState(false);
 
@@ -64,7 +65,7 @@ export function RadarItemDialog({ isOpen, onOpenChange, onSave, item, teams, cur
   const handleChange = (field: keyof FormData, value: string | null) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
-  
+
   const handleRadioChange = (field: keyof FormData, value: string) => {
     if (value) {
       handleChange(field, value);
@@ -73,7 +74,7 @@ export function RadarItemDialog({ isOpen, onOpenChange, onSave, item, teams, cur
 
   const handleSubmit = () => {
     if (!formData.name) return;
-    
+
     // Re-constitute the full RadarItem, adding back system-managed fields
     const finalItem: RadarItem = {
       ...formData,
@@ -82,13 +83,13 @@ export function RadarItemDialog({ isOpen, onOpenChange, onSave, item, teams, cur
       created_at: item?.created_at || '', // API will set this for new items
       updated_at: item?.updated_at || null,
     };
-    
+
     onSave(finalItem);
     onOpenChange(false);
   };
-  
+
   const isFormValid = formData.name?.trim() !== "";
-  
+
   const getZoomLinkTeamName = () => {
     if (!formData.zoom_in) return "Select a radar...";
     const team = teams.find(o => formData.zoom_in?.includes(o.id));
@@ -113,80 +114,80 @@ export function RadarItemDialog({ isOpen, onOpenChange, onSave, item, teams, cur
 
             <div className={styles.spaceY2}>
               <Label htmlFor="detect">What have you detected?</Label>
-              <Textarea id="detect" value={formData.detect} onChange={(e) => handleChange('detect', e.target.value)} placeholder="Describe the signal or event." rows={3}/>
+              <Textarea id="detect" value={formData.detect} onChange={(e) => handleChange('detect', e.target.value)} placeholder="Describe the signal or event." rows={3} />
             </div>
             <div className={styles.spaceY2}>
               <Label htmlFor="assess">What is your assessment?</Label>
-              <Textarea id="assess" value={formData.assess} onChange={(e) => handleChange('assess', e.target.value)} placeholder="Analyze the potential impact and implications." rows={3}/>
+              <Textarea id="assess" value={formData.assess} onChange={(e) => handleChange('assess', e.target.value)} placeholder="Analyze the potential impact and implications." rows={3} />
             </div>
             <div className={styles.spaceY2}>
               <Label htmlFor="respond">What decisions could you take?</Label>
-              <Textarea id="respond" value={formData.respond} onChange={(e) => handleChange('respond', e.target.value)} placeholder="Outline potential actions or strategies." rows={3}/>
+              <Textarea id="respond" value={formData.respond} onChange={(e) => handleChange('respond', e.target.value)} placeholder="Outline potential actions or strategies." rows={3} />
             </div>
 
             <div className={styles.spaceY4}>
-                <div className={styles.spaceY2}>
-                  <Label>Type</Label>
-                  <RadioGroup value={formData.type} onValueChange={(v) => handleRadioChange('type', v as RadarItemType)} className={styles.flexWrapGap2}>
-                      {radarAttributes.types.map(t => (
-                          <RadioGroupItem key={t} value={t} id={`type-${t}`} className={styles.srOnly} />
-                      ))}
-                      {radarAttributes.types.map(t => (
-                          <Label key={t} htmlFor={`type-${t}`} className={cn(styles.radioLabelBase, formData.type === t ? styles.radioLabelSelected : undefined)}>{t}</Label>
-                      ))}
-                  </RadioGroup>
-                </div>
-                 <div className={styles.spaceY2}>
-                  <Label>Category</Label>
-                  <RadioGroup value={formData.category} onValueChange={(v) => handleRadioChange('category', v as RadarCategory)} className={styles.flexWrapGap2}>
-                      {radarAttributes.categories.map(c => (
-                          <RadioGroupItem key={c} value={c} id={`cat-${c}`} className={styles.srOnly} />
-                      ))}
-                      {radarAttributes.categories.map(c => (
-                           <Label key={c} htmlFor={`cat-${c}`} className={cn(styles.radioLabelBase, formData.category === c ? styles.radioLabelSelected : undefined)}>{c}</Label>
-                      ))}
-                  </RadioGroup>
-                </div>
-                 <div className={styles.spaceY2}>
-                  <Label>Distance</Label>
-                  <RadioGroup value={formData.distance} onValueChange={(v) => handleRadioChange('distance', v as RadarDistance)} className={styles.flexWrapGap2}>
-                      {radarAttributes.distances.map(d => (
-                          <RadioGroupItem key={d} value={d} id={`dist-${d}`} className={styles.srOnly} />
-                      ))}
-                      {radarAttributes.distances.map(d => (
-                           <Label key={d} htmlFor={`dist-${d}`} className={cn(styles.radioLabelBase, formData.distance === d ? styles.radioLabelSelected : undefined)}>{d}</Label>
-                      ))}
-                  </RadioGroup>
-                </div>
-                 <div className={styles.spaceY2}>
-                  <Label>Impact</Label>
-                  <RadioGroup value={formData.impact} onValueChange={(v) => handleRadioChange('impact', v as RadarImpact)} className={styles.flexWrapGap2}>
-                      {radarAttributes.impacts.map(i => (
-                          <RadioGroupItem key={i} value={i} id={`impact-${i}`} className={styles.srOnly} />
-                      ))}
-                      {radarAttributes.impacts.map(i => (
-                           <Label key={i} htmlFor={`impact-${i}`} className={cn(styles.radioLabelBase, formData.impact === i ? styles.radioLabelSelected : undefined)}>{i}</Label>
-                      ))}
-                  </RadioGroup>
-                </div>
-                 <div className={styles.spaceY2}>
-                    <Label>Risk</Label>
-                    <RadioGroup value={formData.risk} onValueChange={(v) => handleRadioChange('risk', v as RadarRisk)} className={styles.flexWrapGap2}>
-                      {radarAttributes.risks.map(f => (
-                        <RadioGroupItem key={f} value={f} id={`risk-${f}`} className={styles.srOnly} />
-                      ))}
-                      {radarAttributes.risks.map(f => (
-                         <Label key={f} htmlFor={`risk-${f}`} className={cn(styles.radioLabelBase, formData.risk === f ? styles.radioLabelSelected : undefined)}>{f}</Label>
-                      ))}
-                  </RadioGroup>
-                </div>
+              <div className={styles.spaceY2}>
+                <Label>Type</Label>
+                <RadioGroup value={formData.type} onValueChange={(v) => handleRadioChange('type', v as RadarItemType)} className={styles.flexWrapGap2}>
+                  {radarAttributes.types.map(t => (
+                    <RadioGroupItem key={t} value={t} id={`type-${t}`} className={styles.srOnly} />
+                  ))}
+                  {radarAttributes.types.map(t => (
+                    <Label key={t} htmlFor={`type-${t}`} className={cn(styles.radioLabelBase, formData.type === t ? styles.radioLabelSelected : undefined)}>{t}</Label>
+                  ))}
+                </RadioGroup>
+              </div>
+              <div className={styles.spaceY2}>
+                <Label>Category</Label>
+                <RadioGroup value={formData.category} onValueChange={(v) => handleRadioChange('category', v as RadarCategory)} className={styles.flexWrapGap2}>
+                  {radarAttributes.categories.map(c => (
+                    <RadioGroupItem key={c} value={c} id={`cat-${c}`} className={styles.srOnly} />
+                  ))}
+                  {radarAttributes.categories.map(c => (
+                    <Label key={c} htmlFor={`cat-${c}`} className={cn(styles.radioLabelBase, formData.category === c ? styles.radioLabelSelected : undefined)}>{c}</Label>
+                  ))}
+                </RadioGroup>
+              </div>
+              <div className={styles.spaceY2}>
+                <Label>Distance</Label>
+                <RadioGroup value={formData.distance} onValueChange={(v) => handleRadioChange('distance', v as RadarDistance)} className={styles.flexWrapGap2}>
+                  {radarAttributes.distances.map(d => (
+                    <RadioGroupItem key={d} value={d} id={`dist-${d}`} className={styles.srOnly} />
+                  ))}
+                  {radarAttributes.distances.map(d => (
+                    <Label key={d} htmlFor={`dist-${d}`} className={cn(styles.radioLabelBase, formData.distance === d ? styles.radioLabelSelected : undefined)}>{d}</Label>
+                  ))}
+                </RadioGroup>
+              </div>
+              <div className={styles.spaceY2}>
+                <Label>Impact</Label>
+                <RadioGroup value={formData.impact} onValueChange={(v) => handleRadioChange('impact', v as RadarImpact)} className={styles.flexWrapGap2}>
+                  {radarAttributes.impacts.map(i => (
+                    <RadioGroupItem key={i} value={i} id={`impact-${i}`} className={styles.srOnly} />
+                  ))}
+                  {radarAttributes.impacts.map(i => (
+                    <Label key={i} htmlFor={`impact-${i}`} className={cn(styles.radioLabelBase, formData.impact === i ? styles.radioLabelSelected : undefined)}>{i}</Label>
+                  ))}
+                </RadioGroup>
+              </div>
+              <div className={styles.spaceY2}>
+                <Label>Risk</Label>
+                <RadioGroup value={formData.risk} onValueChange={(v) => handleRadioChange('risk', v as RadarRisk)} className={styles.flexWrapGap2}>
+                  {radarAttributes.risks.map(f => (
+                    <RadioGroupItem key={f} value={f} id={`risk-${f}`} className={styles.srOnly} />
+                  ))}
+                  {radarAttributes.risks.map(f => (
+                    <Label key={f} htmlFor={`risk-${f}`} className={cn(styles.radioLabelBase, formData.risk === f ? styles.radioLabelSelected : undefined)}>{f}</Label>
+                  ))}
+                </RadioGroup>
+              </div>
             </div>
-            
+
             <div className={styles.spaceY2}>
-                <Label htmlFor="zoom_in">Zoom In Link (Optional)</Label>
-                <Button variant="outline" className={styles.zoomButton} onClick={() => setZoomInOpen(true)}>
-                    {getZoomLinkTeamName()}
-                </Button>
+              <Label htmlFor="zoom_in">Zoom In Link (Optional)</Label>
+              <Button variant="outline" className={styles.zoomButton} onClick={() => setZoomInOpen(true)}>
+                {getZoomLinkTeamName()}
+              </Button>
             </div>
           </div>
           <DialogFooter>
@@ -197,12 +198,13 @@ export function RadarItemDialog({ isOpen, onOpenChange, onSave, item, teams, cur
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      <ZoomInDialog 
+      <ZoomInDialog
         isOpen={isZoomInOpen}
         onOpenChange={setZoomInOpen}
         teams={teams}
         onSelect={(link) => handleChange('zoom_in', link)}
         currentTeamId={currentTeamId}
+        companyId={companyId}
       />
     </>
   );

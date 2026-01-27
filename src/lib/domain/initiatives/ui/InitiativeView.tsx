@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { cn } from "@/lib/utils";
 import Link from 'next/link';
-import { Plus, Trash2, Search, Milestone, ListChecks, Target, Edit, MoreVertical } from "lucide-react";
+import { Plus, Trash2, Search, Milestone, ListChecks, Target, Edit, MoreVertical, ChevronDown } from "lucide-react";
 import { v4 as uuidv4 } from 'uuid';
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
@@ -49,17 +50,17 @@ function InitiativeItemView({ item, onSave, onDelete }: InitiativeItemViewProps)
   const handleCancel = () => {
     // If it was a new temporary item, just delete it on cancel.
     if (item.text === "" && isNewItem) {
-        onDelete(item.id);
+      onDelete(item.id);
     } else {
-        setEditText(item.text);
-        setIsEditing(false);
+      setEditText(item.text);
+      setIsEditing(false);
     }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        handleSave();
+      e.preventDefault();
+      handleSave();
     }
   }
 
@@ -95,9 +96,9 @@ function InitiativeItemView({ item, onSave, onDelete }: InitiativeItemViewProps)
   }
 
   return (
-    <div 
-        onClick={() => setIsEditing(true)} 
-        className={stepStyles.itemView}
+    <div
+      onClick={() => setIsEditing(true)}
+      className={stepStyles.itemView}
     >
       <p className={stepStyles.itemText}>{item.text}</p>
     </div>
@@ -118,7 +119,7 @@ interface InitiativeViewProps {
 const iconMap: Record<string, React.ComponentType<any>> = { Search, Milestone, ListChecks, Target };
 
 export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiativeChange, onDeleteInitiative, strategyId, onLocalUpdate }: InitiativeViewProps) {
-  const defaultExpanded = initialInitiative.isExpanded ?? !!(initialInitiative.steps && initialInitiative.steps.some((s: any) => Array.isArray(s.items) && s.items.length > 0));
+  const defaultExpanded = initialInitiative.isExpanded ?? false;
   const [initiative, setInitiative] = useState({ ...initialInitiative, isExpanded: defaultExpanded });
   const [isLinkRadarOpen, setLinkRadarOpen] = useState(false);
   const [isLinkInitiativesOpen, setLinkInitiativesOpen] = useState(false);
@@ -130,25 +131,25 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
   useEffect(() => {
     setInitiative(prev => ({ ...initialInitiative, isExpanded: prev.isExpanded }));
   }, [initialInitiative]);
-  
+
   const fireAndForget = (
     promise: Promise<Response>,
     errorMessage: string
   ) => {
     promise
-        .then(async res => {
-            if (!res.ok) {
-                const errorData = await res.json().catch(() => ({}));
-                console.error("Fire-and-forget failed server-side.", errorData);
-                throw new Error(errorData.message || errorMessage);
-            }
-        })
-        .then(() => onInitiativeChange()) 
-        .catch(err => {
-            console.error(err.message);
-            toast({ title: "Save Error", description: err.message, variant: "destructive" });
-            onInitiativeChange(); // Rollback on error
-        });
+      .then(async res => {
+        if (!res.ok) {
+          const errorData = await res.json().catch(() => ({}));
+          console.error("Fire-and-forget failed server-side.", errorData);
+          throw new Error(errorData.message || errorMessage);
+        }
+      })
+      .then(() => onInitiativeChange())
+      .catch(err => {
+        console.error(err.message);
+        toast({ title: "Save Error", description: err.message, variant: "destructive" });
+        onInitiativeChange(); // Rollback on error
+      });
   };
 
 
@@ -180,127 +181,127 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
   };
 
   const handleAddInitiativeItem = (stepKey: InitiativeStepKey) => {
-  const tempId = `temp-${uuidv4()}`;
-  const newItem: InitiativeItemType = { id: tempId, text: "" };
-  console.log('[UI] Adding new initiative item (optimistic):', { tempId, stepKey });
-  setInitiative(prev => {
-    const newInitiative = JSON.parse(JSON.stringify(prev));
-    const step = newInitiative.steps.find((s: any) => s.key === stepKey);
-    if (step) {
-      step.items.push(newItem);
-    }
-    return newInitiative;
-  });
+    const tempId = `temp-${uuidv4()}`;
+    const newItem: InitiativeItemType = { id: tempId, text: "" };
+    console.log('[UI] Adding new initiative item (optimistic):', { tempId, stepKey });
+    setInitiative(prev => {
+      const newInitiative = JSON.parse(JSON.stringify(prev));
+      const step = newInitiative.steps.find((s: any) => s.key === stepKey);
+      if (step) {
+        step.items.push(newItem);
+      }
+      return newInitiative;
+    });
   };
-  
+
   const handleSaveInitiativeItem = (itemId: string, newText: string, stepKey: InitiativeStepKey) => {
     if (itemId.startsWith('temp-') && newText.trim() === '') {
-        handleDeleteInitiativeItem(itemId, stepKey);
-        return;
+      handleDeleteInitiativeItem(itemId, stepKey);
+      return;
     }
 
     if (itemId.startsWith('temp-')) {
-    // CREATE (POST)
-    const command: AddInitiativeItemCommand = {
-      initiativeId: initiative.id,
-      stepKey,
-      item: { text: newText }, 
-    };
-    console.log('[UI] addInitiativeItem fired (create path):', { orgId, itemId, stepKey });
-    const optimisticInitiative = { ...initiative };
-    const step = optimisticInitiative.steps.find(s => s.key === stepKey);
-    if(step) {
-      const item = step.items.find(i => i.id === itemId);
-      if(item) item.text = newText;
-    }
-    setInitiative(optimisticInitiative);
-
-    addInitiativeItem(orgId, command)
-    .then(async res => {
-      if(!res.ok) {
-        const errorData = await res.json().catch(() => ({}));
-        throw new Error(errorData.message || "Server failed to create item.");
+      // CREATE (POST)
+      const command: AddInitiativeItemCommand = {
+        initiativeId: initiative.id,
+        stepKey,
+        item: { text: newText },
+      };
+      console.log('[UI] addInitiativeItem fired (create path):', { orgId, itemId, stepKey });
+      const optimisticInitiative = { ...initiative };
+      const step = optimisticInitiative.steps.find(s => s.key === stepKey);
+      if (step) {
+        const item = step.items.find(i => i.id === itemId);
+        if (item) item.text = newText;
       }
-      return res.json();
-    })
-    .then((savedItem: InitiativeItemType) => {
+      setInitiative(optimisticInitiative);
+
+      addInitiativeItem(orgId, command)
+        .then(async res => {
+          if (!res.ok) {
+            const errorData = await res.json().catch(() => ({}));
+            throw new Error(errorData.message || "Server failed to create item.");
+          }
+          return res.json();
+        })
+        .then((savedItem: InitiativeItemType) => {
+          setInitiative(prev => {
+            const next = JSON.parse(JSON.stringify(prev));
+            for (const step of next.steps) {
+              const item = step.items.find((i: InitiativeItemType) => i.id === itemId);
+              if (item) {
+                item.id = savedItem.id;
+                item.text = savedItem.text;
+                break;
+              }
+            }
+            return next;
+          });
+          console.log('[UI] Initiative item created on server:', savedItem);
+          toast({
+            title: "Success",
+            description: "Initiative Item Saved",
+            variant: "default"
+          });
+          onInitiativeChange();
+        })
+        .catch(err => {
+          console.error('[UI] Error creating initiative item:', err);
+          toast({ title: "Error", description: err.message, variant: "destructive" });
+          onInitiativeChange(); // Hard refresh on failure
+        });
+    } else {
+      // UPDATE (PUT)
+      const command: UpdateInitiativeItemCommand = { initiativeId: initiative.id, itemId, text: newText };
+      console.log('[UI] updateInitiativeItem fired (update path):', { orgId, itemId, stepKey });
+
       setInitiative(prev => {
-        const next = JSON.parse(JSON.stringify(prev));
-        for (const step of next.steps) {
+        const newInitiative = JSON.parse(JSON.stringify(prev));
+        for (const step of newInitiative.steps) {
           const item = step.items.find((i: InitiativeItemType) => i.id === itemId);
           if (item) {
-            item.id = savedItem.id;
-            item.text = savedItem.text;
+            item.text = newText;
             break;
           }
         }
-        return next;
+        return newInitiative;
       });
-      console.log('[UI] Initiative item created on server:', savedItem);
-      toast({ 
-        title: "Success", 
-        description: "Initiative Item Saved",
-        variant: "default"
-      });
-      onInitiativeChange(); 
-    })
-    .catch(err => {
-      console.error('[UI] Error creating initiative item:', err);
-      toast({ title: "Error", description: err.message, variant: "destructive" });
-      onInitiativeChange(); // Hard refresh on failure
-    });
-    } else {
-        // UPDATE (PUT)
-        const command: UpdateInitiativeItemCommand = { initiativeId: initiative.id, itemId, text: newText };
-        console.log('[UI] updateInitiativeItem fired (update path):', { orgId, itemId, stepKey });
-        
-        setInitiative(prev => {
-            const newInitiative = JSON.parse(JSON.stringify(prev));
-            for (const step of newInitiative.steps) {
-                const item = step.items.find((i: InitiativeItemType) => i.id === itemId);
-                if (item) {
-                    item.text = newText;
-                    break;
-                }
-            }
-            return newInitiative;
-        });
 
-        const promise = updateInitiativeItem(orgId, itemId, command);
-        fireAndForget(promise, "Could not save item changes.");
+      const promise = updateInitiativeItem(orgId, itemId, command);
+      fireAndForget(promise, "Could not save item changes.");
     }
   };
 
   const handleDeleteInitiativeItem = (itemId: string, stepKey: InitiativeStepKey) => {
     const originalInitiative = JSON.parse(JSON.stringify(initiative));
     setInitiative(prev => {
-        const newInitiative = JSON.parse(JSON.stringify(prev));
-        const step = newInitiative.steps.find((s: any) => s.key === stepKey);
-        if (step) {
-          step.items = step.items.filter((i: InitiativeItemType) => i.id !== itemId);
-        }
-        return newInitiative;
+      const newInitiative = JSON.parse(JSON.stringify(prev));
+      const step = newInitiative.steps.find((s: any) => s.key === stepKey);
+      if (step) {
+        step.items = step.items.filter((i: InitiativeItemType) => i.id !== itemId);
+      }
+      return newInitiative;
     });
-    
+
     if (itemId.startsWith('temp-')) return;
 
     deleteInitiativeItem(orgId, itemId, initiative.id)
-    .then(async res => {
+      .then(async res => {
         if (!res.ok) {
-            const errorData = await res.json().catch(() => ({}));
-            throw new Error(errorData.message || 'Failed to delete item.');
+          const errorData = await res.json().catch(() => ({}));
+          throw new Error(errorData.message || 'Failed to delete item.');
         }
-        toast({ 
-            title: "Success", 
-            description: "Initiative Item Deleted",
-            variant: "default"
+        toast({
+          title: "Success",
+          description: "Initiative Item Deleted",
+          variant: "default"
         });
-    })
-    .catch(err => {
+      })
+      .catch(err => {
         console.error(err);
         toast({ title: "Error", description: err.message, variant: "destructive" });
         setInitiative(originalInitiative);
-    });
+      });
   };
 
   // Tag/untag radar items using the tag-an-initiative-with-a-risk API slice
@@ -338,14 +339,14 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
     let allOk = true;
     for (const radarItemId of toAdd) {
       try {
-        const res = await fetch('/api/tag-an-initiative-with-a-risk', {
+        const res = await fetch(`/api/initiatives/${initiative.id}/risks`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ initiativeId: initiative.id, radarItemId, action: 'add' })
+          body: JSON.stringify({ radarItemId })
         });
-        const data = await res.json();
-        console.log('[InitiativeView] Tag add response:', data);
-        if (!data.ok) allOk = false;
+        const json = await res.json();
+        console.log('[InitiativeView] Tag add response:', json);
+        if (!res.ok) allOk = false;
       } catch (err) {
         allOk = false;
         console.error('[InitiativeView] Error tagging radar item:', radarItemId, err);
@@ -353,14 +354,13 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
     }
     for (const radarItemId of toRemove) {
       try {
-        const res = await fetch('/api/tag-an-initiative-with-a-risk', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ initiativeId: initiative.id, radarItemId, action: 'remove' })
+        // DELETE /api/initiatives/[id]/risks/[radarItemId]
+        const res = await fetch(`/api/initiatives/${initiative.id}/risks/${radarItemId}`, {
+          method: 'DELETE',
         });
-        const data = await res.json();
-        console.log('[InitiativeView] Tag remove response:', data);
-        if (!data.ok) allOk = false;
+        const json = await res.json();
+        console.log('[InitiativeView] Tag remove response:', json);
+        if (!res.ok) allOk = false;
       } catch (err) {
         allOk = false;
         console.error('[InitiativeView] Error untagging radar item:', radarItemId, err);
@@ -381,7 +381,7 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
       });
     }
   };
-  
+
   // Always use projection for linked tags
   // Show all tagIds, even if radarItems does not include them yet
   type FallbackRadarItem = { id: string; name: string; type?: undefined; radarId: string; fallback: true };
@@ -398,7 +398,7 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
         const res = await fetch(`/api/initiatives/${initiative.id}/links`);
         const data = await res.json();
         if (Array.isArray(data)) setLinkedInits(data);
-      } catch {}
+      } catch { }
     };
     loadLinks();
   }, [initiative.id]);
@@ -420,182 +420,192 @@ export function InitiativeView({ initialInitiative, radarItems, orgId, onInitiat
       if (res.ok) {
         setLinkedInits(prev => prev.filter(x => x.toInitiativeId !== toInitiativeId));
       }
-    } catch {}
+    } catch { }
   };
 
   return (
     <>
-    <div className="mb-3">
-      <div
-        className={styles.initiativeHeader}
-        data-state={initiative.isExpanded ? 'expanded' : 'collapsed'}
-      >
-        <div className="flex-1" onClick={() => setInitiative(prev => ({ ...prev, isExpanded: !prev.isExpanded }))}>
-          <div className={styles.initiativeNameContainer}>
-            <p className={styles.initiativeName}>{initiative.name}</p>
+      <div className="mb-3">
+        <div
+          className={styles.initiativeHeader}
+          data-state={initiative.isExpanded ? 'active' : 'inactive'}
+          onClick={() => setInitiative(prev => ({ ...prev, isExpanded: !prev.isExpanded }))}
+        >
+          <div className={styles.headerTitleArea}>
+            <ChevronDown
+              className={cn(styles.chevron, initiative.isExpanded && styles.chevronExpanded)}
+            />
+            <div className={styles.initiativeNameContainer}>
+              <p className={styles.initiativeName}>{initiative.name}</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+            <div className={styles.headerProgression}>
+              <span className={styles.progressionText}>{initiative.progression}%</span>
+              <div className={styles.miniProgress}>
+                <div className={styles.miniProgressBar} style={{ width: `${initiative.progression}%` }} />
+              </div>
+            </div>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-black/5">
+                  <MoreVertical className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => setEditInitiativeOpen(true)}>
+                  <Edit className="mr-2 h-4 w-4" />
+                  <span>Edit Name</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setDeleteConfirmOpen(true)} className="text-destructive">
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  <span>Delete Initiative</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
-        <div className="flex items-center gap-1">
-            <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" className="h-8 w-8">
-                        <MoreVertical className="h-4 w-4" />
-                    </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={() => setEditInitiativeOpen(true)}>
-                        <Edit className="mr-2 h-4 w-4" />
-                        <span>Edit Name</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setDeleteConfirmOpen(true)} className="text-destructive">
-                        <Trash2 className="mr-2 h-4 w-4" />
-                        <span>Delete Initiative</span>
-                    </DropdownMenuItem>
-                </DropdownMenuContent>
-            </DropdownMenu>
-        </div>
-      </div>
-      <div
-        className={styles.initiativeContent}
-        data-state={initiative.isExpanded ? 'expanded' : 'collapsed'}
-      >
-           <div className="mb-6">
-             <Label style={{ marginBottom: '12px', display: 'block' }}>
-               Overall Progression: {initiative.progression}%
-             </Label>
-           <Slider
-             value={[initiative.progression]}
-             onValueChange={(value) => {
-               // Update UI immediately for responsiveness
-               setInitiative(prev => ({ ...prev, progression: value[0] }));
-             }}
-             onValueCommit={(value) => {
-               // Only send API call when user stops dragging
-               handleUpdateInitiative({ progression: value[0] });
-             }}
-             max={100}
-             step={1}
-           />
-         </div>
+        <div
+          className={styles.initiativeContent}
+          data-state={initiative.isExpanded ? 'expanded' : 'collapsed'}
+        >
+          <div className="mb-6">
+            <Label style={{ marginBottom: '12px', display: 'block' }}>
+              Overall Progression: {initiative.progression}%
+            </Label>
+            <Slider
+              value={[initiative.progression]}
+              onValueChange={(value) => {
+                // Update UI immediately for responsiveness
+                setInitiative(prev => ({ ...prev, progression: value[0] }));
+              }}
+              onValueCommit={(value) => {
+                // Only send API call when user stops dragging
+                handleUpdateInitiative({ progression: value[0] });
+              }}
+              max={100}
+              step={1}
+            />
+          </div>
 
-        {/* Tag radar items group */}
-        <div className={styles.tagButtonGroup}>
-          <Button className={styles.tagButton} variant="outline" size="sm" onClick={() => setLinkRadarOpen(true)}>
-            Tag radar item
-          </Button>
-          {linkedItems.length > 0 ? (
-            <div className="flex flex-wrap gap-2">
-              {linkedItems.map(item => (
-                <span key={item.id} className="flex items-center">
-                  {isFallbackRadarItem(item) ? (
-                    <Badge variant="outline">{item.id}</Badge>
-                  ) : (
-                    <Link href={`/team/${item.radarId}/radar#${item.id}`}>
-                      <Badge style={{ background: '#bbf7d0', color: '#166534' }}>{item.name}</Badge>
-                    </Link>
-                  )}
-                  <button
-                    aria-label="Remove tag"
-                    className={styles.deleteButton}
-                    onClick={() => {
-                      const newIds = tagIds.filter(id => id !== item.id);
-                      handleLinkRadarItems(newIds);
-                    }}
-                  >
-                    ×
-                  </button>
-                </span>
-              ))}
-            </div>
-          ) : (
-            <p className="text-sm text-muted-foreground">No radar items tagged yet.</p>
-          )}
-        </div>
+          {/* Tag radar items group */}
+          <div className={styles.tagButtonGroup}>
+            <Button className={styles.tagButton} variant="outline" size="sm" onClick={() => setLinkRadarOpen(true)}>
+              Tag radar item
+            </Button>
+            {linkedItems.length > 0 ? (
+              <div className="flex flex-wrap gap-2">
+                {linkedItems.map(item => (
+                  <span key={item.id} className="flex items-center">
+                    {isFallbackRadarItem(item) ? (
+                      <Badge variant="outline">{item.id}</Badge>
+                    ) : (
+                      <Link href={`/team/${item.radarId}/radar#${item.id}`}>
+                        <Badge style={{ background: '#bbf7d0', color: '#166534' }}>{item.name}</Badge>
+                      </Link>
+                    )}
+                    <button
+                      aria-label="Remove tag"
+                      className={styles.deleteButton}
+                      onClick={() => {
+                        const newIds = tagIds.filter(id => id !== item.id);
+                        handleLinkRadarItems(newIds);
+                      }}
+                    >
+                      ×
+                    </button>
+                  </span>
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground">No radar items tagged yet.</p>
+            )}
+          </div>
 
-        {/* Link initiatives group */}
-        <div className={styles.initiativeButtonGroup}>
-          <Button className={styles.initiativeButton} variant="outline" size="sm" onClick={() => setLinkInitiativesOpen(true)} disabled={isTempInitiative}>
-            Link initiatives
-          </Button>
-          {isTempInitiative && (
-            <span className="text-xs text-muted-foreground">Save this initiative before linking</span>
-          )}
-          {linkedInits.length > 0 ? (
-            <div className="flex flex-wrap gap-2">
-              {linkedInits.map(li => (
-                <Badge key={li.toInitiativeId} variant="secondary">
-                  {li.toInitiativeName || li.toInitiativeId}
-                  <button
-                    aria-label="Unlink initiative"
-                    className={styles.deleteButton}
-                    onClick={() => handleUnlink(li.toInitiativeId)}
-                  >
-                    ×
-                  </button>
-                </Badge>
-              ))}
-            </div>
-          ) : (
-            <p className="text-sm text-muted-foreground">No initiative links yet.</p>
-          )}
-        </div>
+          {/* Link initiatives group */}
+          <div className={styles.initiativeButtonGroup}>
+            <Button className={styles.initiativeButton} variant="outline" size="sm" onClick={() => setLinkInitiativesOpen(true)} disabled={isTempInitiative}>
+              Link initiatives
+            </Button>
+            {isTempInitiative && (
+              <span className="text-xs text-muted-foreground">Save this initiative before linking</span>
+            )}
+            {linkedInits.length > 0 ? (
+              <div className="flex flex-wrap gap-2">
+                {linkedInits.map(li => (
+                  <Badge key={li.toInitiativeId} variant="secondary">
+                    {li.toInitiativeName || li.toInitiativeId}
+                    <button
+                      aria-label="Unlink initiative"
+                      className={styles.deleteButton}
+                      onClick={() => handleUnlink(li.toInitiativeId)}
+                    >
+                      ×
+                    </button>
+                  </Badge>
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground">No initiative links yet.</p>
+            )}
+          </div>
 
-        <div className={stepStyles.stepsGrid}>
-          {initiative.steps && initiative.steps.length > 0 ? (
-            initiative.steps.map((step) => (
-              <InitiativeStepView
+          <div className={stepStyles.stepsGrid}>
+            {initiative.steps && initiative.steps.length > 0 ? (
+              initiative.steps.map((step) => (
+                <InitiativeStepView
                   key={step.key}
                   step={step}
                   iconMap={iconMap}
                   onAddItem={() => handleAddInitiativeItem(step.key)}
                   onSaveItem={(itemId, newText) => handleSaveInitiativeItem(itemId, newText, step.key)}
                   onDeleteItem={(itemId) => handleDeleteInitiativeItem(itemId, step.key)}
-              />
-            ))
-          ) : (
-            <p className="text-sm text-muted-foreground">No steps available for this initiative.</p>
-          )}
-        </div>
+                />
+              ))
+            ) : (
+              <p className="text-sm text-muted-foreground">No steps available for this initiative.</p>
+            )}
+          </div>
 
-    <LinkRadarItemsDialog
-      isOpen={isLinkRadarOpen}
-      onOpenChange={setLinkRadarOpen}
-      availableItems={radarItems}
-      linkedItemIds={tagIds}
-      onLinkItems={handleLinkRadarItems}
-    />
+          <LinkRadarItemsDialog
+            isOpen={isLinkRadarOpen}
+            onOpenChange={setLinkRadarOpen}
+            availableItems={radarItems}
+            linkedItemIds={tagIds}
+            onLinkItems={handleLinkRadarItems}
+          />
+        </div>
       </div>
-    </div>
-    <InitiativeLinkDialog
-      open={isLinkInitiativesOpen}
-      onOpenChange={setLinkInitiativesOpen}
-      companyId={orgId}
-      sourceInitiativeId={initiative.id}
-      onLinked={handleLinked}
-    />
-    <EditInitiativeDialog
+      <InitiativeLinkDialog
+        open={isLinkInitiativesOpen}
+        onOpenChange={setLinkInitiativesOpen}
+        companyId={orgId}
+        sourceInitiativeId={initiative.id}
+        onLinked={handleLinked}
+      />
+      <EditInitiativeDialog
         isOpen={isEditInitiativeOpen}
         onOpenChange={setEditInitiativeOpen}
         initiativeName={initiative.name}
         onSave={handleEditName}
-    />
-     <AlertDialog open={isDeleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
+      />
+      <AlertDialog open={isDeleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
         <AlertDialogContent>
-            <AlertDialogHeader>
+          <AlertDialogHeader>
             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
             <AlertDialogDescription>
-                This action cannot be undone. This will permanently delete the initiative
-                and all of its associated items.
+              This action cannot be undone. This will permanently delete the initiative
+              and all of its associated items.
             </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction onClick={handleDeleteConfirmed} className="bg-destructive hover:bg-destructive/90">
-                Delete
+              Delete
             </AlertDialogAction>
-            </AlertDialogFooter>
+          </AlertDialogFooter>
         </AlertDialogContent>
-     </AlertDialog>
+      </AlertDialog>
     </>
   );
 }

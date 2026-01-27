@@ -25,7 +25,7 @@ export default function TeamsListWrapper({ teams, company }: Props) {
   const handleEdit = (team: Team) => {
     // Navigate to the canonical team purpose page instead of opening the inline dialog.
     // The inline dialog is kept for later reuse.
-    router.push(`/team/${encodeURIComponent(team.id)}/purpose?companyId=${encodeURIComponent(company.id)}`);
+    router.push(`/company/${encodeURIComponent(company.id)}/team/${encodeURIComponent(team.id)}/purpose`);
   };
 
   const refresh = () => router.refresh();

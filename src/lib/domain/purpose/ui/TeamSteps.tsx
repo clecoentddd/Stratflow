@@ -27,7 +27,7 @@ export default function TeamSteps({ teamId, teamName, companyId = '', active }: 
   };
 
   const currentTitle = stepConfig[active].title;
-  const headerTitle = teamName 
+  const headerTitle = teamName
     ? `${currentTitle} - ${teamName} - Navigate through the strategic process`
     : `Team Workflow · Navigate through the strategic process`;
 
@@ -56,7 +56,7 @@ export default function TeamSteps({ teamId, teamName, companyId = '', active }: 
     const leftIndex = keys.indexOf(leftKey);
     const activeIndex = keys.indexOf(active);
     const filled = activeIndex > leftIndex;
-    
+
     return (
       <div className={styles.flowArrow}>
         <div className={`${styles.arrowLine} ${filled ? styles.arrowLineFilled : ''}`}></div>
@@ -71,13 +71,13 @@ export default function TeamSteps({ teamId, teamName, companyId = '', active }: 
         <h2 className={styles.flowTitle}>{headerTitle}</h2>
       </div>
       <div className={styles.stepsContainer}>
-        {stepNode('purpose', `/team/${teamId}/purpose${q}`)}
+        {stepNode('purpose', companyId ? `/company/${encodeURIComponent(companyId)}/team/${teamId}/purpose` : `/team/${teamId}/purpose${q}`)}
         {connectorNode('purpose', 'radar')}
-        {stepNode('radar', `/team/${teamId}/radar${q}`)}
+        {stepNode('radar', companyId ? `/company/${encodeURIComponent(companyId)}/team/${teamId}/radar` : `/team/${teamId}/radar${q}`)}
         {connectorNode('radar', 'dashboard')}
-        {stepNode('dashboard', `/team/${teamId}/dashboard${q}`)}
+        {stepNode('dashboard', companyId ? `/company/${encodeURIComponent(companyId)}/team/${teamId}/dashboard` : `/team/${teamId}/dashboard${q}`)}
         {connectorNode('dashboard', 'kanban')}
-        {stepNode('kanban', `/unified-kanban?teamId=${encodeURIComponent(teamId)}&type=items${companyId ? `&companyId=${encodeURIComponent(companyId)}` : ''}`)}
+        {stepNode('kanban', companyId ? `/company/${encodeURIComponent(companyId)}/team/${teamId}/kanban` : `/team/${teamId}/kanban${q}`)}
       </div>
     </div>
   );

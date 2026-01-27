@@ -1,4 +1,5 @@
-import { NextResponse, NextRequest } from 'next/server';
+import { NextRequest } from 'next/server';
+import { successResponse, errorResponse, handleApiError } from '@/lib/api/response';
 import { StrategyCommandHandlers } from '@/lib/domain/strategies/command-handlers';
 import type { CreateStrategyCommand } from '@/lib/domain/strategies/commands';
 
@@ -10,15 +11,14 @@ export async function POST(request: NextRequest) {
     const teamId = queryTeam ?? (body && (body.teamId as string | undefined));
     const command: CreateStrategyCommand = body;
 
-    if (!teamId) return NextResponse.json({ message: 'teamId is required (query or body)' }, { status: 400 });
+    if (!teamId) {
+      return errorResponse('teamId is required (query or body)', 400);
+    }
 
     const result = await StrategyCommandHandlers.handleCreateStrategyCommand(teamId, command);
-    return NextResponse.json(result, { status: 201 });
+    return successResponse(result, 201);
 
   } catch (error) {
-    console.error('Failed to create strategy:', error);
-    const message = error instanceof Error ? error.message : 'Internal Server Error';
-    const status = message.includes('required') || message.includes('Cannot create') ? 409 : 500;
-    return NextResponse.json({ message }, { status });
+    return handleApiError(error);
   }
 }

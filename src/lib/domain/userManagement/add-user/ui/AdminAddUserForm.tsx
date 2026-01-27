@@ -38,19 +38,23 @@ export function AdminAddUserForm({ onSubmit }: { onSubmit: (cmd: Command) => voi
     setSuccess('');
     setError('');
     try {
-      const res = await fetch('/api/add-user', {
+      const res = await fetch('/api/users', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, company: companyId, teamIds }),
       });
+
+      const json = await res.json();
+
       if (res.ok) {
         setSuccess('User added successfully!');
         setUsername('');
         setCompanyId('');
         setTeamIds([]);
       } else {
-        const data = await res.json();
-        setError(data.error || 'Failed to add user');
+        // Standard error format: { error: { message: ... } }
+        const msg = json.error?.message || json.error || 'Failed to add user';
+        setError(msg);
       }
     } catch (err) {
       setError('Failed to add user');

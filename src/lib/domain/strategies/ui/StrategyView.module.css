@@ -1,296 +1,159 @@
-/* Main container */
+/* Main container Refinement */
 .strategyContainer {
   border-radius: 0.75rem;
   background: white;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
-  transition: all 0.2s ease;
-  overflow: hidden;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
   margin-bottom: 1.5rem;
+  overflow: hidden;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.strategyContainer:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border-color: #cbd5e1;
 }
 
 /* Header */
 .strategyHeader {
-  padding: 1.5rem;
-  cursor: pointer;
-  transition: background-color 0.2s;
+  padding: 0.875rem 1.5rem;
+  background: #ffffff;
+  border-bottom: 1px solid #f1f5f9;
+  display: flex;
+  align-items: center;
 }
 
-.strategyHeader:hover {
-  background-color: rgba(0, 0, 0, 0.02);
+.compactHeaderRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  gap: 2rem;
 }
 
-.headerContent {
+.leftGroup {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.titleInfo {
   display: flex;
   flex-direction: column;
+  gap: 0.125rem;
+  min-width: 0;
+}
+
+.strategyTitle {
+  font-size: 1.0625rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
+}
+
+.metaInfo {
+  display: flex;
   align-items: center;
   gap: 1rem;
-  position: relative;
 }
 
-.titleSection {
-  width: 100%;
-  text-align: center;
-}
-
-.actions {
-  position: absolute;
-  right: 0;
-  top: 0;
+.metaBadge {
   display: flex;
-  gap: 0.5rem;
   align-items: center;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #64748b;
+  letter-spacing: 0.01em;
 }
 
-.actionButton {
+.metaBadge svg {
+  color: #94a3b8;
+}
+
+.rightGroup {
+  display: flex;
+  align-items: center;
+  gap: 1.75rem;
+  flex-shrink: 0;
+}
+
+.headerProgressArea {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 140px;
+}
+
+.progressLabelRow {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.progressValue {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: #1e293b;
+  font-variant-numeric: tabular-nums;
+}
+
+.slimProgressBarContainer {
+  height: 5px;
+  background: #f1f5f9;
+  border-radius: 999px;
+  overflow: hidden;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+
+.slimProgressBar {
+  height: 100%;
+  background: #2563eb;
+  border-radius: 999px;
+  transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.miniActionButton {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 2rem;
   height: 2rem;
-  border-radius: 0.375rem;
-  background: transparent;
-  border: none;
+  border-radius: 0.5rem;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  color: #64748b;
   cursor: pointer;
-  color: #4b5563;
-  transition: all 0.2s;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.actionButton:hover {
-  background: rgba(0, 0, 0, 0.05);
-  color: #1f2937;
-}
-
-.actionIcon {
-  width: 1rem;
-  height: 1rem;
-}
-
-/* Status tag and dropdown */
-.statusTag {
-  padding: 0.375rem 0.75rem;
-  border-radius: 9999px;
-  font-size: 0.875rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 150ms ease;
-  border: 1px solid transparent;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.statusTag[data-state='Active'] {
-  background-color: #388CFA;
-  color: white;
-  border-color: transparent;
-}
-
-.statusTag[data-state='Closed'] {
-  background-color: rgb(241 245 249);
-  color: rgb(51 65 85);
-  border-color: rgb(226 232 240);
-}
-
-.statusTag[data-state='Obsolete'] {
-  background-color: rgb(241 245 249);
-  color: rgb(51 65 85);
-  border-color: rgb(226 232 240);
-}
-
-.statusTag:hover {
-  filter: brightness(0.95);
-}
-
-.statusTag svg {
-  width: 1rem;
-  height: 1rem;
-  margin-right: 0.5rem;
-}
-
-/* Base card rounding */
-.baseCard {
-  border-radius: 0.75rem;
-}
-
-/* Layout and state */
-.card {
-  transition: opacity 150ms ease;
-}
-
-.saving {
-  opacity: 0.5;
-}
-
-.unfocused {
-  opacity: 0.5;
-}
-
-.unfocused:hover {
-  opacity: 1;
-}
-
-/* (cardOpen styles are defined below; duplicate removed) */
-
-.actionBar {
-  display: flex;
-  align-items: center;
-  gap: 0.25rem; /* gap-1 */
-  padding-left: 0.5rem; /* pl-2 */
-}
-
-.progressBlock {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 0.25rem; /* mb-1 */
-}
-
-.progressLabel {
-  font-size: 0.875rem; /* text-sm */
-  font-weight: 500; /* font-medium */
-  color: var(--muted-foreground, #6b7280);
-}
-
-.progressValue {
-  font-size: 0.875rem;
-  font-weight: 600; /* font-semibold */
-}
-
-.sectionTitle {
-  margin-top: 1.5rem; /* mt-6 */
-  font-size: 1.125rem; /* text-lg */
-  font-weight: 600; /* font-semibold */
-}
-
-.noInitiatives {
-  text-align: center;
-  padding: 1rem;
-  border: 2px dashed var(--border, #e5e7eb);
-  border-radius: 0.375rem; /* rounded-md */
-  color: var(--muted-foreground, #6b7280);
-}
-
-.footer {
-  background: rgba(248,250,252,0.5); /* bg-slate-50/50 */
-  padding: 1rem; /* p-4 */
-  border-bottom-left-radius: 0.75rem;
-  border-bottom-right-radius: 0.75rem;
-}
-
-.footerRow {
-  display: flex;
-  gap: 0.5rem;
-  width: 100%;
-  align-items: center;
-}
-
-/* Strategy card backgrounds by status */
-.cardOpen {
-  background: linear-gradient(to right, rgba(56, 140, 250, 0.1) 0%, white 50%);
-  border: 2px solid rgba(56, 140, 250, 0.3);
-  position: relative;
-}
-
-.cardClosed {
+.miniActionButton:hover {
   background: #f8fafc;
-  border: 1px solid #cbd5e1;
-  opacity: 0.8;
+  color: #0f172a;
+  border-color: #cbd5e1;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-.cardObsolete {
-  background: #f8fafc;
-  border: 1px solid #cbd5e1;
-  opacity: 0.6;
-}
-
-.cardDraft {
-  background: linear-gradient(to right, rgba(0, 204, 136, 0.08) 0%, white 50%);
-  border: 2px dashed rgba(0, 204, 136, 0.3);
-  position: relative;
-}
-/* Spacing between initiatives inside a strategy */
-.initiativesList > * + * {
-  margin-top: 1rem; /* similar to space-y-4 */
-}
-
-/* Typography */
-.strategyTitle {
-  font-size: 1.5rem;
-  font-weight: 600;
-  line-height: 1.4;
-  color: #1f2937;
-  margin: 0 auto 0.75rem;
-  word-break: break-word;
-  text-align: center;
-  max-width: 80%;
-}
-
-.timeframeTag {
-  display: inline-block;
-  margin-top: 0.25rem;
-  padding: 0.25rem 0.75rem;
-  border-radius: 9999px;
-  font-size: 0.75rem;
-  font-weight: 500;
-  background: #f3f4f6;
-  color: #4b5563;
-  border: 1px solid #e5e7eb;
-}
-
-/* Content section */
-.strategyContent {
-  padding: 0 1.5rem 1.5rem;
-}
-
-/* Progress section */
-.progressSection {
-  margin-bottom: 1.5rem;
-}
-
-.progressHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 0.5rem;
-}
-
-.progressLabel {
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: #4b5563;
-}
-
-.progressValue {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: #1f2937;
-}
-
-.progressBarContainer {
-  height: 0.5rem;
-  background: #e5e7eb;
-  border-radius: 9999px;
-  overflow: hidden;
-}
-
-.progressBar {
-  height: 100%;
-  background: #3b82f6;
-  border-radius: 9999px;
-  transition: width 0.3s ease;
+.miniActionButton:active {
+  transform: translateY(0);
 }
 
 /* Initiatives section */
 .initiativesSection {
-  margin-top: 1.5rem;
+  padding: 1rem 1.5rem;
 }
 
 .sectionTitle {
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: #1f2937;
-  margin: 0 0 1rem 0;
+  display: none;
 }
+
 
 .initiativesList {
   display: flex;
@@ -315,16 +178,16 @@
   margin: 1rem 0;
 }
 
-/* Footer with add initiative form */
+/* Footer Refinement */
 .footer {
-  margin-top: 1.5rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid #e5e7eb;
+  padding: 1.25rem 1.5rem;
+  background-color: #f8fafc;
+  border-top: 1px solid #f1f5f9;
 }
 
 .footerRow {
   display: flex;
-  gap: 0.75rem;
+  gap: 1rem;
   align-items: center;
 }
 
@@ -381,28 +244,29 @@
 
 /* Status tag variants */
 .statusTag[data-state='Draft'] {
-  background-color: #0C8;
-  color: white;
-  border: 2px dashed #0C8;
+  background-color: #ecfdf5;
+  color: #059669;
+  border: 1px solid #a7f3d0;
   font-weight: 600;
 }
+
 .statusTag[data-state='Active'] {
-  background-color: #388CFA;
-  color: white;
-  border-color: transparent;
+  background-color: #eff6ff;
+  color: #2563eb;
+  border: 1px solid #bfdbfe;
   font-weight: 600;
 }
 
 .statusTag[data-state='Closed'] {
-  background-color: #f1f5f9;
+  background-color: #f8fafc;
   color: #64748b;
-  border: 1px solid #cbd5e1;
+  border: 1px solid #e2e8f0;
 }
 
 .statusTag[data-state='Obsolete'] {
-  background-color: #f1f5f9;
+  background-color: #f8fafc;
   color: #94a3b8;
-  border: 1px solid #cbd5e1;
+  border: 1px solid #e2e8f0;
   opacity: 0.7;
 }
 

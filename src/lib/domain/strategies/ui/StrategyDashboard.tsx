@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
-import { Plus } from "lucide-react";
+import { Plus, FileEdit, Target, Archive } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import type { Dashboard, Strategy, StrategyState, RadarItem } from "@/lib/types";
 import type { CreateStrategyCommand } from "@/lib/domain/strategies/commands";
@@ -20,17 +20,17 @@ const strategyOrder: Record<StrategyState, number> = {
 };
 
 interface StrategyDashboardProps {
-    initialDashboard: Dashboard;
-    radarItems: RadarItem[];
-    orgId: string;
-    onDataChange: () => void;
-    isCreateStrategyOpen: boolean;
-    setCreateStrategyOpen: (isOpen: boolean) => void;
+  initialDashboard: Dashboard;
+  radarItems: RadarItem[];
+  orgId: string;
+  onDataChange: () => void;
+  isCreateStrategyOpen: boolean;
+  setCreateStrategyOpen: (isOpen: boolean) => void;
 }
 
-export function StrategyDashboard({ 
-  initialDashboard, 
-  radarItems, 
+export function StrategyDashboard({
+  initialDashboard,
+  radarItems,
   orgId,
   onDataChange,
   isCreateStrategyOpen,
@@ -46,19 +46,26 @@ export function StrategyDashboard({
 
   const { currentStrategies, archivedStrategies } = useMemo(() => {
     if (!dashboard || !dashboard.strategies) return { currentStrategies: [], archivedStrategies: [] };
-    
+
     const current = dashboard.strategies.filter(s => s.state === 'Draft' || s.state === 'Active')
       .sort((a, b) => strategyOrder[a.state] - strategyOrder[b.state]);
-    
+
     const archived = dashboard.strategies.filter(s => s.state === 'Closed' || s.state === 'Obsolete')
       .sort((a, b) => strategyOrder[a.state] - strategyOrder[b.state]);
-    
+
     return { currentStrategies: current, archivedStrategies: archived };
   }, [dashboard]);
 
+  const counts = useMemo(() => {
+    const draft = dashboard.strategies.filter(s => s.state === 'Draft').length;
+    const active = dashboard.strategies.filter(s => s.state === 'Active').length;
+    const archive = dashboard.strategies.filter(s => s.state === 'Closed' || s.state === 'Obsolete').length;
+    return { draft, active, archive };
+  }, [dashboard.strategies]);
+
   const handleCreateStrategy = async (description: string, timeframe: string, _teamId?: string) => {
     setCreateStrategyOpen(false);
-    
+
     const command: CreateStrategyCommand = { description, timeframe };
     const tempId = `strat-temp-${uuidv4()}`;
 
@@ -75,7 +82,7 @@ export function StrategyDashboard({
       ...prev,
       strategies: [...prev.strategies, newStrategy],
     }));
-    
+
     try {
       const response = await fetch(`/api/strategies?teamId=${encodeURIComponent(orgId)}`, {
         method: 'POST',
@@ -84,17 +91,19 @@ export function StrategyDashboard({
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || `Failed to create strategy.`);
+        // Standard error format handling
+        const json = await response.json().catch(() => ({}));
+        const msg = json.error?.message || json.error || `Failed to create strategy.`;
+        throw new Error(msg);
       }
-      
+
       toast({
         title: "Success",
         description: "Strategy has been created.",
       });
-      
+
       // Re-fetch data in the background to sync server-generated ID
-      onDataChange(); 
+      onDataChange();
 
     } catch (error: any) {
       console.error(error);
@@ -107,31 +116,49 @@ export function StrategyDashboard({
       onDataChange();
     }
   };
-  
+
   return (
     <div className={styles.container} data-active={activeTab}>
-      <div className={styles.tabs}>
-        <button 
-          className={styles.tab} 
-          data-active={activeTab === 'draft' ? 'draft' : undefined} 
-          onClick={() => setActiveTab('draft')}
-        >
-          Draft Strategy
-        </button>
-        <button 
-          className={styles.tab} 
-          data-active={activeTab === 'active' ? 'active' : undefined} 
-          onClick={() => setActiveTab('active')}
-        >
-          Active Strategy
-        </button>
-        <button 
-          className={styles.tab} 
-          data-active={activeTab === 'archive' ? 'archive' : undefined} 
-          onClick={() => setActiveTab('archive')}
-        >
-          Archived Strategies
-        </button>
+      <div className={styles.tabsContainer}>
+        <div className={styles.tabsHeader}>
+          <div className={styles.tabsPill}>
+            <button
+              className={styles.tabPill}
+              data-active={activeTab === 'draft'}
+              onClick={() => setActiveTab('draft')}
+            >
+              <FileEdit className="w-4 h-4 mr-2" />
+              <span>Draft</span>
+              {counts.draft > 0 && <span className={styles.tabCount}>{counts.draft}</span>}
+            </button>
+            <button
+              className={styles.tabPill}
+              data-active={activeTab === 'active'}
+              onClick={() => setActiveTab('active')}
+            >
+              <Target className="w-4 h-4 mr-2" />
+              <span>Active</span>
+              {counts.active > 0 && <span className={styles.tabCount}>{counts.active}</span>}
+            </button>
+            <button
+              className={styles.tabPill}
+              data-active={activeTab === 'archive'}
+              onClick={() => setActiveTab('archive')}
+            >
+              <Archive className="w-4 h-4 mr-2" />
+              <span>Archive</span>
+              {counts.archive > 0 && <span className={styles.tabCount}>{counts.archive}</span>}
+            </button>
+          </div>
+
+          <Button
+            onClick={() => setCreateStrategyOpen(true)}
+            className="bg-[#388cfa] hover:bg-[#2a7ae8] text-white h-9 px-4 rounded-full font-semibold shadow-sm transition-all hover:shadow-md active:scale-95"
+          >
+            <Plus className="mr-2 h-4 w-4" />
+            New Strategy
+          </Button>
+        </div>
       </div>
 
       {activeTab === 'draft' ? (

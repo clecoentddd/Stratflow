@@ -4,54 +4,128 @@
   gap: 2rem;
 }
 
-.tabs {
-  display: flex;
-  gap: 1rem;
-  border-bottom: 1px solid var(--border);
+.tabsContainer {
   margin-bottom: 2rem;
 }
 
-.tab {
-  padding: 0.75rem 1.5rem;
-  font-weight: 500;
+.tabsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.tabsPill {
+  display: inline-flex;
+  padding: 0.25rem;
+  background-color: #f1f5f9;
+  border-radius: 999px;
+  border: 1px solid #e2e8f0;
+}
+
+.tabPill {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 600;
   color: var(--muted-foreground);
+  border-radius: 999px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  border: none;
+  background: transparent;
   cursor: pointer;
-  border-bottom: 2px solid transparent;
+}
+
+.tabPill:hover:not([data-active="true"]) {
+  color: var(--foreground);
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.tabPill[data-active="true"] {
+  background: white;
+  color: var(--foreground);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* Color accents for active states */
+.tabPill[data-active="true"]:has(svg[class*="FileEdit"]) {
+  color: #2563eb;
+}
+
+.tabPill[data-active="true"]:has(svg[class*="Target"]) {
+  color: #059669;
+}
+
+.tabPill[data-active="true"]:has(svg[class*="Archive"]) {
+  color: #475569;
+}
+
+.tabCount {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.5rem;
+  height: 1.25rem;
+  padding: 0 0.5rem;
+  margin-left: 0.625rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: 6px;
+  line-height: 1;
   transition: all 0.2s ease;
 }
 
-.tab:hover:not([data-active]) {
-  color: var(--foreground);
-  border-bottom-color: var(--border);
+/* Default / Inactive Count Colors */
+.tabPill:has(svg[class*="FileEdit"]) .tabCount {
+  background: #e0e7ff;
+  color: #4338ca;
 }
 
-.tab[data-active="draft"] {
-  /* lighter blue for Draft tab */
-  color: #7FB3FF;
-  border-bottom-color: #7FB3FF;
+.tabPill:has(svg[class*="Target"]) .tabCount {
+  background: #d1fae5;
+  color: #065f46;
 }
 
-.tab[data-active="active"] {
-  color: #388CFA;
-  border-bottom-color: #388CFA;
+.tabPill:has(svg[class*="Archive"]) .tabCount {
+  background: #f1f5f9;
+  color: #475569;
 }
 
-.tab[data-active="archive"] {
-  /* grey for archived tab */
-  color: #6b7280;
-  border-bottom-color: #6b7280;
+/* Active Count Colors */
+.tabPill[data-active="true"]:has(svg[class*="FileEdit"]) .tabCount {
+  background: #2563eb;
+  color: white;
 }
 
-/* Style the strategy section when Draft tab is active */
-.container[data-active="draft"] .strategySection {
-  background: #eaf5ff; /* very light blue */
-  padding: 1rem;
-  border-radius: 0.5rem;
+.tabPill[data-active="true"]:has(svg[class*="Target"]) .tabCount {
+  background: #059669;
+  color: white;
 }
 
-.container[data-active="draft"] .emptyStateTitle,
-.container[data-active="draft"] .emptyStateText {
-  color: #1e5fb8; /* darker blue for text inside draft section */
+.tabPill[data-active="true"]:has(svg[class*="Archive"]) .tabCount {
+  background: #475569;
+  color: white;
+}
+
+.strategySection {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .strategySection {

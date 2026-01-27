@@ -1,4 +1,5 @@
-import { NextResponse, NextRequest } from 'next/server';
+import { NextRequest } from 'next/server';
+import { successResponse, errorResponse, handleApiError } from '@/lib/api/response';
 import { StrategyCommandHandlers } from '@/lib/domain/strategies/command-handlers';
 import type { UpdateStrategyCommand } from '@/lib/domain/strategies/commands';
 
@@ -10,15 +11,14 @@ export async function PUT(request: NextRequest, { params }: { params: { strategy
     const teamId = request.nextUrl.searchParams.get('teamId') ?? (body && (body.teamId as string | undefined));
     const command: UpdateStrategyCommand = { ...body, strategyId };
 
-    if (!teamId) return NextResponse.json({ message: 'teamId is required (query or body)' }, { status: 400 });
+    if (!teamId) {
+      return errorResponse('teamId is required (query or body)', 400);
+    }
 
     const result = await StrategyCommandHandlers.handleUpdateStrategyCommand(teamId, command);
-    return NextResponse.json(result, { status: 200 });
+    return successResponse(result, 200);
 
   } catch (error) {
-    console.error('Failed to update strategy:', error);
-    const message = error instanceof Error ? error.message : 'Internal Server Error';
-    const status = message.includes('required') || message.includes('Cannot set') ? 409 : 500;
-    return NextResponse.json({ message }, { status });
+    return handleApiError(error);
   }
 }

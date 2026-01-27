@@ -27,17 +27,17 @@ export function TeamCard({ team, onEdit }: TeamCardProps) {
           >
             <Compass className={styles.icon} color="#9B51E0" />
           </button>
-          <Link href={`/team/${team.id}/radar?companyId=${team.companyId}`}>
+          <Link href={`/company/${team.companyId}/team/${team.id}/radar`}>
             <button className={styles.actionButton}>
               <Radar className={styles.icon} color="#00cc88" />
             </button>
           </Link>
-          <Link href={`/team/${team.id}/dashboard?companyId=${team.companyId}`}>
+          <Link href={`/company/${team.companyId}/team/${team.id}/dashboard`}>
             <button className={styles.actionButton}>
               <TrendingUp className={styles.icon} color="#388cfa" />
             </button>
           </Link>
-          <Link href={`/team/${team.id}/kanban?companyId=${team.companyId}`}>
+          <Link href={`/company/${team.companyId}/team/${team.id}/kanban`}>
             <button className={styles.actionButton} title="Kanban Board">
               <SquareKanban className={styles.icon} color="#f59e0b" />
             </button>

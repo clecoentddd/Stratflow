@@ -21,11 +21,11 @@ export default function TeamStrategyPage() {
 
   const fetchTeamData = useCallback(async (showLoading = true) => {
     if (!teamId) return;
-    
+
     if (showLoading) {
       setIsLoading(true);
     }
-    
+
     try {
       const response = await fetch(`/api/teams/${teamId}`);
       if (response.status === 404) {
@@ -59,7 +59,7 @@ export default function TeamStrategyPage() {
     return (
       <div className="flex flex-col min-h-screen">
         <main className="p-4 md:p-6 flex-1 flex items-center justify-center">
-            <p>Loading Strategy Dashboard...</p>
+          <p>Loading Strategy Dashboard...</p>
         </main>
       </div>
     );
@@ -67,42 +67,33 @@ export default function TeamStrategyPage() {
 
   if (!team) {
     return (
-       <div className="flex flex-col min-h-screen">
+      <div className="flex flex-col min-h-screen">
         <main className="p-4 md:p-6 flex-1 flex items-center justify-center">
-            <div className="text-center">
-                <h1 className="text-2xl font-bold">Team Not Found</h1>
-                <p className="text-muted-foreground">The team you are looking for does not exist.</p>
-                <Link href="/" className="mt-4 inline-block">
-                    <Button>Back to Companies</Button>
-                </Link>
-            </div>
+          <div className="text-center">
+            <h1 className="text-2xl font-bold">Team Not Found</h1>
+            <p className="text-muted-foreground">The team you are looking for does not exist.</p>
+            <Link href="/" className="mt-4 inline-block">
+              <Button>Back to Companies</Button>
+            </Link>
+          </div>
         </main>
       </div>
     )
   }
-  
+
   return (
     <div className="flex flex-col min-h-screen">
       <main className="p-4 md:p-6 flex-1">
-        <div className="flex flex-col gap-4 mb-6">
+        <div className="flex flex-col gap-4 mb-4">
           <TeamSteps teamId={teamId} teamName={team.name} companyId={team?.companyId || ''} active={'dashboard'} />
-          <div className="flex justify-end">
-            <Button 
-                onClick={() => setCreateStrategyOpen(true)}
-                className="bg-[#388cfa] hover:bg-[#2a7ae8] text-white"
-            >
-                <Plus className="mr-2 h-4 w-4" />
-                New Strategy
-            </Button>
-          </div>
         </div>
-        <StrategyDashboard 
-            initialDashboard={team.dashboard}
-            radarItems={team.radar || []}
-            orgId={teamId}
-            onDataChange={() => fetchTeamData(false)}
-            isCreateStrategyOpen={isCreateStrategyOpen}
-            setCreateStrategyOpen={setCreateStrategyOpen}
+        <StrategyDashboard
+          initialDashboard={team.dashboard}
+          radarItems={team.radar || []}
+          orgId={teamId}
+          onDataChange={() => fetchTeamData(false)}
+          isCreateStrategyOpen={isCreateStrategyOpen}
+          setCreateStrategyOpen={setCreateStrategyOpen}
         />
       </main>
     </div>

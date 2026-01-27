@@ -18,12 +18,12 @@ interface ZoomInDialogProps {
   currentTeamId: string;
 }
 
-export function ZoomInDialog({ isOpen, onOpenChange, teams, onSelect, currentTeamId }: ZoomInDialogProps) {
+export function ZoomInDialog({ isOpen, onOpenChange, teams, onSelect, currentTeamId, companyId }: ZoomInDialogProps & { companyId: string }) {
   const handleSelect = (teamId: string) => {
-    onSelect(`/team/${teamId}/radar`);
+    onSelect(`/company/${companyId}/team/${teamId}/radar`);
     onOpenChange(false);
   };
-  
+
   const availableTeams = teams.filter(team => team.id !== currentTeamId);
 
   return (
@@ -46,9 +46,9 @@ export function ZoomInDialog({ isOpen, onOpenChange, teams, onSelect, currentTea
               {team.name}
             </Button>
           ))}
-           {availableTeams.length === 0 && (
-                <p className="text-sm text-muted-foreground text-center py-4">No other teams available to link to.</p>
-           )}
+          {availableTeams.length === 0 && (
+            <p className="text-sm text-muted-foreground text-center py-4">No other teams available to link to.</p>
+          )}
         </div>
       </DialogContent>
     </Dialog>

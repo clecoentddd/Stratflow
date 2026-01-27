@@ -36,7 +36,7 @@ export default function GetAIHelp({ open, onOpenChange, currentPurpose, context,
     setLoading(true);
     setResult(null);
     try {
-      try { console.debug('[GetAIHelp] sending generate request', { purpose: currentPurpose, context, teamId }); } catch (e) {}
+      try { console.debug('[GetAIHelp] sending generate request', { purpose: currentPurpose, context, teamId }); } catch (e) { }
       const res = await fetch('/api/nps-ai-coach/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -51,7 +51,7 @@ export default function GetAIHelp({ open, onOpenChange, currentPurpose, context,
         } catch (e) {
           // ignore parse error
         }
-        const msg = body?.error ?? `AI provider error (status ${res.status})`;
+        const msg = body?.error?.message || body?.error || `AI provider error (status ${res.status})`;
         console.error('[GetAIHelp] generate failed:', res.status, body);
         toast({ title: 'AI error', description: msg, variant: 'destructive' });
         setLoading(false);
@@ -59,8 +59,9 @@ export default function GetAIHelp({ open, onOpenChange, currentPurpose, context,
       }
 
       const json = await res.json();
-      try { console.debug('[GetAIHelp] generate response', json); } catch (e) {}
-      setResult(json);
+      try { console.debug('[GetAIHelp] generate response', json); } catch (e) { }
+      // Standardized: { data: ... }
+      setResult(json.data || json);
     } catch (err: any) {
       console.error(err);
       toast({ title: 'AI error', description: err?.message || 'Unable to generate suggestion', variant: 'destructive' });
@@ -71,7 +72,7 @@ export default function GetAIHelp({ open, onOpenChange, currentPurpose, context,
 
   const handleApply = () => {
     if (!result) return;
-    try { console.debug('[GetAIHelp] applying suggestion', result); } catch (e) {}
+    try { console.debug('[GetAIHelp] applying suggestion', result); } catch (e) { }
     const data = result?.data ?? result;
     onApply?.(data?.suggestion ?? data?.suggestions ?? data?.suggestions ?? '');
     onOpenChange(false);
@@ -94,7 +95,7 @@ export default function GetAIHelp({ open, onOpenChange, currentPurpose, context,
       });
       if (!res.ok) {
         let body: any = null;
-        try { body = await res.json(); } catch (e) {}
+        try { body = await res.json(); } catch (e) { }
         throw new Error(body?.error ?? `Status ${res.status}`);
       }
       const saved = await res.json();
@@ -108,7 +109,7 @@ export default function GetAIHelp({ open, onOpenChange, currentPurpose, context,
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-  <DialogContent className="w-[90vw] max-w-[900px] sm:max-w-[900px]">
+      <DialogContent className="w-[90vw] max-w-[900px] sm:max-w-[900px]">
         <DialogHeader>
           <DialogTitle>Get AI Help</DialogTitle>
         </DialogHeader>
