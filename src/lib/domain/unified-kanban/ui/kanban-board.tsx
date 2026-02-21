@@ -37,7 +37,7 @@ export function KanbanBoard({ data, onMoveElement, onElementClick, className = '
 
     const dragState = getDragState();
     const { draggedElement } = dragState;
-    
+
     if (!draggedElement || draggedElement.status === toStatus) {
       endDrag();
       return;
@@ -58,10 +58,10 @@ export function KanbanBoard({ data, onMoveElement, onElementClick, className = '
 
   const ensureTeam = (id: string, name?: string, level?: number) => {
     if (!teamsMap[id]) {
-      teamsMap[id] = { 
-        teamId: id, 
-        teamName: name || 'Team ' + id, 
-        teamLevel: level ?? 0, 
+      teamsMap[id] = {
+        teamId: id,
+        teamName: name || 'Team ' + id,
+        teamLevel: level ?? 0,
         elements: [],
         swimlanes: []
       };
@@ -91,7 +91,7 @@ export function KanbanBoard({ data, onMoveElement, onElementClick, className = '
 
   const sortedLevels = Array.from(new Set(Object.values(teamsMap).map(t => t.teamLevel))).sort((a, b) => a - b);
   const teamsByLevel: Record<number, typeof teamsMap[string][]> = {};
-  
+
   Object.values(teamsMap).forEach(team => {
     if (!teamsByLevel[team.teamLevel]) teamsByLevel[team.teamLevel] = [];
     teamsByLevel[team.teamLevel].push(team);
@@ -200,133 +200,88 @@ export function KanbanBoard({ data, onMoveElement, onElementClick, className = '
   return (
     <div className={`${styles.kanbanBoard} ${className}`}
       style={{ ['--kanban-column-count' as any]: columnCount }}>
-      {/* Fixed column headers */}
-      <div className={styles.columns} style={{ position: 'sticky', top: 0, zIndex: 2, background: '#fff' }}>
-        {data.columns.map((column: KanbanColumnDefinition) => (
-          <div key={column.id} className={styles.columnHeader} style={{ backgroundColor: column.color }}>
-            <h3 className={styles.columnTitle}>{column.title}</h3>
-            {column.description && <p className={styles.columnDescription}>{column.description}</p>}
-          </div>
-        ))}
+      {/* Fixed column headers - offset by AppHeader height (4rem) */}
+      <div className={styles.headerRow}>
+        <div className={styles.columns}>
+          {data.columns.map((column: KanbanColumnDefinition) => (
+            <div key={column.id} className={styles.columnHeader}>
+              <div className={styles.columnColorIndicator} style={{ backgroundColor: column.color }} />
+              <h3 className={styles.columnTitle}>{column.title}</h3>
+              {column.description && <p className={styles.columnDescription}>{column.description}</p>}
+            </div>
+          ))}
+        </div>
       </div>
       {/* Grouped by level */}
-      <div>
+      <div className="mt-8">
         {sortedLevels.map(level => (
-          <div key={level} style={{ marginBottom: 40 }}>
-            <div style={{ fontWeight: 700, fontSize: 20, margin: '24px 0 12px 0', color: '#3b82f6', letterSpacing: 1 }}>
-              Level {level}
-            </div>
+          <div key={level} className="mb-12">
             {teamsByLevel[level]
               .sort((a, b) => a.teamName.localeCompare(b.teamName))
               .map(team => {
                 const strategyGroups = groupElementsByStrategy(team);
-                
-                return (
-                <div key={team.teamId} style={{ marginBottom: 32 }}>
-                  <div style={{ fontWeight: 600, fontSize: 18, marginBottom: 16, color: '#1e293b', borderBottom: '1px solid #e2e8f0', paddingBottom: 8 }}>
-                    {team.teamName}
-                  </div>
-                  
-                  {strategyGroups.map(group => (
-                    <div key={group.id} style={{ marginBottom: 16 }}>
-                      {group.id !== 'default' && (
-                        <div className={styles.swimlaneHeaderRow} style={{
-                          fontWeight: 600,
-                          fontSize: 14,
-                          color: '#0f172a',
-                          background: '#dbeafe',
-                          padding: '8px 12px',
-                          borderRadius: 6,
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '8px',
-                          marginBottom: 8,
-                        }}>
-                          <span>{group.title}</span>
-                          {group.state && (
-                            <span style={{
-                              fontSize: '11px',
-                              padding: '2px 8px',
-                              borderRadius: '12px',
-                              backgroundColor: group.state === 'Active' ? '#dcfce7' : '#f1f5f9',
-                              color: group.state === 'Active' ? '#166534' : '#64748b',
-                              fontWeight: 500,
-                            }}>
-                              {group.state}
-                            </span>
-                          )}
-                        </div>
-                      )}
 
-                      {group.lanes.map(lane => {
-                        const showLaneHeader = group.lanes.length > 1 || lane.title !== group.title;
-                        return (
-                          <div
-                            key={lane.id}
-                            className={styles.swimlane}
-                            style={{
-                              marginBottom: 16,
-                              borderLeft: '4px solid #3b82f6',
-                              borderRadius: 6,
-                              background: '#f9fafb',
-                            }}
-                          >
-                            {showLaneHeader && (
-                              <div
-                                className={styles.swimlaneHeaderRow}
-                                style={{
-                                  fontWeight: 600,
-                                  fontSize: 13,
-                                  color: '#0f172a',
-                                  background: '#e0e7ef',
-                                  padding: '6px 12px',
-                                  borderRadius: '6px 6px 0 0',
-                                  display: 'flex',
-                                  alignItems: 'center',
-                                  gap: '8px',
-                                }}
-                              >
-                                <span>{lane.title}</span>
-                                {lane.state && (
-                                  <span
-                                    style={{
-                                      fontSize: '11px',
-                                      padding: '2px 8px',
-                                      borderRadius: '12px',
-                                      backgroundColor: lane.state === 'Active' ? '#dcfce7' : '#f1f5f9',
-                                      color: lane.state === 'Active' ? '#166534' : '#64748b',
-                                      fontWeight: 500,
-                                    }}
-                                  >
-                                    {lane.state}
-                                  </span>
-                                )}
-                              </div>
-                            )}
-                            <div className={styles.columns}
-                              style={showLaneHeader ? undefined : { borderRadius: '6px 6px 6px 6px' }}
-                            >
-                              {data.columns.map((column: KanbanColumnDefinition) => (
-                                <KanbanColumn
-                                  key={column.id}
-                                  column={column}
-                                  elements={lane.elements.filter(e => e.status === column.status)}
-                                  isDragOver={dragState.dragOverColumn === column.status}
-                                  onDragStart={handleDragStart}
-                                  onDragOver={(e) => handleDragOver(e, column.status)}
-                                  onDragLeave={handleDragLeave}
-                                  onDrop={(e) => handleDrop(e, column.status)}
-                                  onElementClick={onElementClick}
-                                />
-                              ))}
-                            </div>
-                          </div>
-                        );
-                      })}
+                return (
+                  <div key={team.teamId} className="mb-8">
+                    <div className="flex items-center gap-3 mb-6 pb-2 border-b border-border/50">
+                      <span className="px-2 py-0.5 rounded bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-wider border border-primary/20">
+                        Level {level}
+                      </span>
+                      <h2 className="text-xl font-bold text-foreground tracking-tight">
+                        {team.teamName}
+                      </h2>
                     </div>
-                  ))}
-                </div>
-              )})}
+
+                    {strategyGroups.map(group => (
+                      <div key={group.id} className="mb-6">
+                        {group.id !== 'default' && (
+                          <div className={styles.strategyHeader}>
+                            <span className="flex-1">{group.title}</span>
+                            {group.state && (
+                              <span className={`${styles.statusBadge} ${group.state === 'Active' ? styles.statusActive : styles.statusDraft}`}>
+                                {group.state}
+                              </span>
+                            )}
+                          </div>
+                        )}
+
+                        {group.lanes.map(lane => {
+                          const showLaneHeader = group.lanes.length > 1 || lane.title !== group.title;
+                          return (
+                            <div key={lane.id} className={styles.laneContainer}>
+                              {showLaneHeader && (
+                                <div className={styles.laneHeader}>
+                                  <span className="flex-1">{lane.title}</span>
+                                  {lane.state && (
+                                    <span className={`${styles.statusBadge} ${lane.state === 'Active' ? styles.statusActive : styles.statusDraft}`}>
+                                      {lane.state}
+                                    </span>
+                                  )}
+                                </div>
+                              )}
+                              <div className={styles.columns}>
+                                {data.columns.map((column: KanbanColumnDefinition) => (
+                                  <KanbanColumn
+                                    key={column.id}
+                                    column={column}
+                                    elements={lane.elements.filter(e => e.status === column.status)}
+                                    isDragOver={dragState.dragOverColumn === column.status}
+                                    onDragStart={handleDragStart}
+                                    onDragOver={(e) => handleDragOver(e, column.status)}
+                                    onDragLeave={handleDragLeave}
+                                    onDrop={(e) => handleDrop(e, column.status)}
+                                    onElementClick={onElementClick}
+                                  />
+                                ))}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    ))}
+                  </div>
+                )
+              })}
           </div>
         ))}
       </div>
@@ -357,13 +312,12 @@ export function KanbanColumn({
   return (
     <div
       className={`${styles.column} ${isDragOver ? styles.dragOver : ''}`}
-      style={!isDragOver && column.color ? { backgroundColor: column.color } : undefined}
       onDragOver={onDragOver}
       onDragLeave={onDragLeave}
       onDrop={onDrop}
     >
-      <div className={styles.columnCount} style={{ textAlign: 'right', fontSize: 12, color: '#888', marginBottom: 4 }}>
-        {elements.length > 0 ? `${elements.length} item${elements.length > 1 ? 's' : ''}` : ''}
+      <div className={styles.columnCount} style={{ textAlign: 'right', fontSize: 10, color: 'hsl(var(--muted-foreground))', marginBottom: 4, fontWeight: 600 }}>
+        {elements.length > 0 ? `${elements.length} ${elements.length > 1 ? 'ITEMS' : 'ITEM'}` : ''}
       </div>
       <div className={styles.columnContent}>
         {elements.length === 0 ? (
@@ -433,7 +387,7 @@ export function KanbanElement({ element, onDragStart, onClick }: KanbanElementPr
 
               return (
                 <span key={tag} className={tagClassName}>
-                  {lowerTag === 'proximate objective' && <Clock3 size={12} style={{ marginRight: 4 }} />}
+                  {tag.toLowerCase() === 'proximate objective' && <Clock3 size={12} className="mr-1" />}
                   {tag}
                 </span>
               );

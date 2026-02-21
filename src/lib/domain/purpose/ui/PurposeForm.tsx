@@ -20,9 +20,9 @@ type AiSuggestion = {
 };
 
 function npsColor(nps: number) {
-  if (nps >= 4) return '#00cc88';
-  if (nps === 3) return '#9B51E0';
-  return '#ef4444';
+  if (nps >= 4) return 'var(--success)';
+  if (nps === 3) return 'var(--primary)';
+  return 'var(--destructive)';
 }
 
 function fakeAiSuggest(current: string | undefined, context: string | undefined, nps: number, hint?: string): AiSuggestion {
@@ -111,8 +111,8 @@ export default function PurposeForm({ team, onTeamUpdated }: PurposeFormProps) {
       }
 
       toast({ title: 'Saved', description: 'Team purpose updated.' });
-  onTeamUpdated?.();
-  setIsEditing(false);
+      onTeamUpdated?.();
+      setIsEditing(false);
     } catch (err: any) {
       console.error(err);
       toast({ title: 'Error', description: err?.message || 'Unable to save.', variant: 'destructive' });
@@ -171,7 +171,7 @@ export default function PurposeForm({ team, onTeamUpdated }: PurposeFormProps) {
                 <Textarea id="context" value={context} onChange={(e) => setContext(e.target.value)} rows={6} />
               </div>
 
-              
+
 
               <div className={styles.buttonGroup}>
                 <Button onClick={handleSave} disabled={!isFormValid || isSaving} className={styles.primaryButton}>{isSaving ? 'Saving...' : 'Save'}</Button>

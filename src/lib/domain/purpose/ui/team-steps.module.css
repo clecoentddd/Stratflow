@@ -94,12 +94,12 @@
   box-shadow: 0 0 0 2px white, 0 0 6px rgba(16, 185, 129, 0.4);
 }
 
-/* Color variables - matching TeamCard colors */
+/* Color variables from globals.css */
 :root {
-  --step-purpose: #9B51E0; /* purple */
-  --step-radar: #00cc88; /* green */  
-  --step-dashboard: #388cfa; /* blue */
-  --step-kanban: #F5A623; /* orange */
+  --step-purpose: hsl(var(--step-1));
+  --step-radar: hsl(var(--step-2));
+  --step-dashboard: hsl(var(--step-3));
+  --step-kanban: hsl(var(--step-4));
 }
 
 /* ===== ACTIVE STATES ===== */
@@ -250,12 +250,12 @@
     flex-direction: column;
     gap: 16px;
   }
-  
+
   .flowArrow {
     transform: rotate(90deg);
     margin: 8px 0;
   }
-  
+
   .stepCard {
     min-width: 250px;
     justify-content: center;

@@ -153,7 +153,7 @@ export function StrategyDashboard({
 
           <Button
             onClick={() => setCreateStrategyOpen(true)}
-            className="bg-[#388cfa] hover:bg-[#2a7ae8] text-white h-9 px-4 rounded-full font-semibold shadow-sm transition-all hover:shadow-md active:scale-95"
+            className="bg-primary hover:opacity-90 text-white h-9 px-4 rounded-full font-semibold shadow-sm transition-all hover:shadow-md active:scale-95"
           >
             <Plus className="mr-2 h-4 w-4" />
             New Strategy

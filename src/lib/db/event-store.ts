@@ -13,10 +13,24 @@ import type { TagAddedEvent, TagRemovedEvent } from '../domain/tag-an-initiative
 import type { UnifiedKanbanEvent } from '@/lib/domain/unified-kanban/events';
 import type { UserEvent } from '@/lib/domain/userManagement/UserEvent';
 
+import type { StrategyEvent } from '@/lib/domain/strategies/events';
+import type { InitiativeEvent } from '@/lib/domain/initiatives/events';
+import type { RadarEvent } from '@/lib/domain/radar/events';
+
 // In a real app, this would be a proper database. We're using a file-based mock store
 // for simplicity and to ensure state persists across serverless function invocations.
 
-export type AllEvents = TeamEvent | CompanyEvent | LinkingEvents | UnifiedKanbanEvent | TagAddedEvent | TagRemovedEvent | UserEvent;
+export type AllEvents =
+  | TeamEvent
+  | CompanyEvent
+  | LinkingEvents
+  | UnifiedKanbanEvent
+  | TagAddedEvent
+  | TagRemovedEvent
+  | UserEvent
+  | StrategyEvent
+  | InitiativeEvent
+  | RadarEvent;
 
 // We no longer keep state in memory. We'll use functions to read/write from a mock DB file.
 // Let's define the structure of our mock database.
@@ -224,11 +238,11 @@ export const ensureProjectionHandlersLoaded = async () => {
 const initializeEventStore = (): void => {
   // Only initialize once
   if ((global as any)._mockDbEvents) {
-     return;
+    return;
   }
 
   console.log('Initializing event store from JSON (write-only)...');
-  
+
   // Load initial events from JSON file ONLY on first initialization
   let initialEvents: AllEvents[] = [];
   try {
@@ -245,7 +259,7 @@ const initializeEventStore = (): void => {
 
   // Cache the events for write operations only
   (global as any)._mockDbEvents = initialEvents;
-  
+
   // Dispatch initial events to projection handlers
   (global as any)._initializationPromise = (async () => {
     await ensureProjectionHandlersLoaded();
@@ -274,7 +288,7 @@ export const saveEvents = async (newEvents: AllEvents[]): Promise<void> => {
   return new Promise((resolve) => {
     // Initialize event store if needed
     initializeEventStore();
-    
+
     // Get current events array for write operation
     const currentEvents = (global as any)._mockDbEvents || [];
     console.log('[EVENT-STORE] saveEvents called with', newEvents.length, 'event(s)');
@@ -288,14 +302,14 @@ export const saveEvents = async (newEvents: AllEvents[]): Promise<void> => {
         throw new Error(`[EVENT-STORE] Missing tenantId for event ${event.type}`);
       }
     });
-    
+
     // Append new events
     const updatedEvents = [...currentEvents, ...newEvents];
-    
+
     // Save back to storage
     (global as any)._mockDbEvents = updatedEvents;
     console.log(`Saved ${newEvents.length} new events. Total events: ${updatedEvents.length}`);
-    
+
     // Dispatch events to live projection handlers
     (async () => {
       newEvents.forEach(event => dispatchProjectionHandlers(event, false));

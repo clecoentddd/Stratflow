@@ -19,9 +19,9 @@
 .tabsPill {
   display: inline-flex;
   padding: 0.25rem;
-  background-color: #f1f5f9;
+  background-color: var(--muted);
   border-radius: 999px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--border);
 }
 
 .tabPill {
@@ -51,15 +51,15 @@
 
 /* Color accents for active states */
 .tabPill[data-active="true"]:has(svg[class*="FileEdit"]) {
-  color: #2563eb;
+  color: var(--success);
 }
 
 .tabPill[data-active="true"]:has(svg[class*="Target"]) {
-  color: #059669;
+  color: var(--primary);
 }
 
 .tabPill[data-active="true"]:has(svg[class*="Archive"]) {
-  color: #475569;
+  color: var(--muted-foreground);
 }
 
 .tabCount {
@@ -79,34 +79,34 @@
 
 /* Default / Inactive Count Colors */
 .tabPill:has(svg[class*="FileEdit"]) .tabCount {
-  background: #e0e7ff;
-  color: #4338ca;
+  background: var(--success-bg);
+  color: var(--success-foreground);
 }
 
 .tabPill:has(svg[class*="Target"]) .tabCount {
-  background: #d1fae5;
-  color: #065f46;
+  background: var(--accent);
+  color: var(--primary);
 }
 
 .tabPill:has(svg[class*="Archive"]) .tabCount {
-  background: #f1f5f9;
-  color: #475569;
+  background: var(--muted);
+  color: var(--muted-foreground);
 }
 
 /* Active Count Colors */
 .tabPill[data-active="true"]:has(svg[class*="FileEdit"]) .tabCount {
-  background: #2563eb;
-  color: white;
+  background: var(--success);
+  color: var(--primary-foreground);
 }
 
 .tabPill[data-active="true"]:has(svg[class*="Target"]) .tabCount {
-  background: #059669;
-  color: white;
+  background: var(--primary);
+  color: var(--primary-foreground);
 }
 
 .tabPill[data-active="true"]:has(svg[class*="Archive"]) .tabCount {
-  background: #475569;
-  color: white;
+  background: var(--muted-foreground);
+  color: var(--primary-foreground);
 }
 
 .strategySection {

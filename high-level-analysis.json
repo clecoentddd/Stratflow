@@ -1,0 +1,481 @@
+{
+    "slices": [
+        {
+            "id": "slice-company-discovery",
+            "status": "Created",
+            "index": 1,
+            "title": "Company Discovery",
+            "context": "Loading available companies to start the session.",
+            "sliceType": "STATE_VIEW",
+            "commands": [],
+            "events": [],
+            "readmodels": [
+                {
+                    "id": "rm-companies-list",
+                    "title": "Companies Read Model",
+                    "type": "READMODEL",
+                    "fields": [
+                        {
+                            "name": "id",
+                            "type": "UUID",
+                            "example": "comp-123"
+                        },
+                        {
+                            "name": "name",
+                            "type": "String",
+                            "example": "Acme Corp"
+                        }
+                    ],
+                    "dependencies": [
+                        {
+                            "id": "scr-company-selection",
+                            "type": "OUTBOUND",
+                            "title": "Company Selection Screen",
+                            "elementType": "SCREEN"
+                        }
+                    ],
+                    "description": "src/lib/domain/companies/projection/index.ts"
+                }
+            ],
+            "screens": [
+                {
+                    "id": "scr-company-selection",
+                    "title": "Company Selection Screen",
+                    "type": "SCREEN",
+                    "fields": [],
+                    "dependencies": [],
+                    "description": "src/app/page.tsx"
+                }
+            ],
+            "processors": [],
+            "tables": [],
+            "specifications": [],
+            "actors": [
+                {
+                    "name": "User",
+                    "authzRequired": false
+                }
+            ],
+            "aggregates": [
+                "Company"
+            ]
+        },
+        {
+            "id": "slice-team-setup",
+            "status": "Created",
+            "index": 2,
+            "title": "Team Setup",
+            "context": "Creating a new team within a company context.",
+            "sliceType": "STATE_CHANGE",
+            "commands": [
+                {
+                    "id": "cmd-create-team",
+                    "title": "Create Team",
+                    "type": "COMMAND",
+                    "fields": [
+                        {
+                            "name": "companyId",
+                            "type": "UUID",
+                            "example": "comp-123"
+                        },
+                        {
+                            "name": "name",
+                            "type": "String",
+                            "example": "Product Team Alpha"
+                        },
+                        {
+                            "name": "purpose",
+                            "type": "String",
+                            "example": "Deliver high quality features"
+                        }
+                    ],
+                    "dependencies": [
+                        {
+                            "id": "evt-team-created",
+                            "type": "OUTBOUND",
+                            "title": "Team Created",
+                            "elementType": "EVENT"
+                        }
+                    ],
+                    "description": "src/lib/domain/teams/commandHandler.ts"
+                }
+            ],
+            "events": [
+                {
+                    "id": "evt-team-created",
+                    "title": "Team Created",
+                    "type": "EVENT",
+                    "fields": [
+                        {
+                            "name": "id",
+                            "type": "UUID",
+                            "example": "team-456"
+                        },
+                        {
+                            "name": "companyId",
+                            "type": "UUID",
+                            "example": "comp-123"
+                        }
+                    ],
+                    "dependencies": [
+                        {
+                            "id": "rm-teams-list",
+                            "type": "OUTBOUND",
+                            "title": "Teams Read Model",
+                            "elementType": "READMODEL"
+                        }
+                    ],
+                    "description": "src/lib/domain/teams/events.ts",
+                    "aggregate": "Team"
+                }
+            ],
+            "readmodels": [],
+            "screens": [
+                {
+                    "id": "scr-team-form",
+                    "title": "Create Team Form",
+                    "type": "SCREEN",
+                    "fields": [],
+                    "dependencies": [
+                        {
+                            "id": "cmd-create-team",
+                            "type": "OUTBOUND",
+                            "title": "Create Team",
+                            "elementType": "COMMAND"
+                        }
+                    ],
+                    "description": "src/lib/domain/teams/ui/CreateTeamDialog.tsx"
+                }
+            ],
+            "processors": [],
+            "tables": [],
+            "specifications": [],
+            "actors": [
+                {
+                    "name": "Admin",
+                    "authzRequired": true
+                }
+            ],
+            "aggregates": [
+                "Team"
+            ]
+        },
+        {
+            "id": "slice-radar-management",
+            "status": "Created",
+            "index": 3,
+            "title": "Radar Management",
+            "context": "Defining strategic items on the team radar.",
+            "sliceType": "STATE_CHANGE",
+            "commands": [
+                {
+                    "id": "cmd-upsert-radar-item",
+                    "title": "Upsert Radar Item",
+                    "type": "COMMAND",
+                    "fields": [
+                        {
+                            "name": "teamId",
+                            "type": "UUID",
+                            "example": "team-456"
+                        },
+                        {
+                            "name": "label",
+                            "type": "String",
+                            "example": "AI Integration"
+                        },
+                        {
+                            "name": "quadrant",
+                            "type": "String",
+                            "example": "Techniques"
+                        }
+                    ],
+                    "dependencies": [
+                        {
+                            "id": "evt-radar-item-created",
+                            "type": "OUTBOUND",
+                            "title": "Radar Item Created",
+                            "elementType": "EVENT"
+                        }
+                    ],
+                    "description": "src/lib/domain/radar/commandHandler.ts"
+                }
+            ],
+            "events": [
+                {
+                    "id": "evt-radar-item-created",
+                    "title": "Radar Item Created",
+                    "type": "EVENT",
+                    "fields": [],
+                    "dependencies": [
+                        {
+                            "id": "rm-team-projection",
+                            "type": "OUTBOUND",
+                            "title": "Team State Read Model",
+                            "elementType": "READMODEL"
+                        }
+                    ],
+                    "description": "src/lib/domain/radar/RadarItemCreatedEvent.ts",
+                    "aggregate": "RadarItem"
+                }
+            ],
+            "readmodels": [],
+            "screens": [
+                {
+                    "id": "scr-radar-dialog",
+                    "title": "Radar Item Dialog",
+                    "type": "SCREEN",
+                    "fields": [],
+                    "dependencies": [
+                        {
+                            "id": "cmd-upsert-radar-item",
+                            "type": "OUTBOUND",
+                            "title": "Upsert Radar Item",
+                            "elementType": "COMMAND"
+                        }
+                    ],
+                    "description": "src/lib/domain/radar/ui/radar-item-dialog.tsx"
+                }
+            ],
+            "processors": [],
+            "tables": [],
+            "specifications": [],
+            "actors": [
+                {
+                    "name": "Strategy Lead",
+                    "authzRequired": true
+                }
+            ],
+            "aggregates": [
+                "RadarItem"
+            ]
+        },
+        {
+            "id": "slice-initiative-execution",
+            "status": "Created",
+            "index": 4,
+            "title": "Initiative Execution",
+            "context": "Starting a new business initiative.",
+            "sliceType": "STATE_CHANGE",
+            "commands": [
+                {
+                    "id": "cmd-create-initiative",
+                    "title": "Create Initiative",
+                    "type": "COMMAND",
+                    "fields": [
+                        {
+                            "name": "strategyId",
+                            "type": "UUID",
+                            "example": "strat-789"
+                        },
+                        {
+                            "name": "name",
+                            "type": "String",
+                            "example": "Cloud Migration"
+                        }
+                    ],
+                    "dependencies": [
+                        {
+                            "id": "evt-initiative-created",
+                            "type": "OUTBOUND",
+                            "title": "Initiative Created",
+                            "elementType": "EVENT"
+                        }
+                    ],
+                    "description": "src/lib/domain/initiatives/commandHandler.ts"
+                }
+            ],
+            "events": [
+                {
+                    "id": "evt-initiative-created",
+                    "title": "Initiative Created",
+                    "type": "EVENT",
+                    "fields": [
+                        {
+                            "name": "initiativeId",
+                            "type": "UUID",
+                            "example": "init-000"
+                        }
+                    ],
+                    "dependencies": [
+                        {
+                            "id": "proc-kanban-inclusion",
+                            "type": "OUTBOUND",
+                            "title": "Kanban Inclusion Processor",
+                            "elementType": "AUTOMATION"
+                        }
+                    ],
+                    "description": "src/lib/domain/initiatives/events.ts",
+                    "aggregate": "Initiative"
+                }
+            ],
+            "readmodels": [],
+            "screens": [
+                {
+                    "id": "scr-initiative-form",
+                    "title": "New Initiative Form",
+                    "type": "SCREEN",
+                    "fields": [],
+                    "dependencies": [
+                        {
+                            "id": "cmd-create-initiative",
+                            "type": "OUTBOUND",
+                            "title": "Create Initiative",
+                            "elementType": "COMMAND"
+                        }
+                    ],
+                    "description": "src/lib/domain/radar/ui/zoom-in-dialog.tsx"
+                }
+            ],
+            "processors": [],
+            "tables": [],
+            "specifications": [],
+            "actors": [
+                {
+                    "name": "Owner",
+                    "authzRequired": true
+                }
+            ],
+            "aggregates": [
+                "Initiative"
+            ]
+        },
+        {
+            "id": "slice-automatic-kanban-board-registration",
+            "status": "Created",
+            "index": 5,
+            "title": "Automatic Kanban Registration",
+            "context": "Automatically adding new initiatives to the team's Kanban board.",
+            "sliceType": "AUTOMATION",
+            "commands": [
+                {
+                    "id": "cmd-register-incantation",
+                    "title": "Register Initiative on Kanban",
+                    "type": "COMMAND",
+                    "fields": [
+                        {
+                            "name": "initiativeId",
+                            "type": "UUID"
+                        },
+                        {
+                            "name": "status",
+                            "type": "String",
+                            "example": "NEW"
+                        }
+                    ],
+                    "dependencies": [
+                        {
+                            "id": "evt-initiative-added-to-kanban",
+                            "type": "OUTBOUND",
+                            "title": "Initiative Added to Kanban",
+                            "elementType": "EVENT"
+                        }
+                    ],
+                    "description": "Implicit call in domain listener via saveEvents"
+                }
+            ],
+            "events": [
+                {
+                    "id": "evt-initiative-added-to-kanban",
+                    "title": "Initiative Added to Kanban",
+                    "type": "EVENT",
+                    "fields": [],
+                    "dependencies": [
+                        {
+                            "id": "rm-kanban-projection",
+                            "type": "OUTBOUND",
+                            "title": "Kanban Board Read Model",
+                            "elementType": "READMODEL"
+                        }
+                    ],
+                    "description": "src/lib/domain/unified-kanban/events.ts",
+                    "aggregate": "Initiative"
+                }
+            ],
+            "readmodels": [],
+            "screens": [],
+            "processors": [
+                {
+                    "id": "proc-kanban-inclusion",
+                    "title": "Kanban Inclusion Processor",
+                    "type": "AUTOMATION",
+                    "fields": [],
+                    "dependencies": [
+                        {
+                            "id": "cmd-register-incantation",
+                            "type": "OUTBOUND",
+                            "title": "Register Initiative on Kanban",
+                            "elementType": "COMMAND"
+                        }
+                    ],
+                    "description": "src/lib/domain/unified-kanban/domainListeners.ts"
+                }
+            ],
+            "tables": [],
+            "specifications": [],
+            "actors": [],
+            "aggregates": [
+                "Initiative"
+            ]
+        },
+        {
+            "id": "slice-kanban-monitoring",
+            "status": "Created",
+            "index": 6,
+            "title": "Strategic Execution Monitoring",
+            "context": "Visualizing the flow of initiatives on the Kanban board.",
+            "sliceType": "STATE_VIEW",
+            "commands": [],
+            "events": [],
+            "readmodels": [
+                {
+                    "id": "rm-kanban-projection",
+                    "title": "Kanban Board Read Model",
+                    "type": "READMODEL",
+                    "fields": [
+                        {
+                            "name": "columns",
+                            "type": "Custom",
+                            "cardinality": "List"
+                        },
+                        {
+                            "name": "elements",
+                            "type": "Custom",
+                            "cardinality": "List"
+                        }
+                    ],
+                    "dependencies": [
+                        {
+                            "id": "scr-kanban-board",
+                            "type": "OUTBOUND",
+                            "title": "Kanban Board Screen",
+                            "elementType": "SCREEN"
+                        }
+                    ],
+                    "description": "src/lib/domain/unified-kanban/projection/kanban-initiatives-projection.ts"
+                }
+            ],
+            "screens": [
+                {
+                    "id": "scr-kanban-board",
+                    "title": "Strategic Kanban Board",
+                    "type": "SCREEN",
+                    "fields": [],
+                    "dependencies": [],
+                    "description": "src/lib/domain/unified-kanban/ui/kanban-board.tsx"
+                }
+            ],
+            "processors": [],
+            "tables": [],
+            "specifications": [],
+            "actors": [
+                {
+                    "name": "Team",
+                    "authzRequired": true
+                }
+            ],
+            "aggregates": [
+                "Initiative"
+            ]
+        }
+    ]
+}

@@ -190,9 +190,9 @@ export default function RadarPage() {
           <div className="text-center">
             <h1 className="text-2xl font-bold">Team Not Found</h1>
             <p className="text-muted-foreground">The team you are looking for does not exist.</p>
-            <Link href="/" className="mt-4 inline-block">
-              <Button>Back to Companies</Button>
-            </Link>
+            <Button asChild className="mt-4">
+              <Link href="/">Back to Companies</Link>
+            </Button>
           </div>
         </main>
       </div>

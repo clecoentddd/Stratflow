@@ -106,7 +106,7 @@ export default function RadarPage() {
     
     try {
       const method = editingItem ? 'PUT' : 'POST';
-      const response = await fetch(`/api/teams/${selectedTeamId}/radar`, {
+      const response = await fetch(`/api/teams/${selectedTeamId}/radar/${editingItem?.id}`, {
         method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...item, teamId: selectedTeamId }),
@@ -202,6 +202,7 @@ export default function RadarPage() {
           item={editingItem}
           teams={teams}
           currentTeamId={selectedTeamId}
+          companyId={teams.find(t => t.id === selectedTeamId)?.companyId || ""}
         />
       </main>
     </div>

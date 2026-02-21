@@ -11,6 +11,7 @@ export type InitiativeLinkRow = {
   toTeamId?: string;
   fromTeamLevel?: number;
   toTeamLevel?: number;
+  tenantId?: string; // Optional for backward compatibility
   createdAt: string;
   deletedAt: string | null;
 };
@@ -38,6 +39,7 @@ function onLinked(e: any) {
     toTeamId: e.payload.toTeamId,
     fromTeamLevel: e.payload.fromTeamLevel,
     toTeamLevel: e.payload.toTeamLevel,
+    tenantId: e.tenantId,
     createdAt: e.timestamp,
     deletedAt: null,
   };
@@ -69,19 +71,33 @@ registerProjectionHandler('InitiativeUnlinked', (e) => onUnlinked(e));
 registerProjectionHandler('InitiativeDeleted', (e) => onInitiativeDeleted(e));
 
 // Query helpers — used by API/UI
-export const queryLinksFrom = (initiativeId: string) => {
+// CRITICAL: All queries MUST filter by tenantId to prevent cross-tenant data leakage
+export const queryLinksFrom = (initiativeId: string, tenantId: string) => {
   const table = getTable();
-  return Array.from(table.values()).filter(r => r.fromInitiativeId === initiativeId && !r.deletedAt);
+  return Array.from(table.values()).filter(r =>
+    r.fromInitiativeId === initiativeId &&
+    !r.deletedAt &&
+    r.tenantId === tenantId
+  );
 };
 
-export const queryLinksTo = (initiativeId: string) => {
+export const queryLinksTo = (initiativeId: string, tenantId: string) => {
   const table = getTable();
-  return Array.from(table.values()).filter(r => r.toInitiativeId === initiativeId && !r.deletedAt);
+  return Array.from(table.values()).filter(r =>
+    r.toInitiativeId === initiativeId &&
+    !r.deletedAt &&
+    r.tenantId === tenantId
+  );
 };
 
-export const queryAllActiveLinks = () => {
+
+// CRITICAL: tenantId is REQUIRED to prevent returning data from all tenants
+export const queryAllActiveLinks = (tenantId: string) => {
   const table = getTable();
-  return Array.from(table.values()).filter(r => !r.deletedAt);
+  return Array.from(table.values()).filter(r =>
+    !r.deletedAt &&
+    r.tenantId === tenantId
+  );
 };
 
 export const resetInitiativeLinksProjection = () => {

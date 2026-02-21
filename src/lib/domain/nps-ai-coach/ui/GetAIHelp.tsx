@@ -21,9 +21,9 @@ type Props = {
 };
 
 function npsColor(nps: number) {
-  if (nps >= 4) return '#00cc88';
-  if (nps === 3) return '#9B51E0';
-  return '#ef4444';
+  if (nps >= 4) return 'var(--success)';
+  if (nps === 3) return 'var(--primary)';
+  return 'var(--destructive)';
 }
 
 export default function GetAIHelp({ open, onOpenChange, currentPurpose, context, teamId, onApply }: Props) {
@@ -126,7 +126,7 @@ export default function GetAIHelp({ open, onOpenChange, currentPurpose, context,
               const evaluations = data?.evaluations ?? data?.evaluation ?? data?.details ?? '';
               const suggestions = data?.suggestions ?? data?.suggestion ?? data?.suggested ?? '';
               return (
-                <div style={{ padding: 12, border: '1px solid #eee', borderRadius: 8, maxHeight: '60vh', overflowY: 'auto' }}>
+                <div style={{ padding: 12, border: '1px solid var(--border)', borderRadius: 8, maxHeight: '60vh', overflowY: 'auto' }}>
                   <div style={{ fontSize: 14, fontWeight: 600 }}>AI NPS Evaluation</div>
                   <div style={{ marginTop: 8 }}><strong>NPS:</strong> {potentialNPS}</div>
                   <div style={{ marginTop: 8 }}><strong>Evaluations:</strong>
@@ -140,11 +140,11 @@ export default function GetAIHelp({ open, onOpenChange, currentPurpose, context,
                     <Button onClick={() => { handleApply(); }}>Apply to form</Button>
                     <Button variant="outline" onClick={handleSave}>Save suggestion</Button>
                     <Button variant="ghost" onClick={() => setShowRaw(s => !s)}>{showRaw ? 'Hide JSON' : 'Show JSON'}</Button>
-                    <div style={{ marginLeft: 'auto', fontSize: 12, color: '#666' }}>Source: {result?.source ?? (result?.data ? 'ai-coach-get-nps' : 'nps-ai-coach')}</div>
+                    <div style={{ marginLeft: 'auto', fontSize: 12, color: 'var(--muted-foreground)' }}>Source: {result?.source ?? (result?.data ? 'ai-coach-get-nps' : 'nps-ai-coach')}</div>
                   </div>
 
                   {showRaw && (
-                    <div style={{ marginTop: 12, borderTop: '1px solid #eee', paddingTop: 12 }}>
+                    <div style={{ marginTop: 12, borderTop: '1px solid var(--border)', paddingTop: 12 }}>
                       <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
                         <div style={{ fontSize: 13, fontWeight: 600 }}>Raw JSON</div>
                         <Button variant="outline" size="sm" onClick={() => {
@@ -156,7 +156,7 @@ export default function GetAIHelp({ open, onOpenChange, currentPurpose, context,
                           }
                         }}>Copy</Button>
                       </div>
-                      <pre style={{ fontSize: 12, lineHeight: 1.4, whiteSpace: 'pre-wrap', wordBreak: 'break-word', maxHeight: '40vh', overflow: 'auto', background: '#fafafa', padding: 12, borderRadius: 6 }}>{JSON.stringify(result, null, 2)}</pre>
+                      <pre style={{ fontSize: 12, lineHeight: 1.4, whiteSpace: 'pre-wrap', wordBreak: 'break-word', maxHeight: '40vh', overflow: 'auto', background: 'var(--muted)', padding: 12, borderRadius: 6 }}>{JSON.stringify(result, null, 2)}</pre>
                     </div>
                   )}
                 </div>

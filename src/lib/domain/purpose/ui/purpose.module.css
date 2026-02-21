@@ -4,15 +4,15 @@
 */
 
 :root {
-  --purple: #9B51E0;
-  --purple-light: rgba(155, 81, 224, 0.08);
-  --purple-border: rgba(155, 81, 224, 0.16);
-  --text-primary: #111827;
-  --text-secondary: #4b5563;
-  --text-muted: #6b7280;
-  --surface: #ffffff;
-  --surface-alt: #f9fafb;
-  --border-soft: rgba(15, 23, 42, 0.05);
+  --accent-main: hsl(var(--primary));
+  --accent-soft: hsl(var(--secondary));
+  --accent-border: hsl(var(--border));
+  --text-primary: hsl(var(--foreground));
+  --text-secondary: hsl(var(--muted-foreground));
+  --text-muted: hsl(var(--muted-foreground));
+  --surface: hsl(var(--card));
+  --surface-alt: hsl(var(--background));
+  --border-soft: hsl(var(--border));
 }
 
 /* =====================
@@ -34,7 +34,7 @@
 .card {
   background: var(--surface);
   border: 1px solid var(--border-soft);
-  border-left: 6px solid var(--purple-light);
+  border-left: 6px solid var(--accent-soft);
   border-radius: 14px;
   padding: 28px;
   box-shadow: 0 6px 18px rgba(16, 24, 40, 0.05);
@@ -59,7 +59,8 @@
 }
 
 .name {
-  font-size: 1.75rem; /* 28px */
+  font-size: 1.75rem;
+  /* 28px */
   font-weight: 800;
   color: var(--text-primary);
   line-height: 1.15;
@@ -67,13 +68,14 @@
 
 .subtitle {
   color: var(--text-muted);
-  font-size: 0.9rem; /* 14px */
+  font-size: 0.9rem;
+  /* 14px */
 }
 
 .level {
   display: inline-block;
-  background: var(--purple-light);
-  color: var(--purple);
+  background: var(--accent-soft);
+  color: var(--accent-main);
   padding: 6px 10px;
   border-radius: 999px;
   font-weight: 600;
@@ -92,7 +94,8 @@
 }
 
 .purposeText {
-  font-size: 1.125rem; /* 18px */
+  font-size: 1.125rem;
+  /* 18px */
   color: var(--text-primary);
   margin: 8px 0 16px;
   line-height: 1.6;
@@ -144,11 +147,12 @@
 
 /* Primary filled button */
 .primaryButton {
-  background: var(--purple);
+  background: var(--accent-main);
   color: #fff;
-  border: 1px solid var(--purple-border);
-  box-shadow: 0 4px 12px rgba(155, 81, 224, 0.15);
+  border: 1px solid var(--accent-border);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
+
 .primaryButton:hover {
   background: #8c3dd6;
   box-shadow: 0 6px 16px rgba(155, 81, 224, 0.2);
@@ -157,11 +161,12 @@
 /* Outline purple */
 .outlinePurple {
   background: transparent;
-  color: var(--purple);
-  border: 1px solid var(--purple-border);
+  color: var(--accent-main);
+  border: 1px solid var(--accent-border);
 }
+
 .outlinePurple:hover {
-  background: var(--purple-light);
+  background: var(--accent-soft);
 }
 
 /* Ghost (neutral) */
@@ -170,8 +175,9 @@
   color: var(--text-muted);
   border: none;
 }
+
 .ghostPurple:hover {
-  color: var(--purple);
+  color: var(--accent-main);
 }
 
 /* =====================
@@ -202,8 +208,8 @@
   border-radius: 999px;
   font-weight: 600;
   font-size: 0.75rem;
-  color: var(--purple);
-  background: var(--purple-light);
+  color: var(--accent-main);
+  background: var(--accent-soft);
   letter-spacing: 0.3px;
 }
 

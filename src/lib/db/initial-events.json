@@ -7,7 +7,8 @@
     "payload": {
       "id": "company-demo",
       "name": "Demo Company"
-    }
+    },
+    "tenantId": "company-demo"
   },
   {
     "type": "TeamCreated",
@@ -21,7 +22,8 @@
       "purpose": "Demonstrate the system capabilities",
       "context": "Sample team for testing",
       "level": 1
-    }
+    },
+    "tenantId": "company-demo"
   },
   {
     "type": "StrategyCreated",
@@ -32,7 +34,8 @@
       "strategyId": "strategy-draft-demo",
       "description": "Digital Transformation Strategy",
       "timeframe": "Q1-Q2 2025"
-    }
+    },
+    "tenantId": "company-demo"
   },
   {
     "type": "StrategyCreated",
@@ -43,7 +46,8 @@
       "strategyId": "strategy-active-demo",
       "description": "Customer Experience Enhancement",
       "timeframe": "Q4 2024 - Q1 2025"
-    }
+    },
+    "tenantId": "company-demo"
   },
   {
     "type": "StrategyUpdated",
@@ -53,7 +57,8 @@
     "payload": {
       "strategyId": "strategy-active-demo",
       "state": "Active"
-    }
+    },
+    "tenantId": "company-demo"
   },
   {
     "type": "InitiativeCreated",
@@ -68,7 +73,8 @@
     },
     "metadata": {
       "initiativeId": "initiative-draft-1"
-    }
+    },
+    "tenantId": "company-demo"
   },
   {
     "type": "InitiativeCreated",
@@ -83,7 +89,8 @@
     },
     "metadata": {
       "initiativeId": "initiative-draft-2"
-    }
+    },
+    "tenantId": "company-demo"
   },
   {
     "type": "InitiativeCreated",
@@ -98,7 +105,8 @@
     },
     "metadata": {
       "initiativeId": "initiative-active-1"
-    }
+    },
+    "tenantId": "company-demo"
   },
   {
     "type": "InitiativeCreated",
@@ -113,7 +121,8 @@
     },
     "metadata": {
       "initiativeId": "initiative-active-2"
-    }
+    },
+    "tenantId": "company-demo"
   },
   {
     "type": "TeamCreated",
@@ -127,7 +136,8 @@
       "purpose": "Bold with simplicity",
       "context": "Chief Technology Officer: kills inertia with simple solutions, make processes lighter, focus on outcomes, on the why. Remove the fat, be lean. Complexity accidental is our enemy",
       "level": 2
-    }
+    },
+    "tenantId": "company-demo"
   },
   {
     "type": "RadarItemCreated",
@@ -145,7 +155,8 @@
       "distance": "Responding",
       "impact": "High",
       "risk": "Medium"
-    }
+    },
+    "tenantId": "company-demo"
   },
   {
     "type": "RadarItemCreated",
@@ -163,7 +174,8 @@
       "distance": "Assessed",
       "impact": "High",
       "risk": "Low"
-    }
+    },
+    "tenantId": "company-demo"
   },
   {
     "type": "RadarItemCreated",
@@ -181,7 +193,8 @@
       "distance": "Assessed",
       "impact": "Medium",
       "risk": "Medium"
-    }
+    },
+    "tenantId": "company-demo"
   },
   {
     "type": "RadarItemCreated",
@@ -199,7 +212,8 @@
       "distance": "Assessed",
       "impact": "High",
       "risk": "Low"
-    }
+    },
+    "tenantId": "company-demo"
   },
   {
     "type": "RadarItemCreated",
@@ -217,7 +231,8 @@
       "distance": "Detected",
       "impact": "Medium",
       "risk": "Medium"
-    }
+    },
+    "tenantId": "company-demo"
   },
   {
     "type": "RadarItemCreated",
@@ -235,7 +250,8 @@
       "distance": "Assessing",
       "impact": "Medium",
       "risk": "Medium"
-    }
+    },
+    "tenantId": "company-demo"
   },
   {
     "type": "RadarItemCreated",
@@ -253,7 +269,8 @@
       "distance": "Assessing",
       "impact": "High",
       "risk": "Low"
-    }
+    },
+    "tenantId": "company-demo"
   },
   {
     "type": "RadarItemCreated",
@@ -271,7 +288,8 @@
       "distance": "Assessed",
       "impact": "High",
       "risk": "Medium"
-    }
+    },
+    "tenantId": "company-demo"
   },
   {
     "type": "RadarItemCreated",
@@ -289,7 +307,8 @@
       "distance": "Assessing",
       "impact": "Medium",
       "risk": "High"
-    }
+    },
+    "tenantId": "company-demo"
   },
   {
     "type": "RadarItemCreated",
@@ -307,7 +326,8 @@
       "distance": "Assessing",
       "impact": "High",
       "risk": "Medium"
-    }
+    },
+    "tenantId": "company-demo"
   },
   {
     "type": "TeamCreated",
@@ -321,7 +341,8 @@
       "purpose": "Board-level strategic oversight",
       "context": "Top-level governance and direction",
       "level": 3
-    }
+    },
+    "tenantId": "company-demo"
   },
   {
     "type": "RadarItemCreated",
@@ -339,7 +360,8 @@
       "distance": "Detected",
       "impact": "High",
       "risk": "Low"
-    }
+    },
+    "tenantId": "company-demo"
   },
   {
     "type": "RadarItemCreated",
@@ -357,7 +379,8 @@
       "distance": "Detected",
       "impact": "Medium",
       "risk": "Medium"
-    }
+    },
+    "tenantId": "company-demo"
   },
   {
     "type": "RadarItemCreated",
@@ -375,7 +398,8 @@
       "distance": "Emerging",
       "impact": "Medium",
       "risk": "Medium"
-    }
+    },
+    "tenantId": "company-demo"
   },
   {
     "type": "StrategyCreated",
@@ -386,7 +410,8 @@
       "strategyId": "strategy-bod-modernize",
       "description": "Modernize Approach",
       "timeframe": "2026"
-    }
+    },
+    "tenantId": "company-demo"
   },
   {
     "type": "StrategyUpdated",
@@ -396,7 +421,8 @@
     "payload": {
       "strategyId": "strategy-bod-modernize",
       "state": "Active"
-    }
+    },
+    "tenantId": "company-demo"
   },
   {
     "type": "InitiativeCreated",
@@ -411,7 +437,8 @@
     },
     "metadata": {
       "initiativeId": "initiative-bod-1"
-    }
+    },
+    "tenantId": "company-demo"
   },
   {
     "type": "InitiativeDiagnosisAdded",
@@ -421,7 +448,8 @@
     "payload": {
       "initiativeId": "initiative-bod-1",
       "diagnosis": "poor at challenging"
-    }
+    },
+    "tenantId": "company-demo"
   },
   {
     "type": "InitiativeRadarLinkCreated",
@@ -431,7 +459,8 @@
     "payload": {
       "initiativeId": "initiative-bod-1",
       "radarItemId": "radar-item-own-strategy"
-    }
+    },
+    "tenantId": "company-demo"
   },
   {
     "type": "InitiativeRadarLinkCreated",
@@ -441,7 +470,8 @@
     "payload": {
       "initiativeId": "initiative-bod-1",
       "radarItemId": "radar-item-echo-chamber"
-    }
+    },
+    "tenantId": "company-demo"
   },
   {
     "type": "InitiativeAddedToKanban",
@@ -455,7 +485,8 @@
     },
     "metadata": {
       "teamId": "team-demo"
-    }
+    },
+    "tenantId": "company-demo"
   },
   {
     "type": "InitiativeAddedToKanban",
@@ -469,7 +500,8 @@
     },
     "metadata": {
       "teamId": "team-demo"
-    }
+    },
+    "tenantId": "company-demo"
   },
   {
     "type": "InitiativeAddedToKanban",
@@ -483,7 +515,8 @@
     },
     "metadata": {
       "teamId": "team-demo"
-    }
+    },
+    "tenantId": "company-demo"
   },
   {
     "type": "InitiativeAddedToKanban",
@@ -497,7 +530,8 @@
     },
     "metadata": {
       "teamId": "team-demo"
-    }
+    },
+    "tenantId": "company-demo"
   },
   {
     "type": "InitiativeAddedToKanban",
@@ -511,7 +545,8 @@
     },
     "metadata": {
       "teamId": "team-bod"
-    }
+    },
+    "tenantId": "company-demo"
   },
   {
     "type": "StrategyCreated",
@@ -522,7 +557,8 @@
       "strategyId": "strat-0888a5ea-2038-4fc4-b6c0-94001150b06f",
       "description": "Innovation is about connecting the dots",
       "timeframe": "2026"
-    }
+    },
+    "tenantId": "company-demo"
   },
   {
     "type": "InitiativeCreated",
@@ -536,7 +572,8 @@
     },
     "metadata": {
       "initiativeId": "init-db0eb092-6f93-40f5-a5cd-a7369202fdfb"
-    }
+    },
+    "tenantId": "company-demo"
   },
   {
     "type": "InitiativeAddedToKanban",
@@ -550,7 +587,8 @@
     },
     "metadata": {
       "teamId": "team-cto"
-    }
+    },
+    "tenantId": "company-demo"
   },
   {
     "type": "InitiativeItemCreated",
@@ -562,7 +600,8 @@
       "itemId": "item-28cd7c25-9043-41ff-8ca8-5762ab1ad407",
       "stepKey": "diagnosis",
       "text": "BAs are not probing... Just listening and projecting. Projection w/o mining is hope at most"
-    }
+    },
+    "tenantId": "company-demo"
   },
   {
     "type": "InitiativeItemAddedToKanban",
@@ -577,7 +616,8 @@
     },
     "metadata": {
       "teamId": "team-cto"
-    }
+    },
+    "tenantId": "company-demo"
   },
   {
     "type": "InitiativeItemCreated",
@@ -589,7 +629,8 @@
       "itemId": "item-f2287127-b031-4548-8416-1329cec0ce5c",
       "stepKey": "diagnosis",
       "text": "Business people think flows and events. We are forcing them to think data model."
-    }
+    },
+    "tenantId": "company-demo"
   },
   {
     "type": "InitiativeItemAddedToKanban",
@@ -604,7 +645,8 @@
     },
     "metadata": {
       "teamId": "team-cto"
-    }
+    },
+    "tenantId": "company-demo"
   },
   {
     "type": "TagAdded",
@@ -614,7 +656,8 @@
     "payload": {
       "radarItemId": "radar-item-cultural-inertia",
       "radarName": ""
-    }
+    },
+    "tenantId": "company-demo"
   },
   {
     "type": "TagAdded",
@@ -624,7 +667,8 @@
     "payload": {
       "radarItemId": "radar-item-lack-of-modelization",
       "radarName": ""
-    }
+    },
+    "tenantId": "company-demo"
   },
   {
     "type": "ElementMoved",
@@ -639,7 +683,8 @@
         "kanban"
       ]
     },
-    "metadata": {}
+    "metadata": {},
+    "tenantId": "company-demo"
   },
   {
     "type": "InitiativeAddedToKanban",
@@ -653,7 +698,8 @@
     },
     "metadata": {
       "teamId": "team-demo"
-    }
+    },
+    "tenantId": "company-demo"
   },
   {
     "type": "InitiativeAddedToKanban",
@@ -667,7 +713,8 @@
     },
     "metadata": {
       "teamId": "team-demo"
-    }
+    },
+    "tenantId": "company-demo"
   },
   {
     "type": "InitiativeAddedToKanban",
@@ -681,7 +728,8 @@
     },
     "metadata": {
       "teamId": "team-demo"
-    }
+    },
+    "tenantId": "company-demo"
   },
   {
     "type": "InitiativeAddedToKanban",
@@ -695,7 +743,8 @@
     },
     "metadata": {
       "teamId": "team-demo"
-    }
+    },
+    "tenantId": "company-demo"
   },
   {
     "type": "InitiativeAddedToKanban",
@@ -709,7 +758,8 @@
     },
     "metadata": {
       "teamId": "team-bod"
-    }
+    },
+    "tenantId": "company-demo"
   },
   {
     "type": "ElementAddedToKanban",
@@ -724,7 +774,8 @@
     },
     "metadata": {
       "teamId": "team-cto"
-    }
+    },
+    "tenantId": "company-demo"
   },
   {
     "type": "ElementAddedToKanban",
@@ -739,7 +790,8 @@
     },
     "metadata": {
       "teamId": "team-cto"
-    }
+    },
+    "tenantId": "company-demo"
   },
   {
     "type": "ElementAddedToKanban",
@@ -754,7 +806,8 @@
     },
     "metadata": {
       "teamId": "team-cto"
-    }
+    },
+    "tenantId": "company-demo"
   },
   {
     "type": "InitiativeCreated",
@@ -768,7 +821,8 @@
     },
     "metadata": {
       "initiativeId": "init-16ffd67a-ab43-4e46-97f2-cec0392818a8"
-    }
+    },
+    "tenantId": "company-demo"
   },
   {
     "type": "ElementAddedToKanban",
@@ -783,7 +837,8 @@
     },
     "metadata": {
       "teamId": "team-cto"
-    }
+    },
+    "tenantId": "company-demo"
   },
   {
     "type": "InitiativeItemCreated",
@@ -795,7 +850,8 @@
       "itemId": "item-fa53f7b1-480a-4c6c-83ec-280c88e302ca",
       "stepKey": "diagnosis",
       "text": "Doing Agile changes Thinking: to change culture, we need to do things differently"
-    }
+    },
+    "tenantId": "company-demo"
   },
   {
     "type": "ElementAddedToKanban",
@@ -810,7 +866,8 @@
     },
     "metadata": {
       "teamId": "team-cto"
-    }
+    },
+    "tenantId": "company-demo"
   },
   {
     "type": "InitiativeItemCreated",
@@ -822,7 +879,8 @@
       "itemId": "item-230fe439-b7c5-4065-9ed9-c21ff87157bc",
       "stepKey": "diagnosis",
       "text": "Customers do not want agile coaches: not value for money."
-    }
+    },
+    "tenantId": "company-demo"
   },
   {
     "type": "ElementAddedToKanban",
@@ -837,7 +895,8 @@
     },
     "metadata": {
       "teamId": "team-cto"
-    }
+    },
+    "tenantId": "company-demo"
   },
   {
     "type": "InitiativeItemCreated",
@@ -849,7 +908,8 @@
       "itemId": "item-cddf86ed-27a9-4f4c-aa1d-43eb86a996de",
       "stepKey": "diagnosis",
       "text": "SAFe has limits; we see customers moving away from SAFe: too expensive."
-    }
+    },
+    "tenantId": "company-demo"
   },
   {
     "type": "ElementAddedToKanban",
@@ -864,7 +924,8 @@
     },
     "metadata": {
       "teamId": "team-cto"
-    }
+    },
+    "tenantId": "company-demo"
   },
   {
     "type": "InitiativeItemCreated",
@@ -876,7 +937,8 @@
       "itemId": "item-9920ede6-33cc-4c40-a57b-6bf82b433eaa",
       "stepKey": "diagnosis",
       "text": "Flight Levels is an option with a Lean approach, easy to implement"
-    }
+    },
+    "tenantId": "company-demo"
   },
   {
     "type": "ElementAddedToKanban",
@@ -891,7 +953,8 @@
     },
     "metadata": {
       "teamId": "team-cto"
-    }
+    },
+    "tenantId": "company-demo"
   },
   {
     "type": "InitiativeItemCreated",
@@ -903,7 +966,8 @@
       "itemId": "item-79141f85-0d4b-4257-a364-7ff0f7afa580",
       "stepKey": "diagnosis",
       "text": "Flow Engineering is easy, impactful"
-    }
+    },
+    "tenantId": "company-demo"
   },
   {
     "type": "ElementAddedToKanban",
@@ -918,7 +982,8 @@
     },
     "metadata": {
       "teamId": "team-cto"
-    }
+    },
+    "tenantId": "company-demo"
   },
   {
     "type": "RadarItemCreated",
@@ -941,7 +1006,8 @@
       "created_at": "2025-12-11T17:03:52.806Z",
       "updated_at": null,
       "teamId": "team-cto"
-    }
+    },
+    "tenantId": "company-demo"
   },
   {
     "type": "RadarItemCreated",
@@ -964,7 +1030,8 @@
       "created_at": "2025-12-11T17:04:49.665Z",
       "updated_at": null,
       "teamId": "team-cto"
-    }
+    },
+    "tenantId": "company-demo"
   },
   {
     "type": "RadarItemCreated",
@@ -987,7 +1054,8 @@
       "created_at": "2025-12-11T17:05:34.335Z",
       "updated_at": null,
       "teamId": "team-cto"
-    }
+    },
+    "tenantId": "company-demo"
   },
   {
     "type": "RadarItemCreated",
@@ -1010,7 +1078,8 @@
       "created_at": "2025-12-11T17:06:26.227Z",
       "updated_at": null,
       "teamId": "team-cto"
-    }
+    },
+    "tenantId": "company-demo"
   },
   {
     "type": "RadarItemCreated",
@@ -1033,7 +1102,8 @@
       "created_at": "2025-12-11T17:07:06.775Z",
       "updated_at": null,
       "teamId": "team-cto"
-    }
+    },
+    "tenantId": "company-demo"
   },
   {
     "type": "RadarItemCreated",
@@ -1055,7 +1125,8 @@
       "created_at": "2025-12-11T17:07:33.761Z",
       "updated_at": null,
       "teamId": "team-cto"
-    }
+    },
+    "tenantId": "company-demo"
   },
   {
     "type": "CompanyCreated",
@@ -1065,7 +1136,8 @@
     "payload": {
       "id": "company-socraft",
       "name": "Socraft"
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "TeamCreated",
@@ -1079,7 +1151,8 @@
       "purpose": "Act differently: be the best for our customers",
       "context": "IT consulting companies care more about effort than value for customers. We care for more value to customers with minumum effort",
       "level": 1
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "UserAdded",
@@ -1094,7 +1167,8 @@
         "team-socraft-ceo-123-id",
         "team-socraft-cto"
       ]
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "UserAdded",
@@ -1108,7 +1182,8 @@
       "teamIds": [
         "team-demo"
       ]
-    }
+    },
+    "tenantId": "company-demo"
   },
   {
     "type": "TeamCreated",
@@ -1122,7 +1197,8 @@
       "purpose": "Bold with simplicity",
       "context": "Chief Technology Officer: kills inertia with simple solutions, make processes lighter, focus on outcomes, on the why. Remove the fat, be lean. Complexity accidental is our enemy",
       "level": 2
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "RadarItemCreated",
@@ -1140,7 +1216,8 @@
       "distance": "Responding",
       "impact": "High",
       "risk": "Medium"
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "RadarItemCreated",
@@ -1158,7 +1235,8 @@
       "distance": "Assessed",
       "impact": "High",
       "risk": "Low"
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "RadarItemCreated",
@@ -1176,7 +1254,8 @@
       "distance": "Assessed",
       "impact": "Medium",
       "risk": "Medium"
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "RadarItemCreated",
@@ -1194,7 +1273,8 @@
       "distance": "Assessed",
       "impact": "High",
       "risk": "Low"
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "RadarItemCreated",
@@ -1212,7 +1292,8 @@
       "distance": "Detected",
       "impact": "Medium",
       "risk": "Medium"
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "RadarItemCreated",
@@ -1230,7 +1311,8 @@
       "distance": "Assessing",
       "impact": "Medium",
       "risk": "Medium"
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "RadarItemCreated",
@@ -1248,7 +1330,8 @@
       "distance": "Assessing",
       "impact": "High",
       "risk": "Low"
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "RadarItemCreated",
@@ -1266,7 +1349,8 @@
       "distance": "Assessed",
       "impact": "High",
       "risk": "Medium"
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "RadarItemCreated",
@@ -1284,7 +1368,8 @@
       "distance": "Assessing",
       "impact": "Medium",
       "risk": "High"
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "RadarItemCreated",
@@ -1302,7 +1387,8 @@
       "distance": "Assessing",
       "impact": "High",
       "risk": "Medium"
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "StrategyCreated",
@@ -1313,7 +1399,8 @@
       "strategyId": "strat-socraft-61d30985-a233-4da3-ba9a-420bd50b8abf",
       "description": "Innovation is about connecting the dots",
       "timeframe": "2026"
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "InitiativeCreated",
@@ -1327,7 +1414,8 @@
     },
     "metadata": {
       "initiativeId": "init-socraft-77bef4ff-0d2a-451b-b63f-d5ede7d79eba"
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "ElementAddedToKanban",
@@ -1342,7 +1430,8 @@
     },
     "metadata": {
       "teamId": "team-socraft-cto"
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "InitiativeItemCreated",
@@ -1354,7 +1443,8 @@
       "itemId": "item-socraft-a6fa720a-e789-40c2-88fc-e23ee9d89f08",
       "stepKey": "diagnosis",
       "text": "BAs are not probing... Just listening and projecting. Projection w/o mining is hope at most"
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "ElementAddedToKanban",
@@ -1369,7 +1459,8 @@
     },
     "metadata": {
       "teamId": "team-socraft-cto"
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "InitiativeItemCreated",
@@ -1381,7 +1472,8 @@
       "itemId": "item-socraft-f44cd50e-ea29-48d9-a2ad-5906524a73ff",
       "stepKey": "diagnosis",
       "text": "Business people think flows and events. We are forcing them to think data model."
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "ElementAddedToKanban",
@@ -1396,7 +1488,8 @@
     },
     "metadata": {
       "teamId": "team-socraft-cto"
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "TagAdded",
@@ -1406,7 +1499,8 @@
     "payload": {
       "radarItemId": "radar-item-cultural-inertia-socraft",
       "radarName": ""
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "TagAdded",
@@ -1416,7 +1510,8 @@
     "payload": {
       "radarItemId": "radar-item-lack-of-modelization-socraft",
       "radarName": ""
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "ElementAddedToKanban",
@@ -1431,7 +1526,8 @@
     },
     "metadata": {
       "teamId": "team-socraft-cto"
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "ElementAddedToKanban",
@@ -1446,7 +1542,8 @@
     },
     "metadata": {
       "teamId": "team-socraft-cto"
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "ElementAddedToKanban",
@@ -1461,7 +1558,8 @@
     },
     "metadata": {
       "teamId": "team-socraft-cto"
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "InitiativeCreated",
@@ -1475,7 +1573,8 @@
     },
     "metadata": {
       "initiativeId": "init-socraft-08e832a4-d2c3-48f6-9028-f524ccf146b1"
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "ElementAddedToKanban",
@@ -1490,7 +1589,8 @@
     },
     "metadata": {
       "teamId": "team-socraft-cto"
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "InitiativeItemCreated",
@@ -1502,7 +1602,8 @@
       "itemId": "item-socraft-f0b9db62-a607-4e9c-9d53-c321ad99c833",
       "stepKey": "diagnosis",
       "text": "Doing Agile changes Thinking: to change culture, we need to do things differently"
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "ElementAddedToKanban",
@@ -1517,7 +1618,8 @@
     },
     "metadata": {
       "teamId": "team-socraft-cto"
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "InitiativeItemCreated",
@@ -1529,7 +1631,8 @@
       "itemId": "item-socraft-6bbcb530-853c-42fd-82ef-8cefebd584b3",
       "stepKey": "diagnosis",
       "text": "Customers do not want agile coaches: not value for money."
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "ElementAddedToKanban",
@@ -1544,7 +1647,8 @@
     },
     "metadata": {
       "teamId": "team-socraft-cto"
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "InitiativeItemCreated",
@@ -1556,7 +1660,8 @@
       "itemId": "item-socraft-e65c2dd5-a6c5-483f-b8bc-a6b41f8831f6",
       "stepKey": "diagnosis",
       "text": "SAFe has limits; we see customers moving away from SAFe: too expensive."
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "ElementAddedToKanban",
@@ -1571,7 +1676,8 @@
     },
     "metadata": {
       "teamId": "team-socraft-cto"
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "InitiativeItemCreated",
@@ -1583,7 +1689,8 @@
       "itemId": "item-socraft-9988510c-fe1f-4b64-908d-c5c05590307a",
       "stepKey": "diagnosis",
       "text": "Flight Levels is an option with a Lean approach, easy to implement"
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "ElementAddedToKanban",
@@ -1598,7 +1705,8 @@
     },
     "metadata": {
       "teamId": "team-socraft-cto"
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "InitiativeItemCreated",
@@ -1610,7 +1718,8 @@
       "itemId": "item-socraft-7b29bcb8-d78a-4958-a681-b3a2251e1ad3",
       "stepKey": "diagnosis",
       "text": "Flow Engineering is easy, impactful"
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "ElementAddedToKanban",
@@ -1625,7 +1734,8 @@
     },
     "metadata": {
       "teamId": "team-socraft-cto"
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "RadarItemCreated",
@@ -1648,7 +1758,8 @@
       "created_at": "2025-12-11T17:03:52.806Z",
       "updated_at": null,
       "teamId": "team-socraft-cto"
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "RadarItemCreated",
@@ -1671,7 +1782,8 @@
       "created_at": "2025-12-11T17:04:49.665Z",
       "updated_at": null,
       "teamId": "team-socraft-cto"
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "RadarItemCreated",
@@ -1694,7 +1806,8 @@
       "created_at": "2025-12-11T17:05:34.335Z",
       "updated_at": null,
       "teamId": "team-socraft-cto"
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "RadarItemCreated",
@@ -1717,7 +1830,8 @@
       "created_at": "2025-12-11T17:06:26.227Z",
       "updated_at": null,
       "teamId": "team-socraft-cto"
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "RadarItemCreated",
@@ -1740,7 +1854,8 @@
       "created_at": "2025-12-11T17:07:06.775Z",
       "updated_at": null,
       "teamId": "team-socraft-cto"
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "RadarItemCreated",
@@ -1762,7 +1877,8 @@
       "created_at": "2025-12-11T17:07:33.761Z",
       "updated_at": null,
       "teamId": "team-socraft-cto"
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "TeamCreated",
@@ -1776,7 +1892,8 @@
       "purpose": "",
       "context": "",
       "level": 2
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "TeamCreated",
@@ -1790,7 +1907,8 @@
       "purpose": "",
       "context": "",
       "level": 0
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "TeamUpdated",
@@ -1802,7 +1920,8 @@
       "purpose": "To kill inertia & bring accelerators",
       "context": "We can be easily in the day-to-day operation mode. Rejecting new ideas. \nInnovation is not about inventing; this about doing things smarter: less effort for more value",
       "level": 3
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "InitiativeItemCreated",
@@ -1814,7 +1933,8 @@
       "itemId": "item-7ed95361-9d54-46e0-8fc5-ea374c85d0d5",
       "stepKey": "diagnosis",
       "text": "Customers mention modeling (and lack of modeling)"
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "ElementAddedToKanban",
@@ -1829,7 +1949,8 @@
     },
     "metadata": {
       "teamId": "team-socraft-cto"
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "InitiativeItemUpdated",
@@ -1843,7 +1964,8 @@
       "initiativeId": "init-socraft-77bef4ff-0d2a-451b-b63f-d5ede7d79eba",
       "itemId": "item-socraft-a6fa720a-e789-40c2-88fc-e23ee9d89f08",
       "teamId": "team-socraft-cto"
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "TagAdded",
@@ -1853,7 +1975,8 @@
     "payload": {
       "radarItemId": "radar-1699d0ea-2815-4f06-b357-e00c6ad1cc04-socraft",
       "radarName": ""
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "TagAdded",
@@ -1863,7 +1986,8 @@
     "payload": {
       "radarItemId": "radar-item-event-modeling-socraft",
       "radarName": ""
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "TagAdded",
@@ -1873,7 +1997,8 @@
     "payload": {
       "radarItemId": "radar-item-event-sourcing-socraft",
       "radarName": ""
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "TagAdded",
@@ -1883,7 +2008,8 @@
     "payload": {
       "radarItemId": "radar-item-slice-architecture-socraft",
       "radarName": ""
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "InitiativeItemCreated",
@@ -1895,7 +2021,8 @@
       "itemId": "item-72f54e86-d871-4100-befb-d7499b66c4e2",
       "stepKey": "overallApproach",
       "text": "Be first, be experience"
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "ElementAddedToKanban",
@@ -1910,7 +2037,8 @@
     },
     "metadata": {
       "teamId": "team-socraft-cto"
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "ElementAddedToKanban",
@@ -1925,7 +2053,8 @@
     },
     "metadata": {
       "teamId": "team-socraft-cto"
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "ElementAddedToKanban",
@@ -1940,7 +2069,8 @@
     },
     "metadata": {
       "teamId": "team-socraft-cto"
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "InitiativeItemCreated",
@@ -1952,7 +2082,8 @@
       "itemId": "item-f88dd63b-9075-4627-9adf-62ac6f6dc785",
       "stepKey": "proximateObjectives",
       "text": "Hackatlon EM/ES"
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "ElementAddedToKanban",
@@ -1967,7 +2098,8 @@
     },
     "metadata": {
       "teamId": "team-socraft-cto"
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "ElementAddedToKanban",
@@ -1982,7 +2114,8 @@
     },
     "metadata": {
       "teamId": "team-socraft-cto"
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "ElementAddedToKanban",
@@ -1997,7 +2130,8 @@
     },
     "metadata": {
       "teamId": "team-socraft-cto"
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "InitiativeItemCreated",
@@ -2009,7 +2143,8 @@
       "itemId": "item-659b81b6-fec7-4ac4-a2a4-4d1f64123993",
       "stepKey": "actions",
       "text": "To promote the approach thought customers, communication & partners"
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "ElementAddedToKanban",
@@ -2024,7 +2159,8 @@
     },
     "metadata": {
       "teamId": "team-socraft-cto"
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "InitiativeItemCreated",
@@ -2036,7 +2172,8 @@
       "itemId": "item-9b33e547-790a-4cf6-8b43-a4e68df289eb",
       "stepKey": "actions",
       "text": "Experiment internal projects"
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "ElementAddedToKanban",
@@ -2051,7 +2188,8 @@
     },
     "metadata": {
       "teamId": "team-socraft-cto"
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "InitiativeItemCreated",
@@ -2063,7 +2201,8 @@
       "itemId": "item-42a550bf-5241-4167-8748-a0609e1cc11e",
       "stepKey": "actions",
       "text": "Work with startups who need to try new ideas quickly"
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "ElementAddedToKanban",
@@ -2078,7 +2217,8 @@
     },
     "metadata": {
       "teamId": "team-socraft-cto"
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "InitiativeItemCreated",
@@ -2090,7 +2230,8 @@
       "itemId": "item-9b235d90-1749-4fae-b70a-b66f08f24c1a",
       "stepKey": "proximateObjectives",
       "text": "Session EM/ES avec Swiss Chalet (26Q1)"
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "ElementAddedToKanban",
@@ -2105,7 +2246,8 @@
     },
     "metadata": {
       "teamId": "team-socraft-cto"
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "InitiativeItemCreated",
@@ -2117,7 +2259,8 @@
       "itemId": "item-002872d5-ff8b-4942-8a6d-93561bb20446",
       "stepKey": "proximateObjectives",
       "text": "Session EM/ES avec Socraft (26A1)"
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "ElementAddedToKanban",
@@ -2132,7 +2275,8 @@
     },
     "metadata": {
       "teamId": "team-socraft-cto"
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "InitiativeItemCreated",
@@ -2144,7 +2288,8 @@
       "itemId": "item-57c0c681-b089-4d49-872d-e72cb36db2ca",
       "stepKey": "proximateObjectives",
       "text": "Hackatlon EM/ES (26Q1)"
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "ElementAddedToKanban",
@@ -2159,7 +2304,8 @@
     },
     "metadata": {
       "teamId": "team-socraft-cto"
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "InitiativeItemCreated",
@@ -2171,7 +2317,8 @@
       "itemId": "item-1f31f9a7-981b-42bb-b56e-db3d272ffc30",
       "stepKey": "actions",
       "text": "Create and run a working group (CoP)"
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "ElementAddedToKanban",
@@ -2186,7 +2333,8 @@
     },
     "metadata": {
       "teamId": "team-socraft-cto"
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "InitiativeItemCreated",
@@ -2198,7 +2346,8 @@
       "itemId": "item-8562bd62-00f5-4f94-b3fd-f7c1ea9b78d3",
       "stepKey": "proximateObjectives",
       "text": "Training (26Q2)"
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "ElementAddedToKanban",
@@ -2213,7 +2362,8 @@
     },
     "metadata": {
       "teamId": "team-socraft-cto"
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "InitiativeItemCreated",
@@ -2225,7 +2375,8 @@
       "itemId": "item-d1dd6069-e9f3-4a16-b568-a75dc12873e7",
       "stepKey": "proximateObjectives",
       "text": "Build formal training (26Q2)"
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "ElementAddedToKanban",
@@ -2240,7 +2391,8 @@
     },
     "metadata": {
       "teamId": "team-socraft-cto"
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "InitiativeItemCreated",
@@ -2252,7 +2404,8 @@
       "itemId": "item-ba7b80e2-565e-4185-9c19-e37a42e93b19",
       "stepKey": "diagnosis",
       "text": "Projects are still failing (70%?). Customers are given alternatives to build products differently"
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "ElementAddedToKanban",
@@ -2267,7 +2420,8 @@
     },
     "metadata": {
       "teamId": "team-socraft-cto"
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "ElementMoved",
@@ -2282,7 +2436,8 @@
         "kanban"
       ]
     },
-    "metadata": {}
+    "metadata": {},
+    "tenantId": "company-socraft"
   },
   {
     "type": "RadarItemCreated",
@@ -2305,7 +2460,8 @@
       "created_at": "2025-12-13T11:59:52.077Z",
       "updated_at": null,
       "teamId": "team-socraft-ceo-123-id"
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "RadarItemCreated",
@@ -2328,7 +2484,8 @@
       "created_at": "2025-12-13T11:59:53.077Z",
       "updated_at": null,
       "teamId": "team-socraft-ceo-123-id"
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "RadarItemCreated",
@@ -2351,7 +2508,8 @@
       "created_at": "2025-12-13T12:09:18.507Z",
       "updated_at": null,
       "teamId": "team-b662b727-f985-48b0-8740-fbcb9448e069"
-    }
+    },
+    "tenantId": "company-socraft"
   },
   {
     "type": "RadarItemCreated",
@@ -2374,6 +2532,1032 @@
       "created_at": "2025-12-13T13:11:45.322Z",
       "updated_at": null,
       "teamId": "team-b662b727-f985-48b0-8740-fbcb9448e069"
+    },
+    "tenantId": "company-socraft"
+  },
+  {
+    "type": "RadarItemCreated",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2026-01-29T08:34:31.000Z",
+    "payload": {
+      "name": "Change: tension",
+      "detect": "To help change, we need to create tensions within people - not tension between people: people will move if there is tension in themselves. The would stay in their comfort zone regardless even a move will benefit them. So they need tension (internal stress) and also an easy path to change",
+      "assess": "We need to build skills in creating such tensions. The radar is one of them.",
+      "respond": "",
+      "type": "Opportunity",
+      "category": "People & Knowledge",
+      "distance": "Assessing",
+      "impact": "High",
+      "risk": "Low",
+      "zoom_in": null,
+      "id": "radar-bfca705c-8a8d-4b21-90e3-3a31d16ec434",
+      "radarId": "team-socraft-cto",
+      "created_at": "2026-01-29T07:34:31.313Z",
+      "updated_at": null,
+      "teamId": "team-socraft-cto"
+    },
+    "tenantId": "company-socraft"
+  },
+  {
+    "type": "RadarItemCreated",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2026-01-29T08:26:25.000Z",
+    "payload": {
+      "name": "Platform",
+      "detect": "Have a basic platform for prototyping & Dev",
+      "assess": "Could use code generator / slice architecture with spring-boot / Axon / Kotlin to start with ",
+      "respond": "",
+      "type": "Opportunity",
+      "category": "Business",
+      "distance": "Assessing",
+      "impact": "Medium",
+      "risk": "Low",
+      "zoom_in": null,
+      "id": "radar-5804ccf0-8e15-40fb-b19c-dcdf08675d2c",
+      "radarId": "team-socraft-cto",
+      "created_at": "2026-01-29T07:26:25.977Z",
+      "updated_at": null,
+      "teamId": "team-socraft-cto"
+    },
+    "tenantId": "company-socraft"
+  },
+  {
+    "type": "RadarItemCreated",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2026-01-29T08:24:53.000Z",
+    "payload": {
+      "name": "Innovation",
+      "detect": "Just about connecting the dots and embracing new approaches and then develop a service offering",
+      "assess": "Innovation will create tensions, tensions will help move employees and customers",
+      "respond": "",
+      "type": "Opportunity",
+      "category": "Capabilities",
+      "distance": "Assessing",
+      "impact": "High",
+      "risk": "Low",
+      "zoom_in": null,
+      "id": "radar-2df72cfc-ed00-4a28-9fc8-a77bb4073b8d",
+      "radarId": "team-socraft-cto",
+      "created_at": "2026-01-29T07:24:53.913Z",
+      "updated_at": null,
+      "teamId": "team-socraft-cto"
+    },
+    "tenantId": "company-socraft"
+  },
+  {
+    "type": "RadarItemCreated",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2026-01-29T08:22:34.000Z",
+    "payload": {
+      "name": "Brainpower",
+      "detect": "Not using brainpower of people",
+      "assess": "We should use collective intellifence: have a clear strategy to get the powerhouse running",
+      "respond": "",
+      "type": "Opportunity",
+      "category": "People & Knowledge",
+      "distance": "Detected",
+      "impact": "High",
+      "risk": "Low",
+      "zoom_in": null,
+      "id": "radar-9a67808f-c89c-4071-ab4d-4fb508cf4a46",
+      "radarId": "team-socraft-cto",
+      "created_at": "2026-01-29T07:22:34.110Z",
+      "updated_at": null,
+      "teamId": "team-socraft-cto"
+    },
+    "tenantId": "company-socraft"
+  },
+  {
+    "type": "RadarItemCreated",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2026-01-29T08:21:10.000Z",
+    "payload": {
+      "name": "FL1: Lean Kanban",
+      "detect": "Ensure we move to lean kanban thinking from FL1",
+      "assess": "Lack of visibility",
+      "respond": "",
+      "type": "Opportunity",
+      "category": "Operating Model",
+      "distance": "Assessing",
+      "impact": "Medium",
+      "risk": "Low",
+      "zoom_in": null,
+      "id": "radar-3b228b92-6891-4635-977c-4a235cfc2aff",
+      "radarId": "team-socraft-cto",
+      "created_at": "2026-01-29T07:21:10.951Z",
+      "updated_at": null,
+      "teamId": "team-socraft-cto"
+    },
+    "tenantId": "company-socraft"
+  },
+  {
+    "type": "RadarItemCreated",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2026-01-29T08:20:09.000Z",
+    "payload": {
+      "name": "Event Modeling",
+      "detect": "Modelling Technique we should use for projects",
+      "assess": "We are using specifications, user stories but that kills communication, creating or reinforcing silos",
+      "respond": "Go ahead with a pilot project, train people",
+      "type": "Opportunity",
+      "category": "Operating Model",
+      "distance": "Responding",
+      "impact": "High",
+      "risk": "Medium",
+      "id": "radar-41bda5f2-b7d8-4c0f-b173-bcc7fc7a5bdf",
+      "radarId": "team-socraft-cto",
+      "created_at": "2026-01-29T07:20:09.210Z",
+      "updated_at": null,
+      "teamId": "team-socraft-cto"
+    },
+    "tenantId": "company-socraft"
+  },
+  {
+    "type": "RadarItemDeleted",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2026-01-29T08:19:50.000Z",
+    "payload": {
+      "id": "radar-1bb8157f-4a36-4681-a92e-ec1ef12c8533-socraft"
+    },
+    "tenantId": "company-socraft"
+  },
+  {
+    "type": "RadarItemCreated",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2026-02-20T10:31:12.071Z",
+    "tenantId": "company-socraft",
+    "payload": {
+      "name": "Ralph Loop",
+      "detect": "ILM Iterative LLM applies very well with Event Modeling / Slice Architecture. Required a small AI agent",
+      "assess": "No need of AI agentic army",
+      "respond": "",
+      "type": "Opportunity",
+      "category": "Capabilities",
+      "distance": "Detected",
+      "impact": "Medium",
+      "risk": "Medium",
+      "zoom_in": null,
+      "id": "radar-c282587b-6cb9-4ee9-aac3-9e86b7fe7746",
+      "radarId": "team-socraft-cto",
+      "created_at": "2026-02-20T10:31:12.073Z",
+      "updated_at": null,
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "RadarItemCreated",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2026-02-20T10:32:04.167Z",
+    "tenantId": "company-socraft",
+    "payload": {
+      "name": "Slice Architecture",
+      "detect": "Modelling Technique we should use for projects",
+      "assess": "We are using specifications, user stories but that kills communication, creating or reinforcing silos",
+      "respond": "Go ahead with a pilot project, train people",
+      "type": "Opportunity",
+      "category": "Capabilities",
+      "distance": "Responding",
+      "impact": "High",
+      "risk": "Medium",
+      "id": "radar-a3f183ba-bff3-4c3e-a3c5-58723efe00fb",
+      "radarId": "team-socraft-cto",
+      "created_at": "2026-02-20T10:32:04.167Z",
+      "updated_at": null,
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "RadarItemCreated",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2026-02-20T10:32:47.331Z",
+    "tenantId": "company-socraft",
+    "payload": {
+      "name": "Slice Architecture",
+      "detect": "Modelling Technique we should use for projects",
+      "assess": "We are using specifications, user stories but that kills communication, creating or reinforcing silos",
+      "respond": "Go ahead with a pilot project, train people",
+      "type": "Opportunity",
+      "category": "Capabilities",
+      "distance": "Responding",
+      "impact": "High",
+      "risk": "Medium",
+      "id": "radar-e3d466d5-9811-43a4-9858-1bd80d3a70ce",
+      "radarId": "team-socraft-cto",
+      "created_at": "2026-02-20T10:32:47.331Z",
+      "updated_at": null,
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "RadarItemDeleted",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2026-02-20T10:33:07.053Z",
+    "tenantId": "company-socraft",
+    "payload": {
+      "id": "radar-e3d466d5-9811-43a4-9858-1bd80d3a70ce"
+    }
+  },
+  {
+    "type": "RadarItemDeleted",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2026-02-20T10:33:43.342Z",
+    "tenantId": "company-socraft",
+    "payload": {
+      "id": "radar-item-event-modeling-socraft"
+    }
+  },
+  {
+    "type": "RadarItemDeleted",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2026-02-20T10:34:29.309Z",
+    "tenantId": "company-socraft",
+    "payload": {
+      "id": "radar-item-slice-architecture-socraft"
+    }
+  },
+  {
+    "type": "InitiativeCreated",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2026-02-20T10:35:02.918Z",
+    "tenantId": "company-socraft",
+    "payload": {
+      "strategyId": "strat-socraft-61d30985-a233-4da3-ba9a-420bd50b8abf",
+      "strategyName": "Innovation is about connecting the dots",
+      "name": "Digital Factory"
+    },
+    "metadata": {
+      "initiativeId": "init-ea4646be-0278-4ea8-9294-85af7f067ee5"
+    }
+  },
+  {
+    "type": "InitiativeAddedToKanban",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2026-02-20T10:35:03.108Z",
+    "tenantId": "company-socraft",
+    "payload": {
+      "initiativeId": "init-ea4646be-0278-4ea8-9294-85af7f067ee5",
+      "initialStatus": "NEW",
+      "boardId": "team-socraft-cto"
+    },
+    "metadata": {
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "InitiativeItemCreated",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2026-02-20T10:35:27.444Z",
+    "tenantId": "company-socraft",
+    "payload": {
+      "initiativeId": "init-ea4646be-0278-4ea8-9294-85af7f067ee5",
+      "itemId": "item-7f019e0a-a8b8-42a7-982e-4a13a462ca19",
+      "stepKey": "diagnosis",
+      "text": "AI Agentic on Water Scrum Fall will fail"
+    }
+  },
+  {
+    "type": "InitiativeItemAddedToKanban",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2026-02-20T10:35:27.505Z",
+    "tenantId": "company-socraft",
+    "payload": {
+      "itemId": "item-7f019e0a-a8b8-42a7-982e-4a13a462ca19",
+      "initiativeId": "init-ea4646be-0278-4ea8-9294-85af7f067ee5",
+      "initialStatus": "NEW",
+      "boardId": "team-socraft-cto"
+    },
+    "metadata": {
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "InitiativeItemCreated",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2026-02-20T10:35:59.222Z",
+    "tenantId": "company-socraft",
+    "payload": {
+      "initiativeId": "init-ea4646be-0278-4ea8-9294-85af7f067ee5",
+      "itemId": "item-bad92ed5-96a1-415f-9cc1-7edfc7c459b0",
+      "stepKey": "diagnosis",
+      "text": "Event Modeling with Slice Architecture will only get more powerful with a small AI agent"
+    }
+  },
+  {
+    "type": "InitiativeItemAddedToKanban",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2026-02-20T10:35:59.284Z",
+    "tenantId": "company-socraft",
+    "payload": {
+      "itemId": "item-bad92ed5-96a1-415f-9cc1-7edfc7c459b0",
+      "initiativeId": "init-ea4646be-0278-4ea8-9294-85af7f067ee5",
+      "initialStatus": "NEW",
+      "boardId": "team-socraft-cto"
+    },
+    "metadata": {
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "InitiativeItemCreated",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2026-02-20T10:36:24.248Z",
+    "tenantId": "company-socraft",
+    "payload": {
+      "initiativeId": "init-ea4646be-0278-4ea8-9294-85af7f067ee5",
+      "itemId": "item-c74ac778-39df-4861-adef-c394c6a8781d",
+      "stepKey": "diagnosis",
+      "text": "Codegen: just enough to adapt to any platform and products"
+    }
+  },
+  {
+    "type": "InitiativeItemAddedToKanban",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2026-02-20T10:36:24.314Z",
+    "tenantId": "company-socraft",
+    "payload": {
+      "itemId": "item-c74ac778-39df-4861-adef-c394c6a8781d",
+      "initiativeId": "init-ea4646be-0278-4ea8-9294-85af7f067ee5",
+      "initialStatus": "NEW",
+      "boardId": "team-socraft-cto"
+    },
+    "metadata": {
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "InitiativeItemCreated",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2026-02-20T10:36:48.311Z",
+    "tenantId": "company-socraft",
+    "payload": {
+      "initiativeId": "init-ea4646be-0278-4ea8-9294-85af7f067ee5",
+      "itemId": "item-af8e5740-b90f-4e63-93a5-101156ea1fc5",
+      "stepKey": "diagnosis",
+      "text": "AI models are moving towards Slice Architecture"
+    }
+  },
+  {
+    "type": "InitiativeItemAddedToKanban",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2026-02-20T10:36:48.397Z",
+    "tenantId": "company-socraft",
+    "payload": {
+      "itemId": "item-af8e5740-b90f-4e63-93a5-101156ea1fc5",
+      "initiativeId": "init-ea4646be-0278-4ea8-9294-85af7f067ee5",
+      "initialStatus": "NEW",
+      "boardId": "team-socraft-cto"
+    },
+    "metadata": {
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "InitiativeItemCreated",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2026-02-20T10:37:11.648Z",
+    "tenantId": "company-socraft",
+    "payload": {
+      "initiativeId": "init-ea4646be-0278-4ea8-9294-85af7f067ee5",
+      "itemId": "item-516eef0e-ac3c-4dd3-8397-f86e7f3fc653",
+      "stepKey": "diagnosis",
+      "text": "Demo by Martil Dilger: impressive on Emmet Platform. It works"
+    }
+  },
+  {
+    "type": "InitiativeItemAddedToKanban",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2026-02-20T10:37:11.724Z",
+    "tenantId": "company-socraft",
+    "payload": {
+      "itemId": "item-516eef0e-ac3c-4dd3-8397-f86e7f3fc653",
+      "initiativeId": "init-ea4646be-0278-4ea8-9294-85af7f067ee5",
+      "initialStatus": "NEW",
+      "boardId": "team-socraft-cto"
+    },
+    "metadata": {
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "InitiativeItemCreated",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2026-02-20T10:37:56.311Z",
+    "tenantId": "company-socraft",
+    "payload": {
+      "initiativeId": "init-ea4646be-0278-4ea8-9294-85af7f067ee5",
+      "itemId": "item-a43c53dc-f2a1-4592-957b-f0787d5c82fe",
+      "stepKey": "diagnosis",
+      "text": "Most companies are going for spec-driven-dev: wrong direction, opportunity is there to go for simple and proven approach: EM + ES + SA"
+    }
+  },
+  {
+    "type": "InitiativeItemAddedToKanban",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2026-02-20T10:37:56.389Z",
+    "tenantId": "company-socraft",
+    "payload": {
+      "itemId": "item-a43c53dc-f2a1-4592-957b-f0787d5c82fe",
+      "initiativeId": "init-ea4646be-0278-4ea8-9294-85af7f067ee5",
+      "initialStatus": "NEW",
+      "boardId": "team-socraft-cto"
+    },
+    "metadata": {
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "InitiativeItemCreated",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2026-02-20T10:38:42.283Z",
+    "tenantId": "company-socraft",
+    "payload": {
+      "initiativeId": "init-ea4646be-0278-4ea8-9294-85af7f067ee5",
+      "itemId": "item-57a6607f-06a4-486d-a54d-2d16c8bbe9f7",
+      "stepKey": "overallApproach",
+      "text": "To go for simple & small digital factory based on EM+ES+SA to deliver today's products"
+    }
+  },
+  {
+    "type": "InitiativeItemAddedToKanban",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2026-02-20T10:38:42.354Z",
+    "tenantId": "company-socraft",
+    "payload": {
+      "itemId": "item-57a6607f-06a4-486d-a54d-2d16c8bbe9f7",
+      "initiativeId": "init-ea4646be-0278-4ea8-9294-85af7f067ee5",
+      "initialStatus": "NEW",
+      "boardId": "team-socraft-cto"
+    },
+    "metadata": {
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "InitiativeItemCreated",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2026-02-20T10:39:01.474Z",
+    "tenantId": "company-socraft",
+    "payload": {
+      "initiativeId": "init-ea4646be-0278-4ea8-9294-85af7f067ee5",
+      "itemId": "item-13340072-1f7a-4312-914c-b57b4914b10e",
+      "stepKey": "proximateObjectives",
+      "text": "Build client web portal as experiment"
+    }
+  },
+  {
+    "type": "InitiativeItemAddedToKanban",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2026-02-20T10:39:01.556Z",
+    "tenantId": "company-socraft",
+    "payload": {
+      "itemId": "item-13340072-1f7a-4312-914c-b57b4914b10e",
+      "initiativeId": "init-ea4646be-0278-4ea8-9294-85af7f067ee5",
+      "initialStatus": "NEW",
+      "boardId": "team-socraft-cto"
+    },
+    "metadata": {
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "InitiativeItemCreated",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2026-02-20T10:39:15.265Z",
+    "tenantId": "company-socraft",
+    "payload": {
+      "initiativeId": "init-ea4646be-0278-4ea8-9294-85af7f067ee5",
+      "itemId": "item-d5218bb3-7920-496f-ab10-3ebde580f11a",
+      "stepKey": "proximateObjectives",
+      "text": "Deploy ralph loop on client web portal"
+    }
+  },
+  {
+    "type": "InitiativeItemAddedToKanban",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2026-02-20T10:39:15.329Z",
+    "tenantId": "company-socraft",
+    "payload": {
+      "itemId": "item-d5218bb3-7920-496f-ab10-3ebde580f11a",
+      "initiativeId": "init-ea4646be-0278-4ea8-9294-85af7f067ee5",
+      "initialStatus": "NEW",
+      "boardId": "team-socraft-cto"
+    },
+    "metadata": {
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "InitiativeItemCreated",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2026-02-20T10:39:29.234Z",
+    "tenantId": "company-socraft",
+    "payload": {
+      "initiativeId": "init-ea4646be-0278-4ea8-9294-85af7f067ee5",
+      "itemId": "item-f2e42f3c-fb3e-43de-99c0-59a59de0056d",
+      "stepKey": "proximateObjectives",
+      "text": "Update codegen to go faster"
+    }
+  },
+  {
+    "type": "InitiativeItemAddedToKanban",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2026-02-20T10:39:29.443Z",
+    "tenantId": "company-socraft",
+    "payload": {
+      "itemId": "item-f2e42f3c-fb3e-43de-99c0-59a59de0056d",
+      "initiativeId": "init-ea4646be-0278-4ea8-9294-85af7f067ee5",
+      "initialStatus": "NEW",
+      "boardId": "team-socraft-cto"
+    },
+    "metadata": {
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "InitiativeItemCreated",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2026-02-20T10:42:04.010Z",
+    "tenantId": "company-socraft",
+    "payload": {
+      "initiativeId": "init-ea4646be-0278-4ea8-9294-85af7f067ee5",
+      "itemId": "item-48287605-6af8-482e-a9cd-c74d0ac3ca4e",
+      "stepKey": "actions",
+      "text": "Make a product of web portal (authentication, metada, security, CI/CD)"
+    }
+  },
+  {
+    "type": "InitiativeItemAddedToKanban",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2026-02-20T10:42:04.094Z",
+    "tenantId": "company-socraft",
+    "payload": {
+      "itemId": "item-48287605-6af8-482e-a9cd-c74d0ac3ca4e",
+      "initiativeId": "init-ea4646be-0278-4ea8-9294-85af7f067ee5",
+      "initialStatus": "NEW",
+      "boardId": "team-socraft-cto"
+    },
+    "metadata": {
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "InitiativeItemCreated",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2026-02-20T10:42:22.603Z",
+    "tenantId": "company-socraft",
+    "payload": {
+      "initiativeId": "init-ea4646be-0278-4ea8-9294-85af7f067ee5",
+      "itemId": "item-114c41c2-92b6-42ee-8fa6-822c16692eb5",
+      "stepKey": "actions",
+      "text": "Set up events on Event Modeling"
+    }
+  },
+  {
+    "type": "InitiativeItemAddedToKanban",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2026-02-20T10:42:22.682Z",
+    "tenantId": "company-socraft",
+    "payload": {
+      "itemId": "item-114c41c2-92b6-42ee-8fa6-822c16692eb5",
+      "initiativeId": "init-ea4646be-0278-4ea8-9294-85af7f067ee5",
+      "initialStatus": "NEW",
+      "boardId": "team-socraft-cto"
+    },
+    "metadata": {
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "InitiativeItemCreated",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2026-02-20T10:42:56.089Z",
+    "tenantId": "company-socraft",
+    "payload": {
+      "initiativeId": "init-ea4646be-0278-4ea8-9294-85af7f067ee5",
+      "itemId": "item-e65e8972-5ebe-4f85-92ae-3161d1684e2e",
+      "stepKey": "proximateObjectives",
+      "text": "Promote approach to customers to get feedback"
+    }
+  },
+  {
+    "type": "InitiativeItemAddedToKanban",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2026-02-20T10:42:56.158Z",
+    "tenantId": "company-socraft",
+    "payload": {
+      "itemId": "item-e65e8972-5ebe-4f85-92ae-3161d1684e2e",
+      "initiativeId": "init-ea4646be-0278-4ea8-9294-85af7f067ee5",
+      "initialStatus": "NEW",
+      "boardId": "team-socraft-cto"
+    },
+    "metadata": {
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "InitiativeItemCreated",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2026-02-20T10:43:51.252Z",
+    "tenantId": "company-socraft",
+    "payload": {
+      "initiativeId": "init-ea4646be-0278-4ea8-9294-85af7f067ee5",
+      "itemId": "item-8257405f-1e1c-4de1-a1af-42e0bdd3c7ef",
+      "stepKey": "actions",
+      "text": "Reduce product delivery to days only"
+    }
+  },
+  {
+    "type": "InitiativeItemAddedToKanban",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2026-02-20T10:43:51.321Z",
+    "tenantId": "company-socraft",
+    "payload": {
+      "itemId": "item-8257405f-1e1c-4de1-a1af-42e0bdd3c7ef",
+      "initiativeId": "init-ea4646be-0278-4ea8-9294-85af7f067ee5",
+      "initialStatus": "NEW",
+      "boardId": "team-socraft-cto"
+    },
+    "metadata": {
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "InitiativeItemCreated",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2026-02-20T10:44:11.183Z",
+    "tenantId": "company-socraft",
+    "payload": {
+      "initiativeId": "init-ea4646be-0278-4ea8-9294-85af7f067ee5",
+      "itemId": "item-eeedfbf5-c746-4654-822c-de5070e8cec1",
+      "stepKey": "actions",
+      "text": "Redefine software factory"
+    }
+  },
+  {
+    "type": "InitiativeItemAddedToKanban",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2026-02-20T10:44:11.253Z",
+    "tenantId": "company-socraft",
+    "payload": {
+      "itemId": "item-eeedfbf5-c746-4654-822c-de5070e8cec1",
+      "initiativeId": "init-ea4646be-0278-4ea8-9294-85af7f067ee5",
+      "initialStatus": "NEW",
+      "boardId": "team-socraft-cto"
+    },
+    "metadata": {
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "InitiativeItemCreated",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2026-02-20T10:44:24.143Z",
+    "tenantId": "company-socraft",
+    "payload": {
+      "initiativeId": "init-ea4646be-0278-4ea8-9294-85af7f067ee5",
+      "itemId": "item-e3f22ab2-5cad-422f-a6ad-e6c4b64752e6",
+      "stepKey": "actions",
+      "text": "Be the leader, the brand"
+    }
+  },
+  {
+    "type": "InitiativeItemAddedToKanban",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2026-02-20T10:44:24.216Z",
+    "tenantId": "company-socraft",
+    "payload": {
+      "itemId": "item-e3f22ab2-5cad-422f-a6ad-e6c4b64752e6",
+      "initiativeId": "init-ea4646be-0278-4ea8-9294-85af7f067ee5",
+      "initialStatus": "NEW",
+      "boardId": "team-socraft-cto"
+    },
+    "metadata": {
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "InitiativeItemCreated",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2026-02-20T10:44:34.233Z",
+    "tenantId": "company-socraft",
+    "payload": {
+      "initiativeId": "init-ea4646be-0278-4ea8-9294-85af7f067ee5",
+      "itemId": "item-fa391dde-5efb-4d50-96ed-2d952dd27487",
+      "stepKey": "actions",
+      "text": "Partner with Nebulit"
+    }
+  },
+  {
+    "type": "InitiativeItemAddedToKanban",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2026-02-20T10:44:34.332Z",
+    "tenantId": "company-socraft",
+    "payload": {
+      "itemId": "item-fa391dde-5efb-4d50-96ed-2d952dd27487",
+      "initiativeId": "init-ea4646be-0278-4ea8-9294-85af7f067ee5",
+      "initialStatus": "NEW",
+      "boardId": "team-socraft-cto"
+    },
+    "metadata": {
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "InitiativeItemCreated",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2026-02-20T10:44:59.405Z",
+    "tenantId": "company-socraft",
+    "payload": {
+      "initiativeId": "init-ea4646be-0278-4ea8-9294-85af7f067ee5",
+      "itemId": "item-c0a39225-a723-4557-aa2b-75c9a77a6e51",
+      "stepKey": "actions",
+      "text": "Build a business case: including Dev, Training and Strategic Impact"
+    }
+  },
+  {
+    "type": "InitiativeItemAddedToKanban",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2026-02-20T10:44:59.483Z",
+    "tenantId": "company-socraft",
+    "payload": {
+      "itemId": "item-c0a39225-a723-4557-aa2b-75c9a77a6e51",
+      "initiativeId": "init-ea4646be-0278-4ea8-9294-85af7f067ee5",
+      "initialStatus": "NEW",
+      "boardId": "team-socraft-cto"
+    },
+    "metadata": {
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "InitiativeItemUpdated",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2026-02-20T10:45:19.940Z",
+    "tenantId": "company-socraft",
+    "payload": {
+      "text": "Build plan to be the \"Brand\" in Swiss Romande\""
+    },
+    "metadata": {
+      "initiativeId": "init-ea4646be-0278-4ea8-9294-85af7f067ee5",
+      "itemId": "item-e3f22ab2-5cad-422f-a6ad-e6c4b64752e6",
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "InitiativeItemCreated",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2026-02-20T10:45:43.776Z",
+    "tenantId": "company-socraft",
+    "payload": {
+      "initiativeId": "init-ea4646be-0278-4ea8-9294-85af7f067ee5",
+      "itemId": "item-73debbdf-65df-4798-8692-23682b68c507",
+      "stepKey": "actions",
+      "text": "Use network to promote the approach & build an eco-system"
+    }
+  },
+  {
+    "type": "InitiativeItemAddedToKanban",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2026-02-20T10:45:43.831Z",
+    "tenantId": "company-socraft",
+    "payload": {
+      "itemId": "item-73debbdf-65df-4798-8692-23682b68c507",
+      "initiativeId": "init-ea4646be-0278-4ea8-9294-85af7f067ee5",
+      "initialStatus": "NEW",
+      "boardId": "team-socraft-cto"
+    },
+    "metadata": {
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "InitiativeItemUpdated",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2026-02-20T10:46:30.181Z",
+    "tenantId": "company-socraft",
+    "payload": {
+      "text": "To lead on Event Modeling Software Factory"
+    },
+    "metadata": {
+      "initiativeId": "init-ea4646be-0278-4ea8-9294-85af7f067ee5",
+      "itemId": "item-57a6607f-06a4-486d-a54d-2d16c8bbe9f7",
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "TagAdded",
+    "entity": "initiative",
+    "aggregateId": "init-ea4646be-0278-4ea8-9294-85af7f067ee5",
+    "timestamp": "2026-02-20T10:47:05.239Z",
+    "tenantId": "company-socraft",
+    "payload": {
+      "radarItemId": "radar-item-event-sourcing-socraft",
+      "radarName": ""
+    }
+  },
+  {
+    "type": "TagAdded",
+    "entity": "initiative",
+    "aggregateId": "init-ea4646be-0278-4ea8-9294-85af7f067ee5",
+    "timestamp": "2026-02-20T10:47:05.592Z",
+    "tenantId": "company-socraft",
+    "payload": {
+      "radarItemId": "radar-item-accidental-complexity-socraft",
+      "radarName": ""
+    }
+  },
+  {
+    "type": "TagAdded",
+    "entity": "initiative",
+    "aggregateId": "init-ea4646be-0278-4ea8-9294-85af7f067ee5",
+    "timestamp": "2026-02-20T10:47:05.797Z",
+    "tenantId": "company-socraft",
+    "payload": {
+      "radarItemId": "radar-item-cultural-inertia-socraft",
+      "radarName": ""
+    }
+  },
+  {
+    "type": "TagAdded",
+    "entity": "initiative",
+    "aggregateId": "init-ea4646be-0278-4ea8-9294-85af7f067ee5",
+    "timestamp": "2026-02-20T10:47:05.989Z",
+    "tenantId": "company-socraft",
+    "payload": {
+      "radarItemId": "radar-item-lack-of-modelization-socraft",
+      "radarName": ""
+    }
+  },
+  {
+    "type": "TagAdded",
+    "entity": "initiative",
+    "aggregateId": "init-ea4646be-0278-4ea8-9294-85af7f067ee5",
+    "timestamp": "2026-02-20T10:47:06.224Z",
+    "tenantId": "company-socraft",
+    "payload": {
+      "radarItemId": "radar-41bda5f2-b7d8-4c0f-b173-bcc7fc7a5bdf",
+      "radarName": ""
+    }
+  },
+  {
+    "type": "TagAdded",
+    "entity": "initiative",
+    "aggregateId": "init-ea4646be-0278-4ea8-9294-85af7f067ee5",
+    "timestamp": "2026-02-20T10:47:06.501Z",
+    "tenantId": "company-socraft",
+    "payload": {
+      "radarItemId": "radar-2df72cfc-ed00-4a28-9fc8-a77bb4073b8d",
+      "radarName": ""
+    }
+  },
+  {
+    "type": "TagAdded",
+    "entity": "initiative",
+    "aggregateId": "init-ea4646be-0278-4ea8-9294-85af7f067ee5",
+    "timestamp": "2026-02-20T10:47:06.671Z",
+    "tenantId": "company-socraft",
+    "payload": {
+      "radarItemId": "radar-5804ccf0-8e15-40fb-b19c-dcdf08675d2c",
+      "radarName": ""
+    }
+  },
+  {
+    "type": "TagAdded",
+    "entity": "initiative",
+    "aggregateId": "init-ea4646be-0278-4ea8-9294-85af7f067ee5",
+    "timestamp": "2026-02-20T10:47:06.882Z",
+    "tenantId": "company-socraft",
+    "payload": {
+      "radarItemId": "radar-a3f183ba-bff3-4c3e-a3c5-58723efe00fb",
+      "radarName": ""
+    }
+  },
+  {
+    "type": "InitiativeItemUpdated",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2026-02-20T12:44:44.877Z",
+    "tenantId": "company-socraft",
+    "payload": {
+      "text": "To lead on Event Modeling Software Factory"
+    },
+    "metadata": {
+      "initiativeId": "init-ea4646be-0278-4ea8-9294-85af7f067ee5",
+      "itemId": "item-57a6607f-06a4-486d-a54d-2d16c8bbe9f7",
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "InitiativeItemCreated",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2026-02-20T12:45:10.886Z",
+    "tenantId": "company-socraft",
+    "payload": {
+      "initiativeId": "init-ea4646be-0278-4ea8-9294-85af7f067ee5",
+      "itemId": "item-891415a5-ebe8-4bc4-8f31-5030faae346b",
+      "stepKey": "actions",
+      "text": "Bistro du Canton - Efficience"
+    }
+  },
+  {
+    "type": "InitiativeItemAddedToKanban",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2026-02-20T12:45:10.928Z",
+    "tenantId": "company-socraft",
+    "payload": {
+      "itemId": "item-891415a5-ebe8-4bc4-8f31-5030faae346b",
+      "initiativeId": "init-ea4646be-0278-4ea8-9294-85af7f067ee5",
+      "initialStatus": "NEW",
+      "boardId": "team-socraft-cto"
+    },
+    "metadata": {
+      "teamId": "team-socraft-cto"
+    }
+  },
+  {
+    "type": "InitiativeItemCreated",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2026-02-20T12:54:28.022Z",
+    "tenantId": "company-socraft",
+    "payload": {
+      "initiativeId": "init-ea4646be-0278-4ea8-9294-85af7f067ee5",
+      "itemId": "item-f9a89e22-c212-42d5-ab43-8e3f961c7d85",
+      "stepKey": "diagnosis",
+      "text": "EM/ES/SA/codegen/Ralph Loop & Claude AI: hours to build an app..."
+    }
+  },
+  {
+    "type": "InitiativeItemAddedToKanban",
+    "entity": "team",
+    "aggregateId": "team-socraft-cto",
+    "timestamp": "2026-02-20T12:54:28.056Z",
+    "tenantId": "company-socraft",
+    "payload": {
+      "itemId": "item-f9a89e22-c212-42d5-ab43-8e3f961c7d85",
+      "initiativeId": "init-ea4646be-0278-4ea8-9294-85af7f067ee5",
+      "initialStatus": "NEW",
+      "boardId": "team-socraft-cto"
+    },
+    "metadata": {
+      "teamId": "team-socraft-cto"
     }
   }
 ]

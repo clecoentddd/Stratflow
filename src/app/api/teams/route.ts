@@ -18,16 +18,16 @@ export async function GET(request: NextRequest) {
     const userIdFromCookie = cookieStore.get('userId')?.value;
     let user;
     if (userIdFromCookie) {
-        user = users.find(u => u.userId === userIdFromCookie);
+      user = users.find(u => u.userId === userIdFromCookie);
     }
 
     // If no companyId provided, default to user's company
     if (!companyId && user?.companyId) {
-        companyId = user.companyId;
+      companyId = user.companyId;
     }
 
     let teams = await getTeamsProjection();
-    
+
     if (companyId) {
       teams = teams.filter(t => t.companyId === companyId);
     }
@@ -57,21 +57,23 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const command = body as CreateTeamCommand;
-    
+
     const users = await getUsersProjection();
     const cookieStore = await cookies();
     const userIdFromCookie = cookieStore.get('userId')?.value;
     let user;
     if (userIdFromCookie) {
-        user = users.find(u => u.userId === userIdFromCookie);
+      user = users.find(u => u.userId === userIdFromCookie);
     }
 
-    // Enforce companyId from user context
+    // Enforce companyId from user context: users can only create teams for their primary organization
     if (user?.companyId) {
-        if (command.companyId && command.companyId !== user.companyId) {
-             return NextResponse.json({ message: 'Cannot create team for another company' }, { status: 403 });
-        }
-        command.companyId = user.companyId;
+      if (command.companyId && command.companyId !== user.companyId) {
+        return NextResponse.json({
+          message: `Access Denied: You are attempting to create a team for an organization outside of your primary workspace (${user.companyId}). Please switch to the correct company context or contact a system administrator.`
+        }, { status: 403 });
+      }
+      command.companyId = user.companyId;
     }
 
     const created = await TeamsCommandHandlers.handleCreateTeam(command);
@@ -89,7 +91,7 @@ export async function PUT(request: NextRequest) {
   try {
     const body = await request.json();
     const command = body as UpdateTeamCommand;
-    
+
     const updated = await TeamsCommandHandlers.handleUpdateTeam(command);
     return NextResponse.json(updated);
   } catch (error) {

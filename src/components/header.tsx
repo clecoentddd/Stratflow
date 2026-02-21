@@ -62,6 +62,19 @@ export function AppHeader({ companyName }: AppHeaderProps) {
       .catch(err => console.error("Failed to fetch users", err));
   }, []);
 
+  const applyTheme = (themeName: string) => {
+    const root = document.documentElement;
+    // Remove all theme classes first
+    root.classList.remove('theme-pro', 'theme-rose', 'theme-amber', 'theme-slate');
+    root.classList.add(themeName);
+    localStorage.setItem('app-theme', themeName);
+  };
+
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('app-theme') || 'theme-pro';
+    applyTheme(savedTheme);
+  }, []);
+
   const handleSwitchUser = async (userId: string) => {
     await fetch('/api/auth/switch-user', {
       method: 'POST',
@@ -79,7 +92,7 @@ export function AppHeader({ companyName }: AppHeaderProps) {
   const effectiveCompanyId = companyId || user?.companyId;
 
   return (
-    <header className="sticky top-0 z-10 flex h-16 items-center justify-between border-b bg-card/80 px-4 backdrop-blur-sm sm:px-6">
+    <header className="sticky top-0 z-50 flex h-16 items-center justify-between border-b bg-card/80 px-4 backdrop-blur-sm sm:px-6">
       <div className="flex items-center gap-4">
         <Link href="/" className="flex items-center gap-2">
           <StradarLogo size={32} />
@@ -94,6 +107,30 @@ export function AppHeader({ companyName }: AppHeaderProps) {
       </div>
       <div className="flex items-center gap-2">
         <nav className="hidden sm:flex items-center gap-2 mr-2">
+          {/* Theme Switcher */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="sm" className="gap-2 px-2 h-8 text-xs font-medium text-muted-foreground hover:text-primary">
+                <div className="w-3 h-3 rounded-full bg-primary"></div>
+                Theme
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-36">
+              <DropdownMenuItem onClick={() => applyTheme('theme-pro')}>
+                Pro Indigo
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => applyTheme('theme-rose')}>
+                Rose Stone
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => applyTheme('theme-amber')}>
+                Amber Zinc
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => applyTheme('theme-slate')}>
+                Slate Grey
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
           <Link href="/" className="text-sm px-2 py-1 rounded-md hover:bg-accent hover:text-accent-foreground">Companies</Link>
           {effectiveCompanyId && (
             <>
@@ -154,10 +191,10 @@ export function AppHeader({ companyName }: AppHeaderProps) {
           <DropdownMenuContent className="w-56" align="end" forceMount>
             <DropdownMenuLabel className="font-normal">
               <div className="flex flex-col space-y-1">
-                <p className="text-sm font-medium leading-none">User</p>
-                <p className="text-xs leading-none text-muted-foreground">
+                <span className="text-sm font-medium leading-none">User</span>
+                <span className="text-xs leading-none text-muted-foreground">
                   {isLoadingUser ? 'Loading...' : (user?.userId || 'Error: No user found')}
-                </p>
+                </span>
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />

@@ -20,10 +20,10 @@ export default function TeamSteps({ teamId, teamName, companyId = '', active }: 
   const keys: StepKey[] = ['purpose', 'radar', 'dashboard', 'kanban'];
 
   const stepConfig = {
-    purpose: { icon: Compass, title: 'Purpose', subtitle: 'Define & Align', color: '#9B51E0' },
-    radar: { icon: Radar, title: 'Radar', subtitle: 'Detect, Assess & Respond', color: '#00cc88' },
-    dashboard: { icon: TrendingUp, title: 'Strategy', subtitle: 'Plan & Execute', color: '#388cfa' },
-    kanban: { icon: SquareKanban, title: 'Kanban', subtitle: 'Track & Deliver', color: '#F5A623' }
+    purpose: { icon: Compass, title: 'Purpose', subtitle: 'Define & Align', color: 'var(--step-purpose)' },
+    radar: { icon: Radar, title: 'Radar', subtitle: 'Detect, Assess & Respond', color: 'var(--step-radar)' },
+    dashboard: { icon: TrendingUp, title: 'Strategy', subtitle: 'Plan & Execute', color: 'var(--step-dashboard)' },
+    kanban: { icon: SquareKanban, title: 'Kanban', subtitle: 'Track & Deliver', color: 'var(--step-kanban)' }
   };
 
   const currentTitle = stepConfig[active].title;

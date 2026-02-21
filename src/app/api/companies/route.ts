@@ -2,8 +2,10 @@ import { NextResponse, NextRequest } from 'next/server';
 import { cookies } from 'next/headers';
 import { fetchCompanies } from '@/lib/domain/companies/getCompanies';
 import { getUsersProjection } from '@/lib/domain/userManagement/user-projection';
+import { getTeamsProjection } from '@/lib/domain/teams/projection';
 import type { CreateCompanyCommand } from '@/lib/domain/companies/commands';
 import { CompaniesCommandHandlers } from '@/lib/domain/companies/commandHandler';
+import type { Team } from '@/lib/types';
 
 export const dynamic = 'force-dynamic';
 
@@ -18,16 +20,18 @@ export async function GET(request: NextRequest) {
     const userIdFromCookie = cookieStore.get('userId')?.value;
     let user;
     if (userIdFromCookie) {
-        user = users.find(u => u.userId === userIdFromCookie);
+      user = users.find(u => u.userId === userIdFromCookie);
     }
 
     if (!user) {
-        // Require login to see companies
-        return NextResponse.json([]);
+      // Require login to see companies
+      return NextResponse.json([]);
     }
 
-    if (user.companyId) {
-        companies = companies.filter(c => c.id === user.companyId);
+    const isAdmin = user.userId === 'admin@admin.com';
+
+    if (user.companyId && !isAdmin) {
+      companies = companies.filter(c => c.id === user.companyId);
     }
 
     return NextResponse.json(companies);
@@ -42,7 +46,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const command: CreateCompanyCommand = await request.json();
-    
+
     const created = await CompaniesCommandHandlers.handleCreateCompany(command);
     return NextResponse.json(created, { status: 201 });
   } catch (error) {

@@ -2,7 +2,7 @@
 .strategyContainer {
   border-radius: 0.75rem;
   background: white;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--border);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
   margin-bottom: 1.5rem;
   overflow: hidden;
@@ -11,14 +11,14 @@
 
 .strategyContainer:hover {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  border-color: #cbd5e1;
+  border-color: var(--muted-foreground);
 }
 
 /* Header */
 .strategyHeader {
   padding: 0.875rem 1.5rem;
-  background: #ffffff;
-  border-bottom: 1px solid #f1f5f9;
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
   display: flex;
   align-items: center;
 }
@@ -49,7 +49,7 @@
 .strategyTitle {
   font-size: 1.0625rem;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--foreground);
   margin: 0;
   letter-spacing: -0.01em;
   white-space: nowrap;
@@ -70,12 +70,12 @@
   gap: 0.35rem;
   font-size: 0.75rem;
   font-weight: 600;
-  color: #64748b;
+  color: var(--muted-foreground);
   letter-spacing: 0.01em;
 }
 
 .metaBadge svg {
-  color: #94a3b8;
+  color: var(--muted-foreground);
 }
 
 .rightGroup {
@@ -100,13 +100,13 @@
 .progressValue {
   font-size: 0.75rem;
   font-weight: 800;
-  color: #1e293b;
+  color: var(--foreground);
   font-variant-numeric: tabular-nums;
 }
 
 .slimProgressBarContainer {
   height: 5px;
-  background: #f1f5f9;
+  background: var(--muted);
   border-radius: 999px;
   overflow: hidden;
   box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.03);
@@ -114,7 +114,7 @@
 
 .slimProgressBar {
   height: 100%;
-  background: #2563eb;
+  background: var(--primary);
   border-radius: 999px;
   transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -126,17 +126,17 @@
   width: 2rem;
   height: 2rem;
   border-radius: 0.5rem;
-  border: 1px solid #e2e8f0;
-  background: #ffffff;
-  color: #64748b;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--muted-foreground);
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .miniActionButton:hover {
-  background: #f8fafc;
-  color: #0f172a;
-  border-color: #cbd5e1;
+  background: var(--secondary);
+  color: var(--foreground);
+  border-color: var(--muted-foreground);
   transform: translateY(-1px);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
@@ -171,18 +171,18 @@
 .noInitiatives {
   text-align: center;
   padding: 2rem 1rem;
-  background: #f9fafb;
-  border: 2px dashed #e5e7eb;
+  background: var(--muted);
+  border: 2px dashed var(--border);
   border-radius: 0.5rem;
-  color: #6b7280;
+  color: var(--muted-foreground);
   margin: 1rem 0;
 }
 
 /* Footer Refinement */
 .footer {
   padding: 1.25rem 1.5rem;
-  background-color: #f8fafc;
-  border-top: 1px solid #f1f5f9;
+  background-color: var(--secondary);
+  border-top: 1px solid var(--border);
 }
 
 .footerRow {
@@ -202,12 +202,12 @@
 
 .initiativeInput:focus {
   outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 1px #3b82f6;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 1px var(--primary);
 }
 
 .initiativeInput:disabled {
-  background-color: #f3f4f6;
+  background-color: var(--muted);
   cursor: not-allowed;
 }
 
@@ -216,18 +216,18 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem 1rem;
-  background-color: #388cfa;
-  color: white;
+  background-color: var(--primary);
+  color: var(--primary-foreground);
   border: none;
   border-radius: 0.375rem;
   font-size: 0.875rem;
   font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: opacity 0.2s;
 }
 
 .addButton:hover:not(:disabled) {
-  background-color: #2a7ae8;
+  opacity: 0.9;
 }
 
 .addButton:disabled {

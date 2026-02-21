@@ -47,12 +47,33 @@ export async function linkInitiativesCommandHandler(cmd: LinkInitiativesCommand)
     if (toId === cmd.fromInitiativeId) continue;
     const toCtx = getInitiativeContext(toId);
     if (!toCtx) continue;
-    // Optionally, add more business rules here using only event log replay
-    const tenantId = fromCtx.tenantId || toCtx.tenantId;
-    if (!tenantId) {
-      errors.push(`Unable to resolve tenant for initiative linking ${cmd.fromInitiativeId} -> ${toId}`);
+
+    // CRITICAL: Both initiatives must have tenantId
+    if (!fromCtx.tenantId || !toCtx.tenantId) {
+      errors.push(`Missing tenant information for initiative linking`);
+      console.warn('[TENANT-ISOLATION] Missing tenantId', {
+        from: cmd.fromInitiativeId,
+        to: toId,
+        fromTenantId: fromCtx.tenantId,
+        toTenantId: toCtx.tenantId
+      });
       continue;
     }
+
+    // CRITICAL: Both initiatives must belong to SAME tenant
+    if (fromCtx.tenantId !== toCtx.tenantId) {
+      errors.push(`Cannot link initiatives across different tenants/companies (${fromCtx.tenantId} → ${toCtx.tenantId})`);
+      console.error('[TENANT-ISOLATION] Cross-tenant linking attempt blocked', {
+        from: cmd.fromInitiativeId,
+        to: toId,
+        fromTenantId: fromCtx.tenantId,
+        toTenantId: toCtx.tenantId,
+        requestedBy: cmd.requestedBy
+      });
+      continue;
+    }
+
+    const tenantId = fromCtx.tenantId;
 
     const ev: InitiativeLinkedEvent = {
       type: 'InitiativeLinked',

@@ -41,11 +41,11 @@ export function CreateTeamDialog({
 
   const handleSubmit = async () => {
     const levelNum = parseInt(level, 10);
-  // Only name and level are required. Purpose/context are optional.
-  if (!name.trim() || isNaN(levelNum) || !companyId) {
-    toast({ title: "Missing Information", description: "Please provide a team name and numeric level.", variant: "destructive" });
-    return;
-  }
+    // Only name and level are required. Purpose/context are optional.
+    if (!name.trim() || isNaN(levelNum) || !companyId) {
+      toast({ title: "Missing Information", description: "Please provide a team name and numeric level.", variant: "destructive" });
+      return;
+    }
 
     setIsSubmitting(true);
 
@@ -63,7 +63,8 @@ export function CreateTeamDialog({
       });
 
       if (!response.ok) {
-        throw new Error('Failed to create team');
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || 'Failed to create team');
       }
 
       toast({
@@ -77,15 +78,15 @@ export function CreateTeamDialog({
     } catch (error) {
       console.error(error);
       toast({
-        title: "Error",
-        description: "Could not create the team. Please try again.",
+        title: "Team Creation Failed",
+        description: error instanceof Error ? error.message : "An unexpected error occurred. Please try again.",
         variant: "destructive",
       });
     } finally {
       setIsSubmitting(false);
     }
   };
-  
+
   const isFormValid = !!(name.trim() && companyId && !isNaN(parseInt(level, 10)));
 
   return (

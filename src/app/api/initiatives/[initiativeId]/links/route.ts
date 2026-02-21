@@ -27,7 +27,7 @@ function findInitiativeContext(initiativeId: string, teams: Team | Team[]): { te
       continue;
     }
     for (const s of team.dashboard.strategies) {
-  console.warn('    Strategy:', s.id, 'State:', s.state, 'Full object:', s);
+      console.warn('    Strategy:', s.id, 'State:', s.state, 'Full object:', s);
       if (!Array.isArray(s.initiatives) || s.initiatives.length === 0) {
         console.warn('      No initiatives found for this strategy.');
         continue;
@@ -45,10 +45,20 @@ export async function GET(_req: NextRequest, { params }: { params: { initiativeI
     console.log('[API][links][GET] called');
     const { initiativeId } = params;
     console.log('[API][links][GET] initiativeId:', initiativeId);
-    const { queryLinksFrom } = await import('@/lib/domain/initiatives-linking/projection');
-    const rows = queryLinksFrom(initiativeId);
-    console.log('[API][links][GET] rows:', rows);
+
+    // Resolve tenant context for this initiative
     const teams = await getTeamsProjection();
+    const initiativeCtx = findInitiativeContext(initiativeId, teams);
+    if (!initiativeCtx) {
+      console.warn('[API][links][GET] Initiative context not found');
+      return NextResponse.json({ error: 'Initiative not found' }, { status: 404 });
+    }
+
+    const { queryLinksFrom } = await import('@/lib/domain/initiatives-linking/projection');
+    // CRITICAL: Pass tenantId to ensure we only get links for this tenant
+    const rows = queryLinksFrom(initiativeId, initiativeCtx.tenantId);
+    console.log('[API][links][GET] rows:', rows);
+
     const enriched = rows.map(r => {
       const toCtx = findInitiativeContext(r.toInitiativeId, teams);
       const toName = (() => {
@@ -72,7 +82,7 @@ export async function GET(_req: NextRequest, { params }: { params: { initiativeI
     return NextResponse.json(enriched);
   } catch (e) {
     console.error('[API][links][GET] error:', e);
-    return NextResponse.json([]);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
 

@@ -10,7 +10,8 @@ import { queryAllActiveLinks } from '@/lib/domain/initiatives-linking/projection
 function buildSubgraph(selectedId: string | undefined, companyId: string) {
     // Pass companyId to queryEligibleInitiatives for correct filtering
     const rows = queryEligibleInitiatives({ states: ['Draft', 'Active'], companyId });
-    const edges = queryAllActiveLinks();
+    // Filter links by tenantId (which is the companyId in this system)
+    const edges = queryAllActiveLinks(companyId);
     const nodes: CatalogNode[] = rows.map(r => ({
         id: r.id,
         name: r.name,

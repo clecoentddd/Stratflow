@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Compass, TrendingUp, Radar, SquareKanban } from "lucide-react";
 import type { Team } from "@/lib/types";
+import { Button } from "@/components/ui/button";
 import styles from "./TeamCard.module.css";
 
 interface TeamCardProps {
@@ -25,23 +26,23 @@ export function TeamCard({ team, onEdit }: TeamCardProps) {
             aria-label="Edit team"
             title="Team purpose"
           >
-            <Compass className={styles.icon} color="#9B51E0" />
+            <Compass className={`${styles.icon} text-indigo-500`} />
           </button>
-          <Link href={`/company/${team.companyId}/team/${team.id}/radar`}>
-            <button className={styles.actionButton}>
-              <Radar className={styles.icon} color="#00cc88" />
-            </button>
-          </Link>
-          <Link href={`/company/${team.companyId}/team/${team.id}/dashboard`}>
-            <button className={styles.actionButton}>
-              <TrendingUp className={styles.icon} color="#388cfa" />
-            </button>
-          </Link>
-          <Link href={`/company/${team.companyId}/team/${team.id}/kanban`}>
-            <button className={styles.actionButton} title="Kanban Board">
-              <SquareKanban className={styles.icon} color="#f59e0b" />
-            </button>
-          </Link>
+          <Button asChild variant="ghost" className={styles.actionButton}>
+            <Link href={`/company/${team.companyId}/team/${team.id}/radar`}>
+              <Radar className={`${styles.icon} text-success`} />
+            </Link>
+          </Button>
+          <Button asChild variant="ghost" className={styles.actionButton}>
+            <Link href={`/company/${team.companyId}/team/${team.id}/dashboard`}>
+              <TrendingUp className={`${styles.icon} text-primary`} />
+            </Link>
+          </Button>
+          <Button asChild variant="ghost" className={styles.actionButton}>
+            <Link href={`/company/${team.companyId}/team/${team.id}/kanban`}>
+              <SquareKanban className={`${styles.icon} text-warning`} />
+            </Link>
+          </Button>
         </div>
       </div>
       <div className={styles.cardContent}>

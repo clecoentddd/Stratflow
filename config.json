@@ -1,0 +1,725 @@
+{
+    "slices": [
+        {
+            "id": "slice-company-reg",
+            "index": 1,
+            "title": "Register Company",
+            "sliceType": "STATE_CHANGE",
+            "commands": [
+                {
+                    "id": "cmd-create-co",
+                    "title": "Create Company",
+                    "type": "COMMAND",
+                    "description": "src/lib/domain/companies/commandHandler.ts"
+                }
+            ],
+            "events": [
+                {
+                    "id": "evt-co-created",
+                    "title": "CompanyCreated",
+                    "type": "EVENT",
+                    "description": "src/lib/domain/companies/events.ts",
+                    "aggregate": "Company"
+                }
+            ],
+            "screens": [
+                {
+                    "id": "scr-co-setup",
+                    "title": "Organization Setup",
+                    "type": "SCREEN"
+                }
+            ],
+            "aggregates": [
+                "Company"
+            ]
+        },
+        {
+            "id": "slice-team-onboarding",
+            "index": 2,
+            "title": "Onboard Team",
+            "sliceType": "STATE_CHANGE",
+            "commands": [
+                {
+                    "id": "cmd-create-tm",
+                    "title": "Create Team",
+                    "type": "COMMAND",
+                    "description": "src/lib/domain/teams/commandHandler.ts"
+                }
+            ],
+            "events": [
+                {
+                    "id": "evt-tm-created",
+                    "title": "TeamCreated",
+                    "type": "EVENT",
+                    "description": "src/lib/domain/teams/events.ts",
+                    "aggregate": "Team"
+                }
+            ],
+            "readmodels": [
+                {
+                    "id": "rm-tm-list",
+                    "title": "Teams List",
+                    "type": "READMODEL"
+                }
+            ],
+            "aggregates": [
+                "Team"
+            ]
+        },
+        {
+            "id": "slice-team-update",
+            "index": 3,
+            "title": "Update Team Profile",
+            "sliceType": "STATE_CHANGE",
+            "commands": [
+                {
+                    "id": "cmd-update-tm",
+                    "title": "Update Team",
+                    "type": "COMMAND",
+                    "description": "src/lib/domain/teams/commandHandler.ts"
+                }
+            ],
+            "events": [
+                {
+                    "id": "evt-tm-updated",
+                    "title": "TeamUpdated",
+                    "type": "EVENT",
+                    "description": "src/lib/domain/teams/events.ts",
+                    "aggregate": "Team"
+                }
+            ],
+            "aggregates": [
+                "Team"
+            ]
+        },
+        {
+            "id": "slice-radar-item-add",
+            "index": 4,
+            "title": "Identify Signal",
+            "sliceType": "STATE_CHANGE",
+            "commands": [
+                {
+                    "id": "cmd-create-ri",
+                    "title": "Create Radar Item",
+                    "type": "COMMAND",
+                    "description": "src/lib/domain/radar/commandHandler.ts"
+                }
+            ],
+            "events": [
+                {
+                    "id": "evt-ri-created",
+                    "title": "RadarItemCreated",
+                    "type": "EVENT",
+                    "description": "src/lib/domain/radar/RadarItemCreatedEvent.ts",
+                    "aggregate": "RadarItem"
+                }
+            ],
+            "screens": [
+                {
+                    "id": "scr-radar-main",
+                    "title": "Strategy Radar",
+                    "type": "SCREEN"
+                }
+            ],
+            "aggregates": [
+                "RadarItem"
+            ]
+        },
+        {
+            "id": "slice-radar-item-edit",
+            "index": 5,
+            "title": "Refine Signal",
+            "sliceType": "STATE_CHANGE",
+            "commands": [
+                {
+                    "id": "cmd-update-ri",
+                    "title": "Update Radar Item",
+                    "type": "COMMAND",
+                    "description": "src/lib/domain/radar/commandHandler.ts"
+                }
+            ],
+            "events": [
+                {
+                    "id": "evt-ri-updated",
+                    "title": "RadarItemUpdated",
+                    "type": "EVENT",
+                    "description": "src/lib/domain/radar/RadarItemUpdatedEvent.ts",
+                    "aggregate": "RadarItem"
+                }
+            ],
+            "aggregates": [
+                "RadarItem"
+            ]
+        },
+        {
+            "id": "slice-radar-item-del",
+            "index": 6,
+            "title": "Discard Signal",
+            "sliceType": "STATE_CHANGE",
+            "commands": [
+                {
+                    "id": "cmd-delete-ri",
+                    "title": "Delete Radar Item",
+                    "type": "COMMAND",
+                    "description": "src/lib/domain/radar/commandHandler.ts"
+                }
+            ],
+            "events": [
+                {
+                    "id": "evt-ri-deleted",
+                    "title": "RadarItemDeleted",
+                    "type": "EVENT",
+                    "description": "src/lib/domain/radar/RadarItemDeletedEvent.ts",
+                    "aggregate": "RadarItem"
+                }
+            ],
+            "aggregates": [
+                "RadarItem"
+            ]
+        },
+        {
+            "id": "slice-strat-draft",
+            "index": 7,
+            "title": "Draft Strategy",
+            "sliceType": "STATE_CHANGE",
+            "commands": [
+                {
+                    "id": "cmd-create-st",
+                    "title": "Create Strategy",
+                    "type": "COMMAND",
+                    "description": "src/lib/domain/strategies/command-handlers.ts"
+                }
+            ],
+            "events": [
+                {
+                    "id": "evt-st-created",
+                    "title": "StrategyCreated",
+                    "type": "EVENT",
+                    "description": "src/lib/domain/strategies/events.ts",
+                    "aggregate": "Strategy"
+                }
+            ],
+            "aggregates": [
+                "Strategy"
+            ]
+        },
+        {
+            "id": "slice-strat-activation",
+            "index": 8,
+            "title": "Activate Strategy",
+            "sliceType": "STATE_CHANGE",
+            "commands": [
+                {
+                    "id": "cmd-update-st",
+                    "title": "Update Strategy",
+                    "type": "COMMAND",
+                    "description": "src/lib/domain/strategies/command-handlers.ts"
+                }
+            ],
+            "events": [
+                {
+                    "id": "evt-st-updated",
+                    "title": "StrategyUpdated",
+                    "type": "EVENT",
+                    "description": "src/lib/domain/strategies/events.ts",
+                    "aggregate": "Strategy"
+                }
+            ],
+            "aggregates": [
+                "Strategy"
+            ]
+        },
+        {
+            "id": "slice-init-birth",
+            "index": 9,
+            "title": "Define Initiative",
+            "sliceType": "STATE_CHANGE",
+            "commands": [
+                {
+                    "id": "cmd-create-in",
+                    "title": "Create Initiative",
+                    "type": "COMMAND",
+                    "description": "src/lib/domain/initiatives/commandHandler.ts"
+                }
+            ],
+            "events": [
+                {
+                    "id": "evt-in-created",
+                    "title": "InitiativeCreated",
+                    "type": "EVENT",
+                    "description": "src/lib/domain/initiatives/events.ts",
+                    "aggregate": "Initiative"
+                }
+            ],
+            "aggregates": [
+                "Initiative"
+            ]
+        },
+        {
+            "id": "slice-init-name-change",
+            "index": 10,
+            "title": "Rename Initiative",
+            "sliceType": "STATE_CHANGE",
+            "commands": [
+                {
+                    "id": "cmd-update-in",
+                    "title": "Update Initiative",
+                    "type": "COMMAND",
+                    "description": "src/lib/domain/initiatives/commandHandler.ts"
+                }
+            ],
+            "events": [
+                {
+                    "id": "evt-in-updated",
+                    "title": "InitiativeUpdated",
+                    "type": "EVENT",
+                    "description": "src/lib/domain/initiatives/events.ts",
+                    "aggregate": "Initiative"
+                }
+            ],
+            "aggregates": [
+                "Initiative"
+            ]
+        },
+        {
+            "id": "slice-init-progression",
+            "index": 11,
+            "title": "Track Progress",
+            "sliceType": "STATE_CHANGE",
+            "commands": [
+                {
+                    "id": "cmd-prog-in",
+                    "title": "Update Progression",
+                    "type": "COMMAND",
+                    "description": "src/lib/domain/initiatives/commandHandler.ts"
+                }
+            ],
+            "events": [
+                {
+                    "id": "evt-in-prog-updated",
+                    "title": "InitiativeProgressUpdated",
+                    "type": "EVENT",
+                    "description": "src/lib/domain/initiatives/events.ts",
+                    "aggregate": "Initiative"
+                }
+            ],
+            "aggregates": [
+                "Initiative"
+            ]
+        },
+        {
+            "id": "slice-init-removal",
+            "index": 12,
+            "title": "Retire Initiative",
+            "sliceType": "STATE_CHANGE",
+            "commands": [
+                {
+                    "id": "cmd-delete-in",
+                    "title": "Delete Initiative",
+                    "type": "COMMAND",
+                    "description": "src/lib/domain/initiatives/commandHandler.ts"
+                }
+            ],
+            "events": [
+                {
+                    "id": "evt-in-deleted",
+                    "title": "InitiativeDeleted",
+                    "type": "EVENT",
+                    "description": "src/lib/domain/initiatives/events.ts",
+                    "aggregate": "Initiative"
+                }
+            ],
+            "aggregates": [
+                "Initiative"
+            ]
+        },
+        {
+            "id": "slice-init-radar-link",
+            "index": 13,
+            "title": "Link Signal to Action",
+            "sliceType": "STATE_CHANGE",
+            "commands": [
+                {
+                    "id": "cmd-link-ri-in",
+                    "title": "Link Radar Items",
+                    "type": "COMMAND",
+                    "description": "src/lib/domain/initiatives/commandHandler.ts"
+                }
+            ],
+            "events": [
+                {
+                    "id": "evt-in-ri-linked",
+                    "title": "InitiativeRadarItemsLinked",
+                    "type": "EVENT",
+                    "description": "src/lib/domain/initiatives/events.ts",
+                    "aggregate": "Initiative"
+                }
+            ],
+            "aggregates": [
+                "Initiative"
+            ]
+        },
+        {
+            "id": "slice-init-item-step",
+            "index": 14,
+            "title": "Detailed Step Execution",
+            "sliceType": "STATE_CHANGE",
+            "commands": [
+                {
+                    "id": "cmd-add-ii",
+                    "title": "Add Initiative Item",
+                    "type": "COMMAND",
+                    "description": "src/app/api/initiative-items/route.ts"
+                }
+            ],
+            "events": [
+                {
+                    "id": "evt-ii-created",
+                    "title": "InitiativeItemCreated",
+                    "type": "EVENT",
+                    "description": "src/lib/domain/initiative-items/events.ts",
+                    "aggregate": "Initiative"
+                }
+            ],
+            "screens": [
+                {
+                    "id": "scr-init-steps",
+                    "title": "Diagnosis/Approach View",
+                    "type": "SCREEN"
+                }
+            ],
+            "aggregates": [
+                "Initiative"
+            ]
+        },
+        {
+            "id": "slice-init-item-update",
+            "index": 15,
+            "title": "Refine Task",
+            "sliceType": "STATE_CHANGE",
+            "commands": [
+                {
+                    "id": "cmd-update-ii",
+                    "title": "Update Initiative Item",
+                    "type": "COMMAND",
+                    "description": "src/app/api/initiative-items/[itemId]/route.ts"
+                }
+            ],
+            "events": [
+                {
+                    "id": "evt-ii-updated",
+                    "title": "InitiativeItemUpdated",
+                    "type": "EVENT",
+                    "description": "src/lib/domain/initiative-items/events.ts",
+                    "aggregate": "Initiative"
+                }
+            ],
+            "aggregates": [
+                "Initiative"
+            ]
+        },
+        {
+            "id": "slice-init-item-del",
+            "index": 16,
+            "title": "Remove Task",
+            "sliceType": "STATE_CHANGE",
+            "commands": [
+                {
+                    "id": "cmd-delete-ii",
+                    "title": "Delete Initiative Item",
+                    "type": "COMMAND",
+                    "description": "src/app/api/initiative-items/[itemId]/route.ts"
+                }
+            ],
+            "events": [
+                {
+                    "id": "evt-ii-deleted",
+                    "title": "InitiativeItemDeleted",
+                    "type": "EVENT",
+                    "description": "src/lib/domain/initiative-items/events.ts",
+                    "aggregate": "Initiative"
+                }
+            ],
+            "aggregates": [
+                "Initiative"
+            ]
+        },
+        {
+            "id": "slice-link-initiatives",
+            "index": 17,
+            "title": "Link Strategic Initiatives",
+            "sliceType": "STATE_CHANGE",
+            "commands": [
+                {
+                    "id": "cmd-link-in",
+                    "title": "Link Initiative",
+                    "type": "COMMAND",
+                    "description": "src/lib/domain/initiatives-linking/linkInitiativesCommandHandler.ts"
+                }
+            ],
+            "events": [
+                {
+                    "id": "evt-in-linked",
+                    "title": "InitiativeLinked",
+                    "type": "EVENT",
+                    "description": "src/lib/domain/initiatives-linking/events.ts",
+                    "aggregate": "Team"
+                }
+            ],
+            "aggregates": [
+                "Team"
+            ]
+        },
+        {
+            "id": "slice-unlink-initiatives",
+            "index": 18,
+            "title": "Break Strategic Link",
+            "sliceType": "STATE_CHANGE",
+            "commands": [
+                {
+                    "id": "cmd-unlink-in",
+                    "title": "Unlink Initiative",
+                    "type": "COMMAND"
+                }
+            ],
+            "events": [
+                {
+                    "id": "evt-in-unlinked",
+                    "title": "InitiativeUnlinked",
+                    "type": "EVENT",
+                    "description": "src/lib/domain/initiatives-linking/events.ts",
+                    "aggregate": "Team"
+                }
+            ],
+            "aggregates": [
+                "Team"
+            ]
+        },
+        {
+            "id": "slice-kanban-persistence",
+            "index": 19,
+            "title": "Update Execution Status",
+            "sliceType": "STATE_CHANGE",
+            "commands": [
+                {
+                    "id": "cmd-move-el",
+                    "title": "Move Element",
+                    "type": "COMMAND",
+                    "description": "src/lib/domain/unified-kanban/MoveElements/commandHandlers.ts"
+                }
+            ],
+            "events": [
+                {
+                    "id": "evt-el-moved",
+                    "title": "ElementMoved",
+                    "type": "EVENT",
+                    "description": "src/lib/domain/unified-kanban/events.ts",
+                    "aggregate": "Initiative"
+                }
+            ],
+            "readmodels": [
+                {
+                    "id": "rm-kanban",
+                    "title": "Kanban Board",
+                    "type": "READMODEL"
+                }
+            ],
+            "aggregates": [
+                "Initiative"
+            ]
+        },
+        {
+            "id": "slice-kanban-auto-init",
+            "index": 20,
+            "title": "Auto-Kanban Initiative",
+            "sliceType": "AUTOMATION",
+            "commands": [
+                {
+                    "id": "cmd-auto-add-in",
+                    "title": "Add Initiative to Kanban",
+                    "type": "COMMAND"
+                }
+            ],
+            "events": [
+                {
+                    "id": "evt-in-added-kb",
+                    "title": "InitiativeAddedToKanban",
+                    "type": "EVENT",
+                    "description": "src/lib/domain/unified-kanban/events.ts",
+                    "aggregate": "Initiative"
+                }
+            ],
+            "processors": [
+                {
+                    "id": "proc-kb-listener",
+                    "title": "Kanban Context Listener",
+                    "type": "AUTOMATION",
+                    "description": "src/lib/domain/unified-kanban/domainListeners.ts"
+                }
+            ],
+            "aggregates": [
+                "Initiative"
+            ]
+        },
+        {
+            "id": "slice-kanban-auto-item",
+            "index": 21,
+            "title": "Auto-Kanban Item",
+            "sliceType": "AUTOMATION",
+            "commands": [
+                {
+                    "id": "cmd-auto-add-ii",
+                    "title": "Add Item to Kanban",
+                    "type": "COMMAND"
+                }
+            ],
+            "events": [
+                {
+                    "id": "evt-ii-added-kb",
+                    "title": "InitiativeItemAddedToKanban",
+                    "type": "EVENT",
+                    "description": "src/lib/domain/unified-kanban/events.ts",
+                    "aggregate": "Initiative"
+                }
+            ],
+            "processors": [
+                {
+                    "id": "proc-kb-listener",
+                    "title": "Kanban Context Listener",
+                    "type": "AUTOMATION",
+                    "description": "src/lib/domain/unified-kanban/domainListeners.ts"
+                }
+            ],
+            "aggregates": [
+                "Initiative"
+            ]
+        },
+        {
+            "id": "slice-tag-risk",
+            "index": 22,
+            "title": "Tag Risk to Initiative",
+            "sliceType": "STATE_CHANGE",
+            "commands": [
+                {
+                    "id": "cmd-tag-in",
+                    "title": "Add Tag",
+                    "type": "COMMAND",
+                    "description": "src/lib/domain/tag-an-initiative-with-a-risk/commandHandler.ts"
+                }
+            ],
+            "events": [
+                {
+                    "id": "evt-tag-added",
+                    "title": "TagAdded",
+                    "type": "EVENT",
+                    "description": "src/lib/domain/tag-an-initiative-with-a-risk/events.ts",
+                    "aggregate": "Initiative"
+                }
+            ],
+            "aggregates": [
+                "Initiative"
+            ]
+        },
+        {
+            "id": "slice-untag-risk",
+            "index": 23,
+            "title": "Remove Risk Tag",
+            "sliceType": "STATE_CHANGE",
+            "commands": [
+                {
+                    "id": "cmd-untag-in",
+                    "title": "Remove Tag",
+                    "type": "COMMAND",
+                    "description": "src/lib/domain/tag-an-initiative-with-a-risk/commandHandler.ts"
+                }
+            ],
+            "events": [
+                {
+                    "id": "evt-tag-removed",
+                    "title": "TagRemoved",
+                    "type": "EVENT",
+                    "description": "src/lib/domain/tag-an-initiative-with-a-risk/events.ts",
+                    "aggregate": "Initiative"
+                }
+            ],
+            "aggregates": [
+                "Initiative"
+            ]
+        },
+        {
+            "id": "slice-user-creation",
+            "index": 24,
+            "title": "Invite User",
+            "sliceType": "STATE_CHANGE",
+            "commands": [
+                {
+                    "id": "cmd-add-usr",
+                    "title": "Add User",
+                    "type": "COMMAND",
+                    "description": "src/lib/domain/userManagement/add-user/CommandHandler.ts"
+                }
+            ],
+            "events": [
+                {
+                    "id": "evt-usr-added",
+                    "title": "UserAdded",
+                    "type": "EVENT",
+                    "description": "src/lib/domain/userManagement/UserEvent.ts",
+                    "aggregate": "User"
+                }
+            ],
+            "aggregates": [
+                "User"
+            ]
+        },
+        {
+            "id": "slice-user-assignment",
+            "index": 25,
+            "title": "Assign Organization",
+            "sliceType": "STATE_CHANGE",
+            "commands": [
+                {
+                    "id": "cmd-assign-usr",
+                    "title": "Assign User to Organization",
+                    "type": "COMMAND"
+                }
+            ],
+            "events": [
+                {
+                    "id": "evt-usr-assigned",
+                    "title": "UserAssignedToOrganization",
+                    "type": "EVENT",
+                    "description": "src/lib/domain/userManagement/assign-user-to-organization/Event.ts",
+                    "aggregate": "User"
+                }
+            ],
+            "aggregates": [
+                "User"
+            ]
+        },
+        {
+            "id": "slice-view-agg-rm",
+            "index": 26,
+            "title": "Monitor Strategic Portfolio",
+            "sliceType": "STATE_VIEW",
+            "readmodels": [
+                {
+                    "id": "rm-agg-portfolio",
+                    "title": "Strategic Portfolio View",
+                    "type": "READMODEL",
+                    "description": "src/lib/domain/teams/projection/index.ts"
+                }
+            ],
+            "screens": [
+                {
+                    "id": "scr-dashboard",
+                    "title": "Team Dashboard",
+                    "type": "SCREEN"
+                }
+            ],
+            "aggregates": [
+                "Team"
+            ]
+        }
+    ]
+}
